@@ -15,8 +15,13 @@
 <meta property="og:title" content="David Linacre — Developer &amp; Builder">
 <meta property="og:description" content="Developer, builder, creator. A curated, searchable kit of free tools to go from idea to deployed project.">
 <meta property="og:site_name" content="linacre.site">
+<meta property="og:image" content="https://linacre.site/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Terminal window: linacre.site — free developer toolkit, idea to deployed">
 
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://linacre.site/og.png">
 <meta name="twitter:title" content="David Linacre — Developer &amp; Builder">
 <meta name="twitter:description" content="Developer, builder, creator. A searchable kit of free tools to go from idea to deployed project.">
 
@@ -599,10 +604,10 @@
   /* ---------- reading progress bar ---------- */
   #readingProg {
     position: fixed; top: 0; left: 0; z-index: 200;
-    height: 3px; width: 0%;
+    height: 3px; width: 100%;
     background: linear-gradient(90deg, var(--amber), var(--cyan));
     border-radius: 0 2px 2px 0;
-    transition: width .05s linear;
+    transform: scaleX(0); transform-origin: 0 50%;
     pointer-events: none;
   }
 
@@ -1160,6 +1165,7 @@
   </section>
 
   <!-- ROADMAP -->
+  <section id="roadmap">
     <div class="wrap">
       <div class="sec-head">
         <span class="kicker">The path</span>
@@ -1193,11 +1199,11 @@
         <div class="lab-config" id="labConfig">
           <!-- provider tabs -->
           <div class="prov-tabs" role="tablist" aria-label="Select AI provider">
-            <button class="prov-tab active" role="tab" aria-selected="true"  data-prov="gemini"  id="tab-gemini">Gemini</button>
-            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="openai"  id="tab-openai">OpenAI</button>
-            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="ollama"  id="tab-ollama">Ollama</button>
-            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="litellm" id="tab-litellm">LiteLLM</button>
-            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="claude"  id="tab-claude">Claude</button>
+            <button class="prov-tab active" role="tab" aria-selected="true"  tabindex="0"  data-prov="gemini"  id="tab-gemini">Gemini</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" tabindex="-1" data-prov="openai"  id="tab-openai">OpenAI</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" tabindex="-1" data-prov="ollama"  id="tab-ollama">Ollama</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" tabindex="-1" data-prov="litellm" id="tab-litellm">LiteLLM</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" tabindex="-1" data-prov="claude"  id="tab-claude">Claude</button>
           </div>
 
           <!-- Gemini -->
@@ -1489,11 +1495,23 @@
     });
   }
 
+  function getStack() {
+    try { return JSON.parse(localStorage.getItem("linacre_stack_v1") || "[]"); }
+    catch (e) { return []; }
+  }
+
+  function cardTitle(card) {
+    var h = card.querySelector("h3");
+    return card.dataset.title || (h ? h.textContent.trim() : "");
+  }
+
   function apply() {
     var term = (q.value || "").trim().toLowerCase();
+    var stack = activeCat === "stack" ? getStack() : null;
     var shown = 0;
     cards.forEach(function (card) {
-      var catOk = activeCat === "all" || card.dataset.cat === activeCat;
+      var catOk = activeCat === "all" ||
+        (stack ? stack.indexOf(cardTitle(card)) !== -1 : card.dataset.cat === activeCat);
       var hay = (card.dataset.name + " " + card.textContent).toLowerCase();
       var textOk = !term || hay.indexOf(term) !== -1;
       var show = catOk && textOk;
@@ -1501,13 +1519,15 @@
       if (show) shown++;
     });
     noResults.style.display = shown ? "none" : "block";
-    var scope = activeCat === "all" ? "" : " in " + activeCat;
+    var scope = activeCat === "all" ? "" : " in " + (activeCat === "stack" ? "my stack" : activeCat);
     countEl.textContent = "// showing " + shown + " of " + total + " tools" + scope;
   }
 
   chips.forEach(function (chip) {
     chip.addEventListener("click", function () {
-      setChip(chip.dataset.cat);
+      var cat = chip.dataset.cat;
+      if (cat === "stack" && activeCat === "stack") cat = "all"; // second click deselects
+      setChip(cat);
       apply();
     });
   });
@@ -1528,23 +1548,25 @@
   // Hamburger menu toggle
   var hamBtn = document.getElementById("hamBtn");
   var mobNav = document.getElementById("mobNav");
+  function setMobNav(open) {
+    mobNav.classList.toggle("open", open);
+    hamBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    document.body.style.overflow = open ? "hidden" : ""; // lock scroll while menu covers the page
+  }
   if (hamBtn && mobNav) {
     hamBtn.addEventListener("click", function () {
-      var open = mobNav.classList.toggle("open");
-      hamBtn.setAttribute("aria-expanded", open);
+      setMobNav(!mobNav.classList.contains("open"));
     });
     mobNav.querySelectorAll(".mob-link").forEach(function (a) {
-      a.addEventListener("click", function () {
-        mobNav.classList.remove("open");
-        hamBtn.setAttribute("aria-expanded", "false");
-      });
+      a.addEventListener("click", function () { setMobNav(false); });
     });
   }
 
   // When typing in search, auto-reset category to 'all' so cross-category
-  // searches don't silently return 0 results
+  // searches don't silently return 0 results. 'My stack' is the exception:
+  // searching within your bookmarks is intentional.
   q.addEventListener("input", function () {
-    if (q.value.trim() && activeCat !== "all") {
+    if (q.value.trim() && activeCat !== "all" && activeCat !== "stack") {
       setChip("all");
     }
     apply();
@@ -1598,12 +1620,18 @@
 
   // ----- 1. Reading progress bar -----
   var prog = document.getElementById("readingProg");
+  var progTick = false;
   function updateProg() {
-    var scrolled = document.documentElement.scrollTop || document.body.scrollTop;
-    var total = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    prog.style.width = (total > 0 ? (scrolled / total * 100) : 0) + "%";
+    var d = document.documentElement;
+    var max = d.scrollHeight - d.clientHeight;
+    prog.style.transform = "scaleX(" + (max > 0 ? (d.scrollTop || document.body.scrollTop) / max : 0) + ")";
+    progTick = false;
   }
-  window.addEventListener("scroll", updateProg, { passive: true });
+  window.addEventListener("scroll", function () {
+    if (progTick) return;
+    progTick = true;
+    requestAnimationFrame(updateProg);
+  }, { passive: true });
   updateProg();
 
   // ----- 2. Scroll-reveal cards -----
@@ -1661,6 +1689,8 @@
         // update stack chip label
         var sc = document.getElementById("stackChip");
         if (sc) sc.textContent = (s.length ? ("★ my stack (" + s.length + ")") : "★ my stack");
+        // refresh grid if the stack filter is currently active
+        if (activeCat === "stack") apply();
       });
 
       var top = card.querySelector(".card-top");
@@ -1672,38 +1702,6 @@
     var sc2 = document.getElementById("stackChip");
     if (sc2 && initStack.length) sc2.textContent = "★ my stack (" + initStack.length + ")";
   })();
-
-  // Patch the existing filter to support 'stack' category
-  var _origApply = apply;
-  var _stackFilter = false;
-  var stackChip = document.getElementById("stackChip");
-  if (stackChip) {
-    stackChip.addEventListener("click", function () {
-      // deactivate all other chips
-      Array.prototype.slice.call(document.querySelectorAll(".chip")).forEach(function (c) {
-        c.setAttribute("aria-pressed", "false");
-      });
-      _stackFilter = stackChip.getAttribute("aria-pressed") !== "true";
-      stackChip.setAttribute("aria-pressed", _stackFilter ? "true" : "false");
-      if (!_stackFilter) { setChip("all"); apply(); return; }
-      // filter cards by saved stack
-      var STACK_KEY = "linacre_stack_v1";
-      var saved;
-      try { saved = JSON.parse(localStorage.getItem(STACK_KEY) || "[]"); } catch(e) { saved = []; }
-      var allCards = Array.prototype.slice.call(document.querySelectorAll("#grid .card"));
-      var visible = 0;
-      allCards.forEach(function (c) {
-        var title = c.dataset.title || (c.querySelector("h3") ? c.querySelector("h3").textContent.trim() : "");
-        var show = saved.indexOf(title) !== -1;
-        c.style.display = show ? "" : "none";
-        if (show) visible++;
-      });
-      var countEl2 = document.getElementById("count");
-      var noRes = document.getElementById("noResults");
-      if (countEl2) countEl2.textContent = visible + " tool" + (visible !== 1 ? "s" : "") + " in my stack";
-      if (noRes) noRes.style.display = visible === 0 ? "block" : "none";
-    });
-  }
 
   // ----- 4. Keyboard shortcuts (with focus trap) -----
   var scOverlay = document.getElementById("scOverlay");
@@ -1751,9 +1749,10 @@
     // ? = open shortcuts (when not in an input)
     if (e.key === "?" && !inInput) { e.preventDefault(); openShortcuts(); return; }
 
-    // Esc = close shortcuts or clear search
+    // Esc = close shortcuts / mobile nav, or clear search
     if (e.key === "Escape") {
       if (scOverlay && scOverlay.classList.contains("open")) { closeShortcuts(); return; }
+      if (mobNav && mobNav.classList.contains("open")) { setMobNav(false); hamBtn.focus(); return; }
       if (document.activeElement === qEl && qEl.value) {
         qEl.value = ""; qEl.dispatchEvent(new Event("input")); return;
       }
@@ -1800,6 +1799,15 @@
       claude:  { endpoint: "http://localhost:4000",                      model: "claude-3-5-sonnet-20241022" }
     };
 
+    // Input element ids per provider (shared by populateFields + save)
+    var FIELD_MAP = {
+      gemini:  { key: "gKeyIn",   model: "gModel",    endpoint: null },
+      openai:  { key: "oKeyIn",   model: "oModelIn",  endpoint: "oEndIn" },
+      ollama:  { key: null,        model: "olModelIn", endpoint: "olEndIn" },
+      litellm: { key: "llKeyIn",  model: "llModelIn", endpoint: "llEndIn" },
+      claude:  { key: "clKeyIn",  model: "clModelIn", endpoint: "clEndIn" }
+    };
+
     // ------ helpers ------
     function lsGet(k) { try { return localStorage.getItem(k) || ""; } catch(e) { return ""; } }
     function lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
@@ -1818,11 +1826,8 @@
       var order = ["gemini", "openai", "ollama", "litellm", "claude"];
       for (var i = 0; i < order.length; i++) {
         var p = order[i], cfg = getProvConfig(p);
-        if (p === "gemini" && cfg.key) return p;
-        if (p === "openai" && cfg.key) return p;
-        if (p === "ollama" && (cfg.endpoint || DEFAULTS.ollama.endpoint)) return p;
-        if (p === "litellm" && cfg.endpoint) return p;
-        if (p === "claude" && cfg.endpoint) return p;
+        if ((p === "gemini" || p === "openai") && cfg.key) return p;
+        if ((p === "ollama" || p === "litellm" || p === "claude") && cfg.endpoint) return p;
       }
       return null;
     }
@@ -1858,6 +1863,7 @@
         var on = t.dataset.prov === prov;
         t.classList.toggle("active", on);
         t.setAttribute("aria-selected", on ? "true" : "false");
+        t.setAttribute("tabindex", on ? "0" : "-1"); // roving tabindex
       });
       provPanels.forEach(function(p) {
         p.classList.toggle("hidden", p.dataset.panel !== prov);
@@ -1868,17 +1874,24 @@
       tab.addEventListener("click", function() { switchTab(tab.dataset.prov); });
     });
 
+    // ARIA tabs pattern: arrow keys move + activate
+    var provTablist = document.querySelector(".prov-tabs");
+    if (provTablist) {
+      provTablist.addEventListener("keydown", function(e) {
+        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+        var i = provTabs.indexOf(document.activeElement);
+        if (i === -1) return;
+        e.preventDefault();
+        var next = provTabs[(i + (e.key === "ArrowRight" ? 1 : -1) + provTabs.length) % provTabs.length];
+        switchTab(next.dataset.prov);
+        next.focus();
+      });
+    }
+
     // ------ populate saved values into fields ------
     function populateFields(prov) {
       var cfg = getProvConfig(prov);
-      var fieldMap = {
-        gemini:  { key: "gKeyIn",   model: "gModel",    endpoint: null },
-        openai:  { key: "oKeyIn",   model: "oModelIn",  endpoint: "oEndIn" },
-        ollama:  { key: null,        model: "olModelIn", endpoint: "olEndIn" },
-        litellm: { key: "llKeyIn",  model: "llModelIn", endpoint: "llEndIn" },
-        claude:  { key: "clKeyIn",  model: "clModelIn", endpoint: "clEndIn" }
-      };
-      var fm = fieldMap[prov];
+      var fm = FIELD_MAP[prov];
       if (fm.key && cfg.key) { var el = document.getElementById(fm.key); if (el) el.value = cfg.key; }
       if (fm.model && cfg.model) { var el2 = document.getElementById(fm.model); if (el2) el2.value = cfg.model; }
       if (fm.endpoint && cfg.endpoint) { var el3 = document.getElementById(fm.endpoint); if (el3) el3.value = cfg.endpoint; }
@@ -1891,14 +1904,7 @@
       btn.addEventListener("click", function() {
         var prov = btn.dataset.save;
         var ls = LS[prov];
-        var fieldMap = {
-          gemini:  { key: "gKeyIn",   model: "gModel",    endpoint: null },
-          openai:  { key: "oKeyIn",   model: "oModelIn",  endpoint: "oEndIn" },
-          ollama:  { key: null,        model: "olModelIn", endpoint: "olEndIn" },
-          litellm: { key: "llKeyIn",  model: "llModelIn", endpoint: "llEndIn" },
-          claude:  { key: "clKeyIn",  model: "clModelIn", endpoint: "clEndIn" }
-        };
-        var fm = fieldMap[prov];
+        var fm = FIELD_MAP[prov];
         if (fm.key && ls.key) {
           var v = (document.getElementById(fm.key) || {}).value || "";
           if (v) lsSet(ls.key, v.trim());
@@ -1926,7 +1932,7 @@
         var cfg = getProvConfig(prov);
         var ready = (prov === "gemini" && cfg.key) ||
                     (prov === "openai" && cfg.key) ||
-                    (prov === "ollama" && (cfg.endpoint || true)) ||
+                    (prov === "ollama" && cfg.endpoint) ||
                     (prov === "litellm" && cfg.endpoint) ||
                     (prov === "claude" && cfg.endpoint);
         if (ready) {
@@ -2370,8 +2376,12 @@
       // italic
       s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
       s = s.replace(/_([^_]+)_/g, '<em>$1</em>');
-      // links [text](url)
-      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      // links [text](url) — http(s) only; drop javascript:, data:, etc.
+      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function (_m, text, url) {
+        url = url.trim();
+        if (!/^https?:\/\//i.test(url)) return text;
+        return '<a href="' + url.replace(/"/g, "%22") + '" target="_blank" rel="noopener">' + text + '</a>';
+      });
       return s;
     }
 
@@ -2417,3 +2427,4 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
+
