@@ -14,7 +14,7 @@ jobs:
       # Runs only if the project has a package.json (skips for a plain static site).
       - name: Set up Node
         if: hashFiles('**/package.json') != ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
