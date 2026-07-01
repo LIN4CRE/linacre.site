@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — linacre.site</title>
+<meta name="theme-color" content="#0b0e14">
+<style>
+  :root {
+    --bg: #0b0e14; --bg-soft: #10141d; --surface: #161b26;
+    --border: #262d3b; --text: #e6e9ef; --muted: #8b93a7;
+    --amber: #ffb454; --cyan: #5ccfe6;
+    --mono: ui-monospace,"SF Mono","JetBrains Mono",monospace;
+    --sans: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: var(--sans); line-height: 1.6;
+    min-height: 100vh; display: flex; flex-direction: column;
+    background-image: radial-gradient(60rem 40rem at 50% -10%, rgba(255,180,84,.06), transparent 60%);
+  }
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 4px; }
+  .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,14,20,.72); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .brand { font-family: var(--mono); font-weight: 700; color: var(--text); font-size: 1rem; letter-spacing: -.02em; }
+  .brand .p { color: var(--amber); }
+  .main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 24px; }
+  .card {
+    background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 16px; padding: 36px 40px;
+    max-width: 420px; width: 100%;
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,.8);
+    text-align: center;
+  }
+  .card h1 { font-family: var(--mono); font-size: 1.2rem; margin: 0 0 6px; }
+  .card p { color: var(--muted); font-size: .9rem; margin: 0 0 24px; }
+  #clerk-sign-in { min-height: 280px; }
+  .back-link { display: block; margin-top: 20px; font-family: var(--mono); font-size: .82rem; color: var(--muted); }
+  .back-link:hover { color: var(--cyan); text-decoration: none; }
+  footer { border-top: 1px solid var(--border); padding: 24px 0; text-align: center; }
+  footer p { margin: 0; color: var(--muted); font-family: var(--mono); font-size: .78rem; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-row">
+    <a href="index.html" class="brand"><span class="p">&gt;</span> linacre<span class="p">.</span>site</a>
+    <nav class="nav-links" aria-label="Primary" style="display:flex;gap:22px;font-family:var(--mono);font-size:.85rem;">
+      <a href="index.html" style="color:var(--muted)">Home</a>
+      <a href="learn.html" style="color:var(--muted)">Learn</a>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+  <div class="card">
+    <h1>// dashboard access</h1>
+    <p>Sign in with GitHub or Google to access MCP configs &amp; skill templates.</p>
+    <div id="clerk-sign-in"></div>
+    <a href="index.html" class="back-link">&larr; back to toolkit</a>
+  </div>
+</main>
+
+<footer><div class="wrap"><p>David Christopher Linacre · 2026</p></div></footer>
+
+<script
+  src="https://cdn.clerk.dev/clerk.js"
+  data-clerk-publishable-key="CLERK_PUBLISHABLE_KEY"
+  async
+  crossorigin="anonymous"
+></script>
+<script>
+  window.addEventListener("load", function () {
+    if (!window.Clerk) return;
+    Clerk.load().then(function () {
+      Clerk.mountSignIn("clerk-sign-in", {
+        afterSignInUrl: "dashboard.html",
+        afterSignUpUrl: "dashboard.html",
+        appearance: {
+          elements: {
+            rootBox: { width: "100%" },
+            card: { backgroundColor: "transparent", boxShadow: "none" },
+            headerTitle: { color: "#e6e9ef", fontFamily: "ui-monospace, monospace" },
+            headerSubtitle: { color: "#8b93a7" },
+            socialButtonsBlockButton: {
+              backgroundColor: "#161b26", border: "1px solid #262d3b",
+              color: "#e6e9ef", borderRadius: "8px",
+              fontFamily: "ui-monospace, monospace"
+            },
+            formFieldInput: {
+              backgroundColor: "#10141d", border: "1px solid #262d3b",
+              color: "#e6e9ef", borderRadius: "8px"
+            },
+            formButtonPrimary: {
+              backgroundColor: "#ffb454", color: "#0b0e14",
+              borderRadius: "8px", fontWeight: 700
+            },
+            footerActionLink: { color: "#5ccfe6" },
+            dividerLine: { backgroundColor: "#262d3b" },
+            dividerText: { color: "#8b93a7" }
+          }
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

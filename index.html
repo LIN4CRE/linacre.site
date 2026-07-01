@@ -280,7 +280,6 @@
   .card[data-cat="start"]  { border-left-color: var(--amber); }
   .card[data-cat="build"]  { border-left-color: var(--cyan); }
   .card[data-cat="deploy"] { border-left-color: var(--green); }
-  .card[data-cat="learn"]  { border-left-color: #c792ea; }
   .card[data-cat="design"] { border-left-color: #ff8c72; }
   .card[data-cat="email"]  { border-left-color: #5cb8e4; }
 
@@ -295,7 +294,6 @@
   a.card[data-cat="start"]:hover  { border-left-color: var(--amber); box-shadow: 0 8px 30px -10px rgba(255,180,84,.15); }
   a.card[data-cat="build"]:hover  { border-left-color: var(--cyan);  box-shadow: 0 8px 30px -10px rgba(92,207,230,.15); }
   a.card[data-cat="deploy"]:hover { border-left-color: var(--green); box-shadow: 0 8px 30px -10px rgba(127,216,143,.15); }
-  a.card[data-cat="learn"]:hover  { border-left-color: #c792ea; box-shadow: 0 8px 30px -10px rgba(199,146,234,.15); }
   a.card[data-cat="design"]:hover { border-left-color: #ff8c72; box-shadow: 0 8px 30px -10px rgba(255,140,114,.15); }
   a.card[data-cat="email"]:hover  { border-left-color: #5cb8e4; box-shadow: 0 8px 30px -10px rgba(92,184,228,.15); }
 
@@ -774,8 +772,9 @@
     <a href="#top" class="brand"><span class="p">&gt;</span> linacre<span class="p">.</span>site</a>
     <nav class="nav-links" aria-label="Primary">
       <a href="#toolkit" class="hide-sm">Toolkit</a>
-      <a href="#roadmap" class="hide-sm">Roadmap</a>
+      <a href="learn.html" class="hide-sm">Learn</a>
       <a href="#lab" class="hide-sm">Lab</a>
+      <a href="dashboard.html" class="hide-sm">Dashboard</a>
       <a href="https://github.com/LIN4CRE" class="nav-gh hide-sm" target="_blank" rel="noopener">GitHub&nbsp;↗</a>
       <button class="ham" id="hamBtn" type="button" aria-label="Menu" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
@@ -786,8 +785,9 @@
 
 <div class="mob-nav" id="mobNav" aria-label="Mobile navigation">
   <a href="#toolkit" class="mob-link">Toolkit</a>
-  <a href="#roadmap" class="mob-link">Roadmap</a>
+  <a href="learn.html" class="mob-link">Learn</a>
   <a href="#lab" class="mob-link">Lab</a>
+  <a href="dashboard.html" class="mob-link">Dashboard</a>
   <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener" style="border:none">GitHub ↗</a>
 </div>
 
@@ -848,7 +848,6 @@
           <button class="chip" data-cat="start" aria-pressed="false">start</button>
           <button class="chip" data-cat="build" aria-pressed="false">build</button>
           <button class="chip" data-cat="deploy" aria-pressed="false">deploy</button>
-          <button class="chip" data-cat="learn" aria-pressed="false">learn</button>
           <button class="chip" data-cat="design" aria-pressed="false">design</button>
           <button class="chip" data-cat="email" aria-pressed="false">email</button>
           <button class="chip" data-cat="stack" aria-pressed="false" id="stackChip" title="Your bookmarked tools">★ my stack</button>
@@ -1034,58 +1033,6 @@
           <span class="host">railway.app</span>
         </a>
 
-        <!-- LEARN -->
-        <a class="card" data-cat="learn" data-name="freecodecamp curriculum certification beginner" href="https://freecodecamp.org" target="_blank" rel="noopener">
-          <div class="card-top"><h3>freeCodeCamp</h3><span class="tag free">Free</span></div>
-          <p>Full curriculum + certs + huge community. The best place to start from zero.</p>
-          <span class="host">freecodecamp.org</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="odin project fullstack curriculum" href="https://theodinproject.com" target="_blank" rel="noopener">
-          <div class="card-top"><h3>The Odin Project</h3><span class="tag free">Free</span></div>
-          <p>Full-stack JS path. Opinionated curriculum, real projects. Hardcore.</p>
-          <span class="host">theodinproject.com</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="cs50 harvard computer science" href="https://cs50.harvard.edu" target="_blank" rel="noopener">
-          <div class="card-top"><h3>CS50 (Harvard)</h3><span class="tag free">Free</span></div>
-          <p>The best intro to CS. C, Python, SQL, web — world-class lectures.</p>
-          <span class="host">cs50.harvard.edu</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="mdn web docs reference html css js" href="https://developer.mozilla.org" target="_blank" rel="noopener">
-          <div class="card-top"><h3>MDN Web Docs</h3><span class="tag free">Free</span></div>
-          <p>The bible of web dev. HTML, CSS &amp; JS reference. Bookmark it forever.</p>
-          <span class="host">developer.mozilla.org</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="javascript.info modern tutorial" href="https://javascript.info" target="_blank" rel="noopener">
-          <div class="card-top"><h3>JavaScript.info</h3><span class="tag free">Free</span></div>
-          <p>The modern JavaScript tutorial. Deep, thorough and practical.</p>
-          <span class="host">javascript.info</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="frontend mentor html css challenges" href="https://frontendmentor.io" target="_blank" rel="noopener">
-          <div class="card-top"><h3>Frontend Mentor</h3><span class="tag free">Free</span></div>
-          <p>Real HTML/CSS/JS challenges with pro designs. Learn by building.</p>
-          <span class="host">frontendmentor.io</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="exercism practice coding mentored" href="https://exercism.org" target="_blank" rel="noopener">
-          <div class="card-top"><h3>Exercism</h3><span class="tag free">Free</span></div>
-          <p>Practice coding in 66 languages. Mentored &amp; self-paced tracks. 100% free.</p>
-          <span class="host">exercism.org</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="web dev simplified youtube tutorials" href="https://youtube.com/@WebDevSimplified" target="_blank" rel="noopener">
-          <div class="card-top"><h3>Web Dev Simplified</h3><span class="tag free">Free</span></div>
-          <p>Clear, concise video tutorials. Best for visual learners.</p>
-          <span class="host">youtube.com/@WebDevSimplified</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="fireship youtube overviews deep dives" href="https://youtube.com/@Fireship" target="_blank" rel="noopener">
-          <div class="card-top"><h3>Fireship</h3><span class="tag free">Free</span></div>
-          <p>100-second overviews &amp; deep dives. Learn concepts fast, stay entertained.</p>
-          <span class="host">youtube.com/@Fireship</span>
-        </a>
-        <a class="card" data-cat="learn" data-name="python programming language beginner" href="https://python.org" target="_blank" rel="noopener">
-          <div class="card-top"><h3>Python</h3><span class="tag free">Free</span></div>
-          <p>Versatile, beginner-friendly language. Great for automation, data science, and backend.</p>
-          <span class="host">python.org</span>
-        </a>
-
         <!-- DESIGN -->
         <a class="card" data-cat="design" data-name="figma design tool ui" href="https://figma.com" target="_blank" rel="noopener">
           <div class="card-top"><h3>Figma</h3><span class="tag free">Free</span></div>
@@ -1161,26 +1108,6 @@
           <span class="host">github.com/LIN4CRE/DomainDeals</span>
         </a>
       </div>
-    </div>
-  </section>
-
-  <!-- ROADMAP -->
-  <section id="roadmap">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="kicker">The path</span>
-        <h2>From zero to shipped</h2>
-        <p>The route I'm following — and the one I'd point any beginner to. Do them in order.</p>
-      </div>
-      <div class="road">
-        <div class="step"><span class="n">1</span><div><h3>Set up your dev environment</h3><p>Install VS Code + Git, make a dev folder, and run <code>git init</code> for the first time.</p></div></div>
-        <div class="step"><span class="n">2</span><div><h3>Finish freeCodeCamp Responsive Web Design</h3><p>~300 hours covering HTML, CSS, Flexbox &amp; Grid — with a certificate. The perfect start.</p></div></div>
-        <div class="step"><span class="n">3</span><div><h3>Rebuild this landing page</h3><p>Copy the source, modify it, break it, fix it. That's how you learn. Then deploy to Vercel.</p></div></div>
-        <div class="step"><span class="n">4</span><div><h3>Learn JavaScript (ES6+)</h3><p>JavaScript.info + the freeCodeCamp JS cert. Build small projects — DOM, <code>fetch</code>, the works.</p></div></div>
-        <div class="step"><span class="n">5</span><div><h3>Pick a framework &amp; build something real</h3><p>Next.js + Supabase + Vercel = a full-stack app. Build a blog, a tool, a portfolio. Ship it.</p></div></div>
-        <div class="step"><span class="n">6</span><div><h3>Share everything on GitHub</h3><p>Push code, write READMEs, build in public. Make your profile a showcase and get noticed.</p></div></div>
-      </div>
-
     </div>
   </section>
 
@@ -2428,4 +2355,3 @@ if ("serviceWorker" in navigator) {
 </script>
 </body>
 </html>
-
