@@ -5,8 +5,8 @@ name: opencode nightly (autonomous)
 # it can still only spend what your prepaid credits allow (see COST-SAFETY.md).
 on:
   workflow_dispatch: {}
-  # schedule:
-  #   - cron: "0 9 * * 1" # every Monday 09:00 UTC
+  schedule:
+    - cron: "0 9 * * 1" # every Monday 09:00 UTC
 
 concurrency:
   group: opencode-nightly

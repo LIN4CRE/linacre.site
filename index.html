@@ -21,6 +21,7 @@
 <meta name="twitter:description" content="Developer, builder, creator. A searchable kit of free tools to go from idea to deployed project.">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0e14'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' fill='%23ffb454' text-anchor='middle'%3E%3E%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="/manifest.json">
 
 <script type="application/ld+json">
 {
@@ -547,6 +548,15 @@
   #labSend:hover:not(:disabled) { background: #ffc271; box-shadow: 0 0 20px rgba(255,180,84,.3); }
   #labSend:disabled { opacity: .45; cursor: not-allowed; }
   #labSend svg { width: 15px; height: 15px; }
+  #labStop {
+    background: transparent; border: 1px solid var(--border-hi);
+    color: var(--muted); border-radius: 10px;
+    padding: 11px 16px; cursor: pointer;
+    font-family: var(--mono); font-size: .85rem; font-weight: 700;
+    flex-shrink: 0; display: none; align-items: center; gap: 6px;
+  }
+  #labStop:hover { background: var(--surface-hi); color: var(--text); }
+  #labStop svg { width: 15px; height: 15px; }
 
   /* empty state */
   .lab-empty {
@@ -855,6 +865,11 @@
           <p>Opinionated code formatter. Consistent style across your whole project, zero config.</p>
           <span class="host">prettier.io</span>
         </a>
+        <a class="card" data-cat="start" data-name="linear project management issues tracking" href="https://linear.app" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Linear</h3><span class="tag free">Free</span></div>
+          <p>Issue tracking and project management. Clean, fast, built for developers.</p>
+          <span class="host">linear.app</span>
+        </a>
         <a class="card" data-cat="start" data-name="zed editor fast rust gpu" href="https://zed.dev" target="_blank" rel="noopener">
           <div class="card-top"><h3>Zed</h3><span class="tag free">Free</span></div>
           <p>Blazing-fast editor written in Rust. GPU-accelerated, built-in AI, multiplayer editing.</p>
@@ -937,6 +952,21 @@
           <p>Test &amp; explore APIs visually. Send requests, inspect responses, mock endpoints.</p>
           <span class="host">postman.com</span>
         </a>
+        <a class="card" data-cat="build" data-name="docker containers devops deployment" href="https://docker.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Docker</h3><span class="tag free">Free</span></div>
+          <p>Containerize apps for consistent dev &amp; deployment. Free for personal use, huge ecosystem.</p>
+          <span class="host">docker.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="svelte ui compiler javascript" href="https://svelte.dev" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Svelte</h3><span class="tag free">Free</span></div>
+          <p>Compiled UI framework. Less boilerplate, smaller bundles, great DX.</p>
+          <span class="host">svelte.dev</span>
+        </a>
+        <a class="card" data-cat="build" data-name="sentry error monitoring debugging" href="https://sentry.io" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Sentry</h3><span class="tag free">Free</span></div>
+          <p>Real-time error tracking and performance monitoring. Free for small teams.</p>
+          <span class="host">sentry.io</span>
+        </a>
 
         <!-- DEPLOY -->
         <a class="card" data-cat="deploy" data-name="vercel deploy hosting next.js" href="https://vercel.com" target="_blank" rel="noopener">
@@ -1015,6 +1045,11 @@
           <div class="card-top"><h3>Fireship</h3><span class="tag free">Free</span></div>
           <p>100-second overviews &amp; deep dives. Learn concepts fast, stay entertained.</p>
           <span class="host">youtube.com/@Fireship</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="python programming language beginner" href="https://python.org" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Python</h3><span class="tag free">Free</span></div>
+          <p>Versatile, beginner-friendly language. Great for automation, data science, and backend.</p>
+          <span class="host">python.org</span>
         </a>
 
         <!-- DESIGN -->
@@ -1220,9 +1255,27 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
             send
           </button>
+          <button id="labStop" type="button" aria-label="Stop generating">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+            stop
+          </button>
         </div>
 
       </div><!-- /.lab-shell -->
+    </div>
+  </section>
+
+  <!-- CHANGELOG -->
+  <section id="changelog">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">Changelog</span>
+        <h2>What's new</h2>
+      </div>
+      <div class="road">
+        <div class="step"><span class="n">v2</span><div><h3>Streaming AI Lab + PWA support</h3><p>Real-time streaming responses in the Lab with a stop button. Offline-ready with manifest &amp; service worker. Custom 404 page.</p></div></div>
+        <div class="step"><span class="n">v1</span><div><h3>Initial launch — toolkit &amp; AI Lab</h3><p>Terminal-styled hero, searchable toolkit with bookmarks, AI Lab with multi-provider support, and roadmap.</p></div></div>
+      </div>
     </div>
   </section>
 
@@ -1975,10 +2028,13 @@
       if (t && t.wrap && t.wrap.parentNode) t.wrap.parentNode.removeChild(t.wrap);
     }
 
-    // ------ API callers ------
+    // ------ AbortController for stop button ------
+    var currentAbort = null;
 
-    // OpenAI-compatible (covers OpenAI, Ollama /v1, LiteLLM, AnythingLLM)
-    function callOpenAICompat(baseUrl, apiKey, model, messages, onChunk, onDone, onError) {
+    // ------ API callers (streaming) ------
+
+    // OpenAI-compatible streaming (covers OpenAI, Ollama /v1, LiteLLM, AnythingLLM)
+    function callOpenAICompat(baseUrl, apiKey, model, messages, onChunk, onDone, onError, signal) {
       var url = baseUrl.replace(/\/+$/, "") + "/v1/chat/completions";
       var headers = { "Content-Type": "application/json" };
       if (apiKey) headers["Authorization"] = "Bearer " + apiKey;
@@ -1986,52 +2042,111 @@
       fetch(url, {
         method: "POST",
         headers: headers,
-        body: JSON.stringify({
-          model: model,
-          messages: messages,
-          stream: false
-        })
+        body: JSON.stringify({ model: model, messages: messages, stream: true }),
+        signal: signal
       })
       .then(function(r) {
         if (!r.ok) return r.text().then(function(t) { throw new Error(r.status + " " + t.slice(0,200)); });
-        return r.json();
+        var reader = r.body.getReader();
+        var decoder = new TextDecoder();
+        var buf = "";
+        var full = "";
+
+        function read() {
+          reader.read().then(function(result) {
+            if (result.done) { onDone(full); return; }
+            buf += decoder.decode(result.value, { stream: true });
+            var lines = buf.split("\n");
+            buf = lines.pop() || "";
+            lines.forEach(function(line) {
+              if (!line.startsWith("data: ")) return;
+              var data = line.slice(6).trim();
+              if (data === "[DONE]") return;
+              try {
+                var parsed = JSON.parse(data);
+                var content = parsed.choices && parsed.choices[0] && parsed.choices[0].delta && parsed.choices[0].delta.content;
+                if (content) { full += content; onChunk(content); }
+              } catch(e) {}
+            });
+            read();
+          }).catch(function(err) {
+            if (err.name === "AbortError") { onDone(full); return; }
+            onError(err);
+          });
+        }
+        read();
       })
-      .then(function(data) {
-        var text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "(empty response)";
-        onDone(text);
-      })
-      .catch(onError);
+      .catch(function(err) {
+        if (err.name === "AbortError") { onDone(""); return; }
+        onError(err);
+      });
     }
 
-    // Gemini REST API
-    function callGemini(apiKey, model, messages, onDone, onError) {
-      var url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + apiKey;
+    // Gemini streaming REST API
+    function callGemini(apiKey, model, messages, onChunk, onDone, onError, signal) {
+      var url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":streamGenerateContent?alt=sse&key=" + apiKey;
       var contents = messages.map(function(m) {
         return { role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] };
       });
-      // Gemini doesn't support system role inline; prepend as first user turn
       contents.unshift({ role: "user", parts: [{ text: SYSTEM_PROMPT }] });
       contents.splice(1, 0, { role: "model", parts: [{ text: "Understood." }] });
 
       fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: contents })
+        body: JSON.stringify({ contents: contents }),
+        signal: signal
       })
       .then(function(r) {
         if (!r.ok) return r.text().then(function(t) { throw new Error(r.status + " " + t.slice(0,200)); });
-        return r.json();
+        var reader = r.body.getReader();
+        var decoder = new TextDecoder();
+        var buf = "";
+        var full = "";
+
+        function read() {
+          reader.read().then(function(result) {
+            if (result.done) { onDone(full); return; }
+            buf += decoder.decode(result.value, { stream: true });
+            var lines = buf.split("\n");
+            buf = lines.pop() || "";
+            lines.forEach(function(line) {
+              if (!line.startsWith("data: ")) return;
+              var data = line.slice(6).trim();
+              if (!data) return;
+              try {
+                var parsed = JSON.parse(data);
+                var text = parsed.candidates && parsed.candidates[0] && parsed.candidates[0].content &&
+                           parsed.candidates[0].content.parts && parsed.candidates[0].content.parts[0] &&
+                           parsed.candidates[0].content.parts[0].text;
+                if (text) { full += text; onChunk(text); }
+              } catch(e) {}
+            });
+            read();
+          }).catch(function(err) {
+            if (err.name === "AbortError") { onDone(full); return; }
+            onError(err);
+          });
+        }
+        read();
       })
-      .then(function(data) {
-        var text = (data.candidates && data.candidates[0] && data.candidates[0].content &&
-                    data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
-                    data.candidates[0].content.parts[0].text) || "(empty response)";
-        onDone(text);
-      })
-      .catch(onError);
+      .catch(function(err) {
+        if (err.name === "AbortError") { onDone(""); return; }
+        onError(err);
+      });
     }
 
-    // ------ main send ------
+    // ------ stop button ------
+    var labStop = document.getElementById("labStop");
+    function showStop() { if (labStop) labStop.style.display = "flex"; labSend.style.display = "none"; }
+    function hideStop() { if (labStop) labStop.style.display = "none"; labSend.style.display = "flex"; }
+    if (labStop) {
+      labStop.addEventListener("click", function() {
+        if (currentAbort) { currentAbort.abort(); currentAbort = null; }
+      });
+    }
+
+    // ------ main send (streaming) ------
     function sendMessage() {
       if (busy) return;
       var text = labInput.value.trim();
@@ -2051,43 +2166,132 @@
       labInput.style.height = "auto";
       busy = true;
       labSend.disabled = true;
+      showStop();
 
       history.push({ role: "user", content: text });
       addMsg("user", text);
 
-      var thinking = addThinking();
+      // Create a model bubble upfront for streaming
+      var streamBubble = addMsg("model", "");
 
       var cfg = getProvConfig(prov);
       var model = cfg.model || DEFAULTS[prov].model;
       var endpoint = cfg.endpoint || DEFAULTS[prov].endpoint;
       var apiKey = cfg.key || "";
 
-      // Build OpenAI-style messages with system prepended
       var oaiMessages = [{ role: "system", content: SYSTEM_PROMPT }].concat(history);
 
+      var fullReply = "";
+      var aborted = false;
+
+      function onChunk(chunk) {
+        fullReply += chunk;
+        streamBubble.textContent = fullReply;
+        labMsgs.scrollTop = labMsgs.scrollHeight;
+      }
+
       function finish(replyText) {
-        removeThinking(thinking);
-        renderModelReply(replyText);
+        if (aborted) return;
+        currentAbort = null;
+        hideStop();
+        // Re-render with markdown
+        streamBubble.innerHTML = "";
+        renderInto(streamBubble, replyText);
         history.push({ role: "assistant", content: replyText });
-        // Persist
         try { localStorage.setItem(HIST_KEY, JSON.stringify(history)); } catch(e) {}
         busy = false;
         labSend.disabled = false;
       }
 
       function fail(err) {
-        removeThinking(thinking);
+        if (aborted) return;
+        currentAbort = null;
+        hideStop();
         var msg = (err && err.message) ? err.message : String(err);
+        streamBubble.parentNode.removeChild(streamBubble);
         addMsg("error", "// Error [" + prov + "]: " + msg, "error");
         busy = false;
         labSend.disabled = false;
       }
 
+      // AbortController for stop
+      var ac = new AbortController();
+      currentAbort = ac;
+
+      // Override aborted flag if abort fires mid-stream
+      ac.signal.addEventListener("abort", function() {
+        aborted = true;
+        hideStop();
+        currentAbort = null;
+        streamBubble.parentNode.removeChild(streamBubble);
+        finish = function(){};
+        fail = function(){};
+        busy = false;
+        labSend.disabled = false;
+      });
+
       if (prov === "gemini") {
-        callGemini(apiKey, model, history, finish, fail);
+        callGemini(apiKey, model, history, onChunk, finish, fail, ac.signal);
       } else {
-        callOpenAICompat(endpoint, apiKey, model, oaiMessages, null, finish, fail);
+        callOpenAICompat(endpoint, apiKey, model, oaiMessages, onChunk, finish, fail, ac.signal);
       }
+    }
+
+    // Render markdown into an existing element (used by streaming finish)
+    function renderInto(container, replyText) {
+      // Split on fenced code blocks first
+      var parts = replyText.split(/(```[\w]*\n?[\s\S]*?```)/g);
+      parts.forEach(function(part) {
+        if (/^```/.test(part)) {
+          var lang = (part.match(/^```(\w+)/) || [])[1] || "";
+          var code = part.replace(/^```\w*\n?/, "").replace(/\n?```$/, "");
+          var wrap = document.createElement("div"); wrap.className = "code-wrap";
+          var pre = document.createElement("pre");
+          var codeEl = document.createElement("code"); codeEl.textContent = code;
+          pre.appendChild(codeEl); wrap.appendChild(pre);
+          var copyBtn = document.createElement("button"); copyBtn.className = "copy-code";
+          copyBtn.textContent = lang ? "copy " + lang : "copy";
+          copyBtn.addEventListener("click", function() {
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(code).then(function() {
+                copyBtn.textContent = "copied \u2713"; copyBtn.classList.add("done");
+                setTimeout(function() { copyBtn.textContent = lang ? "copy " + lang : "copy"; copyBtn.classList.remove("done"); }, 1800);
+              });
+            }
+          });
+          wrap.appendChild(copyBtn); container.appendChild(wrap);
+        } else {
+          var lines = part.split("\n");
+          var inList = false; var listEl = null;
+          lines.forEach(function(line) {
+            var hm = line.match(/^(#{1,3})\s+(.*)/);
+            if (hm) {
+              if (inList) { container.appendChild(listEl); inList = false; listEl = null; }
+              var h = document.createElement("h" + hm[1].length);
+              h.innerHTML = inlineMarkdown(hm[2]); container.appendChild(h); return;
+            }
+            var lm = line.match(/^[-*+]\s+(.*)/);
+            if (lm) {
+              if (!inList || listEl.tagName !== "UL") { if (inList) container.appendChild(listEl); listEl = document.createElement("ul"); inList = true; }
+              var li = document.createElement("li"); li.innerHTML = inlineMarkdown(lm[1]); listEl.appendChild(li); return;
+            }
+            var om = line.match(/^\d+\.\s+(.*)/);
+            if (om) {
+              if (!inList || listEl.tagName !== "OL") { if (inList) container.appendChild(listEl); listEl = document.createElement("ol"); inList = true; }
+              var li2 = document.createElement("li"); li2.innerHTML = inlineMarkdown(om[1]); listEl.appendChild(li2); return;
+            }
+            if (!line.trim()) {
+              if (inList) { container.appendChild(listEl); inList = false; listEl = null; }
+              container.appendChild(document.createElement("br")); return;
+            }
+            if (inList) { container.appendChild(listEl); inList = false; listEl = null; }
+            var span = document.createElement("span");
+            span.innerHTML = inlineMarkdown(line) + "\n"; container.appendChild(span);
+          });
+          if (inList) container.appendChild(listEl);
+        }
+      });
+      labMsgs.scrollTop = labMsgs.scrollHeight;
     }
 
     // ------ full markdown renderer ------
@@ -2205,6 +2409,13 @@
   })(); // end labInit
 
 })();
+
+// Service worker registration (PWA offline support)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker.register("/sw.js").catch(function() {});
+  });
+}
 </script>
 </body>
 </html>
