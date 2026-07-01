@@ -1,5 +1,5 @@
 var CACHE = "linacre-v1";
-var URLS = ["/", "/index.html", "/manifest.json", "/404.html"];
+var URLS = [".", "index.html", "manifest.json", "404.html"];
 
 self.addEventListener("install", function(e) {
   e.waitUntil(
