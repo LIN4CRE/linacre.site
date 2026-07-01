@@ -773,8 +773,12 @@
           <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
           <span class="term-title">~/linacre.site — zsh</span>
         </div>
-        <div class="term-body" id="termBody" aria-live="polite">
-          <span class="cursor" aria-hidden="true"></span>
+        <div class="term-body" id="termBody" aria-live="off">
+          <p class="row cmd"><span class="pr">$</span> whoami</p>
+          <p class="row out">David Christopher Linacre</p>
+          <div class="spacer"></div>
+          <p class="row cmd"><span class="pr">$</span> echo $STATUS</p>
+          <p class="row out amb">Shipping my first projects & learning in public</p>
         </div>
       </div>
     </div>
@@ -1479,7 +1483,7 @@
   (function () {
     var targets = Array.prototype.slice.call(document.querySelectorAll("#grid .card, .step, .sec-head"));
     targets.forEach(function (el) { el.classList.add("will-reveal"); });
-    if (!window.IntersectionObserver) {
+    if (!("IntersectionObserver" in window)) {
       targets.forEach(function (el) { el.classList.add("revealed"); });
       return;
     }
@@ -1574,13 +1578,43 @@
     });
   }
 
-  // ----- 4. Keyboard shortcuts -----
+  // ----- 4. Keyboard shortcuts (with focus trap) -----
   var scOverlay = document.getElementById("scOverlay");
   var scClose = document.getElementById("scClose");
-  function openShortcuts() { if (scOverlay) scOverlay.classList.add("open"); }
-  function closeShortcuts() { if (scOverlay) scOverlay.classList.remove("open"); }
+  var prevFocus = null;
+
+  function openShortcuts() {
+    if (!scOverlay) return;
+    scOverlay.classList.add("open");
+    prevFocus = document.activeElement;
+    var first = scOverlay.querySelector("button, a, input, select, textarea, [tabindex]:not([tabindex='-1'])");
+    if (first) first.focus();
+  }
+
+  function closeShortcuts() {
+    if (!scOverlay) return;
+    scOverlay.classList.remove("open");
+    if (prevFocus && prevFocus.focus) prevFocus.focus();
+    prevFocus = null;
+  }
+
   if (scClose) scClose.addEventListener("click", closeShortcuts);
   if (scOverlay) scOverlay.addEventListener("click", function (e) { if (e.target === scOverlay) closeShortcuts(); });
+
+  scOverlay.addEventListener("keydown", function (e) {
+    if (e.key !== "Tab") return;
+    var focusable = Array.prototype.slice.call(
+      scOverlay.querySelectorAll("button, a, input, select, textarea, [tabindex]:not([tabindex='-1'])")
+    ).filter(function (el) { return el.offsetParent !== null; });
+    if (!focusable.length) return;
+    if (e.shiftKey && document.activeElement === focusable[0]) {
+      e.preventDefault();
+      focusable[focusable.length - 1].focus();
+    } else if (!e.shiftKey && document.activeElement === focusable[focusable.length - 1]) {
+      e.preventDefault();
+      focusable[0].focus();
+    }
+  });
 
   document.addEventListener("keydown", function (e) {
     var tag = document.activeElement ? document.activeElement.tagName : "";
