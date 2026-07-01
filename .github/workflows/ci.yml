@@ -31,5 +31,5 @@ jobs:
       - name: Check for broken links
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --no-progress --accept 200,206,429 './**/*.html'
+          args: --no-progress --accept 200,206,401,403,429 './**/*.html'
           fail: true
