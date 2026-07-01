@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Runs only if the project has a package.json (skips for a plain static site).
+      - name: Set up Node
+        if: hashFiles('**/package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install & build
+        if: hashFiles('**/package.json') != ''
+        run: |
+          npm ci
+          npm run build --if-present
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for broken links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --accept 200,206,429 './**/*.html'
+          fail: true

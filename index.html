@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David Linacre — Developer &amp; Builder</title>
+
+<meta name="description" content="David Christopher Linacre — developer, builder, creator. A curated, searchable kit of free tools to go from idea to deployed project.">
+<meta name="author" content="David Christopher Linacre">
+<meta name="theme-color" content="#0b0e14">
+<link rel="canonical" href="https://linacre.site">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://linacre.site">
+<meta property="og:title" content="David Linacre — Developer &amp; Builder">
+<meta property="og:description" content="Developer, builder, creator. A curated, searchable kit of free tools to go from idea to deployed project.">
+<meta property="og:site_name" content="linacre.site">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="David Linacre — Developer &amp; Builder">
+<meta name="twitter:description" content="Developer, builder, creator. A searchable kit of free tools to go from idea to deployed project.">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0e14'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' fill='%23ffb454' text-anchor='middle'%3E%3E%3C/text%3E%3C/svg%3E">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "David Christopher Linacre",
+  "url": "https://linacre.site",
+  "email": "david@linacre.site",
+  "jobTitle": "Developer",
+  "description": "Developer, builder and maker learning in public.",
+  "sameAs": ["https://github.com/LIN4CRE"]
+}
+</script>
+
+<style>
+  :root {
+    --bg: #0b0e14;
+    --bg-soft: #10141d;
+    --surface: #161b26;
+    --surface-hi: #1c2230;
+    --border: #262d3b;
+    --border-hi: #38424f;
+    --text: #e6e9ef;
+    --muted: #8b93a7;
+    --faint: #717c93;
+    --amber: #ffb454;
+    --cyan: #5ccfe6;
+    --green: #7fd88f;
+    --radius: 12px;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --maxw: 1080px;
+  }
+
+  * { box-sizing: border-box; }
+
+  /* ---------- custom scrollbar ---------- */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+  * { scrollbar-width: thin; scrollbar-color: var(--border-hi) var(--bg); }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(60rem 40rem at 78% -10%, rgba(255,180,84,.06), transparent 60%),
+      radial-gradient(50rem 40rem at 0% 5%, rgba(92,207,230,.05), transparent 55%);
+  }
+
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  :focus-visible {
+    outline: 2px solid var(--cyan);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--amber); color: #0b0e14; padding: 10px 16px;
+    font-weight: 700; border-radius: 0 0 8px 0; z-index: 100;
+  }
+  .skip:focus { left: 0; text-decoration: none; }
+
+  /* ---------- entrance animations ---------- */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .hero-left  { animation: fadeSlideUp .55s cubic-bezier(.22,.68,0,1.2) both; }
+  .hero-right { animation: fadeSlideUp .55s .12s cubic-bezier(.22,.68,0,1.2) both; }
+
+  /* ---------- nav ---------- */
+  header.nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11,14,20,.72);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .brand { font-family: var(--mono); font-weight: 700; color: var(--text); font-size: 1rem; letter-spacing: -.02em; }
+  .brand .p { color: var(--amber); }
+  .nav-links { display: flex; align-items: center; gap: 26px; }
+  .nav-links a { color: var(--muted); font-size: .9rem; font-weight: 500; }
+  .nav-links a:hover { color: var(--text); text-decoration: none; }
+  .nav-links a.active { color: var(--amber); }
+  .nav-gh {
+    font-family: var(--mono); font-size: .82rem;
+    border: 1px solid var(--border-hi); color: var(--text) !important;
+    padding: 7px 13px; border-radius: 8px;
+  }
+  .nav-gh:hover { border-color: var(--amber); text-decoration: none; }
+  @media (max-width: 640px) { .nav-links a.hide-sm { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 80px 0 56px; position: relative; overflow: hidden; }
+
+  /* dot-grid texture behind hero */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,180,84,.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 44px; align-items: center; position: relative; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: .78rem; color: var(--amber);
+    border: 1px solid var(--border); background: var(--bg-soft);
+    padding: 5px 12px; border-radius: 999px; margin-bottom: 22px;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(127,216,143,.18); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .5; } }
+
+  h1.title {
+    font-family: var(--mono);
+    font-size: clamp(2.4rem, 6vw, 3.7rem);
+    line-height: 1.02; letter-spacing: -.03em; font-weight: 700; margin: 0 0 18px;
+  }
+  h1.title .accent { color: var(--amber); }
+  .lede { font-size: 1.14rem; color: var(--muted); max-width: 34ch; margin: 0 0 30px; }
+  .lede strong { color: var(--text); font-weight: 600; }
+
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-weight: 600; font-size: .95rem; padding: 12px 20px;
+    border-radius: 10px; border: 1px solid transparent; cursor: pointer;
+    font-family: var(--sans); transition: background .15s, border-color .15s, box-shadow .15s;
+  }
+  .btn-primary { background: var(--amber); color: #0b0e14; }
+  .btn-primary:hover { background: #ffc271; text-decoration: none; box-shadow: 0 0 20px rgba(255,180,84,.35); }
+  .btn-ghost { background: transparent; border-color: var(--border-hi); color: var(--text); }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--text); text-decoration: none; }
+  .btn svg { width: 17px; height: 17px; }
+  .copied { color: var(--green) !important; border-color: var(--green) !important; }
+
+  /* ---------- terminal ---------- */
+  .term {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 24px 60px -30px rgba(0,0,0,.8);
+    overflow: hidden;
+    font-family: var(--mono);
+    font-size: .9rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .term:hover {
+    border-color: rgba(255,180,84,.35);
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,.8), 0 0 40px -10px rgba(255,180,84,.12);
+  }
+  .term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 15px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .tl { width: 11px; height: 11px; border-radius: 50%; }
+  .tl.r { background: #ff5f57; } .tl.y { background: #febc2e; } .tl.g { background: #28c840; }
+  .term-title { margin-left: 8px; color: var(--faint); font-size: .78rem; }
+  .term-body { padding: 18px 18px 20px; min-height: 190px; }
+  .term-body .row { margin: 0 0 4px; white-space: pre-wrap; word-break: break-word; }
+  .cmd { color: var(--muted); }
+  .cmd .pr { color: var(--green); }
+  .out { color: var(--text); }
+  .out.dim { color: var(--muted); }
+  .out.amb { color: var(--amber); }
+  .spacer { height: 12px; }
+  .cursor { display: inline-block; width: 8px; height: 1.05em; background: var(--amber); vertical-align: text-bottom; animation: blink 1.1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ---------- section shell ---------- */
+  section { padding: 56px 0; }
+  .sec-head { margin-bottom: 26px; }
+  .kicker { font-family: var(--mono); font-size: .8rem; color: var(--cyan); letter-spacing: .04em; text-transform: uppercase; }
+  .sec-head h2 { font-family: var(--mono); font-size: clamp(1.6rem, 4vw, 2.1rem); letter-spacing: -.02em; margin: 8px 0 6px; }
+  .sec-head p { color: var(--muted); margin: 0; max-width: 60ch; }
+
+  /* ---------- toolkit controls ---------- */
+  .controls { position: sticky; top: 62px; z-index: 20; padding: 16px 0; margin-bottom: 8px; background: linear-gradient(var(--bg) 72%, transparent); }
+  .search {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 10px; padding: 11px 15px; font-family: var(--mono);
+  }
+  .search:focus-within { border-color: var(--cyan); }
+  .search .pr { color: var(--green); white-space: nowrap; }
+  .search input {
+    flex: 1; background: transparent; border: 0; color: var(--text);
+    font-family: var(--mono); font-size: .95rem; outline: none; min-width: 0;
+  }
+  .search input::placeholder { color: var(--faint); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip {
+    font-family: var(--mono); font-size: .82rem; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 6px 13px; border-radius: 999px; cursor: pointer;
+    transition: color .12s, border-color .12s;
+  }
+  .chip:hover { color: var(--text); border-color: var(--border-hi); }
+  .chip[aria-pressed="true"] { background: rgba(255,180,84,.12); border-color: var(--amber); color: var(--amber); }
+  .count { font-family: var(--mono); font-size: .8rem; color: var(--faint); margin-top: 12px; }
+
+  /* ---------- cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(258px, 1fr)); gap: 14px; }
+  .card {
+    display: flex; flex-direction: column; gap: 7px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 17px 17px 15px;
+    color: inherit;
+    border-left-width: 3px;
+    transition: transform .15s ease, border-color .15s ease, background .15s ease, box-shadow .15s ease;
+  }
+  /* Category accent colours on left border */
+  .card[data-cat="start"]  { border-left-color: var(--amber); }
+  .card[data-cat="build"]  { border-left-color: var(--cyan); }
+  .card[data-cat="deploy"] { border-left-color: var(--green); }
+  .card[data-cat="learn"]  { border-left-color: #c792ea; }
+  .card[data-cat="design"] { border-left-color: #ff8c72; }
+  .card[data-cat="email"]  { border-left-color: #5cb8e4; }
+
+  a.card:hover {
+    border-color: var(--border-hi);
+    background: var(--surface-hi);
+    text-decoration: none;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px -10px rgba(0,0,0,.5);
+  }
+  /* Keep left accent visible on hover */
+  a.card[data-cat="start"]:hover  { border-left-color: var(--amber); box-shadow: 0 8px 30px -10px rgba(255,180,84,.15); }
+  a.card[data-cat="build"]:hover  { border-left-color: var(--cyan);  box-shadow: 0 8px 30px -10px rgba(92,207,230,.15); }
+  a.card[data-cat="deploy"]:hover { border-left-color: var(--green); box-shadow: 0 8px 30px -10px rgba(127,216,143,.15); }
+  a.card[data-cat="learn"]:hover  { border-left-color: #c792ea; box-shadow: 0 8px 30px -10px rgba(199,146,234,.15); }
+  a.card[data-cat="design"]:hover { border-left-color: #ff8c72; box-shadow: 0 8px 30px -10px rgba(255,140,114,.15); }
+  a.card[data-cat="email"]:hover  { border-left-color: #5cb8e4; box-shadow: 0 8px 30px -10px rgba(92,184,228,.15); }
+
+  .card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .card h3 { font-size: 1.02rem; margin: 0; font-weight: 650; letter-spacing: -.01em; }
+  .tag { font-family: var(--mono); font-size: .66rem; text-transform: uppercase; letter-spacing: .05em; padding: 3px 8px; border-radius: 6px; white-space: nowrap; }
+  .tag.free { color: var(--green); background: rgba(127,216,143,.1); }
+  .tag.trial { color: var(--amber); background: rgba(255,180,84,.1); }
+  .card p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.5; flex: 1; }
+  .card .host { font-family: var(--mono); font-size: .77rem; color: var(--faint); margin-top: 2px; }
+  a.card:hover .host { color: var(--cyan); }
+  .cat-label { font-family: var(--mono); font-size: .68rem; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+  .no-results { display: none; color: var(--muted); font-family: var(--mono); padding: 30px 4px; }
+
+  /* ---------- roadmap ---------- */
+  .road { display: grid; gap: 2px; position: relative; }
+  /* Vertical timeline line */
+  .road::before {
+    content: '';
+    position: absolute;
+    left: 13px; top: 22px; bottom: 22px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--amber), rgba(255,180,84,.1));
+    border-radius: 1px;
+  }
+  .step {
+    display: grid; grid-template-columns: auto 1fr; gap: 20px;
+    padding: 22px 4px 22px 0; border-top: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: 1px solid var(--border); }
+  /* Number badge */
+  .step .n {
+    font-family: var(--mono);
+    font-size: 1rem;
+    color: #0b0e14;
+    font-weight: 700;
+    line-height: 1;
+    min-width: 28px; height: 28px;
+    background: var(--amber);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(255,180,84,.12);
+    position: relative; z-index: 1;
+  }
+  .step h3 { margin: 0 0 5px; font-size: 1.12rem; letter-spacing: -.01em; }
+  .step p { margin: 0; color: var(--muted); font-size: .93rem; }
+  .step code { font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); padding: 1px 6px; border-radius: 5px; font-size: .85em; color: var(--cyan); }
+
+  /* ---------- lab provider tabs ---------- */
+  .prov-tabs {
+    display: flex; gap: 4px; flex-wrap: wrap;
+    width: 100%; margin-bottom: 12px;
+  }
+  .prov-tab {
+    font-family: var(--mono); font-size: .78rem;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    color: var(--muted); padding: 5px 12px; border-radius: 7px;
+    cursor: pointer; transition: color .12s, border-color .12s, background .12s;
+  }
+  .prov-tab:hover { color: var(--text); border-color: var(--border-hi); }
+  .prov-tab.active { background: rgba(255,180,84,.12); border-color: var(--amber); color: var(--amber); }
+  .prov-panel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; width: 100%; }
+  .prov-panel.hidden { display: none; }
+  .prov-panel label { font-family: var(--mono); font-size: .8rem; color: var(--muted); width: 100%; margin-bottom: -4px; }
+  .prov-panel input, .prov-panel select {
+    flex: 1; min-width: 160px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    font-family: var(--mono); font-size: .82rem; color: var(--text); outline: none;
+  }
+  .prov-panel input:focus, .prov-panel select:focus { border-color: var(--cyan); }
+  .prov-panel select { cursor: pointer; min-width: 200px; }
+  .prov-hint {
+    width: 100%; margin: 4px 0 0;
+    font-family: var(--mono); font-size: .74rem; color: var(--muted);
+    background: rgba(255,180,84,.06); border: 1px solid rgba(255,180,84,.15);
+    border-radius: 7px; padding: 7px 10px; line-height: 1.5;
+  }
+  .prov-hint code { color: var(--amber); background: none; border: none; padding: 0; font-size: inherit; }
+
+  /* ---------- lab ---------- */
+  .lab-shell {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 680px;
+    box-shadow: 0 32px 80px -30px rgba(0,0,0,.7);
+    transition: border-color .2s;
+  }
+  .lab-shell:focus-within { border-color: rgba(92,207,230,.35); }
+
+  /* key config panel */
+  .lab-config {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px;
+    display: none;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .lab-config.open { display: flex; }
+  .lab-config label { font-family: var(--mono); font-size: .8rem; color: var(--muted); white-space: nowrap; }
+  .lab-config input {
+    flex: 1; min-width: 180px;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px 12px;
+    font-family: var(--mono); font-size: .82rem; color: var(--text);
+    outline: none;
+  }
+  .lab-config input:focus { border-color: var(--cyan); }
+  .lab-config .key-save {
+    font-family: var(--mono); font-size: .8rem;
+    background: var(--amber); color: #0b0e14; border: none;
+    padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: 700;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .lab-config .key-save:hover { background: #ffc271; }
+  .key-status { font-family: var(--mono); font-size: .75rem; color: var(--green); white-space: nowrap; }
+  .key-status.none { color: var(--faint); }
+
+  /* bar */
+  .lab-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 15px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .lab-bar .tl-wrap { display: flex; gap: 6px; align-items: center; }
+  .lab-bar .term-title { font-family: var(--mono); font-size: .78rem; color: var(--faint); }
+  .lab-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .lab-icon-btn {
+    background: none; border: 1px solid var(--border);
+    border-radius: 7px; padding: 5px 8px; cursor: pointer;
+    color: var(--muted); font-family: var(--mono); font-size: .75rem;
+    display: flex; align-items: center; gap: 5px;
+    transition: border-color .12s, color .12s;
+  }
+  .lab-icon-btn:hover { border-color: var(--border-hi); color: var(--text); }
+  .lab-icon-btn.key-active { border-color: var(--amber); color: var(--amber); }
+  .lab-icon-btn svg { width: 14px; height: 14px; }
+
+  /* messages */
+  .lab-msgs {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .lab-msgs::-webkit-scrollbar { width: 5px; }
+  .lab-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .msg {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 88%;
+    animation: fadeSlideUp .2s ease both;
+  }
+  .msg.user { align-self: flex-end; }
+  .msg.model { align-self: flex-start; }
+  .msg-who { font-family: var(--mono); font-size: .7rem; color: var(--faint); padding: 0 4px; }
+  .msg.user .msg-who { color: var(--amber); text-align: right; }
+  .msg.model .msg-who { color: var(--cyan); }
+  .msg-bubble {
+    padding: 11px 15px;
+    border-radius: 12px;
+    font-size: .9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .msg.user .msg-bubble {
+    background: rgba(255,180,84,.1);
+    border: 1px solid rgba(255,180,84,.2);
+    color: var(--text);
+    border-bottom-right-radius: 4px;
+  }
+  .msg.model .msg-bubble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+    font-family: var(--mono);
+  }
+  .msg.model.thinking .msg-bubble { color: var(--muted); }
+  .msg.error .msg-bubble {
+    background: rgba(255,95,87,.08);
+    border-color: rgba(255,95,87,.25);
+    color: #ff8080;
+    font-family: var(--mono);
+    font-size: .83rem;
+  }
+
+  /* code blocks inside model responses */
+  .msg-bubble code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1px 5px;
+    font-family: var(--mono);
+    font-size: .82em;
+    color: var(--cyan);
+  }
+  .msg-bubble pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    margin: 8px 0 0;
+  }
+  .msg-bubble pre code {
+    background: none; border: none; padding: 0;
+    font-size: .85rem; color: var(--text);
+  }
+
+  /* quick prompts */
+  .lab-quick {
+    padding: 10px 18px 0;
+    display: flex; flex-wrap: wrap; gap: 7px;
+    border-top: 1px solid var(--border);
+  }
+  .qp {
+    font-family: var(--mono); font-size: .76rem;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); padding: 5px 11px;
+    border-radius: 999px; cursor: pointer;
+    transition: color .12s, border-color .12s;
+    white-space: nowrap;
+  }
+  .qp:hover { color: var(--cyan); border-color: var(--cyan); }
+
+  /* input row */
+  .lab-input-row {
+    display: flex; align-items: flex-end; gap: 10px;
+    padding: 12px 18px 16px;
+  }
+  .lab-textarea-wrap {
+    flex: 1;
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: flex-end;
+    padding: 10px 14px;
+    transition: border-color .15s;
+  }
+  .lab-textarea-wrap:focus-within { border-color: var(--cyan); }
+  .lab-textarea-wrap .pr { color: var(--green); font-family: var(--mono); font-size: .88rem; margin-right: 8px; flex-shrink: 0; line-height: 1.6; }
+  #labInput {
+    flex: 1; background: none; border: none; outline: none;
+    color: var(--text); font-family: var(--mono); font-size: .88rem;
+    line-height: 1.6; resize: none; min-height: 24px; max-height: 140px;
+    overflow-y: auto; padding: 0;
+  }
+  #labInput::placeholder { color: var(--faint); }
+  #labSend {
+    background: var(--amber); color: #0b0e14;
+    border: none; border-radius: 10px;
+    padding: 11px 16px; cursor: pointer;
+    font-family: var(--mono); font-size: .85rem; font-weight: 700;
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 6px;
+    transition: background .15s, box-shadow .15s;
+  }
+  #labSend:hover:not(:disabled) { background: #ffc271; box-shadow: 0 0 20px rgba(255,180,84,.3); }
+  #labSend:disabled { opacity: .45; cursor: not-allowed; }
+  #labSend svg { width: 15px; height: 15px; }
+
+  /* empty state */
+  .lab-empty {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px; color: var(--faint);
+    font-family: var(--mono); font-size: .85rem; text-align: center;
+    padding: 32px;
+    pointer-events: none;
+  }
+  .lab-empty svg { opacity: .25; width: 40px; height: 40px; }
+  .lab-empty p { margin: 0; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--border); padding: 40px 0 56px; margin-top: 20px; }
+  .foot-row { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; justify-content: space-between; }
+  .foot-row p { margin: 0; color: var(--faint); font-family: var(--mono); font-size: .82rem; }
+  .foot-links { display: flex; gap: 22px; }
+  .foot-links a { color: var(--muted); font-size: .88rem; }
+  .foot-links a:hover { color: var(--amber); text-decoration: none; }
+  /* ---------- reading progress bar ---------- */
+  #readingProg {
+    position: fixed; top: 0; left: 0; z-index: 200;
+    height: 3px; width: 0%;
+    background: linear-gradient(90deg, var(--amber), var(--cyan));
+    border-radius: 0 2px 2px 0;
+    transition: width .05s linear;
+    pointer-events: none;
+  }
+
+  /* ---------- scroll reveal ---------- */
+  .will-reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity .45s ease, transform .45s cubic-bezier(.22,.68,0,1.1);
+  }
+  .will-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce) { .will-reveal { opacity: 1; transform: none; } }
+
+  /* ---------- card bookmark button ---------- */
+  .card-bm {
+    background: none; border: none; cursor: pointer;
+    color: var(--faint); padding: 2px 0 2px 6px; flex-shrink: 0;
+    font-size: 1rem; line-height: 1;
+    transition: color .15s, transform .15s;
+    display: flex; align-items: center;
+  }
+  .card-bm:hover { color: var(--amber); transform: scale(1.2); }
+  .card-bm.saved { color: var(--amber); }
+  .card-bm.saved svg { fill: var(--amber); }
+  .card-bm svg { width: 14px; height: 14px; transition: fill .15s; }
+
+  /* My Stack chip special colour */
+  .chip[data-cat="stack"] { color: var(--amber); border-color: rgba(255,180,84,.3); }
+  .chip[data-cat="stack"]:hover { color: var(--amber); border-color: var(--amber); }
+  .chip[data-cat="stack"][aria-pressed="true"] { background: rgba(255,180,84,.15); border-color: var(--amber); color: var(--amber); }
+
+  /* ---------- keyboard shortcut hint ---------- */
+  .search-hint {
+    font-family: var(--mono); font-size: .72rem; color: var(--faint);
+    border: 1px solid var(--border); border-radius: 5px;
+    padding: 2px 6px; white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* ---------- shortcuts modal ---------- */
+  .sc-overlay {
+    position: fixed; inset: 0; z-index: 300;
+    background: rgba(11,14,20,.75);
+    backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .sc-overlay.open { display: flex; }
+  .sc-modal {
+    background: var(--bg-soft);
+    border: 1px solid var(--border-hi);
+    border-radius: 16px;
+    padding: 28px 32px;
+    max-width: 420px; width: 100%; margin: 16px;
+    box-shadow: 0 40px 100px -20px rgba(0,0,0,.8);
+    animation: fadeSlideUp .22s ease both;
+  }
+  .sc-modal h3 {
+    font-family: var(--mono); font-size: 1rem;
+    color: var(--amber); margin: 0 0 18px;
+    letter-spacing: .04em;
+  }
+  .sc-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 0; border-bottom: 1px solid var(--border);
+    font-size: .88rem;
+  }
+  .sc-row:last-child { border-bottom: none; }
+  .sc-row span { color: var(--muted); }
+  .sc-keys { display: flex; gap: 5px; }
+  kbd {
+    font-family: var(--mono); font-size: .75rem;
+    background: var(--surface); border: 1px solid var(--border-hi);
+    border-radius: 5px; padding: 3px 7px; color: var(--text);
+  }
+  .sc-close {
+    display: block; margin-top: 18px;
+    font-family: var(--mono); font-size: .8rem;
+    color: var(--muted); text-align: center; cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 8px; width: 100%;
+  }
+  .sc-close:hover { color: var(--text); border-color: var(--border-hi); }
+
+  /* ---------- GitHub stats strip ---------- */
+  .gh-stats {
+    display: flex; gap: 18px; flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .gh-stat {
+    display: flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: .78rem; color: var(--muted);
+  }
+  .gh-stat svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .gh-stat strong { color: var(--text); }
+  .gh-stat-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 0 3px rgba(127,216,143,.18);
+    animation: pulse 2.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Lab enhancements ---------- */
+  /* token counter */
+  .tok-count {
+    font-family: var(--mono); font-size: .72rem;
+    color: var(--faint); align-self: flex-end;
+    padding-bottom: 4px; flex-shrink: 0; white-space: nowrap;
+  }
+  .tok-count.warn { color: var(--amber); }
+
+  /* improved markdown in bubbles */
+  .msg-bubble strong { color: var(--text); font-weight: 700; }
+  .msg-bubble em { color: var(--muted); font-style: italic; }
+  .msg-bubble ul, .msg-bubble ol { margin: 6px 0 6px 18px; padding: 0; }
+  .msg-bubble li { margin-bottom: 3px; }
+  .msg-bubble a { color: var(--cyan); }
+  .msg-bubble a:hover { text-decoration: underline; }
+  .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 {
+    margin: 10px 0 4px; color: var(--amber); font-size: 1em;
+    font-family: var(--mono);
+  }
+
+  /* copy button on code blocks */
+  .code-wrap { position: relative; margin: 8px 0 0; }
+  .copy-code {
+    position: absolute; top: 8px; right: 8px;
+    font-family: var(--mono); font-size: .7rem;
+    background: var(--surface-hi); border: 1px solid var(--border-hi);
+    color: var(--muted); padding: 3px 8px; border-radius: 6px;
+    cursor: pointer; opacity: 0; transition: opacity .15s, color .12s;
+  }
+  .code-wrap:hover .copy-code { opacity: 1; }
+  .copy-code:hover { color: var(--amber); border-color: var(--amber); }
+  .copy-code.done { color: var(--green); border-color: var(--green); opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<div id="readingProg" aria-hidden="true"></div>
+
+<!-- Keyboard shortcuts modal -->
+<div class="sc-overlay" id="scOverlay" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+  <div class="sc-modal">
+    <h3>// keyboard shortcuts</h3>
+    <div class="sc-row"><span>Focus search</span><div class="sc-keys"><kbd>/</kbd></div></div>
+    <div class="sc-row"><span>Clear search</span><div class="sc-keys"><kbd>Esc</kbd></div></div>
+    <div class="sc-row"><span>Next filter chip</span><div class="sc-keys"><kbd>→</kbd></div></div>
+    <div class="sc-row"><span>Prev filter chip</span><div class="sc-keys"><kbd>←</kbd></div></div>
+    <div class="sc-row"><span>Show shortcuts</span><div class="sc-keys"><kbd>?</kbd></div></div>
+    <div class="sc-row"><span>Send Lab message</span><div class="sc-keys"><kbd>Enter</kbd></div></div>
+    <div class="sc-row"><span>New line in Lab</span><div class="sc-keys"><kbd>Shift</kbd><kbd>Enter</kbd></div></div>
+    <div class="sc-row"><span>Close this panel</span><div class="sc-keys"><kbd>Esc</kbd></div></div>
+    <button class="sc-close" id="scClose">close</button>
+  </div>
+</div>
+
+<a href="#toolkit" class="skip">Skip to toolkit</a>
+
+<header class="nav">
+  <div class="wrap nav-row">
+    <a href="#top" class="brand"><span class="p">&gt;</span> linacre<span class="p">.</span>site</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#toolkit" class="hide-sm">Toolkit</a>
+      <a href="#roadmap" class="hide-sm">Roadmap</a>
+      <a href="#lab" class="hide-sm">Lab</a>
+      <a href="https://github.com/LIN4CRE" class="nav-gh" target="_blank" rel="noopener">GitHub&nbsp;↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" id="about">
+    <div class="wrap hero-grid">
+      <div class="hero-left">
+        <span class="eyebrow"><span class="dot" aria-hidden="true"></span> Building in public</span>
+        <h1 class="title">David <span class="accent">Linacre</span></h1>
+        <p class="lede">Developer, builder &amp; maker. Welcome to my <strong>corner of the internet</strong> — and the free toolkit I'm learning to build with.</p>
+        <div class="cta-row">
+          <a href="#toolkit" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            Browse the toolkit
+          </a>
+          <button class="btn btn-ghost" id="copyEmail" type="button" data-email="david@linacre.site">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="13" height="13" rx="2"/><path d="M9 4V3a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-1"/></svg>
+            <span id="copyLabel">david@linacre.site</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="term hero-right" aria-label="Terminal introduction">
+        <div class="term-bar" aria-hidden="true">
+          <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+          <span class="term-title">~/linacre.site — zsh</span>
+        </div>
+        <div class="term-body" id="termBody" aria-live="polite">
+          <span class="cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOOLKIT -->
+  <section id="toolkit">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">The kit</span>
+        <h2>Free toolkit: idea → deployed</h2>
+        <p>Everything I'm using to go from a blank folder to a live project — editors, frameworks, databases, hosting, and the resources to learn it all. Filter by keyword or category.</p>
+      </div>
+
+      <div class="controls">
+        <label class="search">
+          <span class="pr" aria-hidden="true">$ grep</span>
+          <input type="search" id="q" placeholder="search the toolkit…" aria-label="Search tools" autocomplete="off">
+          <span class="search-hint" title="Press / to focus">/ to search</span>
+        </label>
+        <div class="chips" id="chips" role="group" aria-label="Filter by category">
+          <button class="chip" data-cat="all" aria-pressed="true">all</button>
+          <button class="chip" data-cat="start" aria-pressed="false">start</button>
+          <button class="chip" data-cat="build" aria-pressed="false">build</button>
+          <button class="chip" data-cat="deploy" aria-pressed="false">deploy</button>
+          <button class="chip" data-cat="learn" aria-pressed="false">learn</button>
+          <button class="chip" data-cat="design" aria-pressed="false">design</button>
+          <button class="chip" data-cat="email" aria-pressed="false">email</button>
+          <button class="chip" data-cat="stack" aria-pressed="false" id="stackChip" title="Your bookmarked tools">★ my stack</button>
+        </div>
+        <p class="count" id="count" aria-live="polite"></p>
+      </div>
+
+      <div class="grid" id="grid" aria-label="Toolkit cards">
+
+        <!-- START -->
+        <a class="card" data-cat="start" data-name="vs code editor microsoft" href="https://code.visualstudio.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>VS Code</h3><span class="tag free">Free</span></div>
+          <p>The gold-standard code editor. Extensions for everything. Start here.</p>
+          <span class="host">code.visualstudio.com</span>
+        </a>
+        <a class="card" data-cat="start" data-name="github version control repos" href="https://github.com/LIN4CRE" target="_blank" rel="noopener">
+          <div class="card-top"><h3>GitHub</h3><span class="tag free">Free</span></div>
+          <p>Version control + collaboration. Host repos, track issues, showcase work.</p>
+          <span class="host">github.com/LIN4CRE</span>
+        </a>
+        <a class="card" data-cat="start" data-name="git version control cli" href="https://git-scm.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Git</h3><span class="tag free">Free</span></div>
+          <p>The version control system underneath it all. Learn it early, love it forever.</p>
+          <span class="host">git-scm.com</span>
+        </a>
+        <a class="card" data-cat="start" data-name="github copilot ai pair programmer" href="https://github.com/features/copilot" target="_blank" rel="noopener">
+          <div class="card-top"><h3>GitHub Copilot</h3><span class="tag free">Free</span></div>
+          <p>AI pair programmer. Free for students &amp; verified open-source contributors.</p>
+          <span class="host">github.com/features/copilot</span>
+        </a>
+        <a class="card" data-cat="start" data-name="cursor ai editor" href="https://cursor.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Cursor</h3><span class="tag free">Free</span></div>
+          <p>AI-first editor built on VS Code. Generous free tier. Great for learning.</p>
+          <span class="host">cursor.com</span>
+        </a>
+        <a class="card" data-cat="start" data-name="notion notes docs planning" href="https://notion.so" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Notion</h3><span class="tag free">Free</span></div>
+          <p>Plan projects, take notes, write docs. Great for organising your builds.</p>
+          <span class="host">notion.so</span>
+        </a>
+        <a class="card" data-cat="start" data-name="github profile readme showcase portfolio" href="https://github.com/LIN4CRE" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Profile README</h3><span class="tag free">Free</span></div>
+          <p>Pin your projects and showcase skills. Make your GitHub profile memorable.</p>
+          <span class="host">github.com/LIN4CRE</span>
+        </a>
+        <a class="card" data-cat="start" data-name="prettier code formatter autoformat" href="https://prettier.io" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Prettier</h3><span class="tag free">Free</span></div>
+          <p>Opinionated code formatter. Consistent style across your whole project, zero config.</p>
+          <span class="host">prettier.io</span>
+        </a>
+        <a class="card" data-cat="start" data-name="zed editor fast rust gpu" href="https://zed.dev" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Zed</h3><span class="tag free">Free</span></div>
+          <p>Blazing-fast editor written in Rust. GPU-accelerated, built-in AI, multiplayer editing.</p>
+          <span class="host">zed.dev</span>
+        </a>
+
+        <!-- BUILD -->
+        <a class="card" data-cat="build" data-name="react ui library javascript" href="https://react.dev" target="_blank" rel="noopener">
+          <div class="card-top"><h3>React</h3><span class="tag free">Free</span></div>
+          <p>The most popular UI library. Huge ecosystem, great docs. The safe bet.</p>
+          <span class="host">react.dev</span>
+        </a>
+        <a class="card" data-cat="build" data-name="next.js react framework fullstack" href="https://nextjs.org" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Next.js</h3><span class="tag free">Free</span></div>
+          <p>Full-stack React framework. Best DX, deploys in seconds.</p>
+          <span class="host">nextjs.org</span>
+        </a>
+        <a class="card" data-cat="build" data-name="tailwind css utility styling" href="https://tailwindcss.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Tailwind CSS</h3><span class="tag free">Free</span></div>
+          <p>Utility-first CSS. Style things fast without leaving your markup.</p>
+          <span class="host">tailwindcss.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="supabase postgres database auth storage" href="https://supabase.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Supabase</h3><span class="tag free">Free</span></div>
+          <p>Postgres + auth + storage + edge functions. The free tier is unreal.</p>
+          <span class="host">supabase.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="neon serverless postgres sql" href="https://neon.tech" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Neon</h3><span class="tag free">Free</span></div>
+          <p>Serverless Postgres. Branch your DB like Git. Great for learning SQL.</p>
+          <span class="host">neon.tech</span>
+        </a>
+        <a class="card" data-cat="build" data-name="turso sqlite edge database" href="https://turso.tech" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Turso</h3><span class="tag free">Free</span></div>
+          <p>SQLite at the edge. Embedded databases, insanely fast, free hobby plan.</p>
+          <span class="host">turso.tech</span>
+        </a>
+        <a class="card" data-cat="build" data-name="upstash redis serverless cache queue" href="https://upstash.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Upstash Redis</h3><span class="tag free">Free</span></div>
+          <p>Serverless Redis for rate limiting, caching &amp; queues. Pay per request.</p>
+          <span class="host">upstash.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="clerk authentication users signin" href="https://clerk.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Clerk</h3><span class="tag free">Free</span></div>
+          <p>Auth in minutes — sign-up, sign-in, user management. 10K free users.</p>
+          <span class="host">clerk.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="auth.js oauth open source authentication" href="https://authjs.dev" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Auth.js</h3><span class="tag free">Free</span></div>
+          <p>Open-source auth. OAuth, magic links and more. Free forever.</p>
+          <span class="host">authjs.dev</span>
+        </a>
+        <a class="card" data-cat="build" data-name="stripe payments checkout" href="https://stripe.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Stripe</h3><span class="tag free">Free</span></div>
+          <p>Accept payments online. Free to set up, pay only per transaction.</p>
+          <span class="host">stripe.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="resend transactional email react" href="https://resend.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Resend</h3><span class="tag free">Free</span></div>
+          <p>Transactional email from code. 3K/month free, React Email built in.</p>
+          <span class="host">resend.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="cloudflare cdn dns workers r2 storage" href="https://cloudflare.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Cloudflare</h3><span class="tag free">Free</span></div>
+          <p>CDN, DNS, Workers &amp; R2 storage. Generous free tier, domains at cost.</p>
+          <span class="host">cloudflare.com</span>
+        </a>
+        <a class="card" data-cat="build" data-name="vite build tool dev server bundler" href="https://vitejs.dev" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Vite</h3><span class="tag free">Free</span></div>
+          <p>Lightning-fast dev server &amp; bundler. Hot module replacement, instant startup.</p>
+          <span class="host">vitejs.dev</span>
+        </a>
+        <a class="card" data-cat="build" data-name="bun javascript runtime bundler package manager" href="https://bun.sh" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Bun</h3><span class="tag free">Free</span></div>
+          <p>All-in-one JS runtime, bundler &amp; package manager. Drop-in Node replacement, much faster.</p>
+          <span class="host">bun.sh</span>
+        </a>
+        <a class="card" data-cat="build" data-name="postman api testing http client rest" href="https://www.postman.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Postman</h3><span class="tag free">Free</span></div>
+          <p>Test &amp; explore APIs visually. Send requests, inspect responses, mock endpoints.</p>
+          <span class="host">postman.com</span>
+        </a>
+
+        <!-- DEPLOY -->
+        <a class="card" data-cat="deploy" data-name="vercel deploy hosting next.js" href="https://vercel.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Vercel</h3><span class="tag free">Free</span></div>
+          <p>Deploy React, Next.js, Svelte &amp; more. Instant previews, free hobby tier.</p>
+          <span class="host">vercel.com</span>
+        </a>
+        <a class="card" data-cat="deploy" data-name="netlify static sites serverless functions" href="https://netlify.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Netlify</h3><span class="tag free">Free</span></div>
+          <p>Static sites + serverless functions. Git or drag-and-drop. 100GB free.</p>
+          <span class="host">netlify.com</span>
+        </a>
+        <a class="card" data-cat="deploy" data-name="cloudflare pages edge hosting" href="https://pages.cloudflare.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Cloudflare Pages</h3><span class="tag free">Free</span></div>
+          <p>Unlimited bandwidth on the fastest edge network. Pairs with Workers.</p>
+          <span class="host">pages.cloudflare.com</span>
+        </a>
+        <a class="card" data-cat="deploy" data-name="github pages static hosting portfolio" href="https://pages.github.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>GitHub Pages</h3><span class="tag free">Free</span></div>
+          <p>Free static hosting straight from your repo. Perfect for portfolios &amp; docs.</p>
+          <span class="host">pages.github.com</span>
+        </a>
+        <a class="card" data-cat="deploy" data-name="render web services databases" href="https://render.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Render</h3><span class="tag free">Free</span></div>
+          <p>Web services, static sites &amp; databases. Free static + 750 compute hrs/mo.</p>
+          <span class="host">render.com</span>
+        </a>
+        <a class="card" data-cat="deploy" data-name="railway deploy backend fullstack" href="https://railway.app" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Railway</h3><span class="tag free">Free</span></div>
+          <p>Deploy anything — databases, backends, full-stack apps. $5 credit/month.</p>
+          <span class="host">railway.app</span>
+        </a>
+
+        <!-- LEARN -->
+        <a class="card" data-cat="learn" data-name="freecodecamp curriculum certification beginner" href="https://freecodecamp.org" target="_blank" rel="noopener">
+          <div class="card-top"><h3>freeCodeCamp</h3><span class="tag free">Free</span></div>
+          <p>Full curriculum + certs + huge community. The best place to start from zero.</p>
+          <span class="host">freecodecamp.org</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="odin project fullstack curriculum" href="https://theodinproject.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>The Odin Project</h3><span class="tag free">Free</span></div>
+          <p>Full-stack JS path. Opinionated curriculum, real projects. Hardcore.</p>
+          <span class="host">theodinproject.com</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="cs50 harvard computer science" href="https://cs50.harvard.edu" target="_blank" rel="noopener">
+          <div class="card-top"><h3>CS50 (Harvard)</h3><span class="tag free">Free</span></div>
+          <p>The best intro to CS. C, Python, SQL, web — world-class lectures.</p>
+          <span class="host">cs50.harvard.edu</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="mdn web docs reference html css js" href="https://developer.mozilla.org" target="_blank" rel="noopener">
+          <div class="card-top"><h3>MDN Web Docs</h3><span class="tag free">Free</span></div>
+          <p>The bible of web dev. HTML, CSS &amp; JS reference. Bookmark it forever.</p>
+          <span class="host">developer.mozilla.org</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="javascript.info modern tutorial" href="https://javascript.info" target="_blank" rel="noopener">
+          <div class="card-top"><h3>JavaScript.info</h3><span class="tag free">Free</span></div>
+          <p>The modern JavaScript tutorial. Deep, thorough and practical.</p>
+          <span class="host">javascript.info</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="frontend mentor html css challenges" href="https://frontendmentor.io" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Frontend Mentor</h3><span class="tag free">Free</span></div>
+          <p>Real HTML/CSS/JS challenges with pro designs. Learn by building.</p>
+          <span class="host">frontendmentor.io</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="exercism practice coding mentored" href="https://exercism.org" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Exercism</h3><span class="tag free">Free</span></div>
+          <p>Practice coding in 66 languages. Mentored &amp; self-paced tracks. 100% free.</p>
+          <span class="host">exercism.org</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="web dev simplified youtube tutorials" href="https://youtube.com/@WebDevSimplified" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Web Dev Simplified</h3><span class="tag free">Free</span></div>
+          <p>Clear, concise video tutorials. Best for visual learners.</p>
+          <span class="host">youtube.com/@WebDevSimplified</span>
+        </a>
+        <a class="card" data-cat="learn" data-name="fireship youtube overviews deep dives" href="https://youtube.com/@Fireship" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Fireship</h3><span class="tag free">Free</span></div>
+          <p>100-second overviews &amp; deep dives. Learn concepts fast, stay entertained.</p>
+          <span class="host">youtube.com/@Fireship</span>
+        </a>
+
+        <!-- DESIGN -->
+        <a class="card" data-cat="design" data-name="figma design tool ui" href="https://figma.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Figma</h3><span class="tag free">Free</span></div>
+          <p>Industry-standard design tool. Free for 3 projects, browser-based.</p>
+          <span class="host">figma.com</span>
+        </a>
+        <a class="card" data-cat="design" data-name="lucide icons svg react vue svelte" href="https://lucide.dev" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Lucide Icons</h3><span class="tag free">Free</span></div>
+          <p>Beautiful, consistent icons. SVG + framework components. All free.</p>
+          <span class="host">lucide.dev</span>
+        </a>
+        <a class="card" data-cat="design" data-name="heroicons tailwind svg icons" href="https://heroicons.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Heroicons</h3><span class="tag free">Free</span></div>
+          <p>Clean SVG icons in 3 styles, by the Tailwind team. Free to use anywhere.</p>
+          <span class="host">heroicons.com</span>
+        </a>
+        <a class="card" data-cat="design" data-name="unsplash stock photos free commercial" href="https://unsplash.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Unsplash</h3><span class="tag free">Free</span></div>
+          <p>High-quality stock photos. Free for commercial use, no attribution.</p>
+          <span class="host">unsplash.com</span>
+        </a>
+        <a class="card" data-cat="design" data-name="coolors color palette generator" href="https://coolors.co" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Coolors</h3><span class="tag free">Free</span></div>
+          <p>Palette generator. Hit space to generate, export to CSS or Tailwind.</p>
+          <span class="host">coolors.co</span>
+        </a>
+        <a class="card" data-cat="design" data-name="dribbble design inspiration" href="https://dribbble.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Dribbble</h3><span class="tag free">Free</span></div>
+          <p>Design inspiration. See what top designers are shipping and get ideas.</p>
+          <span class="host">dribbble.com</span>
+        </a>
+
+        <!-- EMAIL -->
+        <a class="card" data-cat="email" data-name="zoho mail custom domain free" href="https://zoho.com/mail" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Zoho Mail</h3><span class="tag free">Free</span></div>
+          <p>Custom-domain email for 5 users, no ads. david@yourdomain — done.</p>
+          <span class="host">zoho.com/mail</span>
+        </a>
+        <a class="card" data-cat="email" data-name="google workspace gmail custom domain" href="https://workspace.google.com" target="_blank" rel="noopener">
+          <div class="card-top"><h3>Google Workspace</h3><span class="tag trial">Trial</span></div>
+          <p>Gmail on your domain. $7/mo after the trial — the best email experience.</p>
+          <span class="host">workspace.google.com</span>
+        </a>
+
+      </div>
+
+      <p class="no-results" id="noResults">// no matches — try another keyword or clear the filter.</p>
+    </div>
+  </section>
+
+  <!-- ROADMAP -->
+  <section id="roadmap">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">The path</span>
+        <h2>From zero to shipped</h2>
+        <p>The route I'm following — and the one I'd point any beginner to. Do them in order.</p>
+      </div>
+      <div class="road">
+        <div class="step"><span class="n">1</span><div><h3>Set up your dev environment</h3><p>Install VS Code + Git, make a dev folder, and run <code>git init</code> for the first time.</p></div></div>
+        <div class="step"><span class="n">2</span><div><h3>Finish freeCodeCamp Responsive Web Design</h3><p>~300 hours covering HTML, CSS, Flexbox &amp; Grid — with a certificate. The perfect start.</p></div></div>
+        <div class="step"><span class="n">3</span><div><h3>Rebuild this landing page</h3><p>Copy the source, modify it, break it, fix it. That's how you learn. Then deploy to Vercel.</p></div></div>
+        <div class="step"><span class="n">4</span><div><h3>Learn JavaScript (ES6+)</h3><p>JavaScript.info + the freeCodeCamp JS cert. Build small projects — DOM, <code>fetch</code>, the works.</p></div></div>
+        <div class="step"><span class="n">5</span><div><h3>Pick a framework &amp; build something real</h3><p>Next.js + Supabase + Vercel = a full-stack app. Build a blog, a tool, a portfolio. Ship it.</p></div></div>
+        <div class="step"><span class="n">6</span><div><h3>Share everything on GitHub</h3><p>Push code, write READMEs, build in public. Make your profile a showcase and get noticed.</p></div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- LAB -->
+  <section id="lab">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">The lab</span>
+        <h2>AI Dev Assistant</h2>
+        <p>Connect any AI — Gemini, OpenAI, your local <strong style="color:var(--text)">Ollama</strong> Docker container, a <strong style="color:var(--text)">LiteLLM</strong> proxy, or Claude via LiteLLM. Keys stored in browser only, never in git.</p>
+      </div>
+
+      <div class="lab-shell">
+
+        <!-- provider config (hidden until toggled) -->
+        <div class="lab-config" id="labConfig">
+          <!-- provider tabs -->
+          <div class="prov-tabs" role="tablist" aria-label="Select AI provider">
+            <button class="prov-tab active" role="tab" aria-selected="true"  data-prov="gemini"  id="tab-gemini">Gemini</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="openai"  id="tab-openai">OpenAI</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="ollama"  id="tab-ollama">Ollama</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="litellm" id="tab-litellm">LiteLLM</button>
+            <button class="prov-tab"          role="tab" aria-selected="false" data-prov="claude"  id="tab-claude">Claude</button>
+          </div>
+
+          <!-- Gemini -->
+          <div class="prov-panel" data-panel="gemini">
+            <label for="gKeyIn">API Key &nbsp;<a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="font-size:.75rem">get free key ↗</a></label>
+            <input type="password" id="gKeyIn" placeholder="AIza…" autocomplete="off" spellcheck="false" data-field="key">
+            <select id="gModel" data-field="model">
+              <option value="gemini-2.0-flash">gemini-2.0-flash (free, fast)</option>
+              <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+              <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+            </select>
+            <button class="key-save" data-save="gemini">Save</button>
+            <span class="key-status none" id="st-gemini"></span>
+          </div>
+
+          <!-- OpenAI -->
+          <div class="prov-panel hidden" data-panel="openai">
+            <label for="oKeyIn">API Key</label>
+            <input type="password" id="oKeyIn" placeholder="sk-…" autocomplete="off" spellcheck="false" data-field="key">
+            <input type="text" id="oEndIn" placeholder="https://api.openai.com/v1" autocomplete="off" spellcheck="false" data-field="endpoint" style="font-size:.78rem">
+            <input type="text" id="oModelIn" placeholder="gpt-4o-mini" autocomplete="off" spellcheck="false" data-field="model" style="max-width:160px">
+            <button class="key-save" data-save="openai">Save</button>
+            <span class="key-status none" id="st-openai"></span>
+          </div>
+
+          <!-- Ollama -->
+          <div class="prov-panel hidden" data-panel="ollama">
+            <label for="olEndIn">Ollama base URL <span style="color:var(--faint);font-size:.74rem">(Docker host)</span></label>
+            <input type="text" id="olEndIn" placeholder="http://localhost:11434" autocomplete="off" spellcheck="false" data-field="endpoint">
+            <input type="text" id="olModelIn" placeholder="llama3.2" autocomplete="off" spellcheck="false" data-field="model" style="max-width:160px">
+            <button class="key-save" data-save="ollama">Save</button>
+            <span class="key-status none" id="st-ollama"></span>
+            <p class="prov-hint">⚠️ Requires <code>OLLAMA_ORIGINS=https://linacre.site</code> (or <code>*</code>) in your Docker env.</p>
+          </div>
+
+          <!-- LiteLLM -->
+          <div class="prov-panel hidden" data-panel="litellm">
+            <label for="llEndIn">LiteLLM proxy URL</label>
+            <input type="text" id="llEndIn" placeholder="http://localhost:4000" autocomplete="off" spellcheck="false" data-field="endpoint">
+            <input type="password" id="llKeyIn" placeholder="Master key (optional)" autocomplete="off" spellcheck="false" data-field="key">
+            <input type="text" id="llModelIn" placeholder="gpt-4o / claude-3-5-sonnet / ollama/llama3" autocomplete="off" spellcheck="false" data-field="model">
+            <button class="key-save" data-save="litellm">Save</button>
+            <span class="key-status none" id="st-litellm"></span>
+            <p class="prov-hint">⚠️ Add <code>allow_origins = ["https://linacre.site"]</code> to your LiteLLM <code>config.yaml</code>.</p>
+          </div>
+
+          <!-- Claude via LiteLLM -->
+          <div class="prov-panel hidden" data-panel="claude">
+            <label>Claude via LiteLLM proxy</label>
+            <input type="text" id="clEndIn" placeholder="http://localhost:4000" autocomplete="off" spellcheck="false" data-field="endpoint">
+            <input type="password" id="clKeyIn" placeholder="sk-ant-… or LiteLLM master key" autocomplete="off" spellcheck="false" data-field="key">
+            <select id="clModelIn" data-field="model">
+              <option value="claude-3-5-sonnet-20241022">claude-3-5-sonnet (best)</option>
+              <option value="claude-3-5-haiku-20241022">claude-3-5-haiku (fast)</option>
+              <option value="claude-3-opus-20240229">claude-3-opus (powerful)</option>
+            </select>
+            <button class="key-save" data-save="claude">Save</button>
+            <span class="key-status none" id="st-claude"></span>
+            <p class="prov-hint">Route Claude through LiteLLM to avoid CORS. LiteLLM handles the Anthropic API server-side.</p>
+          </div>
+        </div><!-- /.lab-config -->
+
+        <!-- bar -->
+        <div class="lab-bar">
+          <div class="tl-wrap" aria-hidden="true">
+            <span class="tl r"></span><span class="tl y"></span><span class="tl g"></span>
+          </div>
+          <span class="term-title" id="labBarTitle">no provider · configure key ↑</span>
+          <div class="lab-actions">
+            <button class="lab-icon-btn" id="labExport" type="button" title="Export chat as Markdown">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              export
+            </button>
+            <button class="lab-icon-btn" id="labClear" type="button" title="Clear chat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+              clear
+            </button>
+            <button class="lab-icon-btn" id="labKeyToggle" type="button" title="Configure API key">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m12 11 8-8M18 4l2 2-2 2-2-2"/></svg>
+              key
+            </button>
+          </div>
+        </div>
+
+        <!-- messages -->
+        <div class="lab-msgs" id="labMsgs" role="log" aria-live="polite" aria-label="Chat messages">
+          <div class="lab-empty" id="labEmpty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 12V8m0 6v.5"/></svg>
+            <p>Configure a provider above and start chatting.<br>Gemini, OpenAI, Ollama, LiteLLM, or Claude.</p>
+          </div>
+        </div>
+
+        <!-- quick prompts -->
+        <div class="lab-quick" id="labQuick" aria-label="Quick prompts">
+          <button class="qp" data-q="Explain async/await in JavaScript with a short example.">async/await</button>
+          <button class="qp" data-q="What's the difference between CSS Grid and Flexbox? When should I use each?">grid vs flexbox</button>
+          <button class="qp" data-q="Give me a quick-start checklist for a new Next.js + Supabase project.">Next.js + Supabase</button>
+          <button class="qp" data-q="What's the best way to store secrets in a static site without a backend?">secret management</button>
+          <button class="qp" data-q="Explain how the Fetch API works and give me a reusable wrapper.">fetch wrapper</button>
+          <button class="qp" data-q="What should every junior dev know about Git before working with a team?">git for teams</button>
+        </div>
+
+        <!-- input -->
+        <div class="lab-input-row">
+          <div class="lab-textarea-wrap">
+            <span class="pr" aria-hidden="true">$</span>
+            <textarea id="labInput" rows="1" placeholder="Ask anything…" aria-label="Your message"></textarea>
+          </div>
+          <span class="tok-count" id="tokCount">0 ~tok</span>
+          <button id="labSend" type="button" aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
+            send
+          </button>
+        </div>
+
+      </div><!-- /.lab-shell -->
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-row">
+    <p>Built with ♥ and zero frameworks · David Christopher Linacre · 2026</p>
+    <div class="foot-links">
+      <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:david@linacre.site">Email</a>
+      <a href="#top">Top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  // ----- Typewriter terminal animation -----
+  var termBody = document.getElementById("termBody");
+  var prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var termLines = [
+    { type: "cmd",  text: "whoami" },
+    { type: "out",  text: "David Christopher Linacre", cls: "" },
+    { type: "gap" },
+    { type: "cmd",  text: "cat interests.txt" },
+    { type: "out",  text: "building things · open source · learning · creating", cls: "dim" },
+    { type: "gap" },
+    { type: "cmd",  text: "echo $STATUS" },
+    { type: "out",  text: "🚀 Shipping my first projects & learning in public", cls: "amb" },
+    { type: "gap" },
+    { type: "cmd",  text: "ls ./this-site/" },
+    { type: "out",  text: "HTML · CSS · zero frameworks · just vibes", cls: "dim" },
+    { type: "gap" },
+    { type: "prompt" }
+  ];
+
+  function makeCursor() {
+    var c = document.createElement("span");
+    c.className = "cursor"; c.setAttribute("aria-hidden", "true");
+    return c;
+  }
+
+  function renderInstant() {
+    termBody.innerHTML = "";
+    termLines.forEach(function (line) {
+      if (line.type === "gap") {
+        var d = document.createElement("div"); d.className = "spacer"; termBody.appendChild(d);
+      } else if (line.type === "prompt") {
+        var p = document.createElement("p"); p.className = "row cmd";
+        var pr = document.createElement("span"); pr.className = "pr"; pr.textContent = "$";
+        p.appendChild(pr); p.appendChild(document.createTextNode(" ")); p.appendChild(makeCursor());
+        termBody.appendChild(p);
+      } else if (line.type === "cmd") {
+        var p = document.createElement("p"); p.className = "row cmd";
+        var pr = document.createElement("span"); pr.className = "pr"; pr.textContent = "$";
+        p.appendChild(pr); p.appendChild(document.createTextNode(" " + line.text));
+        termBody.appendChild(p);
+      } else {
+        var p = document.createElement("p"); p.className = "row out" + (line.cls ? " " + line.cls : "");
+        p.textContent = line.text; termBody.appendChild(p);
+      }
+    });
+  }
+
+  if (prefersReduced) {
+    renderInstant();
+  } else {
+    // Typewriter — runs once on load
+    var lineIdx = 0;
+    var charIdx = 0;
+    var currentEl = null;
+    var currentText = "";
+    var cursor = makeCursor();
+    termBody.innerHTML = "";
+    termBody.appendChild(cursor);
+
+    var CMD_SPEED = 38;   // ms per char when typing a command
+    var CMD_PAUSE = 320;  // pause after command before output appears
+    var OUT_DELAY = 60;   // delay before output line appears
+
+    function nextLine() {
+      if (lineIdx >= termLines.length) return;
+      var line = termLines[lineIdx];
+      lineIdx++;
+
+      if (line.type === "gap") {
+        var d = document.createElement("div"); d.className = "spacer";
+        termBody.insertBefore(d, cursor);
+        setTimeout(nextLine, 80);
+        return;
+      }
+      if (line.type === "prompt") {
+        var p = document.createElement("p"); p.className = "row cmd";
+        var pr = document.createElement("span"); pr.className = "pr"; pr.textContent = "$";
+        p.appendChild(pr); p.appendChild(document.createTextNode(" "));
+        termBody.insertBefore(p, cursor);
+        p.appendChild(cursor);
+        return; // leave cursor blinking at prompt
+      }
+      if (line.type === "cmd") {
+        var p = document.createElement("p"); p.className = "row cmd";
+        var pr = document.createElement("span"); pr.className = "pr"; pr.textContent = "$";
+        p.appendChild(pr); p.appendChild(document.createTextNode(" "));
+        currentEl = p;
+        currentText = line.text;
+        charIdx = 0;
+        termBody.insertBefore(p, cursor);
+        p.appendChild(cursor);
+        typeChar();
+        return;
+      }
+      if (line.type === "out") {
+        setTimeout(function () {
+          var p = document.createElement("p");
+          p.className = "row out" + (line.cls ? " " + line.cls : "");
+          p.textContent = line.text;
+          termBody.insertBefore(p, cursor);
+          setTimeout(nextLine, OUT_DELAY);
+        }, OUT_DELAY);
+        return;
+      }
+    }
+
+    function typeChar() {
+      if (charIdx < currentText.length) {
+        currentEl.appendChild(document.createTextNode(currentText[charIdx]));
+        charIdx++;
+        setTimeout(typeChar, CMD_SPEED);
+      } else {
+        // Command fully typed — pause then show output
+        setTimeout(nextLine, CMD_PAUSE);
+      }
+    }
+
+    setTimeout(nextLine, 400);
+  }
+
+  // ----- Toolkit filter -----
+  var q = document.getElementById("q");
+  var chips = Array.prototype.slice.call(document.querySelectorAll(".chip"));
+  var cards = Array.prototype.slice.call(document.querySelectorAll("#grid .card"));
+  var countEl = document.getElementById("count");
+  var noResults = document.getElementById("noResults");
+  var total = cards.length;
+  var activeCat = "all";
+
+  function setChip(cat) {
+    activeCat = cat;
+    chips.forEach(function (c) {
+      c.setAttribute("aria-pressed", c.dataset.cat === cat ? "true" : "false");
+    });
+  }
+
+  function apply() {
+    var term = (q.value || "").trim().toLowerCase();
+    var shown = 0;
+    cards.forEach(function (card) {
+      var catOk = activeCat === "all" || card.dataset.cat === activeCat;
+      var hay = (card.dataset.name + " " + card.textContent).toLowerCase();
+      var textOk = !term || hay.indexOf(term) !== -1;
+      var show = catOk && textOk;
+      card.style.display = show ? "" : "none";
+      if (show) shown++;
+    });
+    noResults.style.display = shown ? "none" : "block";
+    var scope = activeCat === "all" ? "" : " in " + activeCat;
+    countEl.textContent = "// showing " + shown + " of " + total + " tools" + scope;
+  }
+
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      setChip(chip.dataset.cat);
+      apply();
+    });
+  });
+
+  // Arrow key navigation between chips
+  chips.forEach(function (chip, i) {
+    chip.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+        e.preventDefault();
+        var next = (i + (e.key === "ArrowRight" ? 1 : -1) + chips.length) % chips.length;
+        chips[next].focus();
+      }
+    });
+  });
+
+  // When typing in search, auto-reset category to 'all' so cross-category
+  // searches don't silently return 0 results
+  q.addEventListener("input", function () {
+    if (q.value.trim() && activeCat !== "all") {
+      setChip("all");
+    }
+    apply();
+  });
+
+  apply();
+
+  // ----- Copy email -----
+  var btn = document.getElementById("copyEmail");
+  var label = document.getElementById("copyLabel");
+  if (btn) {
+    btn.addEventListener("click", function () {
+      var email = btn.dataset.email;
+      var done = function () {
+        var prev = label.textContent;
+        label.textContent = "copied ✓";
+        btn.classList.add("copied");
+        setTimeout(function () { label.textContent = prev; btn.classList.remove("copied"); }, 1600);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(done).catch(function () { window.location.href = "mailto:" + email; });
+      } else {
+        window.location.href = "mailto:" + email;
+      }
+    });
+  }
+
+  // ----- Scroll-spy nav -----
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll(".nav-links a[href^='#']"));
+  var map = {};
+  navLinks.forEach(function (a) {
+    var id = a.getAttribute("href").slice(1);
+    var sec = document.getElementById(id);
+    if (sec) map[id] = a;
+  });
+  if ("IntersectionObserver" in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          navLinks.forEach(function (a) { a.classList.remove("active"); });
+          if (map[e.target.id]) map[e.target.id].classList.add("active");
+        }
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    Object.keys(map).forEach(function (id) { obs.observe(document.getElementById(id)); });
+  }
+
+  // ================================================================
+  // FEATURES BLOCK
+  // ================================================================
+
+  // ----- 1. Reading progress bar -----
+  var prog = document.getElementById("readingProg");
+  function updateProg() {
+    var scrolled = document.documentElement.scrollTop || document.body.scrollTop;
+    var total = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    prog.style.width = (total > 0 ? (scrolled / total * 100) : 0) + "%";
+  }
+  window.addEventListener("scroll", updateProg, { passive: true });
+  updateProg();
+
+  // ----- 2. Scroll-reveal cards -----
+  (function () {
+    var targets = Array.prototype.slice.call(document.querySelectorAll("#grid .card, .step, .sec-head"));
+    targets.forEach(function (el) { el.classList.add("will-reveal"); });
+    if (!window.IntersectionObserver) {
+      targets.forEach(function (el) { el.classList.add("revealed"); });
+      return;
+    }
+    var rev = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("revealed");
+          rev.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    targets.forEach(function (el) { rev.observe(el); });
+  })();
+
+  // ----- 3. Card bookmarking + My Stack -----
+  (function () {
+    var STACK_KEY = "linacre_stack_v1";
+    function getStack() {
+      try { return JSON.parse(localStorage.getItem(STACK_KEY) || "[]"); } catch(e) { return []; }
+    }
+    function setStack(arr) {
+      try { localStorage.setItem(STACK_KEY, JSON.stringify(arr)); } catch(e) {}
+    }
+
+    var cards = Array.prototype.slice.call(document.querySelectorAll("#grid .card"));
+
+    // Inject bookmark button into every card
+    cards.forEach(function (card) {
+      var title = card.querySelector("h3") ? card.querySelector("h3").textContent.trim() : "";
+      card.dataset.title = title;
+      var bm = document.createElement("button");
+      bm.className = "card-bm";
+      bm.setAttribute("type", "button");
+      bm.setAttribute("title", "Bookmark to My Stack");
+      bm.setAttribute("aria-label", "Bookmark " + title);
+      bm.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+
+      var stack = getStack();
+      if (stack.indexOf(title) !== -1) bm.classList.add("saved");
+
+      bm.addEventListener("click", function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var s = getStack();
+        var idx = s.indexOf(title);
+        if (idx === -1) { s.push(title); bm.classList.add("saved"); }
+        else { s.splice(idx, 1); bm.classList.remove("saved"); }
+        setStack(s);
+        // update stack chip label
+        var sc = document.getElementById("stackChip");
+        if (sc) sc.textContent = (s.length ? ("★ my stack (" + s.length + ")") : "★ my stack");
+      });
+
+      var top = card.querySelector(".card-top");
+      if (top) top.appendChild(bm);
+    });
+
+    // Update stack chip count on load
+    var initStack = getStack();
+    var sc2 = document.getElementById("stackChip");
+    if (sc2 && initStack.length) sc2.textContent = "★ my stack (" + initStack.length + ")";
+  })();
+
+  // Patch the existing filter to support 'stack' category
+  var _origApply = apply;
+  var _stackFilter = false;
+  var stackChip = document.getElementById("stackChip");
+  if (stackChip) {
+    stackChip.addEventListener("click", function () {
+      // deactivate all other chips
+      Array.prototype.slice.call(document.querySelectorAll(".chip")).forEach(function (c) {
+        c.setAttribute("aria-pressed", "false");
+      });
+      _stackFilter = stackChip.getAttribute("aria-pressed") !== "true";
+      stackChip.setAttribute("aria-pressed", _stackFilter ? "true" : "false");
+      if (!_stackFilter) { setChip("all"); apply(); return; }
+      // filter cards by saved stack
+      var STACK_KEY = "linacre_stack_v1";
+      var saved;
+      try { saved = JSON.parse(localStorage.getItem(STACK_KEY) || "[]"); } catch(e) { saved = []; }
+      var allCards = Array.prototype.slice.call(document.querySelectorAll("#grid .card"));
+      var visible = 0;
+      allCards.forEach(function (c) {
+        var title = c.dataset.title || (c.querySelector("h3") ? c.querySelector("h3").textContent.trim() : "");
+        var show = saved.indexOf(title) !== -1;
+        c.style.display = show ? "" : "none";
+        if (show) visible++;
+      });
+      var countEl2 = document.getElementById("count");
+      var noRes = document.getElementById("noResults");
+      if (countEl2) countEl2.textContent = visible + " tool" + (visible !== 1 ? "s" : "") + " in my stack";
+      if (noRes) noRes.style.display = visible === 0 ? "block" : "none";
+    });
+  }
+
+  // ----- 4. Keyboard shortcuts -----
+  var scOverlay = document.getElementById("scOverlay");
+  var scClose = document.getElementById("scClose");
+  function openShortcuts() { if (scOverlay) scOverlay.classList.add("open"); }
+  function closeShortcuts() { if (scOverlay) scOverlay.classList.remove("open"); }
+  if (scClose) scClose.addEventListener("click", closeShortcuts);
+  if (scOverlay) scOverlay.addEventListener("click", function (e) { if (e.target === scOverlay) closeShortcuts(); });
+
+  document.addEventListener("keydown", function (e) {
+    var tag = document.activeElement ? document.activeElement.tagName : "";
+    var inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+    var qEl = document.getElementById("q");
+
+    // ? = open shortcuts (when not in an input)
+    if (e.key === "?" && !inInput) { e.preventDefault(); openShortcuts(); return; }
+
+    // Esc = close shortcuts or clear search
+    if (e.key === "Escape") {
+      if (scOverlay && scOverlay.classList.contains("open")) { closeShortcuts(); return; }
+      if (document.activeElement === qEl && qEl.value) {
+        qEl.value = ""; qEl.dispatchEvent(new Event("input")); return;
+      }
+    }
+
+    // / = focus search (not in input)
+    if (e.key === "/" && !inInput) {
+      e.preventDefault();
+      if (qEl) { qEl.focus(); qEl.select(); }
+    }
+  });
+
+  // ----- 5. GitHub stats -----
+  (function () {
+    var lede = document.querySelector(".hero-left .cta-row");
+    if (!lede) return;
+    var strip = document.createElement("div");
+    strip.className = "gh-stats";
+    strip.setAttribute("aria-label", "GitHub stats");
+    strip.innerHTML = '<div class="gh-stat"><span class="gh-stat-dot"></span><span>Building in public</span></div>';
+    lede.insertAdjacentElement("afterend", strip);
+
+    fetch("https://api.github.com/users/LIN4CRE", { headers: { Accept: "application/vnd.github.v3+json" } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      strip.innerHTML = [
+        '<div class="gh-stat">',
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>',
+          '<span><strong>' + (data.public_repos || 0) + '</strong> repos</span>',
+        '</div>',
+        '<div class="gh-stat">',
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+          '<span><strong>' + (data.followers || 0) + '</strong> followers</span>',
+        '</div>',
+        '<div class="gh-stat"><span class="gh-stat-dot"></span><span>Building in public</span></div>'
+      ].join("");
+    })
+    .catch(function(){}); // silently fail if rate-limited
+  })();
+
+  // ================================================================
+  // ----- AI LAB — multi-provider -----
+  // ================================================================
+  (function labInit() {
+
+    // Storage keys per provider
+    var LS = {
+      gemini:  { key: "lab_gemini_key",  model: "lab_gemini_model",  endpoint: null },
+      openai:  { key: "lab_openai_key",  model: "lab_openai_model",  endpoint: "lab_openai_ep" },
+      ollama:  { key: null,               model: "lab_ollama_model",  endpoint: "lab_ollama_ep" },
+      litellm: { key: "lab_litellm_key", model: "lab_litellm_model", endpoint: "lab_litellm_ep" },
+      claude:  { key: "lab_claude_key",  model: "lab_claude_model",  endpoint: "lab_claude_ep" }
+    };
+
+    // Default endpoints / models
+    var DEFAULTS = {
+      gemini:  { endpoint: "https://generativelanguage.googleapis.com", model: "gemini-2.0-flash" },
+      openai:  { endpoint: "https://api.openai.com/v1",                  model: "gpt-4o-mini" },
+      ollama:  { endpoint: "http://localhost:11434",                     model: "llama3.2" },
+      litellm: { endpoint: "http://localhost:4000",                      model: "gpt-4o-mini" },
+      claude:  { endpoint: "http://localhost:4000",                      model: "claude-3-5-sonnet-20241022" }
+    };
+
+    // ------ helpers ------
+    function lsGet(k) { try { return localStorage.getItem(k) || ""; } catch(e) { return ""; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch(e) {} }
+
+    function getProvConfig(prov) {
+      var ls = LS[prov];
+      return {
+        key:      ls.key      ? lsGet(ls.key)      : "",
+        model:    ls.model    ? lsGet(ls.model)    : "",
+        endpoint: ls.endpoint ? lsGet(ls.endpoint) : ""
+      };
+    }
+
+    // Determine the best ready provider (has minimum required config)
+    function getBestProvider() {
+      var order = ["gemini", "openai", "ollama", "litellm", "claude"];
+      for (var i = 0; i < order.length; i++) {
+        var p = order[i], cfg = getProvConfig(p);
+        if (p === "gemini" && cfg.key) return p;
+        if (p === "openai" && cfg.key) return p;
+        if (p === "ollama" && (cfg.endpoint || DEFAULTS.ollama.endpoint)) return p;
+        if (p === "litellm" && cfg.endpoint) return p;
+        if (p === "claude" && cfg.endpoint) return p;
+      }
+      return null;
+    }
+
+    // ------ state ------
+    var activeProv = getBestProvider() || "gemini";
+    var history = [];   // [{role, content}]
+    var busy = false;
+
+    var SYSTEM_PROMPT = "You are a sharp, concise developer assistant on linacre.site. " +
+      "Favour short answers with inline code. Use markdown fences for code blocks. " +
+      "When answering questions about tools or libraries, prefer free/open-source options first.";
+
+    // ------ DOM refs ------
+    var labMsgs      = document.getElementById("labMsgs");
+    var labEmpty     = document.getElementById("labEmpty");
+    var labInput     = document.getElementById("labInput");
+    var labSend      = document.getElementById("labSend");
+    var labClear     = document.getElementById("labClear");
+    var labConfig    = document.getElementById("labConfig");
+    var labKeyToggle = document.getElementById("labKeyToggle");
+    var labBarTitle  = document.getElementById("labBarTitle");
+    var provTabs     = Array.prototype.slice.call(document.querySelectorAll(".prov-tab"));
+    var provPanels   = Array.prototype.slice.call(document.querySelectorAll(".prov-panel"));
+    var saveBtns     = Array.prototype.slice.call(document.querySelectorAll("[data-save]"));
+
+    // ------ provider tab UI ------
+    var tabActiveProv = "gemini";
+
+    function switchTab(prov) {
+      tabActiveProv = prov;
+      provTabs.forEach(function(t) {
+        var on = t.dataset.prov === prov;
+        t.classList.toggle("active", on);
+        t.setAttribute("aria-selected", on ? "true" : "false");
+      });
+      provPanels.forEach(function(p) {
+        p.classList.toggle("hidden", p.dataset.panel !== prov);
+      });
+    }
+
+    provTabs.forEach(function(tab) {
+      tab.addEventListener("click", function() { switchTab(tab.dataset.prov); });
+    });
+
+    // ------ populate saved values into fields ------
+    function populateFields(prov) {
+      var cfg = getProvConfig(prov);
+      var fieldMap = {
+        gemini:  { key: "gKeyIn",   model: "gModel",    endpoint: null },
+        openai:  { key: "oKeyIn",   model: "oModelIn",  endpoint: "oEndIn" },
+        ollama:  { key: null,        model: "olModelIn", endpoint: "olEndIn" },
+        litellm: { key: "llKeyIn",  model: "llModelIn", endpoint: "llEndIn" },
+        claude:  { key: "clKeyIn",  model: "clModelIn", endpoint: "clEndIn" }
+      };
+      var fm = fieldMap[prov];
+      if (fm.key && cfg.key) { var el = document.getElementById(fm.key); if (el) el.value = cfg.key; }
+      if (fm.model && cfg.model) { var el2 = document.getElementById(fm.model); if (el2) el2.value = cfg.model; }
+      if (fm.endpoint && cfg.endpoint) { var el3 = document.getElementById(fm.endpoint); if (el3) el3.value = cfg.endpoint; }
+    }
+    ["gemini","openai","ollama","litellm","claude"].forEach(populateFields);
+    updateAllStatuses();
+
+    // ------ save buttons ------
+    saveBtns.forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var prov = btn.dataset.save;
+        var ls = LS[prov];
+        var fieldMap = {
+          gemini:  { key: "gKeyIn",   model: "gModel",    endpoint: null },
+          openai:  { key: "oKeyIn",   model: "oModelIn",  endpoint: "oEndIn" },
+          ollama:  { key: null,        model: "olModelIn", endpoint: "olEndIn" },
+          litellm: { key: "llKeyIn",  model: "llModelIn", endpoint: "llEndIn" },
+          claude:  { key: "clKeyIn",  model: "clModelIn", endpoint: "clEndIn" }
+        };
+        var fm = fieldMap[prov];
+        if (fm.key && ls.key) {
+          var v = (document.getElementById(fm.key) || {}).value || "";
+          if (v) lsSet(ls.key, v.trim());
+        }
+        if (fm.model && ls.model) {
+          var v2 = (document.getElementById(fm.model) || {}).value || "";
+          if (v2) lsSet(ls.model, v2.trim());
+        }
+        if (fm.endpoint && ls.endpoint) {
+          var v3 = (document.getElementById(fm.endpoint) || {}).value || "";
+          if (v3) lsSet(ls.endpoint, v3.trim().replace(/\/$/, ""));
+        }
+        activeProv = getBestProvider() || prov;
+        updateAllStatuses();
+        updateBarTitle();
+        var st = document.getElementById("st-" + prov);
+        if (st) { st.textContent = "saved ✓"; st.className = "key-status"; }
+      });
+    });
+
+    function updateAllStatuses() {
+      ["gemini","openai","ollama","litellm","claude"].forEach(function(prov) {
+        var st = document.getElementById("st-" + prov);
+        if (!st) return;
+        var cfg = getProvConfig(prov);
+        var ready = (prov === "gemini" && cfg.key) ||
+                    (prov === "openai" && cfg.key) ||
+                    (prov === "ollama" && (cfg.endpoint || true)) ||
+                    (prov === "litellm" && cfg.endpoint) ||
+                    (prov === "claude" && cfg.endpoint);
+        if (ready) {
+          st.textContent = "✓ ready";
+          st.className = "key-status";
+        } else {
+          st.textContent = "not configured";
+          st.className = "key-status none";
+        }
+      });
+    }
+
+    function updateBarTitle() {
+      var best = getBestProvider();
+      if (!best) { labBarTitle.textContent = "no provider · click \u2022 key to configure"; return; }
+      var cfg = getProvConfig(best);
+      var model = cfg.model || DEFAULTS[best].model;
+      var ep = best === "gemini" ? "cloud" : (cfg.endpoint || DEFAULTS[best].endpoint);
+      labBarTitle.textContent = best + " · " + model + " · " + ep;
+    }
+    updateBarTitle();
+
+    // ------ key toggle ------
+    labKeyToggle.addEventListener("click", function() {
+      var open = labConfig.classList.toggle("open");
+      labKeyToggle.classList.toggle("key-active", open);
+      if (open) switchTab(tabActiveProv);
+    });
+
+    // Auto-open config if no provider ready
+    if (!getBestProvider()) {
+      labConfig.classList.add("open");
+      labKeyToggle.classList.add("key-active");
+    }
+
+    // ------ clear ------
+    var HIST_KEY = "lab_chat_history_v1";
+    labClear.addEventListener("click", function() {
+      history = [];
+      try { localStorage.removeItem(HIST_KEY); } catch(e) {}
+      labMsgs.innerHTML = "";
+      labMsgs.appendChild(labEmpty);
+      labEmpty.style.display = "flex";
+    });
+
+    // ------ restore persisted chat ------
+    (function() {
+      try {
+        var saved = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+        if (!saved.length) return;
+        history = saved;
+        if (labEmpty) labEmpty.style.display = "none";
+        saved.forEach(function(m) {
+          if (m.role === "user") {
+            addMsg("user", m.content);
+          } else if (m.role === "assistant") {
+            renderModelReply(m.content);
+          }
+        });
+      } catch(e) {}
+    })();
+
+    // ------ quick prompts ------
+    document.querySelectorAll(".qp").forEach(function(qp) {
+      qp.addEventListener("click", function() {
+        labInput.value = qp.dataset.q;
+        autoResize();
+        sendMessage();
+      });
+    });
+
+    // ------ textarea auto-resize + token counter ------
+    var tokEl = document.getElementById("tokCount");
+    function estTokens(s) { return Math.ceil(s.length / 4); }
+    function updateTok() {
+      var n = estTokens(labInput.value);
+      if (tokEl) {
+        tokEl.textContent = n + " ~tok";
+        tokEl.className = "tok-count" + (n > 800 ? " warn" : "");
+      }
+    }
+    function autoResize() {
+      labInput.style.height = "auto";
+      labInput.style.height = Math.min(labInput.scrollHeight, 140) + "px";
+      updateTok();
+    }
+    labInput.addEventListener("input", autoResize);
+    labInput.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+    labSend.addEventListener("click", sendMessage);
+
+    // ------ export button ------
+    var labExport = document.getElementById("labExport");
+    if (labExport) {
+      labExport.addEventListener("click", function() {
+        if (!history.length) { return; }
+        var md = "# Chat Export — linacre.site/lab\n\n";
+        md += "> Provider: " + (activeProv || "unknown") + "\n";
+        md += "> Exported: " + new Date().toISOString() + "\n\n---\n\n";
+        history.forEach(function(m) {
+          md += "**" + (m.role === "user" ? "You" : activeProv) + "**\n\n" + m.content + "\n\n---\n\n";
+        });
+        var blob = new Blob([md], { type: "text/markdown" });
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "lab-chat-" + Date.now() + ".md";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+    }
+
+    // ------ message helpers ------
+    function addMsg(role, text, cls) {
+      var empty = document.getElementById("labEmpty");
+      if (empty) empty.style.display = "none";
+
+      var wrap = document.createElement("div");
+      wrap.className = "msg " + role + (cls ? " " + cls : "");
+
+      var who = document.createElement("div");
+      who.className = "msg-who";
+      who.textContent = role === "user" ? "you" : (activeProv || "model");
+      wrap.appendChild(who);
+
+      var bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      bubble.textContent = text;
+      wrap.appendChild(bubble);
+
+      labMsgs.appendChild(wrap);
+      labMsgs.scrollTop = labMsgs.scrollHeight;
+      return bubble;
+    }
+
+    function addThinking() {
+      var empty = document.getElementById("labEmpty");
+      if (empty) empty.style.display = "none";
+
+      var wrap = document.createElement("div");
+      wrap.className = "msg model thinking";
+      var who = document.createElement("div");
+      who.className = "msg-who";
+      who.textContent = activeProv || "model";
+      wrap.appendChild(who);
+      var bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      bubble.textContent = "…";
+      wrap.appendChild(bubble);
+      labMsgs.appendChild(wrap);
+      labMsgs.scrollTop = labMsgs.scrollHeight;
+      return { wrap: wrap, bubble: bubble };
+    }
+
+    function removeThinking(t) {
+      if (t && t.wrap && t.wrap.parentNode) t.wrap.parentNode.removeChild(t.wrap);
+    }
+
+    // ------ API callers ------
+
+    // OpenAI-compatible (covers OpenAI, Ollama /v1, LiteLLM, AnythingLLM)
+    function callOpenAICompat(baseUrl, apiKey, model, messages, onChunk, onDone, onError) {
+      var url = baseUrl.replace(/\/+$/, "") + "/v1/chat/completions";
+      var headers = { "Content-Type": "application/json" };
+      if (apiKey) headers["Authorization"] = "Bearer " + apiKey;
+
+      fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          model: model,
+          messages: messages,
+          stream: false
+        })
+      })
+      .then(function(r) {
+        if (!r.ok) return r.text().then(function(t) { throw new Error(r.status + " " + t.slice(0,200)); });
+        return r.json();
+      })
+      .then(function(data) {
+        var text = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "(empty response)";
+        onDone(text);
+      })
+      .catch(onError);
+    }
+
+    // Gemini REST API
+    function callGemini(apiKey, model, messages, onDone, onError) {
+      var url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent?key=" + apiKey;
+      var contents = messages.map(function(m) {
+        return { role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] };
+      });
+      // Gemini doesn't support system role inline; prepend as first user turn
+      contents.unshift({ role: "user", parts: [{ text: SYSTEM_PROMPT }] });
+      contents.splice(1, 0, { role: "model", parts: [{ text: "Understood." }] });
+
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: contents })
+      })
+      .then(function(r) {
+        if (!r.ok) return r.text().then(function(t) { throw new Error(r.status + " " + t.slice(0,200)); });
+        return r.json();
+      })
+      .then(function(data) {
+        var text = (data.candidates && data.candidates[0] && data.candidates[0].content &&
+                    data.candidates[0].content.parts && data.candidates[0].content.parts[0] &&
+                    data.candidates[0].content.parts[0].text) || "(empty response)";
+        onDone(text);
+      })
+      .catch(onError);
+    }
+
+    // ------ main send ------
+    function sendMessage() {
+      if (busy) return;
+      var text = labInput.value.trim();
+      if (!text) return;
+
+      var prov = getBestProvider();
+      if (!prov) {
+        addMsg("error", "// No provider configured. Click \u2022 key to add one.", "error");
+        labConfig.classList.add("open");
+        labKeyToggle.classList.add("key-active");
+        return;
+      }
+      activeProv = prov;
+      updateBarTitle();
+
+      labInput.value = "";
+      labInput.style.height = "auto";
+      busy = true;
+      labSend.disabled = true;
+
+      history.push({ role: "user", content: text });
+      addMsg("user", text);
+
+      var thinking = addThinking();
+
+      var cfg = getProvConfig(prov);
+      var model = cfg.model || DEFAULTS[prov].model;
+      var endpoint = cfg.endpoint || DEFAULTS[prov].endpoint;
+      var apiKey = cfg.key || "";
+
+      // Build OpenAI-style messages with system prepended
+      var oaiMessages = [{ role: "system", content: SYSTEM_PROMPT }].concat(history);
+
+      function finish(replyText) {
+        removeThinking(thinking);
+        renderModelReply(replyText);
+        history.push({ role: "assistant", content: replyText });
+        // Persist
+        try { localStorage.setItem(HIST_KEY, JSON.stringify(history)); } catch(e) {}
+        busy = false;
+        labSend.disabled = false;
+      }
+
+      function fail(err) {
+        removeThinking(thinking);
+        var msg = (err && err.message) ? err.message : String(err);
+        addMsg("error", "// Error [" + prov + "]: " + msg, "error");
+        busy = false;
+        labSend.disabled = false;
+      }
+
+      if (prov === "gemini") {
+        callGemini(apiKey, model, history, finish, fail);
+      } else {
+        callOpenAICompat(endpoint, apiKey, model, oaiMessages, null, finish, fail);
+      }
+    }
+
+    // ------ full markdown renderer ------
+    function renderModelReply(replyText) {
+      var bubble = addMsg("model", "");
+
+      // Split on fenced code blocks first
+      var parts = replyText.split(/(```[\w]*\n?[\s\S]*?```)/g);
+      parts.forEach(function(part) {
+        if (/^```/.test(part)) {
+          // Code block with copy button
+          var lang = (part.match(/^```(\w+)/) || [])[1] || "";
+          var code = part.replace(/^```\w*\n?/, "").replace(/\n?```$/, "");
+
+          var wrap = document.createElement("div");
+          wrap.className = "code-wrap";
+
+          var pre = document.createElement("pre");
+          var codeEl = document.createElement("code");
+          codeEl.textContent = code;
+          pre.appendChild(codeEl);
+          wrap.appendChild(pre);
+
+          // Copy button
+          var copyBtn = document.createElement("button");
+          copyBtn.className = "copy-code";
+          copyBtn.textContent = lang ? "copy " + lang : "copy";
+          copyBtn.addEventListener("click", function() {
+            if (navigator.clipboard) {
+              navigator.clipboard.writeText(code).then(function() {
+                copyBtn.textContent = "copied ✓";
+                copyBtn.classList.add("done");
+                setTimeout(function() {
+                  copyBtn.textContent = lang ? "copy " + lang : "copy";
+                  copyBtn.classList.remove("done");
+                }, 1800);
+              });
+            }
+          });
+          wrap.appendChild(copyBtn);
+          bubble.appendChild(wrap);
+        } else {
+          // Inline markdown rendering
+          var lines = part.split("\n");
+          var inList = false;
+          var listEl = null;
+
+          lines.forEach(function(line) {
+            // headings
+            var hm = line.match(/^(#{1,3})\s+(.*)/); 
+            if (hm) {
+              if (inList) { bubble.appendChild(listEl); inList = false; listEl = null; }
+              var h = document.createElement("h" + hm[1].length);
+              h.innerHTML = inlineMarkdown(hm[2]);
+              bubble.appendChild(h); return;
+            }
+            // unordered list
+            var lm = line.match(/^[-*+]\s+(.*)/); 
+            if (lm) {
+              if (!inList || listEl.tagName !== "UL") {
+                if (inList) bubble.appendChild(listEl);
+                listEl = document.createElement("ul"); inList = true;
+              }
+              var li = document.createElement("li");
+              li.innerHTML = inlineMarkdown(lm[1]);
+              listEl.appendChild(li); return;
+            }
+            // ordered list
+            var om = line.match(/^\d+\.\s+(.*)/); 
+            if (om) {
+              if (!inList || listEl.tagName !== "OL") {
+                if (inList) bubble.appendChild(listEl);
+                listEl = document.createElement("ol"); inList = true;
+              }
+              var li2 = document.createElement("li");
+              li2.innerHTML = inlineMarkdown(om[1]);
+              listEl.appendChild(li2); return;
+            }
+            // blank line
+            if (!line.trim()) {
+              if (inList) { bubble.appendChild(listEl); inList = false; listEl = null; }
+              bubble.appendChild(document.createElement("br")); return;
+            }
+            // normal paragraph line
+            if (inList) { bubble.appendChild(listEl); inList = false; listEl = null; }
+            var span = document.createElement("span");
+            span.innerHTML = inlineMarkdown(line) + "\n";
+            bubble.appendChild(span);
+          });
+          if (inList) bubble.appendChild(listEl);
+        }
+      });
+
+      labMsgs.scrollTop = labMsgs.scrollHeight;
+      return bubble;
+    }
+
+    // Inline markdown: bold, italic, inline code, links
+    function inlineMarkdown(s) {
+      // Escape HTML first
+      s = s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      // inline code
+      s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // bold
+      s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+      // italic
+      s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      s = s.replace(/_([^_]+)_/g, '<em>$1</em>');
+      // links [text](url)
+      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+      return s;
+    }
+
+  })(); // end labInit
+
+})();
+</script>
+</body>
+</html>
