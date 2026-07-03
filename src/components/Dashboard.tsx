@@ -16,7 +16,7 @@ export default function Dashboard() {
     }
   }, []);
 
-  const [activeSubTab, setActiveSubTab] = useState<'mcp' | 'skills' | 'env'>('mcp');
+  const [activeSubTab, setActiveSubTab] = useState<'mcp' | 'skills' | 'env' | 'ecosystem'>('mcp');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [envContent, setEnvContent] = useState(ENV_TEMPLATE);
@@ -203,6 +203,20 @@ export default function Dashboard() {
         >
           <Key className="w-3.5 h-3.5" />
           <span>Environment Configs</span>
+        </button>
+        <button
+          onClick={() => {
+            setActiveSubTab('ecosystem');
+            setSearchQuery('');
+          }}
+          className={`px-5 py-3 border-b-2 transition-all flex items-center gap-2 cursor-pointer ${
+            activeSubTab === 'ecosystem'
+              ? 'border-cyan text-cyan font-semibold'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Cpu className="w-3.5 h-3.5" />
+          <span>Ecosystem Sync</span>
         </button>
       </div>
 
@@ -419,6 +433,96 @@ export default function Dashboard() {
               className="w-full h-80 bg-black/40 dark:bg-black/25 border border-border-color/75 rounded-lg p-4 text-[11px] font-mono text-emerald-color focus:outline-none focus:ring-1 focus:ring-cyan select-text resize-y leading-relaxed"
               id="env-editor"
             />
+          </div>
+        </section>
+      )}
+
+      {/* TAB CONTENT: ECOSYSTEM SYNC */}
+      {activeSubTab === 'ecosystem' && (
+        <section className="space-y-6" id="dashboard-ecosystem-pane">
+          <div className="bg-muted/15 dark:bg-[#161b26] border border-border-color rounded-xl p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-border-color/50 pb-4">
+              <div className="flex items-center gap-2.5 font-mono">
+                <Cpu className="w-5 h-5 text-cyan animate-pulse" />
+                <span className="text-sm font-semibold text-foreground">Tailscale AI Mesh Connection</span>
+              </div>
+              <span className="px-2.5 py-0.5 text-[9px] font-mono bg-emerald-color/10 text-emerald-color border border-emerald-color/20 rounded-md">
+                Active Mesh
+              </span>
+            </div>
+
+            <p className="text-xs text-muted-foreground font-mono leading-relaxed">
+              // This panel connects your linacre.site platform with the local ev-bot.uk voice/Android assistant service over the Tailscale mesh.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-black/30 dark:bg-black/15 border border-border-color/40 p-4 rounded-xl space-y-2">
+                <span className="block text-[9px] font-mono text-muted-foreground">POCO-F7-1 (Android 16)</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-foreground font-bold">100.102.1.7</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-color" />
+                </div>
+              </div>
+              <div className="bg-black/30 dark:bg-black/15 border border-border-color/40 p-4 rounded-xl space-y-2">
+                <span className="block text-[9px] font-mono text-muted-foreground">DL (PC HOST)</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-foreground font-bold">100.91.217.7</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-color" />
+                </div>
+              </div>
+              <div className="bg-black/30 dark:bg-black/15 border border-border-color/40 p-4 rounded-xl space-y-2">
+                <span className="block text-[9px] font-mono text-muted-foreground">DL-DOCKER-DESKTOP (Linux)</span>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-foreground font-bold">100.119.229.89</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-color" />
+                </div>
+              </div>
+            </div>
+
+            {/* EV-Bot controller inside Linacre site */}
+            <div className="border-t border-border-color/40 pt-6 space-y-4">
+              <h3 className="font-mono text-xs font-bold text-amber-color uppercase tracking-wider">
+                🤖 EV-Bot Service Controller (ev-bot.uk)
+              </h3>
+              <p className="text-[11px] text-muted-foreground font-mono">
+                Trigger a voice macro simulation or verify client handshake directly from this panel:
+              </p>
+              
+              <div className="flex flex-wrap gap-2.5">
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("http://localhost:8000/api/v1/evbot/health");
+                      const data = await res.json();
+                      alert(`EV-Bot Service status: ${data.status || 'Offline'}`);
+                    } catch (e) {
+                      alert("Could not reach EV-Bot API (make sure backend is running on port 8000).");
+                    }
+                  }}
+                  className="px-4 py-2 bg-cyan/15 hover:bg-cyan/25 border border-cyan/35 text-cyan hover:text-cyan/90 font-mono text-xs font-semibold rounded-lg transition-all cursor-pointer"
+                >
+                  Ping EV-Bot backend (Port 8000)
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("http://localhost:8000/api/v1/evbot/alexa/trigger", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ phrase: "Alexa, tell EV-Bot to check PC status" })
+                      });
+                      const data = await res.json();
+                      alert(`Alexa broadcast: ${data.event?.actionTaken || 'Success'}`);
+                    } catch (e) {
+                      alert("Failed to trigger Alexa command.");
+                    }
+                  }}
+                  className="px-4 py-2 bg-amber-color/15 hover:bg-amber-color/25 border border-amber-color/35 text-amber-color hover:text-amber-color/90 font-mono text-xs font-semibold rounded-lg transition-all cursor-pointer"
+                >
+                  Trigger voice macro
+                </button>
+              </div>
+            </div>
           </div>
         </section>
       )}
