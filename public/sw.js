@@ -1,4 +1,4 @@
-var CACHE = "linacre-v4"; // bump on every release so returning visitors get fresh assets
+var CACHE = "linacre-v5"; // bump on every release so returning visitors get fresh assets
 var URLS = [".", "index.html", "manifest.json", "404.html"];
 
 self.addEventListener("install", function (e) {
@@ -36,8 +36,19 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  // Cache-first for other same-origin GETs (manifest, icons)
+  // Cache-first with dynamic backfill for other same-origin GETs (manifest, icons, bundle assets)
   e.respondWith(
-    caches.match(e.request).then(function (r) { return r || fetch(e.request); })
+    caches.match(e.request).then(function (cachedResponse) {
+      if (cachedResponse) return cachedResponse;
+      return fetch(e.request).then(function (networkResponse) {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === "basic") {
+          var copy = networkResponse.clone();
+          caches.open(CACHE).then(function (cache) {
+            cache.put(e.request, copy);
+          });
+        }
+        return networkResponse;
+      });
+    })
   );
 });
