@@ -39,13 +39,13 @@ export default function Learn() {
             >
               {/* Bullet Node */}
               <div className="absolute -left-[45px] sm:-left-[49px] top-0 flex items-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-background dark:bg-[#0b0e14] border-2 border-amber-color flex items-center justify-center font-mono text-xs font-bold text-amber-color group-hover:scale-115 group-hover:bg-amber-color group-hover:text-background transition-all duration-300 shadow-[0_0_12px_rgba(255,180,84,0.1)]">
+                <div className="w-8 h-8 rounded-full bg-background dark:bg-[#070A0F] border-2 border-amber-color flex items-center justify-center font-mono text-xs font-bold text-amber-color group-hover:scale-115 group-hover:bg-amber-color group-hover:text-background transition-all shadow-[0_0_0_rgba(245,158,11,0)] group-hover:shadow-[0_0_16px_rgba(245,158,11,0.35)]" style={{ transitionDuration: 'var(--linacre-duration-base)' }}>
                   {step.n}
                 </div>
               </div>
 
               {/* Step Content */}
-              <div className="bg-muted/10 dark:bg-[#161b26]/50 border border-border-color/60 p-5 rounded-xl hover:border-border-hi hover:bg-muted/20 dark:hover:bg-[#161b26]/95 transition-all duration-300 shadow-sm">
+              <div className="bg-muted/10 dark:bg-[#0B1220]/70 border border-amber-color/12 p-5 rounded-2xl hover:border-amber-color/25 hover:bg-muted/20 dark:hover:bg-[#111827]/95 transition-all shadow-sm" style={{ transitionDuration: 'var(--linacre-duration-base)', boxShadow: 'var(--linacre-card-shadow)' }}>
                 <h3 className="font-mono text-sm font-semibold text-foreground group-hover:text-amber-color transition-colors flex items-center gap-2">
                   <span>{step.title}</span>
                 </h3>
@@ -81,7 +81,8 @@ export default function Learn() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.25, delay: idx * 0.05 }}
-              className="group flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi hover:-translate-y-0.5 transition-all duration-200 border-l-[3px] border-l-purple-color"
+              className="group flex flex-col justify-between bg-muted/20 dark:bg-[#0B1220]/80 border border-amber-color/12 rounded-2xl p-5 hover:bg-muted/35 dark:hover:bg-[#111827] hover:border-amber-color/30 hover:-translate-y-1 transition-all border-l-[3px] border-l-purple-color"
+              style={{ transitionDuration: 'var(--linacre-duration-base)', boxShadow: 'var(--linacre-card-shadow)' }}
               id={`resource-card-${res.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
               <div>

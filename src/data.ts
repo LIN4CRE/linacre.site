@@ -474,6 +474,11 @@ export const PROJECTS: Project[] = [...MANUAL_PROJECTS, ...ecoProjects];
 
 export const CHANGELOG: ChangelogItem[] = [
   {
+    version: 'v4.5',
+    title: 'Premium Brand-Kit Alignment',
+    description: 'Complete visual overhaul aligned to the Linacre brand-kit: Ink Black backgrounds, Amber Core/Glow accent system, brand gradients and glow shadows, hex-grid hero with CTAs, glassmorphism header with breathing logo, amber pulse-line dividers, upgraded card surfaces across Toolkit/Learn/Terminal, LinkedIn footer link, and unified Python CLI (linacre.py) replacing 4 separate automation scripts.'
+  },
+  {
     version: 'v3.5',
     title: 'React & Full-Stack Evolution',
     description: 'Rebuild of the architecture to fully compiled React + TypeScript + Express v4, styled using Tailwind CSS v4 and Motion. Engineered server-side Gemini API chat routes to keep keys secure, built a client-side command palette with full keyboard navigation and shortcut support, added dark/light mode toggles with localStorage system-sync, fixed service worker state bugs, and polished the typography with Space Grotesk.'
@@ -503,10 +508,10 @@ export const TERMINAL_LINES = [
   { type: 'out', text: 'building things · open source · learning · creating', cls: 'dim' },
   { type: 'gap' },
   { type: 'cmd', text: 'echo $STATUS' },
-  { type: 'out', text: '🚀 Shipping premium projects & learning in public', cls: 'amb' },
+  { type: 'out', text: '⚡ Shipping v4.5 — brand-kit aligned, amber-coded, premium.', cls: 'amb' },
   { type: 'gap' },
   { type: 'cmd', text: 'ls ./this-site/' },
-  { type: 'out', text: 'React · TypeScript · Tailwind CSS v4 · Motion · Express server', cls: 'dim' },
+  { type: 'out', text: 'React · TypeScript · Tailwind CSS v4 · Motion · Express · Brand Kit', cls: 'dim' },
   { type: 'gap' },
   { type: 'prompt' }
 ];

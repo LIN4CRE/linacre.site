@@ -1,0 +1,598 @@
+Delivered-To: delinacre@gmail.com
+Received: by 2002:a05:7508:1b06:b0:ef:3584:2bea with SMTP id jl6csp968809gbb;
+        Wed, 1 Jul 2026 13:07:04 -0700 (PDT)
+X-Received: by 2002:a05:6820:338d:20b0:6a3:1055:b034 with SMTP id 006d021491bc7-6a31055b479mr615377eaf.56.1782936424368;
+        Wed, 01 Jul 2026 13:07:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1782936424; cv=none;
+        d=google.com; s=arc-20260327;
+        b=RxJOh0OevEzj4SNAcmCoPKZIU3PH6X/YvQZ2eMwFsS9CSpdQb94cUY6H3RrFuKk/U2
+         21B+2hb+0wQQ60U+DPGLxphtt9npHeUvqVRDibleXrxUZZhz9MifbnC2Dz5bJBFrARZy
+         IhBnEmOf8jDPPBQ761j0pvAJm2gItAcm1KTR/ecxRJBg2rgUUTVUCZ2IVJ8oj49kM1B1
+         11TqH/PMHw9xCd8y+zmcFNr9DHpjocoVLZcvegEHPtExKUTL1sS4jLLKfyQFf3E9qZIC
+         GFkkTppH7WxmgAVCZSCI9Tvu4UJWN4lKrxABLOdR+EWcB6sQVvil2ngC/e5/atxVm4be
+         SdTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20260327;
+        h=mime-version:date:message-id:subject:to:from:list-unsubscribe-post
+         :list-unsubscribe:dkim-signature;
+        bh=WzbD+kzewj6/Igv/ld1RlW9/x3WM8C5c73Uhhkoqf1U=;
+        fh=XBcOPVBRCmqOKNe21u3RpRtaTM6jwyivVxeWqHaUmuA=;
+        b=hifjfMQH/dELUDYUFAbmmZKk2tPyrwt+FcLmNT+S3OQPiPmwzK02SL6Z29qEaWAQ6c
+         3O2J8uYWq/sgtTLIKdYLPvpVguhFhzXGAuXiwlRT5L4fRwpqgGFEgTq3oMqdfbrK4wcL
+         WBgT7TheERsOZjoLPmGcrgiz1vULYFORThZ1GVdrJYQK9QpyyW8ZaIiSzTQhQFYyQ+B9
+         vnxx+T1RX2utz0nmN+v8HLoXfu6oY0xvykXIP9Tr6XSy2ndAQjEFQzHH3yFAYZR5VatC
+         +nXd7mm1nfDWH2R2AYAsLiy2p+z08q8AbDL6dhCqwr8d6Z1lCDXtNaAQb/a9C0gUe73f
+         rkIQ==;
+        dara=google.com
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@forwardemail.net header.s=fe-01e7c0bf38 header.b="d/UKDhNf";
+       spf=pass (google.com: domain of support@forwardemail.net designates 121.127.44.66 as permitted sender) smtp.mailfrom=support@forwardemail.net;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=forwardemail.net
+Return-Path: <support@forwardemail.net>
+Received: from smtp.forwardemail.net (smtp.forwardemail.net. [121.127.44.66])
+        by mx.google.com with ESMTPS id 586e51a60fabf-44cbef1126bsi583510fac.246.2026.07.01.13.07.04
+        for <delinacre@gmail.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jul 2026 13:07:04 -0700 (PDT)
+Received-SPF: pass (google.com: domain of support@forwardemail.net designates 121.127.44.66 as permitted sender) client-ip=121.127.44.66;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@forwardemail.net header.s=fe-01e7c0bf38 header.b="d/UKDhNf";
+       spf=pass (google.com: domain of support@forwardemail.net designates 121.127.44.66 as permitted sender) smtp.mailfrom=support@forwardemail.net;
+       dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=forwardemail.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=forwardemail.net;
+ h=Content-Type: MIME-Version: Date: Message-ID: Subject: To: From:
+ List-Unsubscribe; q=dns/txt; s=fe-01e7c0bf38; t=1782936423;
+ bh=WzbD+kzewj6/Igv/ld1RlW9/x3WM8C5c73Uhhkoqf1U=;
+ b=d/UKDhNfvet7MMn86DWDpb57QbKK4nnRLjiy1WuMlw07+DyfnTz/hffBrTZ12mCXAt1y2oWvQ
+ JLV6EBFB7gwVxAQHjs6LmKvwEB/s++CWX+WyJHz+xY+BI8e6a0I8y+kF8Y36i64GUUg9AFDgBvg
+ rnaScnQzPIKWw8SG3zIrC6NI4pdq9eBatmuXATRFxwCyG92jnCAsVhEfA7zFEho4OCz5ZH2QFWe
+ fFCotP0S/tpQ8UdxL/QvA1eO99GvslUVMfNHfAMVQTnyMWpQ16HInnq99cJJUqFpPaCp899hvjw
+ Wz6ZZkMGbzMGytb1qA36f4POoYhyxj3dCX5kJzfIwa3g==
+X-Forward-Email-ID: 6a4573653997c58b8567f083
+X-Forward-Email-Sender: rfc822; support@forwardemail.net,
+ smtp.forwardemail.net, 121.127.44.66
+X-Forward-Email-Version: 2.9.1
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+List-Unsubscribe:
+ <https://forwardemail.net/en/unsubscribe/AugYjAAvYXKP_ttCljdIpbFulcuxXx2a3qMZRbmk0bUgafI5LKiTbUFVXw8Yv0Ym8EWyBYxv0AXQKYdbkhbeqOYaEz-hv52Ed3a6EqSueBSlf6HC-nrby9A>
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+From: Forward Email <support@forwardemail.net>
+To: delinacre@gmail.com
+Subject: =?UTF-8?Q?Forward_Email_=E2=80=93_=F0=9F=91=8B_Tha?=
+ =?UTF-8?Q?nks_for_signing_up!?=
+Message-ID: <ecb2763a-f8ba-182d-6cbe-1bb6f78f986a@forwardemail.net>
+Date: Wed, 01 Jul 2026 20:07:01 +0000
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="--_NmP-0a48aee9dd4f2f36-Part_1"
+
+----_NmP-0a48aee9dd4f2f36-Part_1
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+THANK YOU FOR JOINING US
+
+https://forwardemail.net/en/my-account
+
+
+FEATURES
+
+ * =E2=9C=85 Unlimited domains and aliases 100% Free
+ * =E2=9C=85 10 GB encrypted email storage Learn more =E2=86=92
+   [https://forwardemail.net/en/blog/docs/best-quantum-safe-encrypted-email=
+-service]
+ * =E2=9C=85 Privacy-focused email Privacy Policy =E2=86=92
+   [https://forwardemail.net/en/privacy]
+ * =E2=9C=85 Send outbound SMTP =
+email SMTP Guide =E2=86=92
+   [https://forwardemail.=
+net/en/guides/send-email-with-custom-domain-smtp]
+ * =E2=9C=85 Works with =
+Apple, Outlook, Gmail, Thunderbird, Android Apps =E2=86=92
+   [https://forwardemail.net/en/faq#do-you-support-receiving-email-with-ima=
+p]
+ * =E2=9C=85 Support for E2EE/OpenPGP/WKD Learn more =E2=86=92
+   [https://forwardemail.net/en/faq#do-you-support-openpgpmime-end-to-end-e=
+ncryption-e2ee-and-web-key-directory-wkd]
+ * =E2=9C=85 Easily migrate from =
+any provider Learn more =E2=86=92
+   [https://forwardemail.=
+net/en/faq#how-do-i-import-and-migrate-my-existing-mailbox]
+ * =E2=9C=85 Enterprise-grade 99.99% uptime SLA View FAQ =E2=86=92
+   [https://forwardemail.net/en/faq]
+ * =E2=9C=85 Powered by bare metal =
+servers Status Page =E2=86=92
+   [https://status.forwardemail.net]
+ * =E2=9C=85 100% open-source software View GitHub =E2=86=92 =
+[https://github.com/forwardemail]
+ * =E2=9C=85 Email API designed for =
+developers Email API =E2=86=92
+   [https://forwardemail.net/en/email-api]
+
+
+NEED REAL-TIME ALERTS AND LOGS?
+
+Upgrading will unlock real-time alerts and=
+ logs
+[https://forwardemail.net/faq#do-you-store-error-logs] and outbound =
+SMTP support
+[https://forwardemail.net/guides/send-email-with-custom-domain=
+-smtp]. Outbound
+SMTP support means you can send email using any alias with=
+ your custom domain
+name.
+
+Upgrade for $3
+[https://forwardemail.=
+net/my-account/billing/upgrade?plan=3Denhanced_protection]
+100% Money back guarantee =E2=86=92
+[https://forwardemail.=
+net/en/faq#do-you-offer-a-money-back-guarantee-on-paid-plans]
+
+Upgrading keeps your email private:
+
+Right now anyone can run this computer=
+ command:
+
+dig yourdomain.com txt
+
+Your email is displayed in the output:
+
+forward-email=3Ddelinacre@gmail.com
+
+Upgrading will encrypt and hide your =
+email:
+
+forward-email=3D**********
+
+These features ensure high =
+deliverability and help to keep your email safe. The
+cost is only $3 per month and supports our roadmap, server infrastructure, =
+and
+the open-source community.
+
+Upgrading includes unlimited domains and =
+aliases, real-time alerts and logs,
+outbound SMTP access, and more.
+
+Upgrade for $3
+[https://forwardemail.net/my-account/billing/upgrade?=
+plan=3Denhanced_protection]
+100% Money back guarantee =E2=86=92
+[https://forwardemail.net/en/faq#do-you-offer-a-money-back-guarantee-on-pai=
+d-plans]
+
+
+YOUR ACCOUNT
+
+Manage your aliases, domains, settings, and =
+security.
+
+My Account [https://forwardemail.net/en/my-account]
+
+
+CUSTOMER SUPPORT
+
+Read our FAQ, submit a help request, or reply to this =
+email.
+
+ * Read FAQ [https://forwardemail.net/en/faq]
+ * Help Request [https://forwardemail.net/en/help]
+
+If you have any questions or comments, then please let us know
+https://forwardemail.net
+ * Home [https://forwardemail.net/en]
+ * My Account [https://forwardemail.net/en/my-account]
+ * Privacy [https://forwardemail.net/en/privacy]
+ * Terms =
+[https://forwardemail.net/en/terms]
+
+Unsubscribe
+[https://forwardemail.=
+net/en/unsubscribe/AugYjAAvYXKP_ttCljdIpbFulcuxXx2a3qMZRbmk0bUgafI5LKiTbUFV=
+Xw8Yv0Ym8EWyBYxv0AXQKYdbkhbeqOYaEz-hv52Ed3a6EqSueBSlf6HC-nrby9A]
+----_NmP-0a48aee9dd4f2f36-Part_1
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!doctype html><html lang=3D"en" style=3D"font-family: sans-serif; =
+line-height: 1.15; -webkit-text-size-adjust: 100%; -webkit-tap-highlight-co=
+lor: rgba(0,0,0,0); box-sizing: border-box;"><head><meta =
+charset=3D"utf-8"><meta name=3D"viewport" content=3D"width=3Ddevice-width">=
+<meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge"><meta =
+name=3D"x-apple-disable-message-reformatting"><title></title></head><body =
+class=3D"email" style=3D"box-sizing: inherit; background-color: #fff; =
+color: #212529; font-family: Nunito Sans,Helvetica Neue,Arial,sans-serif; =
+font-size: 1rem; font-weight: 400; line-height: 1.5; text-align: left; =
+margin: 0 auto!important; max-width: 600px!important; padding: 0!=
+important;"><div class=3D"container mt-3" style=3D"margin-left: auto; =
+margin-right: auto; width: 100%; box-sizing: border-box; margin-top: 1rem!=
+important; padding-left: 0!important; padding-right: 0!important;"><div =
+class=3D"row" style=3D"display: flex; flex-wrap: wrap; box-sizing: =
+border-box; overflow: visible!important; margin-left: 0!important; =
+margin-right: 0!important;"><div class=3D"col-12" style=3D"position: =
+relative; width: 100%; flex: 0 0 100%; max-width: 100%; box-sizing: =
+border-box; padding-left: 5px!important; padding-right: 5px!=
+important;"><div class=3D"card border-dark d-block text-center" =
+style=3D"flex-direction: column; min-width: 0; position: relative; =
+word-wrap: break-word; background-clip: border-box; background-color: #fff;=
+ border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; box-sizing: =
+border-box; border-color: #1d1d1d!important; display: block!important; =
+text-align: center!important;"><h1 class=3D"h5 card-header" =
+style=3D"margin-top: 0; font-family: VC Honey,Nunito Sans,Helvetica Neue,=
+Arial,sans-serif; font-weight: 400; line-height: 1.2; font-size: 1.25rem; =
+border-bottom: 1px solid rgba(0,0,0,.125); background-color: rgba(0,0,0,.=
+03); padding: .75rem 1.25rem; box-sizing: border-box; margin-bottom: 0!=
+important;">Thank you for joining us</h1><div class=3D"card-body =
+text-center p-0" style=3D"flex: 1 1 auto; min-height: 1px; box-sizing: =
+border-box; padding: 0!important; text-align: center!important;"><a =
+href=3D"https://forwardemail.net/en/my-account" style=3D"background-color: =
+transparent; color: #06f; -webkit-text-decoration: none; text-decoration: =
+none; box-sizing: border-box;"><img class=3D"img-fluid d-block align-top" =
+src=3D"https://forwardemail.net/img/emails/welcome-691b9da96d.gif" alt =
+style=3D"border-style: none; vertical-align: middle; box-sizing: =
+border-box; display: block!important; height: auto!important; max-width: =
+100%!important; -o-object-fit: cover!important; object-fit: cover!=
+important;" height=3D"auto"></a><div class=3D"p-3" style=3D"box-sizing: =
+border-box; padding: 1rem!important;"><h1 class=3D"h3" style=3D"margin-top:=
+ 0; font-family: VC Honey,Nunito Sans,Helvetica Neue,Arial,sans-serif; =
+font-weight: 400; line-height: 1.2; margin-bottom: .5rem; font-size: 1.=
+75rem; box-sizing: border-box;">Features</h1><ul class=3D"list-unstyled =
+text-left mb-0 d-inline-block mx-auto" style=3D"margin-top: 0; list-style: =
+none; padding-left: 0; box-sizing: border-box; display: inline-block!=
+important; margin-bottom: 0!important; margin-right: auto!important; =
+margin-left: auto!important; text-align: left!important;"><li =
+style=3D"box-sizing: border-box; margin-right: 1rem;">=E2=9C=85 Unlimited =
+domains and aliases <span class=3D"badge badge-success" =
+style=3D"border-radius: .25rem; display: inline-block; font-size: 75%; =
+font-weight: 700; line-height: 1; padding: .25em .4em; text-align: center; =
+transition: color .15s ease-in-out,background-color .15s ease-in-out,=
+border-color .15s ease-in-out,box-shadow .15s ease-in-out; vertical-align: =
+baseline; white-space: nowrap; background-color: #1c7325; color: #fff; =
+box-sizing: border-box;">100% Free</span></li><li style=3D"box-sizing: =
+border-box; margin-right: 1rem;">=E2=9C=85 10 GB encrypted email storage <a=
+ class=3D"badge badge-dark" href=3D"https://forwardemail.=
+net/en/blog/docs/best-quantum-safe-encrypted-email-service" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">Learn more &rarr;</a></li><li style=3D"box-sizing: border-box;=
+ margin-right: 1rem;">=E2=9C=85 Privacy-focused email <a class=3D"badge =
+badge-dark align-middle" href=3D"https://forwardemail.net/en/privacy" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; white-space: nowrap; =
+background-color: #1d1d1d; color: #fff; box-sizing: border-box; =
+vertical-align: middle!important;">Privacy Policy &rarr;</a></li><li =
+style=3D"box-sizing: border-box; margin-right: 1rem;">=E2=9C=85 Send =
+outbound SMTP email <a class=3D"badge badge-dark" href=3D"https://forwardem=
+ail.net/en/guides/send-email-with-custom-domain-smtp" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">SMTP Guide &rarr;</a></li><li style=3D"box-sizing: border-box;=
+ margin-right: 1rem;">=E2=9C=85 Works with Apple, Outlook, Gmail, =
+Thunderbird, Android <a class=3D"badge badge-dark" href=3D"https://forwarde=
+mail.net/en/faq#do-you-support-receiving-email-with-imap" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">Apps &rarr;</a></li><li style=3D"box-sizing: border-box; =
+margin-right: 1rem;">=E2=9C=85 Support for E2EE/OpenPGP/WKD <a =
+class=3D"badge badge-dark" href=3D"https://forwardemail.=
+net/en/faq#do-you-support-openpgpmime-end-to-end-encryption-e2ee-and-web-ke=
+y-directory-wkd" style=3D"-webkit-text-decoration: none; text-decoration: =
+none; border-radius: .25rem; display: inline-block; font-size: 75%; =
+font-weight: 700; line-height: 1; padding: .25em .4em; text-align: center; =
+transition: color .15s ease-in-out,background-color .15s ease-in-out,=
+border-color .15s ease-in-out,box-shadow .15s ease-in-out; vertical-align: =
+baseline; white-space: nowrap; background-color: #1d1d1d; color: #fff; =
+box-sizing: border-box;">Learn more &rarr;</a></li><li style=3D"box-sizing:=
+ border-box; margin-right: 1rem;">=E2=9C=85 Easily migrate from any =
+provider <a class=3D"badge badge-dark" href=3D"https://forwardemail.=
+net/en/faq#how-do-i-import-and-migrate-my-existing-mailbox" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">Learn more &rarr;</a></li><li style=3D"box-sizing: border-box;=
+ margin-right: 1rem;">=E2=9C=85 Enterprise-grade 99.99% uptime SLA <a =
+class=3D"badge badge-dark" href=3D"https://forwardemail.net/en/faq" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">View FAQ &rarr;</a></li><li style=3D"box-sizing: border-box; =
+margin-right: 1rem;">=E2=9C=85 Powered by bare metal servers <a =
+class=3D"badge badge-dark" href=3D"https://status.forwardemail.net" =
+target=3D"_blank" rel=3D"noopener noreferrer" style=3D"-webkit-text-decorat=
+ion: none; text-decoration: none; border-radius: .25rem; display: =
+inline-block; font-size: 75%; font-weight: 700; line-height: 1; padding: .=
+25em .4em; text-align: center; transition: color .15s ease-in-out,=
+background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow =
+.15s ease-in-out; vertical-align: baseline; white-space: nowrap; =
+background-color: #1d1d1d; color: #fff; box-sizing: border-box;">Status =
+Page &rarr;</a></li><li style=3D"box-sizing: border-box; margin-right: =
+1rem;">=E2=9C=85 100% open-source software <a class=3D"badge badge-dark" =
+href=3D"https://github.com/forwardemail" target=3D"_blank" rel=3D"noopener =
+noreferrer" style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">View GitHub &rarr;</a></li><li style=3D"box-sizing: =
+border-box; margin-right: 1rem;">=E2=9C=85 Email API designed for =
+developers <a class=3D"badge badge-dark" href=3D"https://forwardemail.=
+net/en/email-api" style=3D"-webkit-text-decoration: none; text-decoration: =
+none; border-radius: .25rem; display: inline-block; font-size: 75%; =
+font-weight: 700; line-height: 1; padding: .25em .4em; text-align: center; =
+transition: color .15s ease-in-out,background-color .15s ease-in-out,=
+border-color .15s ease-in-out,box-shadow .15s ease-in-out; vertical-align: =
+baseline; white-space: nowrap; background-color: #1d1d1d; color: #fff; =
+box-sizing: border-box;">Email API &rarr;</a></li></ul></div><div =
+class=3D"p-3 text-center" style=3D"box-sizing: border-box; padding: 1rem!=
+important; text-align: center!important;"><h2 class=3D"h3" =
+style=3D"margin-top: 0; font-family: VC Honey,Nunito Sans,Helvetica Neue,=
+Arial,sans-serif; font-weight: 400; line-height: 1.2; margin-bottom: .5rem;=
+ font-size: 1.75rem; box-sizing: border-box;">Need real-time alerts and =
+logs?</h2><p class=3D"card-text" style=3D"margin-bottom: 1rem; margin-top: =
+0; box-sizing: border-box;"> <strong style=3D"font-weight: bolder; =
+box-sizing: border-box;">Upgrading will unlock <a href=3D"https://forwardem=
+ail.net/faq#do-you-store-error-logs" target=3D"_blank" =
+style=3D"background-color: transparent; color: #06f; =
+-webkit-text-decoration: none; text-decoration: none; box-sizing: =
+border-box;">real-time alerts and logs</a> and <a href=3D"https://forwardem=
+ail.net/guides/send-email-with-custom-domain-smtp" target=3D"_blank" =
+style=3D"background-color: transparent; color: #06f; =
+-webkit-text-decoration: none; text-decoration: none; box-sizing: =
+border-box;">outbound SMTP support</a></strong>. Outbound SMTP support =
+means you can send email using any alias with your custom domain name.=
+</p><div class=3D"d-block mb-1" style=3D"box-sizing: border-box; display: =
+block!important; margin-bottom: .25rem!important;"><a class=3D"btn btn-lg =
+btn-success" href=3D"https://forwardemail.net/my-account/billing/upgrade?=
+plan=3Denhanced_protection" role=3D"button" style=3D"-webkit-text-decoratio=
+n: none; text-decoration: none; border: 1px solid transparent; display: =
+inline-block; font-weight: 400; text-align: center; transition: color .15s =
+ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out=
+,box-shadow .15s ease-in-out; -webkit-user-select: none; -moz-user-select: =
+none; user-select: none; vertical-align: middle; background-color: #1c7325;=
+ border-color: #1c7325; color: #fff; border-radius: .3rem; font-size: 1.=
+25rem; line-height: 1.5; padding: .5rem 1rem; cursor: pointer; box-sizing: =
+border-box; margin-right: 1rem;">Upgrade for $3</a></div><a class=3D"badge =
+badge-primary text-uppercase mb-3" href=3D"https://forwardemail.=
+net/en/faq#do-you-offer-a-money-back-guarantee-on-paid-plans" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #06f; color: #fff; box-sizing: =
+border-box; margin-bottom: 1rem!important; text-transform: uppercase!=
+important;">100% Money back guarantee &rarr;</a><p class=3D"card-text =
+font-weight-bold text-decoration-underline lead" style=3D"margin-bottom: =
+1rem; margin-top: 0; font-size: 1.25rem; box-sizing: border-box; =
+font-weight: 700!important; -webkit-text-decoration: underline!important; =
+text-decoration: underline!important;">Upgrading keeps your email =
+private:</p><span class=3D"badge badge-dark" style=3D"border-radius: .=
+25rem; display: inline-block; font-size: 75%; font-weight: 700; =
+line-height: 1; padding: .25em .4em; text-align: center; transition: color =
+.15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #1d1d1d; color: #fff; box-sizing: =
+border-box;">Right now anyone can run this computer command:</span><div =
+class=3D"d-block mb-1" style=3D"box-sizing: border-box; display: block!=
+important; margin-bottom: .25rem!important;"><pre class=3D"d-inline-block =
+mx-auto bg-dark p-3 rounded text-white mb-0" style=3D"font-family: Menlo,=
+Monaco,Consolas,Liberation Mono,Courier New,monospace; margin-top: 0; =
+overflow: auto; -ms-overflow-style: scrollbar; font-size: 87.5%; =
+box-sizing: border-box; white-space: pre-wrap!important; border-radius: .=
+25rem!important; display: inline-block!important; margin-bottom: 0!=
+important; padding: 1rem!important; margin-right: auto!important; =
+margin-left: auto!important; color: #fff!important; background-color: =
+#1d1d1d!important;"><code class=3D"d-block" style=3D"font-family: Menlo,=
+Monaco,Consolas,Liberation Mono,Courier New,monospace; word-wrap: =
+break-word; color: inherit; font-size: inherit; word-break: normal; =
+box-sizing: border-box; display: block!important;">dig yourdomain.com =
+txt</code></pre></div><span class=3D"badge badge-danger" =
+style=3D"border-radius: .25rem; display: inline-block; font-size: 75%; =
+font-weight: 700; line-height: 1; padding: .25em .4em; text-align: center; =
+transition: color .15s ease-in-out,background-color .15s ease-in-out,=
+border-color .15s ease-in-out,box-shadow .15s ease-in-out; vertical-align: =
+baseline; white-space: nowrap; background-color: #dc3545; color: #fff; =
+box-sizing: border-box;">Your email is displayed in the output:</span><div =
+class=3D"d-block mb-1" style=3D"box-sizing: border-box; display: block!=
+important; margin-bottom: .25rem!important;"><pre class=3D"d-inline-block =
+mx-auto bg-dark p-3 rounded text-white mb-0" style=3D"font-family: Menlo,=
+Monaco,Consolas,Liberation Mono,Courier New,monospace; margin-top: 0; =
+overflow: auto; -ms-overflow-style: scrollbar; font-size: 87.5%; =
+box-sizing: border-box; white-space: pre-wrap!important; border-radius: .=
+25rem!important; display: inline-block!important; margin-bottom: 0!=
+important; padding: 1rem!important; margin-right: auto!important; =
+margin-left: auto!important; color: #fff!important; background-color: =
+#1d1d1d!important;"><code class=3D"d-block" style=3D"font-family: Menlo,=
+Monaco,Consolas,Liberation Mono,Courier New,monospace; word-wrap: =
+break-word; color: inherit; font-size: inherit; word-break: normal; =
+box-sizing: border-box; display: block!important;">forward-email=3D<span =
+class=3D"font-weight-bold" style=3D"box-sizing: border-box; color: red; =
+font-weight: 700!important;">delinacre@gmail.com</span></code></pre></div><=
+span class=3D"badge badge-success" style=3D"border-radius: .25rem; display:=
+ inline-block; font-size: 75%; font-weight: 700; line-height: 1; padding: .=
+25em .4em; text-align: center; transition: color .15s ease-in-out,=
+background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow =
+.15s ease-in-out; vertical-align: baseline; white-space: nowrap; =
+background-color: #1c7325; color: #fff; box-sizing: border-box;">Upgrading =
+will encrypt and hide your email:</span><div class=3D"d-block mb-1" =
+style=3D"box-sizing: border-box; display: block!important; margin-bottom: .=
+25rem!important;"><pre class=3D"d-inline-block mx-auto bg-dark p-3 rounded =
+text-white mb-0" style=3D"font-family: Menlo,Monaco,Consolas,Liberation =
+Mono,Courier New,monospace; margin-top: 0; overflow: auto; =
+-ms-overflow-style: scrollbar; font-size: 87.5%; box-sizing: border-box; =
+white-space: pre-wrap!important; border-radius: .25rem!important; display: =
+inline-block!important; margin-bottom: 0!important; padding: 1rem!=
+important; margin-right: auto!important; margin-left: auto!important; =
+color: #fff!important; background-color: #1d1d1d!important;"><code =
+class=3D"d-block" style=3D"font-family: Menlo,Monaco,Consolas,Liberation =
+Mono,Courier New,monospace; word-wrap: break-word; color: inherit; =
+font-size: inherit; word-break: normal; box-sizing: border-box; display: =
+block!important;">forward-email=3D<span class=3D"font-weight-bold =
+text-success" style=3D"box-sizing: border-box; font-weight: 700!important; =
+color: #1c7325!important;">**********</span></code></pre></div><p =
+class=3D"card-text" style=3D"margin-bottom: 1rem; margin-top: 0; =
+box-sizing: border-box;">These features ensure high deliverability and help=
+ to keep your email safe. The cost is only $3 per month and supports our =
+roadmap, server infrastructure, and the open-source community.</p><p =
+class=3D"card-text font-weight-bold" style=3D"margin-bottom: 1rem; =
+margin-top: 0; box-sizing: border-box; font-weight: 700!=
+important;">Upgrading includes unlimited domains and aliases, real-time =
+alerts and logs, outbound SMTP access, and more.</p><div class=3D"d-block =
+mb-1" style=3D"box-sizing: border-box; display: block!important; =
+margin-bottom: .25rem!important;"><a class=3D"btn btn-lg btn-success" =
+href=3D"https://forwardemail.net/my-account/billing/upgrade?=
+plan=3Denhanced_protection" role=3D"button" style=3D"-webkit-text-decoratio=
+n: none; text-decoration: none; border: 1px solid transparent; display: =
+inline-block; font-weight: 400; text-align: center; transition: color .15s =
+ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out=
+,box-shadow .15s ease-in-out; -webkit-user-select: none; -moz-user-select: =
+none; user-select: none; vertical-align: middle; background-color: #1c7325;=
+ border-color: #1c7325; color: #fff; border-radius: .3rem; font-size: 1.=
+25rem; line-height: 1.5; padding: .5rem 1rem; cursor: pointer; box-sizing: =
+border-box; margin-right: 1rem;">Upgrade for $3</a></div><a class=3D"badge =
+badge-primary text-uppercase" href=3D"https://forwardemail.=
+net/en/faq#do-you-offer-a-money-back-guarantee-on-paid-plans" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; =
+border-radius: .25rem; display: inline-block; font-size: 75%; font-weight: =
+700; line-height: 1; padding: .25em .4em; text-align: center; transition: =
+color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s =
+ease-in-out,box-shadow .15s ease-in-out; vertical-align: baseline; =
+white-space: nowrap; background-color: #06f; color: #fff; box-sizing: =
+border-box; text-transform: uppercase!important;">100% Money back guarantee=
+ &rarr;</a></div><div class=3D"p-3" style=3D"box-sizing: border-box; =
+padding: 1rem!important;"><h1 class=3D"h3" style=3D"margin-top: 0; =
+font-family: VC Honey,Nunito Sans,Helvetica Neue,Arial,sans-serif; =
+font-weight: 400; line-height: 1.2; margin-bottom: .5rem; font-size: 1.=
+75rem; box-sizing: border-box;">Your Account</h1><p class=3D"card-text" =
+style=3D"margin-bottom: 1rem; margin-top: 0; box-sizing: =
+border-box;">Manage your aliases, domains, settings, and security.</p><a =
+class=3D"btn btn-lg btn-dark" href=3D"https://forwardemail.=
+net/en/my-account" style=3D"-webkit-text-decoration: none; text-decoration:=
+ none; border: 1px solid transparent; display: inline-block; font-weight: =
+400; text-align: center; transition: color .15s ease-in-out,=
+background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow =
+.15s ease-in-out; -webkit-user-select: none; -moz-user-select: none; =
+user-select: none; vertical-align: middle; background-color: #1d1d1d; =
+border-color: #1d1d1d; color: #fff; border-radius: .3rem; font-size: 1.=
+25rem; line-height: 1.5; padding: .5rem 1rem; cursor: pointer; box-sizing: =
+border-box; margin-right: 1rem;">My Account</a></div><div class=3D"p-3" =
+style=3D"box-sizing: border-box; padding: 1rem!important;"><h1 class=3D"h3"=
+ style=3D"margin-top: 0; font-family: VC Honey,Nunito Sans,Helvetica Neue,=
+Arial,sans-serif; font-weight: 400; line-height: 1.2; margin-bottom: .5rem;=
+ font-size: 1.75rem; box-sizing: border-box;">Customer Support</h1><p =
+class=3D"card-text" style=3D"margin-bottom: 1rem; margin-top: 0; =
+box-sizing: border-box;">Read our FAQ, submit a help request, or reply to =
+this email.</p><ul class=3D"list-inline mb-0" style=3D"margin-top: 0; =
+list-style: none; padding-left: 0; box-sizing: border-box; margin-bottom: 0=
+!important;"><li class=3D"list-inline-item" style=3D"display: inline-block;=
+ box-sizing: border-box; margin-right: 1rem;"><a class=3D"btn btn-lg =
+btn-primary" href=3D"https://forwardemail.net/en/faq" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; border: 1px =
+solid transparent; display: inline-block; font-weight: 400; text-align: =
+center; transition: color .15s ease-in-out,background-color .15s =
+ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out; =
+-webkit-user-select: none; -moz-user-select: none; user-select: none; =
+vertical-align: middle; background-color: #06f; border-color: #06f; color: =
+#fff; border-radius: .3rem; font-size: 1.25rem; line-height: 1.5; padding: =
+.5rem 1rem; cursor: pointer; box-sizing: border-box; margin-right: =
+1rem;">Read FAQ</a></li><li class=3D"list-inline-item" style=3D"display: =
+inline-block; box-sizing: border-box; margin-right: 1rem;"><a class=3D"btn =
+btn-lg btn-dark" href=3D"https://forwardemail.net/en/help" =
+style=3D"-webkit-text-decoration: none; text-decoration: none; border: 1px =
+solid transparent; display: inline-block; font-weight: 400; text-align: =
+center; transition: color .15s ease-in-out,background-color .15s =
+ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out; =
+-webkit-user-select: none; -moz-user-select: none; user-select: none; =
+vertical-align: middle; background-color: #1d1d1d; border-color: #1d1d1d; =
+color: #fff; border-radius: .3rem; font-size: 1.25rem; line-height: 1.5; =
+padding: .5rem 1rem; cursor: pointer; box-sizing: border-box; margin-right:=
+ 1rem;">Help Request</a></li></ul></div></div><div class=3D"card-footer =
+small text-muted" style=3D"font-size: .875em; font-weight: 400; =
+background-color: rgba(0,0,0,.03); padding: .75rem 1.25rem; border-top: 1px=
+ solid rgba(0,0,0,.125); box-sizing: border-box; color: #6c757d!=
+important;">If you have any questions or comments, then please let us =
+know</div></div></div></div></div><footer style=3D"display: block; =
+box-sizing: border-box;"><div class=3D"container my-3" =
+style=3D"margin-left: auto; margin-right: auto; width: 100%; box-sizing: =
+border-box; margin-top: 1rem!important; margin-bottom: 1rem!important; =
+padding-left: 0!important; padding-right: 0!important;"><div class=3D"row" =
+style=3D"display: flex; flex-wrap: wrap; box-sizing: border-box; overflow: =
+visible!important; margin-left: 0!important; margin-right: 0!=
+important;"><div class=3D"col-12 text-center" style=3D"position: relative; =
+width: 100%; flex: 0 0 100%; max-width: 100%; box-sizing: border-box; =
+text-align: center!important; padding-left: 5px!important; padding-right: =
+5px!important;"><a href=3D"https://forwardemail.net" =
+style=3D"background-color: transparent; color: #06f; =
+-webkit-text-decoration: none; text-decoration: none; box-sizing: =
+border-box;"><img class=3D"d-inline-block align-middle" =
+src=3D"https://forwardemail.net/img/logo-square-180x180-c59a3dcccc.png" =
+width=3D"90" height=3D"auto" alt style=3D"border-style: none; box-sizing: =
+border-box; vertical-align: middle!important; display: inline-block!=
+important; height: auto!important; max-width: 100%!important; =
+-o-object-fit: cover!important; object-fit: cover!important;"></a><ul =
+class=3D"list-inline m-0 text-muted py-3" style=3D"margin-bottom: 1rem; =
+margin-top: 0; list-style: none; padding-left: 0; box-sizing: border-box; =
+margin: 0!important; padding-top: 1rem!important; padding-bottom: 1rem!=
+important; color: #6c757d!important;"><li class=3D"list-inline-item small" =
+style=3D"font-size: .875em; font-weight: 400; display: inline-block; =
+box-sizing: border-box; margin-right: 1rem;"><a class=3D"text-muted" =
+href=3D"https://forwardemail.net/en" style=3D"background-color: =
+transparent; -webkit-text-decoration: none; text-decoration: none; =
+box-sizing: border-box; color: #6c757d!important;">Home</a></li><li =
+class=3D"list-inline-item small" style=3D"font-size: .875em; font-weight: =
+400; display: inline-block; box-sizing: border-box; margin-right: 1rem;"><a=
+ class=3D"text-muted" href=3D"https://forwardemail.net/en/my-account" =
+style=3D"background-color: transparent; -webkit-text-decoration: none; =
+text-decoration: none; box-sizing: border-box; color: #6c757d!=
+important;">My Account</a></li><li class=3D"list-inline-item small" =
+style=3D"font-size: .875em; font-weight: 400; display: inline-block; =
+box-sizing: border-box; margin-right: 1rem;"><a class=3D"text-muted" =
+href=3D"https://forwardemail.net/en/privacy" style=3D"background-color: =
+transparent; -webkit-text-decoration: none; text-decoration: none; =
+box-sizing: border-box; color: #6c757d!important;">Privacy</a></li><li =
+class=3D"list-inline-item small" style=3D"font-size: .875em; font-weight: =
+400; display: inline-block; box-sizing: border-box; margin-right: 1rem;"><a=
+ class=3D"text-muted" href=3D"https://forwardemail.net/en/terms" =
+style=3D"background-color: transparent; -webkit-text-decoration: none; =
+text-decoration: none; box-sizing: border-box; color: #6c757d!=
+important;">Terms</a></li></ul></div></div><div class=3D"row" =
+style=3D"display: flex; flex-wrap: wrap; box-sizing: border-box; overflow: =
+visible!important; margin-left: 0!important; margin-right: 0!=
+important;"><div class=3D"col-12 text-center small" style=3D"font-size: .=
+875em; font-weight: 400; position: relative; width: 100%; flex: 0 0 100%; =
+max-width: 100%; box-sizing: border-box; text-align: center!important; =
+padding-left: 5px!important; padding-right: 5px!important;"><a =
+class=3D"small text-muted text-monospace" href=3D"https://forwardemail.=
+net/en/unsubscribe/AugYjAAvYXKP_ttCljdIpbFulcuxXx2a3qMZRbmk0bUgafI5LKiTbUFV=
+Xw8Yv0Ym8EWyBYxv0AXQKYdbkhbeqOYaEz-hv52Ed3a6EqSueBSlf6HC-nrby9A" =
+style=3D"background-color: transparent; -webkit-text-decoration: none; =
+text-decoration: none; font-size: .875em; font-weight: 400; box-sizing: =
+border-box; font-family: Menlo,Monaco,Consolas,Liberation Mono,Courier New,=
+monospace!important; color: #6c757d!important;">Unsubscribe</a></div></div>=
+</div></footer></body></html>
+----_NmP-0a48aee9dd4f2f36-Part_1--

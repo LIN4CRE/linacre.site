@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Terminal, Github, Heart, ArrowUp } from 'lucide-react';
+import { Terminal, Github, Heart, ArrowUp, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -23,7 +23,8 @@ export default function Footer() {
       {showTopBtn && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 p-3 bg-amber-color text-[#0b0e14] rounded-full shadow-lg hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-cyan"
+          className="fixed bottom-6 right-6 z-40 p-3 bg-amber-color text-[#070A0F] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
+          style={{ boxShadow: 'var(--linacre-glow-strong)' }}
           aria-label="Scroll to top"
           id="btn-scroll-top"
         >
@@ -31,39 +32,54 @@ export default function Footer() {
         </button>
       )}
 
-      <footer className="w-full border-t border-border-color/60 bg-background/50 py-10 transition-all duration-200" id="global-footer" role="contentinfo">
+      {/* Amber pulse-line divider */}
+      <div className="linacre-pulse-line w-full" />
+
+      <footer className="w-full bg-background/50 py-12 transition-all" style={{ transitionDuration: 'var(--linacre-duration-base)' }} id="global-footer" role="contentinfo">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             {/* Copyright/Author */}
-            <div className="flex flex-col items-center md:items-start gap-1 font-mono text-xs text-muted-foreground/80">
+            <div className="flex flex-col items-center md:items-start gap-1.5 font-mono text-xs text-muted-foreground/80">
               <div className="flex items-center gap-1.5 font-bold text-foreground">
-                <Terminal className="w-3.5 h-3.5 text-cyan" />
+                <Terminal className="w-3.5 h-3.5 text-amber-color" />
                 <span>david@linacre.site</span>
               </div>
               <p className="mt-1">
-                &copy; {currentYear} Rebuilt with React, TypeScript and Tailwind CSS v4.
+                &copy; {currentYear} Built with React, TypeScript and Tailwind CSS v4.
+              </p>
+              <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                Calm systems, useful tools, amber-coded craft.
               </p>
             </div>
 
             {/* Center heart indicator */}
             <div className="text-[10px] font-mono text-muted-foreground/60 flex items-center gap-1">
               <span>Built with passion and absolute precision</span>
-              <Heart className="w-3 h-3 text-red-500 fill-red-500 animate-pulse" />
+              <Heart className="w-3 h-3 text-amber-color fill-amber-color linacre-animate-pulse" />
             </div>
 
             {/* Social Links */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <a
                 href="https://github.com/LIN4CRE"
                 target="_blank"
                 rel="noopener"
-                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors focus:outline-none"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
                 title="GitHub Profile"
               >
                 <Github className="w-4 h-4" />
               </a>
-              <span className="font-mono text-[9px] text-muted-foreground/40 border border-border-color/30 px-1.5 py-0.5 rounded select-none">
-                v4.2.0
+              <a
+                href="https://linkedin.com/in/davidlinacre"
+                target="_blank"
+                rel="noopener"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
+                title="LinkedIn Profile"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <span className="font-mono text-[9px] text-muted-foreground/40 border border-amber-color/15 px-1.5 py-0.5 rounded-md select-none">
+                v4.5.0
               </span>
             </div>
           </div>

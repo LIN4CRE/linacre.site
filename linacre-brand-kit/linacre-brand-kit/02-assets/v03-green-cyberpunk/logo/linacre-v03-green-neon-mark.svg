@@ -1,0 +1,10 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="bg" cx="50%" cy="44%" r="75%"><stop offset="0" stop-color="#092016"/><stop offset=".55" stop-color="#050D0A"/><stop offset="1" stop-color="#000000"/></radialGradient><filter id="glow" x="0" y="0" width="1024" height="1024"><feGaussianBlur stdDeviation="20" result="b"/><feColorMatrix in="b" type="matrix" values="0 0 0 0 0.1 0 1 0 0 1 0 0 0 0 0.08 0 0 0 .9 0"/><feBlend in2="SourceGraphic" mode="screen"/></filter><linearGradient id="g" x1="190" y1="120" x2="850" y2="900"><stop stop-color="#D9FFDA"/><stop offset=".22" stop-color="#39FF14"/><stop offset=".7" stop-color="#00FF78"/><stop offset="1" stop-color="#007A46"/></linearGradient></defs>
+<rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+<path d="M512 118 853.5 315v394L512 906 170.5 709V315L512 118Z" stroke="url(#g)" stroke-width="34" stroke-linejoin="round" filter="url(#glow)"/>
+<path d="M512 190 791 351v322L512 834 233 673V351L512 190Z" stroke="#00FF78" stroke-opacity=".36" stroke-width="10"/>
+<path d="M333 691V332M333 691H463" stroke="#39FF14" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M280 537H402L455 407 565 681 628 537H744" stroke="#D9FFDA" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="744" cy="537" r="23" fill="#00FFD6"/>
+<text x="512" y="965" text-anchor="middle" fill="#39FF14" font-family="monospace" font-size="28" opacity=".8">github.com/LIN4CRE</text>
+</svg>

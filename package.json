@@ -1,15 +1,18 @@
 {
-  "name": "react-example",
+  "name": "linacre-site",
   "private": true,
-  "version": "0.0.0",
+  "version": "4.5.0",
   "type": "module",
   "scripts": {
-    "dev": "python setup_env.py && tsx api/server.ts",
-    "build": "python setup_env.py && vite build && esbuild api/server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js",
+    "dev": "python linacre.py dev",
+    "build": "python linacre.py setup && vite build && esbuild api/server.ts --bundle --platform=node --format=esm --packages=external --sourcemap --outfile=dist/server.js",
     "start": "node dist/server.js",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "setup": "python linacre.py setup",
+    "sync": "python linacre.py sync",
+    "status": "python linacre.py status"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

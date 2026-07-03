@@ -33,7 +33,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border-color bg-background/80 backdrop-blur-md transition-colors duration-200" role="banner">
+    <header className="sticky top-0 z-50 w-full border-b border-amber-color/10 bg-background/70 backdrop-blur-xl transition-colors" style={{ transitionDuration: 'var(--linacre-duration-base)' }} role="banner">
       {/* Skip-to-content link for keyboard/screen reader accessibility */}
       <a
         href="#main-content"
@@ -49,7 +49,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             className="flex items-center gap-2 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded"
             id="nav-logo"
           >
-            <span className="text-amber-color transform group-hover:translate-x-0.5 transition-transform">&gt;</span>
+            <span className="text-amber-color transform group-hover:translate-x-0.5 transition-transform linacre-animate-pulse">&gt;</span>
             <span className="text-foreground transition-colors">linacre</span>
             <span className="text-amber-color">.</span>
             <span className="text-foreground transition-colors">site</span>
@@ -77,7 +77,8 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                   {isActive && (
                     <motion.div
                       layoutId="activeTabUnderline"
-                      className="absolute bottom-0 left-2 right-2 h-0.5 bg-amber-color"
+                      className="absolute bottom-0 left-2 right-2 h-[2px] bg-amber-color rounded-full"
+                      style={{ boxShadow: '0 0 12px rgba(245,158,11,0.4)' }}
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -144,7 +145,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.15 }}
-            className="md:hidden border-t border-border-color bg-background/95 backdrop-blur-lg overflow-hidden"
+            className="md:hidden border-t border-amber-color/10 bg-background/95 backdrop-blur-xl overflow-hidden"
             id="mobile-nav-panel"
           >
             <div className="px-4 py-3 space-y-1">

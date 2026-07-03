@@ -183,65 +183,7 @@ const WriterRobotSVG = ({ color }: { color: string }) => (
   </svg>
 );
 
-// Custom High-Resolution SVG artwork buildings
-const CyberCastleSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    <rect x="15" y="60" width="70" height="30" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="2" />
-    <line x1="15" y1="75" x2="85" y2="75" stroke="#334155" strokeWidth="1.5" />
-    <rect x="25" y="30" width="50" height="30" fill="#334155" stroke="#475569" strokeWidth="2" />
-    <rect x="20" y="20" width="12" height="15" fill="#475569" stroke="#64748b" strokeWidth="1.5" />
-    <rect x="68" y="20" width="12" height="15" fill="#475569" stroke="#64748b" strokeWidth="1.5" />
-    <line x1="50" y1="30" x2="50" y2="5" stroke="#fbbf24" strokeWidth="2.5" />
-    <circle cx="50" cy="5" r="4" fill="#fbbf24" className="animate-pulse" />
-    <ellipse cx="50" cy="50" rx="35" ry="12" fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 4" opacity="0.4" />
-    <rect x="42" y="68" width="16" height="22" rx="4" fill="#0f172a" stroke="#fbbf24" strokeWidth="2" />
-  </svg>
-);
 
-const PokeCenterSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    <rect x="15" y="35" width="70" height="55" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2.5" />
-    <path d="M 10 35 Q 50 12 90 35 Z" fill="#ef4444" stroke="#dc2626" strokeWidth="3" />
-    <circle cx="50" cy="28" r="9" fill="#0f172a" stroke="#5ccfe6" strokeWidth="2" />
-    <path d="M 50 23 L 50 33 M 45 28 L 55 28" fill="none" stroke="#5ccfe6" strokeWidth="2.5" />
-    <rect x="38" y="60" width="24" height="30" rx="2" fill="#0f172a" stroke="#5ccfe6" strokeWidth="2" />
-  </svg>
-);
-
-const FlaskLabSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    <rect x="20" y="40" width="60" height="50" rx="4" fill="#0f172a" stroke="#a855f7" strokeWidth="2" />
-    <rect x="35" y="15" width="30" height="55" rx="15" fill="#a855f7" opacity="0.15" />
-    <rect x="35" y="15" width="30" height="55" rx="15" fill="none" stroke="#a855f7" strokeWidth="2.5" />
-    <path d="M 36 50 Q 50 46 64 50 L 64 68 Q 50 68 36 68 Z" fill="#c084fc" opacity="0.75" />
-    <circle cx="45" cy="40" r="2.5" fill="#ffffff" className="animate-bounce" />
-    <circle cx="55" cy="30" r="2" fill="#ffffff" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
-    <circle cx="48" cy="22" r="1.5" fill="#ffffff" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
-  </svg>
-);
-
-const WindmillGeneratorSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    <path d="M 38 90 L 46 35 L 54 35 L 62 90 Z" fill="#1e293b" stroke="#334155" strokeWidth="2.5" />
-    <circle cx="50" cy="35" r="8" fill="#0f172a" stroke="#10b981" strokeWidth="2" />
-    <g className="animate-spin" style={{ transformOrigin: '50px 35px', animationDuration: '6s' }}>
-      <path d="M 50 35 L 50 2 M 49 2 L 51 2" stroke="#10b981" strokeWidth="3" />
-      <path d="M 50 35 L 20 52" stroke="#10b981" strokeWidth="3" />
-      <path d="M 50 35 L 80 52" stroke="#10b981" strokeWidth="3" />
-    </g>
-  </svg>
-);
-
-const TavernCafeSVG = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    <rect x="15" y="45" width="70" height="45" fill="#451a03" stroke="#78350f" strokeWidth="2.5" />
-    <polygon points="10,45 50,15 90,45" fill="#fef08a" stroke="#78350f" strokeWidth="3" />
-    <line x1="30" y1="45" x2="30" y2="90" stroke="#78350f" strokeWidth="2" />
-    <line x1="70" y1="45" x2="70" y2="90" stroke="#78350f" strokeWidth="2" />
-    <rect x="22" y="10" width="10" height="20" fill="#4b5563" stroke="#374151" strokeWidth="1.5" />
-    <circle cx="27" cy="5" r="2.5" fill="#9ca3af" className="animate-ping" opacity="0.7" />
-  </svg>
-);
 
 export default function AgentsHub() {
   const [agents, setAgents] = useState<Agent[]>([
@@ -315,7 +257,7 @@ export default function AgentsHub() {
       id: 'log-initial-1',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       agentName: 'System',
-      message: 'Welcome to the Autonomous Pokémon Simulation Grid! Dispatch a command to start.',
+      message: 'Welcome to the Autonomous Agent Grid! Dispatch a command to start.',
       type: 'info'
     }
   ]);
@@ -360,7 +302,7 @@ export default function AgentsHub() {
   // Dialog Typing effect state
   const [typedDialogText, setTypedDialogText] = useState('');
   const [typingIndex, setTypingIndex] = useState(0);
-  const [currentDialogMessage, setCurrentDialogMessage] = useState('System: Welcome to the Autonomous Pokémon Simulation Grid! Dispatch a command to start.');
+  const [currentDialogMessage, setCurrentDialogMessage] = useState('System: Welcome to the Autonomous Agent Grid! Dispatch a command to start.');
 
   // Pre-coded agent suggestions database
   const ARCHITECT_SUGGESTIONS: AgentSuggestion[] = [
@@ -895,7 +837,7 @@ export default function AgentsHub() {
     };
 
     setAgents((prev) => [...prev, newAgent]);
-    addLog('System', `Spawned autonomous Pokémon agent: ${newAgent.name} [Model: ${newAgent.spriteName}]`, 'success');
+    addLog('System', `Spawned autonomous agent: ${newAgent.name} [Model: ${newAgent.spriteName}]`, 'success');
     setNewAgentName('');
   };
 
@@ -1148,200 +1090,168 @@ export default function AgentsHub() {
         </div>
       </div>
 
-      {/* Grid & Control Panel Split */}
+      {/* Agent Command Center - Pixel Art Party Roster */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Side: Game Screen Simulation Grid (60 FPS Visuals) */}
+        {/* Left Side: Agent Party Roster Cards */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border border-border-color shadow-xl overflow-hidden">
+          <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border-2 border-amber-color/20 shadow-xl overflow-hidden">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808007_1px,transparent_1px),linear-gradient(to_bottom,#80808007_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             
-            {/* Clean Simulation Screen */}
-            <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/75 rounded-xl overflow-hidden p-1 shadow-inner select-none">
-              
-              {/* Target lines vector paths for active agents */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+            {/* Corner ornaments */}
+            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-amber-color/40" />
+            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-amber-color/40" />
+            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-amber-color/40" />
+            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-amber-color/40" />
+
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-2 h-2 bg-amber-color rounded-full animate-pulse" />
+              <h2 className="font-mono text-xs font-bold text-amber-color uppercase tracking-widest">
+                Agent Party Roster
+              </h2>
+              <span className="font-mono text-[10px] text-muted-foreground ml-auto">
+                {agents.filter(a => !a.isPaused).length}/{agents.length} Active
+              </span>
+            </div>
+            
+            {/* Agent Cards Grid */}
+            {agents.length === 0 ? (
+              <div className="text-center py-12 font-mono text-xs text-muted-foreground">
+                <Bot className="w-8 h-8 mx-auto mb-3 opacity-30" />
+                <p>No agents deployed. Spawn one from the factory panel.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {agents.map((agent) => {
-                  if (agent.isPaused || (agent.x === agent.targetX && agent.y === agent.targetY)) return null;
-                  
-                  const startX = `${agent.x * 10 + 5}%`;
-                  const startY = `${agent.y * 10 + 5}%`;
-                  const endX = `${agent.targetX * 10 + 5}%`;
-                  const endY = `${agent.targetY * 10 + 5}%`;
+                  const isMoving = !agent.isPaused && (agent.x !== agent.targetX || agent.y !== agent.targetY);
+                  const isCarrying = agent.task !== 'Idle';
+                  const progress = getPathProgress(agent);
+                  const hasImageError = imageErrors[agent.id];
 
                   return (
-                    <line
+                    <motion.div
                       key={agent.id}
-                      x1={startX}
-                      y1={startY}
-                      x2={endX}
-                      y2={endY}
-                      stroke={agent.color}
-                      strokeWidth="1.5"
-                      strokeDasharray="4 3"
-                      opacity="0.5"
-                    />
-                  );
-                })}
-              </svg>
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      onClick={() => {
+                        playSynthSound('click', isMuted);
+                        setInspectingAgent(agent);
+                      }}
+                      className={`relative bg-[#0a0f1d]/90 border-2 rounded-xl p-4 font-mono cursor-pointer transition-all duration-200 hover:shadow-lg ${
+                        agent.isPaused
+                          ? 'border-red-900/40 opacity-55'
+                          : isMoving
+                          ? 'border-cyan/40 hover:border-cyan/60 shadow-[0_0_12px_rgba(92,207,230,0.08)]'
+                          : 'border-border-color hover:border-amber-color/40'
+                      }`}
+                    >
+                      {/* Corner decorations */}
+                      <div className={`absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 ${agent.isPaused ? 'border-red-900/40' : 'border-amber-color/30'}`} />
+                      <div className={`absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 ${agent.isPaused ? 'border-red-900/40' : 'border-amber-color/30'}`} />
+                      <div className={`absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 ${agent.isPaused ? 'border-red-900/40' : 'border-amber-color/30'}`} />
+                      <div className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 ${agent.isPaused ? 'border-red-900/40' : 'border-amber-color/30'}`} />
 
-              {/* Draw 100 cells */}
-              {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
-                const cellX = index % GRID_SIZE;
-                const cellY = Math.floor(index / GRID_SIZE);
-
-                const isRoad = isPathTile(cellX, cellY);
-
-                const hasMainframe = cellX === 1 && cellY === 1;
-                const hasGit = cellX === 1 && cellY === 8;
-                const hasFlask = cellX === 8 && cellY === 1;
-                const hasWindmill = cellX === 8 && cellY === 8;
-                const hasTavern = cellX === 5 && cellY === 5;
-
-                const stationRGB = 
-                  hasMainframe ? '251, 191, 36' :
-                  hasGit ? '92, 207, 230' :
-                  hasFlask ? '168, 85, 247' :
-                  hasWindmill ? '127, 216, 143' :
-                  hasTavern ? '248, 113, 113' : '';
-
-                const isOccupied = agents.some(a => !a.isPaused && a.x === cellX && a.y === cellY && (a.x !== a.targetX || a.y !== a.targetY || a.task !== 'Idle'));
-
-                return (
-                  <div
-                    key={index}
-                    className={`relative aspect-square flex items-center justify-center transition-all ${
-                      hasMainframe || hasGit || hasFlask || hasWindmill || hasTavern
-                        ? 'bg-[#1b2c1f]/40 border border-[#3e684a]/50 shadow-md' 
-                        : isRoad 
-                        ? 'bg-[#d2b48c]/10 border-[0.5px] border-[#c2a47c]/10' // Clean path styling
-                        : 'bg-[#182315]/10 border-[0.5px] border-border-color/5' // Grass matrix style
-                    }`}
-                  >
-                    {isOccupied && stationRGB && (
-                      <div 
-                        className="absolute w-full h-full rounded-full opacity-60 pointer-events-none scale-110 animate-ping z-0"
-                        style={{ border: `1.5px solid rgba(${stationRGB}, 0.6)` }}
-                      />
-                    )}
-
-                    {hasMainframe && <div className="w-11/12 h-11/12 z-10"><CyberCastleSVG /></div>}
-                    {hasGit && <div className="w-11/12 h-11/12 z-10"><PokeCenterSVG /></div>}
-                    {hasFlask && <div className="w-11/12 h-11/12 z-10"><FlaskLabSVG /></div>}
-                    {hasWindmill && <div className="w-11/12 h-11/12 z-10"><WindmillGeneratorSVG /></div>}
-                    {hasTavern && <div className="w-11/12 h-11/12 z-10"><TavernCafeSVG /></div>}
-                  </div>
-                );
-              })}
-
-              {/* Render 60fps Walk Footprint/Dust Particles */}
-              {particles.map((part) => {
-                const partLeft = `calc(${part.x * 10}% + 5% - 4px)`;
-                const partTop = `calc(${part.y * 10}% + 5% - 4px)`;
-                return (
-                  <div 
-                    key={part.id}
-                    className="absolute w-2 h-2 rounded-full bg-slate-500/30 blur-[0.5px] animate-ping"
-                    style={{ left: partLeft, top: partTop }}
-                  />
-                );
-              })}
-
-              {/* Render Animated Pokémon Agents with detailed Game HUD */}
-              {agents.map((agent) => {
-                const leftPos = `calc(${agent.x * 10}% + 5% - 20px)`;
-                const topPos = `calc(${agent.y * 10}% + 5% - 20px)`;
-
-                const isCarrying = agent.task !== 'Idle';
-                const isMoving = !agent.isPaused && (agent.x !== agent.targetX || agent.y !== agent.targetY);
-                const progress = getPathProgress(agent);
-                const hasImageError = imageErrors[agent.id];
-
-                return (
-                  <motion.div
-                    key={agent.id}
-                    layout
-                    onClick={() => {
-                      playSynthSound('click', isMuted);
-                      setInspectingAgent(agent);
-                    }}
-                    className={`absolute w-10 h-10 flex flex-col items-center justify-center z-20 cursor-pointer ${
-                      isMoving ? 'agent-walk-bounce' : ''
-                    }`}
-                    style={{
-                      left: leftPos,
-                      top: topPos,
-                      filter: agent.isPaused ? 'grayscale(100%) opacity(0.5)' : 'none',
-                      transition: { type: 'spring', stiffness: 130, damping: 14 }
-                    }}
-                  >
-                    {/* Floating RPG HUD Panel (Lvl 99, HP, EXP) */}
-                    <div className="absolute bottom-[110%] w-24 bg-[#0a0f1d]/95 border border-border-color rounded p-1 shadow-2xl space-y-1 text-[6px] font-mono pointer-events-none z-30">
-                      
-                      <div className="flex justify-between text-foreground font-bold">
-                        <span className="truncate max-w-[55%]">{agent.name}</span>
-                        <span className="text-amber-color">
-                          {agent.taskQueue.length > 0 ? `+${agent.taskQueue.length}Q` : 'Lv99'}
-                        </span>
-                      </div>
-
-                      {/* HP Bar */}
-                      <div className="space-y-0.5">
-                        <div className="flex justify-between text-[4px] text-muted-foreground uppercase">
-                          <span>HP</span>
-                          <span>100%</span>
+                      <div className="flex gap-4">
+                        {/* Avatar */}
+                        <div className="w-16 h-16 flex-shrink-0 relative">
+                          <div className={`w-full h-full p-1 rounded-lg bg-background/50 border ${agent.isPaused ? 'border-red-900/30' : 'border-border-color/60'}`}>
+                            {hasImageError ? (
+                              renderAgentSVG(agent.role, agent.color)
+                            ) : (
+                              <img
+                                src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
+                                alt={agent.name}
+                                className="w-full h-full object-contain drop-shadow-[0_0_3px_rgba(255,255,255,0.15)]"
+                                onError={() => setImageErrors(prev => ({ ...prev, [agent.id]: true }))}
+                              />
+                            )}
+                          </div>
+                          {isMoving && (
+                            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-color rounded-full animate-ping" />
+                          )}
                         </div>
-                        <div className="w-full bg-slate-800 h-1 rounded overflow-hidden">
-                          <div className="bg-emerald-color h-full" style={{ width: '100%' }} />
+
+                        {/* Info */}
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          {/* Name + Role */}
+                          <div className="flex items-center justify-between gap-1">
+                            <span className="font-bold text-sm text-foreground truncate">{agent.name}</span>
+                            <span className={`flex-shrink-0 text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                              agent.role === 'Dev' ? 'bg-cyan/10 text-cyan' :
+                              agent.role === 'DevOps' ? 'bg-emerald-color/10 text-emerald-color' :
+                              agent.role === 'Security' ? 'bg-amber-color/10 text-amber-color' :
+                              'bg-purple-color/10 text-purple-color'
+                            }`}>
+                              {agent.role}
+                            </span>
+                          </div>
+
+                          {/* Task */}
+                          <div className="flex items-center gap-1 text-[10px]">
+                            {isCarrying && !agent.isPaused ? (
+                              <>
+                                <span className="text-cyan">▶</span>
+                                <span className="text-muted-foreground truncate">{agent.task}</span>
+                              </>
+                            ) : agent.isPaused ? (
+                              <>
+                                <span className="text-red-400">⏸</span>
+                                <span className="text-red-400/70 text-[9px]">SUSPENDED</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-emerald-color">●</span>
+                                <span className="text-muted-foreground text-[9px]">Standing by</span>
+                              </>
+                            )}
+                          </div>
+
+                          {/* HP Bar */}
+                          <div className="space-y-0.5">
+                            <div className="flex justify-between text-[7px] text-muted-foreground uppercase tracking-wider">
+                              <span>HP</span>
+                              <span>100%</span>
+                            </div>
+                            <div className="w-full bg-slate-800/80 h-1.5 rounded-sm overflow-hidden">
+                              <div className="bg-emerald-color h-full rounded-sm transition-all duration-500" style={{ width: `${agent.isPaused ? 30 : 100}%` }} />
+                            </div>
+                          </div>
+
+                          {/* EXP Bar when working */}
+                          {isCarrying && !agent.isPaused && (
+                            <div className="space-y-0.5">
+                              <div className="flex justify-between text-[7px] text-muted-foreground uppercase tracking-wider">
+                                <span>EXP</span>
+                                <span>{progress}%</span>
+                              </div>
+                              <div className="w-full bg-slate-800/80 h-1.5 rounded-sm overflow-hidden">
+                                <div className="bg-cyan h-full rounded-sm transition-all duration-500" style={{ width: `${progress}%` }} />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Status + Queue */}
+                          <div className="flex items-center justify-between text-[8px] text-muted-foreground">
+                            <span className="truncate max-w-[70%]">{agent.status}</span>
+                            {agent.taskQueue.length > 0 && (
+                              <span className="text-amber-color font-bold flex-shrink-0">+{agent.taskQueue.length}Q</span>
+                            )}
+                          </div>
                         </div>
                       </div>
 
-                      {/* EXP Bar (Visible during active tasks) */}
-                      {isCarrying && (
-                        <div className="space-y-0.5">
-                          <div className="flex justify-between text-[4px] text-muted-foreground uppercase">
-                            <span>EXP</span>
-                            <span>{progress}%</span>
-                          </div>
-                          <div className="w-full bg-slate-800 h-1 rounded overflow-hidden">
-                            <div className="bg-cyan h-full transition-all duration-500" style={{ width: `${progress}%` }} />
-                          </div>
+                      {/* Paused overlay indicator */}
+                      {agent.isPaused && (
+                        <div className="absolute inset-0 rounded-xl bg-black/20 pointer-events-none flex items-center justify-center">
+                          <span className="text-[8px] text-red-400/60 font-bold uppercase tracking-widest bg-black/60 px-2 py-0.5 rounded">Suspended</span>
                         </div>
                       )}
-                    </div>
-
-                    {/* Cargo Carrying Animation */}
-                    {isCarrying && !agent.isPaused && (
-                      <div className="absolute bottom-[65%] left-1/2 transform -translate-x-1/2 text-xs cargo-box z-30">
-                        📦
-                      </div>
-                    )}
-
-                    {/* Shadow underneath sprite */}
-                    <div 
-                      className="absolute bottom-0 w-6 h-1 rounded-full bg-black/40 blur-[1px] transition-transform"
-                      style={{ transform: isMoving ? 'scale(0.85)' : 'scale(1)' }}
-                    />
-
-                    {/* Bulletproof image load fallback */}
-                    {hasImageError ? (
-                      <div className="w-8 h-8 p-0.5 z-10">
-                        {renderAgentSVG(agent.role, agent.color)}
-                      </div>
-                    ) : (
-                      <img 
-                        src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
-                        alt={agent.name}
-                        className="w-8 h-8 object-contain drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] z-10"
-                        onError={() => {
-                          setImageErrors(prev => ({ ...prev, [agent.id]: true }));
-                        }}
-                      />
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
@@ -1351,6 +1261,10 @@ export default function AgentsHub() {
           {/* Panel 1: AI Agent Architect Suggestions Card */}
           <div className="p-5 rounded-2xl bg-purple-color/5 border-2 border-purple-color/40 shadow-[0_0_15px_rgba(168,85,247,0.15)] space-y-4 animate-fade-in relative overflow-hidden">
             <div className="absolute -right-8 -top-8 w-20 h-20 bg-purple-color/10 rounded-full blur-xl pointer-events-none" />
+            <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-purple-color/30" />
+            <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-purple-color/30" />
+            <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-purple-color/30" />
+            <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-purple-color/30" />
             
             <h3 className="font-mono text-xs font-bold text-purple-color uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-purple-color animate-pulse" />
@@ -1408,8 +1322,12 @@ export default function AgentsHub() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="p-5 rounded-2xl bg-muted/15 border border-border-color/60 shadow-lg space-y-4"
+                className="p-5 rounded-2xl bg-muted/15 border-2 border-amber-color/20 shadow-lg space-y-4 relative"
               >
+                <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-amber-color/25" />
+                <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-amber-color/25" />
+                <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-amber-color/25" />
+                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-amber-color/25" />
                 <div className="flex items-center justify-between border-b border-border-color/40 pb-2 font-mono text-xs">
                   <div className="flex items-center gap-2">
                     <span className="font-bold text-foreground uppercase tracking-wider">
@@ -1499,13 +1417,17 @@ export default function AgentsHub() {
             ) : (
               <div className="p-5 rounded-2xl bg-muted/5 border border-dashed border-border-color/40 text-center text-xs font-mono text-muted-foreground py-8">
                 <Info className="w-6 h-6 mx-auto mb-2 text-muted-foreground/40" />
-                <span>Click on a Pokémon bot on the grid to inspect real-time CPU/RAM telemetry, robotic build details, and toggle pause/decommission states.</span>
+                <span>Click on an agent card to inspect real-time CPU/RAM telemetry, robotic build details, and toggle pause/decommission states.</span>
               </div>
             )}
           </AnimatePresence>
 
           {/* Panel 3: Task Dispatcher & Predefined Actions */}
-          <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
+          <div className="p-5 rounded-2xl bg-muted/15 border-2 border-cyan/20 space-y-4 relative">
+            <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-cyan/25" />
+            <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-cyan/25" />
+            <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-cyan/25" />
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-cyan/25" />
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Bot className="w-4 h-4 text-cyan" />
               <span>Coordinated Task Assigner</span>
@@ -1568,7 +1490,11 @@ export default function AgentsHub() {
           </div>
 
           {/* Panel 4: Add Predefined Actions Form */}
-          <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
+          <div className="p-5 rounded-2xl bg-muted/15 border-2 border-purple-color/20 space-y-4 relative">
+            <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-purple-color/25" />
+            <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-purple-color/25" />
+            <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-purple-color/25" />
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-purple-color/25" />
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Plus className="w-4 h-4 text-purple-color" />
               <span>Create New Action Script</span>
@@ -1598,7 +1524,11 @@ export default function AgentsHub() {
           </div>
 
           {/* Panel 5: Agent Spawner Factory */}
-          <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
+          <div className="p-5 rounded-2xl bg-muted/15 border-2 border-emerald-color/20 space-y-4 relative">
+            <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-emerald-color/25" />
+            <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-emerald-color/25" />
+            <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-emerald-color/25" />
+            <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-emerald-color/25" />
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Plus className="w-4 h-4 text-emerald-color" />
               <span>Spawn New Agent</span>
@@ -1648,7 +1578,7 @@ export default function AgentsHub() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] text-muted-foreground uppercase font-bold">Select Pokémon Sprite</label>
+                <label className="block text-[10px] text-muted-foreground uppercase font-bold">Select Avatar Sprite</label>
                 <select
                   value={newAgentSprite}
                   onChange={(e) => setNewAgentSprite(e.target.value)}

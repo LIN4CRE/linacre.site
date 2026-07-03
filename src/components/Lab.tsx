@@ -1967,11 +1967,10 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                       <Folder className="w-3.5 h-3.5 text-amber-color" />
                       <input
                         type="file"
-                        webkitdirectory=""
-                        directory=""
                         multiple
                         onChange={handleImportSingleFiles}
                         className="hidden"
+                        {...{ webkitdirectory: "", directory: "" }}
                       />
                     </label>
 

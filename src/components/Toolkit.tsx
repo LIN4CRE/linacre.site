@@ -124,7 +124,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
               placeholder="search the toolkit..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-muted/40 dark:bg-[#10141d]/40 border border-border-color rounded-lg py-2.5 pl-20 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-cyan/50 focus:border-cyan text-foreground placeholder:text-muted-foreground/60 transition-all font-mono"
+              className="w-full bg-muted/40 dark:bg-[#0B1220]/60 border border-amber-color/15 rounded-2xl py-2.5 pl-20 pr-16 text-sm focus:outline-none focus:ring-2 focus:ring-amber-color/50 focus:border-amber-color text-foreground placeholder:text-muted-foreground/60 transition-all font-mono"
               id="search-input"
             />
             <div className="absolute inset-y-0 right-3 flex items-center">
@@ -135,7 +135,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
           </div>
 
           {/* Counts */}
-          <div className="font-mono text-xs text-muted-foreground flex items-center gap-1.5 self-end md:self-center bg-muted/30 dark:bg-muted/10 border border-border-color/30 px-3 py-1.5 rounded-md">
+          <div className="font-mono text-xs text-muted-foreground flex items-center gap-1.5 self-end md:self-center bg-muted/30 dark:bg-[#0B1220]/40 border border-amber-color/10 px-3 py-1.5 rounded-xl">
             <Sparkles className="w-3.5 h-3.5 text-amber-color animate-pulse" />
             <span>
               // showing {filteredTools.length} of {TOOLS.length} tools
@@ -193,9 +193,12 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                     href={tool.url}
                     target="_blank"
                     rel="noopener"
-                    className={`group relative flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi hover:-translate-y-0.5 transition-all duration-200 border-l-[3px] ${getLeftBorderColor(
+                    className={`group relative flex flex-col justify-between bg-muted/20 dark:bg-[#0B1220]/80 border border-amber-color/12 rounded-2xl p-5 hover:bg-muted/35 dark:hover:bg-[#111827] hover:border-amber-color/30 hover:-translate-y-1 transition-all border-l-[3px] ${getLeftBorderColor(
                       tool.category
                     )}`}
+                    style={{ transitionDuration: 'var(--linacre-duration-base)', boxShadow: 'var(--linacre-card-shadow)' }}
+                    onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = 'var(--linacre-glow-soft)'; }}
+                    onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.boxShadow = 'var(--linacre-card-shadow)'; }}
                     id={`tool-card-${tool.id}`}
                   >
                     <div>
@@ -215,7 +218,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                             <Star
                               className={`w-3.5 h-3.5 transition-transform ${
                                 isBookmarked
-                                  ? 'fill-amber-color text-amber-color scale-110'
+                                  ? 'fill-amber-color text-amber-color scale-110 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]'
                                   : 'text-muted-foreground'
                               }`}
                             />

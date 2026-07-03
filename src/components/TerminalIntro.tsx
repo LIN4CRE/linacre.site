@@ -75,7 +75,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
             setCurrentLineText('');
             resolve();
           }
-        }, 30);
+        }, 25);
       });
     };
 
@@ -108,9 +108,9 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
   return (
     <div className="w-full max-w-2xl mx-auto my-8 font-mono" id="intro-terminal">
       {/* Terminal Container */}
-      <div className="bg-muted/70 dark:bg-[#10141d]/90 border border-border-color rounded-xl overflow-hidden shadow-2xl transition-all duration-300">
+      <div className="linacre-surface overflow-hidden transition-all" style={{ transitionDuration: 'var(--linacre-duration-base)' }}>
         {/* Title Bar */}
-        <div className="flex items-center justify-between px-4 py-3 bg-muted dark:bg-[#161b26] border-b border-border-color select-none">
+        <div className="flex items-center justify-between px-4 py-3 bg-muted dark:bg-[#0B1220] border-b border-amber-color/15 select-none">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500/80 hover:bg-red-500 transition-colors" />
             <div className="w-3 h-3 rounded-full bg-yellow-500/80 hover:bg-yellow-500 transition-colors" />
@@ -133,7 +133,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
         </div>
 
         {/* Terminal Body */}
-        <div className="p-5 min-h-[280px] max-h-[400px] overflow-y-auto text-sm leading-relaxed space-y-2 select-text scrollbar-thin">
+        <div className="p-5 min-h-[280px] max-h-[400px] overflow-y-auto text-sm leading-relaxed space-y-2 select-text" style={{ scrollbarColor: 'rgba(245,158,11,0.15) transparent' }}>
           {renderedLines.map((line, idx) => {
             if (line.type === 'gap') {
               return <div key={idx} className="h-2" />;

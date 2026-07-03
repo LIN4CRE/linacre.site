@@ -118,9 +118,9 @@ export default function App() {
 
   // Define brand configuration maps to inject into styles and SVGs
   const colorsMap: Record<string, { primary: string; secondary: string }> = {
-    amber: { primary: '#ffb454', secondary: '#fbbf24' },
-    cyan: { primary: '#5ccfe6', secondary: '#22d3ee' },
-    emerald: { primary: '#7fd88f', secondary: '#34d399' },
+    amber: { primary: '#F59E0B', secondary: '#FFB000' },
+    cyan: { primary: '#22D3EE', secondary: '#67e8f9' },
+    emerald: { primary: '#34D399', secondary: '#6ee7b7' },
     crimson: { primary: '#f87171', secondary: '#ef4444' },
     mono: { primary: '#e2e8f0', secondary: '#94a3b8' }
   };
@@ -269,7 +269,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-amber-color/30">
+    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-amber-color/30" style={{ background: 'var(--linacre-gradient-hero)' }}>
       <style dangerouslySetInnerHTML={{ __html: `
         ${activeFont.import}
         :root, .dark, .light {
@@ -307,30 +307,52 @@ export default function App() {
               {/* Hero Banner Section with Dynamic Identity Integration */}
               <motion.section 
                 variants={itemVariants}
-                className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center border-b border-border-color/30 pb-10" 
+                className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-12 overflow-hidden" 
                 id="toolkit-hero"
               >
-                <div className="md:col-span-8 space-y-4 text-center md:text-left">
+                {/* Hex-grid subtle background pattern */}
+                <div className="absolute inset-0 linacre-grid-bg opacity-40 pointer-events-none" />
+                {/* Ambient amber orb */}
+                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)` }} />
+
+                <div className="md:col-span-8 space-y-5 text-center md:text-left relative z-10">
                   <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/20 px-2.5 py-1 rounded-full">
                     Full-Stack Portfolio & Directory
                   </span>
-                  <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-tight">
-                    Hi, I'm <span className="text-amber-color">{identity.name}</span>
+                  <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.04em] text-foreground leading-tight">
+                    Hi, I'm <span className="text-amber-color animate-amber-breathe">{identity.name}</span>
                   </h1>
-                  <h3 className="font-mono text-sm sm:text-base text-amber-color font-medium tracking-wide">
+                  <h3 className="font-mono text-sm sm:text-base text-amber-color/90 font-medium tracking-wide">
                     {identity.title}
                   </h3>
-                  <p className="text-sm sm:text-base md:text-md text-muted-foreground leading-relaxed">
+                  <p className="text-sm sm:text-base md:text-md text-muted-foreground leading-[1.65] max-w-2xl">
                     {identity.bio}
                   </p>
+                  {/* CTA buttons */}
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <button
+                      onClick={() => { setActiveTab('toolkit'); }}
+                      className="px-5 py-2.5 bg-amber-color text-[#070A0F] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:-translate-y-0.5"
+                      id="cta-explore-toolkit"
+                    >
+                      Explore Toolkit
+                    </button>
+                    <button
+                      onClick={() => { setActiveTab('projects'); }}
+                      className="px-5 py-2.5 bg-transparent border border-amber-color/40 text-amber-color font-mono text-sm font-bold rounded-lg hover:bg-amber-color/10 hover:border-amber-color transition-all duration-200 hover:-translate-y-0.5"
+                      id="cta-view-projects"
+                    >
+                      View Projects
+                    </button>
+                  </div>
                 </div>
 
                 {/* Live Responsive Brand Signature Widget */}
-                <div className="md:col-span-4 flex justify-center items-center">
+                <div className="md:col-span-4 flex justify-center items-center relative z-10">
                   <motion.div 
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                    className="p-6 rounded-2xl bg-muted/20 dark:bg-[#10141d]/30 border border-border-color shadow-xl flex flex-col items-center justify-center space-y-4 relative group overflow-hidden w-full max-w-[240px]"
+                    className="linacre-surface p-6 rounded-2xl flex flex-col items-center justify-center space-y-4 relative group overflow-hidden w-full max-w-[240px]"
                   >
                     {/* Pulsing ambient radial aura gradient */}
                     <div 
@@ -356,6 +378,9 @@ export default function App() {
                   </motion.div>
                 </div>
               </motion.section>
+
+              {/* Brand amber pulse-line divider */}
+              <motion.div variants={itemVariants} className="linacre-pulse-line w-full" />
  
               {/* Typewriter Terminal */}
               <motion.div variants={itemVariants}>
@@ -399,7 +424,7 @@ export default function App() {
                       id={`changelog-item-${item.version}`}
                     >
                       {/* node dot */}
-                      <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#0b0e14] border-2 border-cyan group-hover:scale-125 transition-transform" />
+                      <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#070A0F] border-2 border-cyan group-hover:scale-125 transition-transform" />
                       
                       <div className="space-y-1">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">

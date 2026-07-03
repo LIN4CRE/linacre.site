@@ -1,0 +1,14 @@
+<svg width="1800" height="480" viewBox="0 0 1800 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1800" height="480" rx="72" fill="#070A0F"/>
+<g transform="translate(76 58) scale(.36)">
+<path d="M512 118 853.5 315v394L512 906 170.5 709V315L512 118Z" stroke="url(#amber)" stroke-width="34" stroke-linejoin="round" filter="url(#glow)"/>
+<path d="M512 188 792.9 350v324L512 836 231.1 674V350L512 188Z" stroke="#F59E0B" stroke-opacity=".34" stroke-width="10"/>
+<path d="M333 691V332M333 691H463" stroke="#F59E0B" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M280 537H402L455 407 565 681 628 537H744" stroke="#F5E7C8" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="744" cy="537" r="23" fill="#22D3EE"/>
+</g>
+<text x="500" y="210" fill="#F5E7C8" font-family="DejaVu Sans Condensed, Space Grotesk, Inter, sans-serif" font-size="142" font-weight="800" letter-spacing="-7">Linacre</text>
+<text x="1100" y="218" fill="#F59E0B" font-family="DejaVu Sans Mono, JetBrains Mono, monospace" font-size="94" font-weight="700">.site</text>
+<text x="508" y="292" fill="#94A3B8" font-family="DejaVu Sans Mono, JetBrains Mono, monospace" font-size="33" letter-spacing="3">FULL-STACK &amp; AI ENGINEERING</text>
+<path d="M508 346H1395" stroke="#FFB000" stroke-opacity=".72" stroke-width="3"/>
+</svg>

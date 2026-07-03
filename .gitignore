@@ -7,3 +7,14 @@ coverage/
 .env*
 !.env.example
 temp_repo/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Vercel local cache
+.vercel/
+
+# Vendored extensions
+*.vsix
