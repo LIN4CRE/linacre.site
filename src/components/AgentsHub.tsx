@@ -6,7 +6,7 @@ interface Agent {
   id: string;
   name: string;
   role: 'Dev' | 'DevOps' | 'Security' | 'Librarian';
-  spriteName: string; // Pokémon Showdown gif filename
+  spriteName: string; // Pokémon Showdown gif name
   personality: 'focused' | 'caffeinated' | 'chaotic' | 'pragmatic';
   color: string;
   x: number;
@@ -48,11 +48,11 @@ const AVAILABLE_POKEMON = [
 ];
 
 const WORKSTATIONS = [
-  { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]' },
-  { name: 'Git Repository', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-[#0d161a]/80 shadow-[0_0_10px_rgba(92,207,230,0.15)]' },
-  { name: 'Database Cluster', x: 8, y: 1, icon: Database, color: 'text-purple-color border-purple-color/30 bg-[#140f1a]/80 shadow-[0_0_10px_rgba(168,85,247,0.15)]' },
-  { name: 'Edge Server', x: 8, y: 8, icon: Award, color: 'text-emerald-color border-emerald-color/30 bg-[#0d1a12]/80 shadow-[0_0_10px_rgba(127,216,143,0.15)]' },
-  { name: 'Game Corner Cafe', x: 5, y: 5, icon: Coffee, color: 'text-rose-400 border-rose-400/30 bg-[#1a0f12]/80 shadow-[0_0_10px_rgba(248,113,113,0.15)]' }
+  { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]', rgb: '251, 191, 36' },
+  { name: 'Git Repository', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-[#0d161a]/80 shadow-[0_0_10px_rgba(92,207,230,0.15)]', rgb: '92, 207, 230' },
+  { name: 'Database Cluster', x: 8, y: 1, icon: Database, color: 'text-purple-color border-purple-color/30 bg-[#140f1a]/80 shadow-[0_0_10px_rgba(168,85,247,0.15)]', rgb: '168, 85, 247' },
+  { name: 'Edge Server', x: 8, y: 8, icon: Award, color: 'text-emerald-color border-emerald-color/30 bg-[#0d1a12]/80 shadow-[0_0_10px_rgba(127,216,143,0.15)]', rgb: '127, 216, 143' },
+  { name: 'Game Corner Cafe', x: 5, y: 5, icon: Coffee, color: 'text-rose-400 border-rose-400/30 bg-[#1a0f12]/80 shadow-[0_0_10px_rgba(248,113,113,0.15)]', rgb: '248, 113, 113' }
 ];
 
 const isPathTile = (x: number, y: number): boolean => {
@@ -120,6 +120,10 @@ export default function AgentsHub() {
     powerDraw: 85
   });
 
+  // Historical lists for live plotting
+  const [bandwidthHistory, setBandwidthHistory] = useState<number[]>([12, 15, 10, 8, 14, 18, 11, 13, 16, 12]);
+  const [loadHistory, setLoadHistory] = useState<number[]>([20, 25, 22, 18, 24, 28, 21, 23, 26, 22]);
+
   const [predefinedActions, setPredefinedActions] = useState<string[]>([
     'Audit PATH registry keys',
     'Optimize CSS styles',
@@ -153,9 +157,13 @@ export default function AgentsHub() {
       const activeMovingCount = agents.filter(a => !a.isPaused && (a.x !== a.targetX || a.y !== a.targetY)).length;
       
       setTelemetry((prev) => {
-        const bandwidthChange = activeMovingCount > 0 ? (Math.random() * 15 + 10) : (Math.random() * 2 + 1);
-        const loadChange = Math.min(95, Math.max(5, (activeMovingCount * 25) + Math.floor(Math.random() * 12)));
+        const bandwidthChange = activeMovingCount > 0 ? (Math.random() * 15 + 15) : (Math.random() * 2 + 1);
+        const loadChange = Math.min(95, Math.max(5, (activeMovingCount * 22) + Math.floor(Math.random() * 10)));
         const powerChange = Math.max(45, 60 + (activeMovingCount * 30) + Math.floor(Math.random() * 10));
+
+        // Update charts history
+        setBandwidthHistory((prevHist) => [...prevHist.slice(1), Number(bandwidthChange.toFixed(1))]);
+        setLoadHistory((prevHist) => [...prevHist.slice(1), loadChange]);
 
         return {
           ...prev,
@@ -380,6 +388,18 @@ export default function AgentsHub() {
     );
   };
 
+  // Helper to generate coordinates path for line chart
+  const generatePathData = (history: number[], maxVal: number) => {
+    const width = 120;
+    const height = 24;
+    const step = width / (history.length - 1);
+    return history.map((val, i) => {
+      const x = i * step;
+      const y = height - (val / maxVal) * height;
+      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`;
+    }).join(' ');
+  };
+
   return (
     <div className="space-y-12 animate-fade-in">
       {/* NO-SPEND GUARD: Prominent Billing Alert Warning Sign */}
@@ -393,33 +413,55 @@ export default function AgentsHub() {
         </div>
       </div>
 
-      {/* Global Telemetry Metrics Dashboard (Passive Watching UI) */}
+      {/* Global Telemetry Metrics Dashboard with real-time SVG charts */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4" id="telemetry-dashboard">
-        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2">
+        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
             <span>Matrix Load</span>
             <Cpu className="w-3.5 h-3.5 text-amber-color" />
           </div>
-          <div className="flex items-baseline gap-1">
+          <div className="flex items-baseline gap-1 relative z-10">
             <span className="font-display text-2xl font-bold text-foreground">{telemetry.load}</span>
             <span className="font-mono text-xs text-muted-foreground">%</span>
           </div>
-          <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
-            <div className="bg-amber-color h-full transition-all duration-500" style={{ width: `${telemetry.load}%` }} />
+          
+          {/* Neon Mini Sparkline Chart */}
+          <div className="absolute right-2 bottom-1 w-28 h-6 opacity-35">
+            <svg viewBox="0 0 120 24" className="w-full h-full">
+              <path
+                d={generatePathData(loadHistory, 100)}
+                fill="none"
+                stroke="#fbbf24"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+            </svg>
           </div>
         </div>
 
-        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2">
+        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
             <span>Bandwidth Transfer</span>
             <Activity className="w-3.5 h-3.5 text-cyan" />
           </div>
-          <div className="flex items-baseline gap-1">
+          <div className="flex items-baseline gap-1 relative z-10">
             <span className="font-display text-2xl font-bold text-foreground">{telemetry.bandwidth}</span>
             <span className="font-mono text-xs text-muted-foreground">MB/s</span>
           </div>
-          <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
-            <div className="bg-cyan h-full transition-all duration-500" style={{ width: `${Math.min(100, (telemetry.bandwidth / 40) * 100)}%` }} />
+          
+          {/* Neon Mini Sparkline Chart */}
+          <div className="absolute right-2 bottom-1 w-28 h-6 opacity-35">
+            <svg viewBox="0 0 120 24" className="w-full h-full">
+              <path
+                d={generatePathData(bandwidthHistory, 40)}
+                fill="none"
+                stroke="#5ccfe6"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                className="transition-all duration-500"
+              />
+            </svg>
           </div>
         </div>
 
@@ -460,7 +502,7 @@ export default function AgentsHub() {
           <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border border-border-color shadow-xl overflow-hidden">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808007_1px,transparent_1px),linear-gradient(to_bottom,#80808007_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             
-            {/* Clean Simulation Screen */}
+            {/* Clean Simulation Grid */}
             <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/75 rounded-xl overflow-hidden p-1 shadow-inner">
               
               {/* Target lines vector paths for active agents */}
@@ -498,6 +540,9 @@ export default function AgentsHub() {
                 const Icon = station?.icon;
                 const isRoad = isPathTile(cellX, cellY);
 
+                // Check if any active bot is currently occupying this station
+                const isOccupied = agents.some(a => !a.isPaused && a.x === cellX && a.y === cellY && (a.x !== a.targetX || a.y !== a.targetY || a.task !== 'Idle'));
+
                 return (
                   <div
                     key={index}
@@ -510,11 +555,21 @@ export default function AgentsHub() {
                     }`}
                   >
                     {station && Icon && (
-                      <div className={`flex flex-col items-center justify-center p-1 rounded border text-center ${station.color} w-11/12 h-11/12 scale-95`}>
-                        <Icon className="w-3.5 h-3.5 mb-0.5" />
-                        <span className="text-[4px] leading-tight font-mono font-bold scale-90 truncate max-w-full">
-                          {station.name}
-                        </span>
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        {/* Radial Rippling Processing Waves when occupied */}
+                        {isOccupied && (
+                          <div 
+                            className="absolute w-full h-full rounded-full opacity-60 pointer-events-none scale-110 animate-ping"
+                            style={{ border: `1.5px solid rgba(${station.rgb}, 0.6)` }}
+                          />
+                        )}
+                        
+                        <div className={`flex flex-col items-center justify-center p-1 rounded border text-center ${station.color} w-11/12 h-11/12 scale-95 z-10 transition-shadow`}>
+                          <Icon className="w-3.5 h-3.5 mb-0.5" />
+                          <span className="text-[4px] leading-tight font-mono font-bold scale-90 truncate max-w-full">
+                            {station.name}
+                          </span>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -560,13 +615,18 @@ export default function AgentsHub() {
                       </div>
                     )}
 
+                    {/* Shadow underneath sprite */}
+                    <div 
+                      className="absolute bottom-0 w-6 h-1 rounded-full bg-black/40 blur-[1px] transition-transform"
+                      style={{ transform: isMoving ? 'scale(0.85)' : 'scale(1)' }}
+                    />
+
                     {/* Pokémon Showdown Animated GIF */}
                     <img 
                       src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
                       alt={agent.name}
-                      className="w-8 h-8 object-contain drop-shadow-[0_0_4px_rgba(255,255,255,0.2)]"
+                      className="w-8 h-8 object-contain drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] z-10"
                       onError={(e) => {
-                        // Fallback in case of Showdown image access failure
                         (e.target as HTMLImageElement).src = 'https://play.pokemonshowdown.com/sprites/ani/porygon.gif';
                       }}
                     />
@@ -580,7 +640,7 @@ export default function AgentsHub() {
         {/* Right Side: Control Panels & Inspector */}
         <div className="lg:col-span-5 space-y-6">
           
-          {/* Panel 1: Agent Inspector (Gauges for CPU/RAM & Actions) */}
+          {/* Panel 1: Agent Inspector */}
           <AnimatePresence>
             {inspectingAgent ? (
               <motion.div
@@ -772,7 +832,7 @@ export default function AgentsHub() {
             </form>
           </div>
 
-          {/* Panel 4: Agent Factory (Spawn Polished Agent) */}
+          {/* Panel 4: Agent Factory */}
           <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Plus className="w-4 h-4 text-emerald-color" />
