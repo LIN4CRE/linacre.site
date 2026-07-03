@@ -80,20 +80,54 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Scrollbar customizations */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+/* Global Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-.scrollbar-thin::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
 }
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 147, 167, 0.2);
   border-radius: 99px;
 }
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: var(--border-hi);
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 147, 167, 0.4);
+}
+
+/* Polished Select Dropdown Overrides (stripping outdated OS styles) */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%238b93a7'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.25rem !important;
+  cursor: pointer;
+}
+
+/* Modern Range Slider Control Styling */
+input[type="range"] {
+  appearance: none;
+  background: var(--border-color);
+  height: 6px;
+  border-radius: 9999px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #5ccfe6; /* Neon Cyan */
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 0 4px rgba(92,207,230,0.4);
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.25);
+  background: #ffb454; /* Amber on Hover */
 }
 
 /* Accessible focus-visible ring for all interactive elements */
