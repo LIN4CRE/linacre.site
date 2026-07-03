@@ -1,0 +1,6 @@
+{
+  "name": "Linacre Portfolio & Toolkit",
+  "description": "David Linacre's personal developer site, toolkit directory, learning portal, AI assistant Lab, and private dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
