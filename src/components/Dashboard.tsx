@@ -5,7 +5,9 @@ import { MCP_SERVERS, SKILL_TEMPLATES, ENV_TEMPLATE } from '../data';
 import { MCPServer, SkillTemplate } from '../types';
 
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem('linacre_dashboard_auth') === 'true';
+  });
   const [activeSubTab, setActiveSubTab] = useState<'mcp' | 'skills' | 'env'>('mcp');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +24,7 @@ export default function Dashboard() {
     // David Linacre private gate bypass password or click bypass
     if (password === 'admin' || password === 'david' || password === '') {
       setIsAuthenticated(true);
+      localStorage.setItem('linacre_dashboard_auth', 'true');
       setAuthError(null);
     } else {
       setAuthError('Access Denied: Invalid credentials.');
@@ -100,7 +103,10 @@ export default function Dashboard() {
 
           <div className="text-center">
             <button
-              onClick={() => setIsAuthenticated(true)}
+              onClick={() => {
+                setIsAuthenticated(true);
+                localStorage.setItem('linacre_dashboard_auth', 'true');
+              }}
               className="text-[10px] text-muted-foreground hover:text-cyan transition-colors underline cursor-pointer"
             >
               Reviewer / Guest Bypass
@@ -136,6 +142,7 @@ export default function Dashboard() {
           <button
             onClick={() => {
               setIsAuthenticated(false);
+              localStorage.removeItem('linacre_dashboard_auth');
               setPassword('');
             }}
             className="px-2.5 py-1 text-[10px] bg-muted hover:bg-muted/70 text-muted-foreground border border-border-color/60 hover:text-foreground rounded-md transition-all cursor-pointer"
