@@ -9,9 +9,10 @@ interface CommandPaletteProps {
   onClose: () => void;
   setActiveTab: (tab: string) => void;
   setSearchQuery: (query: string) => void;
+  setActiveCategory: (category: any) => void;
 }
 
-export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearchQuery }: CommandPaletteProps) {
+export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearchQuery, setActiveCategory }: CommandPaletteProps) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -53,10 +54,10 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
   ];
 
   const catCommands: CommandItem[] = [
-    { id: 'cat-start', label: 'Filter toolkit: start', action: () => { setActiveTab('toolkit'); setSearchQuery(''); onClose(); }, meta: 'Explore workspace editors, Git VCS, and planners' },
-    { id: 'cat-build', label: 'Filter toolkit: build', action: () => { setActiveTab('toolkit'); setSearchQuery(''); onClose(); }, meta: 'Explore frameworks, databases, auth, and billing' },
-    { id: 'cat-deploy', label: 'Filter toolkit: deploy', action: () => { setActiveTab('toolkit'); setSearchQuery(''); onClose(); }, meta: 'Explore cloud hosting platforms and edge servers' },
-    { id: 'cat-design', label: 'Filter toolkit: design', action: () => { setActiveTab('toolkit'); setSearchQuery(''); onClose(); }, meta: 'Explore assets, prototypes, and icons' },
+    { id: 'cat-start', label: 'Filter toolkit: start', action: () => { setActiveTab('toolkit'); setActiveCategory('start'); setSearchQuery(''); onClose(); }, meta: 'Explore workspace editors, Git VCS, and planners' },
+    { id: 'cat-build', label: 'Filter toolkit: build', action: () => { setActiveTab('toolkit'); setActiveCategory('build'); setSearchQuery(''); onClose(); }, meta: 'Explore frameworks, databases, auth, and billing' },
+    { id: 'cat-deploy', label: 'Filter toolkit: deploy', action: () => { setActiveTab('toolkit'); setActiveCategory('deploy'); setSearchQuery(''); onClose(); }, meta: 'Explore cloud hosting platforms and edge servers' },
+    { id: 'cat-design', label: 'Filter toolkit: design', action: () => { setActiveTab('toolkit'); setActiveCategory('design'); setSearchQuery(''); onClose(); }, meta: 'Explore assets, prototypes, and icons' },
   ];
 
   // Tool search commands

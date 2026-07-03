@@ -10,12 +10,38 @@ import IdentityHub from './components/IdentityHub';
 import CommandPalette from './components/CommandPalette';
 import Footer from './components/Footer';
 import { CHANGELOG } from './data';
+import { ToolCategory } from './types';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('toolkit');
+  const [activeCategory, setActiveCategory] = useState<ToolCategory | 'all'>('all');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Synchronize activeTab with URL Hash for back/forward navigation support
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity'];
+      if (hash && validTabs.includes(hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    handleHashChange();
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  // Update URL Hash when activeTab changes
+  useEffect(() => {
+    const currentHash = window.location.hash.replace('#', '');
+    if (currentHash !== activeTab) {
+      window.history.pushState(null, '', `#${activeTab}`);
+    }
+  }, [activeTab]);
 
   // Identity and Brand custom values synchronized from localStorage
   const [identity, setIdentity] = useState({
@@ -326,6 +352,8 @@ export default function App() {
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
                   openPalette={() => setPaletteOpen(true)}
+                  activeCategory={activeCategory}
+                  setActiveCategory={setActiveCategory}
                 />
               </motion.div>
  
@@ -432,6 +460,7 @@ export default function App() {
         onClose={() => setPaletteOpen(false)}
         setActiveTab={setActiveTab}
         setSearchQuery={setSearchQuery}
+        setActiveCategory={setActiveCategory}
       />
 
       <Footer />

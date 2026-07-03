@@ -9,10 +9,11 @@ interface ToolkitProps {
   openPalette?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  activeCategory: ToolCategory | 'all';
+  setActiveCategory: (category: ToolCategory | 'all') => void;
 }
 
-export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSearchQuery }: ToolkitProps) {
-  const [activeCategory, setActiveCategory] = useState<ToolCategory | 'all'>('all');
+export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSearchQuery, activeCategory, setActiveCategory }: ToolkitProps) {
   const [bookmarkedTools, setBookmarkedTools] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
