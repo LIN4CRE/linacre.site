@@ -28,14 +28,25 @@ interface LogMessage {
 
 const GRID_SIZE = 10;
 
-// Locations of workstations on the 10x10 grid
+// Pokémon retro styled workstation locations
 const WORKSTATIONS = [
-  { name: 'Central Mainframe', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-amber-color/5' },
-  { name: 'Git Repository', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-cyan/5' },
-  { name: 'Database Cluster', x: 8, y: 1, icon: Database, color: 'text-purple-color border-purple-color/30 bg-purple-color/5' },
-  { name: 'Vercel Edge CDN', x: 8, y: 8, icon: Award, color: 'text-emerald-color border-emerald-color/30 bg-emerald-color/5' },
-  { name: 'Coffee Lounge', x: 5, y: 5, icon: Coffee, color: 'text-rose-400 border-rose-400/30 bg-rose-400/5' }
+  { name: 'Mainframe Gym', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]' },
+  { name: 'Code PokéCenter', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-[#0d161a]/80 shadow-[0_0_10px_rgba(92,207,230,0.15)]' },
+  { name: 'Data Lab', x: 8, y: 1, icon: Database, color: 'text-purple-color border-purple-color/30 bg-[#140f1a]/80 shadow-[0_0_10px_rgba(168,85,247,0.15)]' },
+  { name: 'Edge Power Plant', x: 8, y: 8, icon: Award, color: 'text-emerald-color border-emerald-color/30 bg-[#0d1a12]/80 shadow-[0_0_10px_rgba(127,216,143,0.15)]' },
+  { name: 'Game Corner Cafe', x: 5, y: 5, icon: Coffee, color: 'text-rose-400 border-rose-400/30 bg-[#1a0f12]/80 shadow-[0_0_10px_rgba(248,113,113,0.15)]' }
 ];
+
+// Helper to determine if a tile is part of the H-shaped road network
+const isPathTile = (x: number, y: number): boolean => {
+  // Column 1 connects Mainframe and PokéCenter
+  if (x === 1 && y >= 1 && y <= 8) return true;
+  // Column 8 connects Data Lab and Power Plant
+  if (x === 8 && y >= 1 && y <= 8) return true;
+  // Row 5 acts as the cross-street connecting the columns and Coffee Cafe
+  if (y === 5 && x >= 1 && x <= 8) return true;
+  return false;
+};
 
 export default function AgentsHub() {
   const [agents, setAgents] = useState<Agent[]>([
@@ -76,16 +87,14 @@ export default function AgentsHub() {
       id: 'log-initial-1',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       agentName: 'System',
-      message: 'Autonomous simulation grid initialized. Standing by.',
+      message: 'Autonomous GBA simulation grid initialized. Standing by.',
       type: 'info'
     }
   ]);
 
-  // Form states
   const [selectedAgentId, setSelectedAgentId] = useState(agents[0].id);
   const [taskText, setTaskText] = useState('');
   
-  // Factory Form states
   const [newAgentName, setNewAgentName] = useState('');
   const [newAgentRole, setNewAgentRole] = useState<'Dev' | 'DevOps' | 'Security' | 'Librarian'>('Dev');
   const [newAgentPersonality, setNewAgentPersonality] = useState<'focused' | 'caffeinated' | 'chaotic' | 'pragmatic'>('focused');
@@ -93,62 +102,67 @@ export default function AgentsHub() {
 
   const consoleEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll logs
   useEffect(() => {
     consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
 
-  // Main Simulation Loop (runs movement every 1.5 seconds)
+  // Movement & Pathfinding Logic: Forces characters to walk down the dirt roads
   useEffect(() => {
     const interval = setInterval(() => {
       setAgents((prevAgents) =>
         prevAgents.map((agent) => {
           let { x, y, targetX, targetY, personality, name } = agent;
 
-          // If arrived at destination, decide next steps based on personality
+          // Arrived
           if (x === targetX && y === targetY) {
-            // Caffeinated agents randomly walk to coffee lounge
             if (personality === 'caffeinated' && Math.random() < 0.25 && (x !== 5 || y !== 5)) {
-              addLog(name, 'Feeling low on energy. Navigating to Coffee Lounge...', 'info');
-              return { ...agent, targetX: 5, targetY: 5, status: 'Heading to Coffee Station' };
+              addLog(name, 'Low battery. Navigating to Game Corner Cafe for charge break...', 'info');
+              return { ...agent, targetX: 5, targetY: 5, status: 'Charging at Cafe' };
             }
             
-            // Chaotic agents randomly walk to any node
             if (personality === 'chaotic' && Math.random() < 0.2 && agent.task === 'Idle') {
               const nextStation = WORKSTATIONS[Math.floor(Math.random() * WORKSTATIONS.length)];
-              addLog(name, `Triggered random sweep to: ${nextStation.name}`, 'warning');
-              return { ...agent, targetX: nextStation.x, targetY: nextStation.y, status: `Exploring ${nextStation.name}` };
+              addLog(name, `Random sweep triggered: traveling to ${nextStation.name}`, 'warning');
+              return { ...agent, targetX: nextStation.x, targetY: nextStation.y, status: `Roaming to ${nextStation.name}` };
             }
 
-            // Normal idle behavior
             if (agent.task !== 'Idle' && x !== 5 && y !== 5) {
-              // Mark task as done
-              addLog(name, `Task complete: "${agent.task}". Resuming idle monitoring.`, 'success');
-              return { ...agent, task: 'Idle', status: 'Monitoring network integrity' };
+              addLog(name, `Task complete: "${agent.task}". Delivery successful!`, 'success');
+              return { ...agent, task: 'Idle', status: 'Idle guarding' };
             }
 
             return agent;
           }
 
-          // Step closer to target
+          // Path routing calculations: Follows roads (Column 1, Column 8, and Row 5)
           let nextX = x;
           let nextY = y;
 
-          if (x < targetX) nextX = x + 1;
-          else if (x > targetX) nextX = x - 1;
-          
-          if (y < targetY) nextY = y + 1;
-          else if (y > targetY) nextY = y - 1;
+          // Case 1: If not on Row 5 and not on target column, first move vertically to the Row 5 cross-street
+          if (y !== 5 && x !== targetX) {
+            if (y < 5) nextY = y + 1;
+            else nextY = y - 1;
+          }
+          // Case 2: On Row 5, walk horizontally to the target column
+          else if (y === 5 && x !== targetX) {
+            if (x < targetX) nextX = x + 1;
+            else nextX = x - 1;
+          }
+          // Case 3: On target column, walk vertically to the target row
+          else if (x === targetX && y !== targetY) {
+            if (y < targetY) nextY = y + 1;
+            else nextY = y - 1;
+          }
 
           return {
             ...agent,
             x: nextX,
             y: nextY,
-            status: `Moving to node (${targetX}, ${targetY})...`
+            status: `Walking coordinates (${nextX}, ${nextY})`
           };
         })
       );
-    }, 1500);
+    }, 1200); // 1.2s ticks for slightly faster pacing
 
     return () => clearInterval(interval);
   }, []);
@@ -165,19 +179,19 @@ export default function AgentsHub() {
     e.preventDefault();
     if (!taskText.trim()) return;
 
-    // Pick a workstation randomly to "do the work"
+    // Pick workstation destination
     const targetStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
 
     setAgents((prev) =>
       prev.map((agent) => {
         if (agent.id === selectedAgentId) {
-          addLog(agent.name, `Received Task: "${taskText}". Navigating to ${targetStation.name}...`, 'info');
+          addLog(agent.name, `Carrying box with task: "${taskText}" to ${targetStation.name}`, 'info');
           return {
             ...agent,
             task: taskText,
             targetX: targetStation.x,
             targetY: targetStation.y,
-            status: `Working on: ${taskText}`
+            status: `Transporting cargo to ${targetStation.name}`
           };
         }
         return agent;
@@ -209,13 +223,13 @@ export default function AgentsHub() {
       y: 5,
       targetX: 5,
       targetY: 5,
-      status: 'Online and idling',
+      status: 'Ready at Coffee Lounge',
       task: 'Idle',
       speed: 1
     };
 
     setAgents((prev) => [...prev, newAgent]);
-    addLog('System', `New agent spawned: ${newAgent.name} [Role: ${newAgent.role}, Personality: ${newAgent.personality}]`, 'success');
+    addLog('System', `New bot spawned: ${newAgent.name}`, 'success');
     
     setNewAgentName('');
   };
@@ -235,145 +249,174 @@ export default function AgentsHub() {
         </p>
       </section>
 
-      {/* CSS Animation Injector for Glitch/Shake effects */}
+      {/* Classic RPG CSS Animations */}
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes mini-shake {
-          0%, 100% { transform: translate(0, 0); }
-          20% { transform: translate(-1px, 1px); }
-          40% { transform: translate(1px, -1px); }
-          60% { transform: translate(-1px, -1px); }
-          80% { transform: translate(1px, 1px); }
+        @keyframes rpg-bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-4px); }
         }
-        .agent-shake {
-          animation: mini-shake 0.3s infinite alternate;
+        .agent-walk-bounce {
+          animation: rpg-bounce 0.4s infinite ease-in-out;
         }
-        @keyframes float-up {
-          0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
-          100% { transform: translateY(-20px) scale(1.1); opacity: 0; }
+        @keyframes carry-float {
+          0%, 100% { transform: translate(-50%, -4px); }
+          50% { transform: translate(-50%, -8px); }
         }
-        .caffeine-steam::after {
-          content: '☕';
-          position: absolute;
-          bottom: 100%;
-          left: 50%;
-          font-size: 10px;
-          animation: float-up 1.2s infinite ease-out;
+        .cargo-box {
+          animation: carry-float 0.4s infinite ease-in-out;
+        }
+        .pixel-borders {
+          border: 4px solid #161b26;
+          border-image: stretch;
         }
       `}} />
 
       {/* Main Grid & Controllers Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Side: 2-D Grid Simulation (7 Cols) */}
+        {/* Left Side: Gameboy Console + 2-D Grid Simulation (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border border-border-color shadow-xl overflow-hidden">
-            {/* Ambient grid lines behind */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
+          {/* Gameboy Handheld Frame */}
+          <div className="relative mx-auto max-w-[420px] bg-[#2d3748] dark:bg-[#1a202c] border-[12px] border-[#4a5568] dark:border-[#2d3748] rounded-[36px] p-6 shadow-2xl flex flex-col items-center">
             
-            {/* Grid Container */}
-            <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/75 rounded-xl overflow-hidden p-1 shadow-2xl">
+            {/* Screen Border with classic text */}
+            <div className="w-full bg-[#1a202c] border-[8px] border-[#0f172a] rounded-xl p-3 flex flex-col items-center shadow-inner relative">
+              <span className="font-mono text-[7px] text-muted-foreground/60 absolute top-1 uppercase tracking-widest">
+                MATRIX SCREEN COLOR · DOT MATRIX LINK
+              </span>
               
-              {/* Render dynamic pathing target vectors under the bots */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
-                {agents.map((agent) => {
-                  if (agent.x === agent.targetX && agent.y === agent.targetY) return null;
-                  
-                  // Compute start and end pixel percentages
-                  const startX = `${agent.x * 10 + 5}%`;
-                  const startY = `${agent.y * 10 + 5}%`;
-                  const endX = `${agent.targetX * 10 + 5}%`;
-                  const endY = `${agent.targetY * 10 + 5}%`;
+              {/* Actual Game Screen */}
+              <div className="relative aspect-square w-full grid grid-cols-10 border-2 border-[#161a22] bg-[#2e522e] rounded overflow-hidden mt-3 shadow-inner">
+                
+                {/* Render path tiles (brown roads) and grass tiles (green RPG turf) */}
+                {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
+                  const cellX = index % GRID_SIZE;
+                  const cellY = Math.floor(index / GRID_SIZE);
+
+                  const station = WORKSTATIONS.find(w => w.x === cellX && w.y === cellY);
+                  const Icon = station?.icon;
+                  const isRoad = isPathTile(cellX, cellY);
 
                   return (
-                    <line
-                      key={agent.id}
-                      x1={startX}
-                      y1={startY}
-                      x2={endX}
-                      y2={endY}
-                      stroke={agent.color}
-                      strokeWidth="1.5"
-                      strokeDasharray="4 3"
-                      opacity="0.55"
-                    />
+                    <div
+                      key={index}
+                      className={`relative aspect-square flex items-center justify-center transition-all ${
+                        station 
+                          ? 'bg-[#1b2c1f] border border-[#3e684a]' 
+                          : isRoad 
+                          ? 'bg-[#d2b48c] border-[0.5px] border-[#c2a47c]/30 shadow-inner' // Sand/dirt path
+                          : 'bg-[#407a46] border-[0.5px] border-[#37693c]/20' // Green grass
+                      }`}
+                    >
+                      {/* Workstation Building Sprite representation */}
+                      {station && Icon && (
+                        <div className={`flex flex-col items-center justify-center p-0.5 rounded border text-center ${station.color} w-11/12 h-11/12 scale-95`}>
+                          <Icon className="w-3.5 h-3.5 mb-0.5" />
+                          <span className="text-[4px] leading-tight font-mono font-bold scale-90 truncate max-w-full">
+                            {station.name.split(' ')[0]}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Small flower or path detail */}
+                      {!station && !isRoad && (index % 13 === 0) && (
+                        <span className="text-[6px] opacity-25">✿</span>
+                      )}
+                    </div>
                   );
                 })}
-              </svg>
 
-              {/* Draw 100 tiles */}
-              {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
-                const cellX = index % GRID_SIZE;
-                const cellY = Math.floor(index / GRID_SIZE);
+                {/* Render Game Characters & Box carrying animations */}
+                {agents.map((agent) => {
+                  const leftPos = `calc(${agent.x * 10}% + 5% - 15px)`;
+                  const topPos = `calc(${agent.y * 10}% + 5% - 15px)`;
 
-                // Find if workstation matches
-                const station = WORKSTATIONS.find(w => w.x === cellX && w.y === cellY);
-                const Icon = station?.icon;
+                  const isCarrying = agent.task !== 'Idle';
+                  const isMoving = agent.x !== agent.targetX || agent.y !== agent.targetY;
 
-                return (
-                  <div
-                    key={index}
-                    className={`relative aspect-square border border-border-color/10 flex items-center justify-center font-mono text-[8px] text-muted-foreground/35 select-none ${
-                      station ? 'bg-muted/15 border-border-color/40 shadow-lg' : ''
-                    }`}
-                  >
-                    {/* Render Workstation */}
-                    {station && Icon && (
-                      <div className={`flex flex-col items-center justify-center p-1 rounded border text-center ${station.color} w-11/12 h-11/12 transition-all duration-300 hover:scale-102 hover:border-border-hi`}>
-                        <Icon className="w-4 h-4 mb-0.5" />
-                        <span className="text-[5px] leading-tight font-bold scale-90 truncate max-w-full">
-                          {station.name.split(' ')[0]}
-                        </span>
+                  return (
+                    <motion.div
+                      key={agent.id}
+                      layout
+                      className={`absolute w-7 h-7 rounded-full flex items-center justify-center text-md z-20 select-none ${
+                        isMoving ? 'agent-walk-bounce' : ''
+                      }`}
+                      style={{
+                        left: leftPos,
+                        top: topPos,
+                        backgroundColor: '#162217',
+                        border: `1.5px solid ${agent.color}`,
+                        boxShadow: `0 0 8px ${agent.color}60`,
+                        transition: { type: 'spring', stiffness: 140, damping: 13 }
+                      }}
+                      title={`${agent.name} (${agent.role})`}
+                    >
+                      {/* speech bubble above carrying box */}
+                      <div className="absolute bottom-[130%] left-1/2 transform -translate-x-1/2 bg-[#0c101a]/95 border border-[#3e684a] rounded-md px-1.5 py-0.5 text-[6px] font-mono text-foreground font-semibold leading-normal w-24 shadow-2xl pointer-events-none z-30">
+                        <div className="relative text-center">
+                          I'm just doing this job
+                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-t-[3px] border-t-[#0c101a]" />
+                        </div>
                       </div>
-                    )}
-                    
-                    {/* Render grid coordinates for corners */}
-                    {!station && (cellX === 0 || cellX === 9) && (cellY === 0 || cellY === 9) && (
-                      <span className="opacity-40">{cellX},{cellY}</span>
-                    )}
-                  </div>
-                );
-              })}
 
-              {/* Render Animated Agent Nodes & Speech Bubbles */}
-              {agents.map((agent) => {
-                // Calculate percentage positions for CSS rendering
-                const leftPos = `calc(${agent.x * 10}% + 5% - 18px)`;
-                const topPos = `calc(${agent.y * 10}% + 5% - 18px)`;
+                      {/* Render Box carried over head */}
+                      {isCarrying && (
+                        <div className="absolute bottom-[80%] left-1/2 transform -translate-x-1/2 text-xs cargo-box z-30">
+                          📦
+                        </div>
+                      )}
 
-                const isChaotic = agent.personality === 'chaotic';
-                const isCaffeinatedAtCoffee = agent.personality === 'caffeinated' && agent.x === 5 && agent.y === 5;
+                      <span className="relative z-10">{agent.emoji}</span>
+                    </motion.div>
+                  );
+                })}
+              </div>
 
-                return (
-                  <motion.div
-                    key={agent.id}
-                    layout
-                    className={`absolute w-9 h-9 rounded-full flex items-center justify-center text-lg z-20 cursor-pointer shadow-lg select-none ${
-                      isChaotic ? 'agent-shake' : ''
-                    } ${isCaffeinatedAtCoffee ? 'caffeine-steam' : ''}`}
-                    style={{
-                      left: leftPos,
-                      top: topPos,
-                      backgroundColor: '#0c101a',
-                      border: `2.5px solid ${agent.color}`,
-                      boxShadow: `0 0 12px ${agent.color}50`,
-                      transition: { type: 'spring', stiffness: 120, damping: 14 }
-                    }}
-                    title={`${agent.name} (${agent.role}) - ${agent.status}`}
-                  >
-                    {/* Speech Bubble */}
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-[#0c101a]/95 border border-border-color rounded-lg px-2.5 py-1 text-[8px] font-mono text-foreground font-semibold leading-normal w-36 shadow-2xl pointer-events-none select-none z-30 transition-all duration-200">
-                      <div className="relative text-center leading-relaxed">
-                        I'm just doing this job{agent.task !== 'Idle' ? `: ${agent.task}` : ''}
-                        {/* Tooltip arrow pointer */}
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-border-color mt-[1px]" />
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-t-[3.5px] border-t-[#0c101a]" />
-                      </div>
-                    </div>
-
-                    <span className="relative z-10">{agent.emoji}</span>
-                  </motion.div>
-                );
-              })}
+              {/* Power LED Indicator */}
+              <div className="absolute left-2.5 top-1/2 transform -translate-y-1/2 flex items-center gap-1">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ef4444] animate-pulse shadow-[0_0_8px_#ef4444]" />
+                <span className="font-mono text-[5px] text-muted-foreground/60">POWER</span>
+              </div>
             </div>
+
+            {/* Handheld D-Pad and Buttons control mockup */}
+            <div className="w-full flex items-center justify-between mt-6 px-2">
+              {/* D-Pad */}
+              <div className="relative w-16 h-16 flex items-center justify-center">
+                <div className="absolute w-16 h-5 bg-[#718096] rounded-sm" />
+                <div className="absolute h-16 w-5 bg-[#718096] rounded-sm" />
+                <div className="absolute w-3.5 h-3.5 bg-[#4a5568] rounded-full" />
+              </div>
+
+              {/* Speaker Grids */}
+              <div className="flex flex-col gap-1 opacity-20 transform -rotate-25">
+                <div className="w-10 h-1 bg-black rounded" />
+                <div className="w-10 h-1 bg-black rounded" />
+                <div className="w-10 h-1 bg-black rounded" />
+              </div>
+
+              {/* A & B Buttons */}
+              <div className="flex gap-4">
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#9b2c2c] active:bg-[#c53030] shadow border border-black/30 flex items-center justify-center font-bold text-xs text-white/50 select-none cursor-pointer">B</div>
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-8 h-8 rounded-full bg-[#9b2c2c] active:bg-[#c53030] shadow border border-black/30 flex items-center justify-center font-bold text-xs text-white/50 select-none cursor-pointer">A</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Start & Select buttons */}
+            <div className="flex gap-4 mt-4 font-mono text-[7px] text-muted-foreground/70">
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-2 bg-[#718096] rounded transform -rotate-15 cursor-pointer" />
+                <span className="mt-1">SELECT</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="w-8 h-2 bg-[#718096] rounded transform -rotate-15 cursor-pointer" />
+                <span className="mt-1">START</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
