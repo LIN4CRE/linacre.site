@@ -872,7 +872,7 @@ export default function AgentsHub() {
         <div className="flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 animate-pulse text-amber-color" />
           <div className="space-y-0.5">
-            <div className="font-bold uppercase tracking-wider">Simulated Sandbox Sandbox Guard</div>
+            <div className="font-bold uppercase tracking-wider">Simulated Sandbox Guard</div>
             <p className="text-muted-foreground text-[10px] leading-relaxed">
               All agent activities are executed in local memory simulation. The sandbox prevents credit allocation and blocks external real-world cloud spend.
             </p>
