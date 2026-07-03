@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Terminal, Send, Plus, Bot, Coffee, Shield, Database, LayoutGrid, Award, Server, Pause, Play, Trash2, AlertTriangle, Info, Cpu, Activity, Zap, Layers, Volume2, VolumeX } from 'lucide-react';
+import { Terminal, Send, Plus, Bot, Coffee, Shield, Database, LayoutGrid, Award, Server, Pause, Play, Trash2, AlertTriangle, Info, Cpu, Activity, Zap, Layers, Volume2, VolumeX, Sparkles } from 'lucide-react';
 
 interface Agent {
   id: string;
@@ -36,6 +36,16 @@ interface WalkingParticle {
   id: string;
   x: number;
   y: number;
+}
+
+interface AgentSuggestion {
+  name: string;
+  role: 'Dev' | 'DevOps' | 'Security' | 'Librarian';
+  spriteName: string;
+  personality: 'focused' | 'caffeinated' | 'chaotic' | 'pragmatic';
+  concept: string;
+  detailedPrompt: string;
+  steps: string[];
 }
 
 const GRID_SIZE = 10;
@@ -118,7 +128,6 @@ const playSynthSound = (type: 'click' | 'success' | 'error', isMuted: boolean) =
   }
 };
 
-// Robot SVG art components showing details like arms, legs, antennas
 const DevOpsRobotSVG = ({ color }: { color: string }) => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
     <line x1="50" y1="20" x2="50" y2="5" stroke={color} strokeWidth="3" />
@@ -237,6 +246,27 @@ const TavernCafeSVG = () => (
 export default function AgentsHub() {
   const [agents, setAgents] = useState<Agent[]>([
     {
+      id: 'agent-architect',
+      name: 'Agent Architect',
+      role: 'Dev',
+      spriteName: 'mewtwo',
+      personality: 'focused',
+      color: '#c084fc',
+      x: 5,
+      y: 5,
+      startX: 5,
+      startY: 5,
+      targetX: 5,
+      targetY: 5,
+      status: 'Generating ideas...',
+      task: 'Idle',
+      taskQueue: [],
+      isPaused: false,
+      roboticTraits: 'Equipped with cognitive neural synapses, deep model synthesis logic, and auto-spawner subassemblies.',
+      cpu: 12,
+      ram: 256
+    },
+    {
       id: 'agent-devops',
       name: 'DevOps Rotom',
       role: 'DevOps',
@@ -327,6 +357,78 @@ export default function AgentsHub() {
   const [typedDialogText, setTypedDialogText] = useState('');
   const [typingIndex, setTypingIndex] = useState(0);
   const [currentDialogMessage, setCurrentDialogMessage] = useState('System: Welcome to the Autonomous Pokémon Simulation Grid! Dispatch a command to start.');
+
+  // Pre-coded agent suggestions database
+  const ARCHITECT_SUGGESTIONS: AgentSuggestion[] = [
+    {
+      name: 'Git-Sentinel',
+      role: 'Security',
+      spriteName: 'scizor',
+      personality: 'focused',
+      concept: 'Staged Version Control & Push Sentinel',
+      detailedPrompt: 'Crawl staging indices, compile diff reports, and push to GitHub automatically using AI commits.',
+      steps: [
+        '1. Inspects modified file headers.',
+        '2. Generates conventional commit logs.',
+        '3. Sweeps code branches and pushes changes to Git.'
+      ]
+    },
+    {
+      name: 'SysEnv-Healer',
+      role: 'DevOps',
+      spriteName: 'metagross',
+      personality: 'pragmatic',
+      concept: 'Windows PATH Registry Sweeper',
+      detailedPrompt: 'Inspect Windows system environment PATH variables, eliminate redundant/broken link paths, and synchronize SDK runtimes.',
+      steps: [
+        '1. Crawls system PATH variables.',
+        '2. Checks for dead binary executables.',
+        '3. Flushes invalid paths to heal build commands.'
+      ]
+    },
+    {
+      name: 'Query-Optimizer',
+      role: 'Dev',
+      spriteName: 'genesect',
+      personality: 'focused',
+      concept: 'Database Query Optimizer',
+      detailedPrompt: 'Scan SQL tables, inspect key references, run execution EXPLAIN statements, and automatically build optimal indexes.',
+      steps: [
+        '1. Intercepts local DB queries.',
+        '2. Assesses table structures.',
+        '3. Injects Postgres index proposals.'
+      ]
+    },
+    {
+      name: 'Style-Guard',
+      role: 'Dev',
+      spriteName: 'pikachu',
+      personality: 'chaotic',
+      concept: 'CSS margin & mobile flexbox healer',
+      detailedPrompt: 'Review CSS styles, repair flexbox alignments, remove redundant spacing, and optimize responsive mobile layout rules.',
+      steps: [
+        '1. Scans styles sheet files.',
+        '2. Validates alignment parameters.',
+        '3. Heals flexbox bugs.'
+      ]
+    },
+    {
+      name: 'Doc-Writer',
+      role: 'Librarian',
+      spriteName: 'slowking',
+      personality: 'caffeinated',
+      concept: 'Sitemap XML & Walkthrough compiler',
+      detailedPrompt: 'Scan file tree additions, document component relationships, and automatically generate sitemaps or walkthrough logs.',
+      steps: [
+        '1. Indexes file structural modifications.',
+        '2. Writes walkthrough updates.',
+        '3. Keeps sitemap xml directories synchronized.'
+      ]
+    }
+  ];
+
+  const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(0);
+  const activeSuggestion = ARCHITECT_SUGGESTIONS[currentSuggestionIndex];
 
   const [predefinedActions, setPredefinedActions] = useState<string[]>([
     'Audit PATH registry keys',
@@ -441,7 +543,7 @@ export default function AgentsHub() {
               playSynthSound('success', isMuted);
               setTelemetry(prev => ({ ...prev, jobsCompleted: prev.jobsCompleted + 1 }));
 
-              // Task Queue Handler: Dequeue next task automatically if queued
+              // Task Queue Handler
               if (taskQueue.length > 0) {
                 const nextTask = taskQueue[0];
                 const newQueue = taskQueue.slice(1);
@@ -507,6 +609,14 @@ export default function AgentsHub() {
     }
   }, [agents]);
 
+  // Periodically cycle Architect recommendations (every 16 seconds if no manual click)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSuggestionIndex((prev) => (prev + 1) % ARCHITECT_SUGGESTIONS.length);
+    }, 16000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleAssignAction = async (e: FormEvent) => {
     e.preventDefault();
     const finalActionText = customActionText.trim() || selectedAction;
@@ -524,7 +634,6 @@ export default function AgentsHub() {
     playSynthSound('click', isMuted);
     const targetStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
 
-    // If already doing a job, push to queue instead of overwriting
     if (targetAgent.task !== 'Idle') {
       if (targetAgent.taskQueue.length >= 3) {
         addLog('System', `Request rejected: ${targetAgent.name}'s task pipeline queue is full (max 3 queued jobs).`, 'warning');
@@ -648,6 +757,50 @@ export default function AgentsHub() {
     setAgents((prev) => [...prev, newAgent]);
     addLog('System', `Spawned autonomous Pokémon agent: ${newAgent.name} [Model: ${newAgent.spriteName}]`, 'success');
     setNewAgentName('');
+  };
+
+  // Build recommendation spawner automatically
+  const handleBuildArchitectSuggestion = () => {
+    if (agents.some(a => a.name.toLowerCase() === activeSuggestion.name.toLowerCase())) {
+      alert('This recommended agent is already synthesized and active on the grid!');
+      return;
+    }
+
+    playSynthSound('success', isMuted);
+    const colors = {
+      Dev: '#5ccfe6',
+      DevOps: '#7fd88f',
+      Security: '#fbbf24',
+      Librarian: '#f87171'
+    };
+
+    const newAgent: Agent = {
+      id: `agent-${Date.now()}`,
+      name: activeSuggestion.name,
+      role: activeSuggestion.role,
+      spriteName: activeSuggestion.spriteName,
+      personality: activeSuggestion.personality,
+      color: colors[activeSuggestion.role],
+      x: 5,
+      y: 5,
+      startX: 5,
+      startY: 5,
+      targetX: 5,
+      targetY: 5,
+      status: 'Booted by Architect',
+      task: 'Idle',
+      taskQueue: [],
+      isPaused: false,
+      roboticTraits: activeSuggestion.detailedPrompt,
+      cpu: 15,
+      ram: 256
+    };
+
+    setAgents((prev) => [...prev, newAgent]);
+    addLog('Agent Architect', `Successfully compiled and spawned recommended bot: ${newAgent.name}!`, 'success');
+    
+    // Auto-advance suggestion index
+    setCurrentSuggestionIndex((prev) => (prev + 1) % ARCHITECT_SUGGESTIONS.length);
   };
 
   const handleDecommissionAgent = (id: string) => {
@@ -884,7 +1037,6 @@ export default function AgentsHub() {
 
                 const isRoad = isPathTile(cellX, cellY);
 
-                // Identify if a workstation is at this coordinate
                 const hasMainframe = cellX === 1 && cellY === 1;
                 const hasGit = cellX === 1 && cellY === 8;
                 const hasFlask = cellX === 8 && cellY === 1;
@@ -911,7 +1063,6 @@ export default function AgentsHub() {
                         : 'bg-[#182315]/10 border-[0.5px] border-border-color/5' // Grass matrix style
                     }`}
                   >
-                    {/* Render rippling active rings if occupied */}
                     {isOccupied && stationRGB && (
                       <div 
                         className="absolute w-full h-full rounded-full opacity-60 pointer-events-none scale-110 animate-ping z-0"
@@ -919,7 +1070,6 @@ export default function AgentsHub() {
                       />
                     )}
 
-                    {/* Rendering RPG High Resolution SVGs */}
                     {hasMainframe && <div className="w-11/12 h-11/12 z-10"><CyberCastleSVG /></div>}
                     {hasGit && <div className="w-11/12 h-11/12 z-10"><PokeCenterSVG /></div>}
                     {hasFlask && <div className="w-11/12 h-11/12 z-10"><FlaskLabSVG /></div>}
@@ -973,7 +1123,6 @@ export default function AgentsHub() {
                     {/* Floating RPG HUD Panel (Lvl 99, HP, EXP) */}
                     <div className="absolute bottom-[110%] w-24 bg-[#0a0f1d]/95 border border-border-color rounded p-1 shadow-2xl space-y-1 text-[6px] font-mono pointer-events-none z-30">
                       
-                      {/* Name, Lvl, and Queued jobs indicator */}
                       <div className="flex justify-between text-foreground font-bold">
                         <span className="truncate max-w-[55%]">{agent.name}</span>
                         <span className="text-amber-color">
@@ -1019,7 +1168,7 @@ export default function AgentsHub() {
                       style={{ transform: isMoving ? 'scale(0.85)' : 'scale(1)' }}
                     />
 
-                    {/* Bulletproof image load fallback: If Showdown down, draw local robot SVG instead */}
+                    {/* Bulletproof image load fallback */}
                     {hasImageError ? (
                       <div className="w-8 h-8 p-0.5 z-10">
                         {renderAgentSVG(agent.role, agent.color)}
@@ -1044,14 +1193,67 @@ export default function AgentsHub() {
         {/* Right Side: Control Panels & Inspector */}
         <div className="lg:col-span-5 space-y-6">
           
-          {/* Panel 1: Agent Inspector */}
+          {/* Panel 1: AI Agent Architect Suggestions Card */}
+          <div className="p-5 rounded-2xl bg-purple-color/5 border-2 border-purple-color/40 shadow-[0_0_15px_rgba(168,85,247,0.15)] space-y-4 animate-fade-in relative overflow-hidden">
+            <div className="absolute -right-8 -top-8 w-20 h-20 bg-purple-color/10 rounded-full blur-xl pointer-events-none" />
+            
+            <h3 className="font-mono text-xs font-bold text-purple-color uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-purple-color animate-pulse" />
+              <span>🧠 Agent Architect Recommendations</span>
+            </h3>
+
+            {activeSuggestion ? (
+              <div className="space-y-3 font-mono text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 bg-purple-color/20 text-purple-color rounded text-[10px] font-bold">
+                    Concept Suggestion
+                  </span>
+                  <span className="font-bold text-foreground">{activeSuggestion.concept}</span>
+                </div>
+
+                <div className="p-3 rounded-lg bg-background/50 border border-purple-color/20 space-y-2">
+                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                    <strong>Recommended Name:</strong> <span className="text-foreground font-bold">{activeSuggestion.name}</span>
+                    <strong className="ml-2">Sprite:</strong> <span className="text-foreground capitalize">{activeSuggestion.spriteName}</span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    <span className="text-purple-color font-bold">Prompt Function: </span>
+                    {activeSuggestion.detailedPrompt}
+                  </p>
+                </div>
+
+                {/* Step by step guide */}
+                <div className="space-y-1 p-2.5 rounded bg-[#090d14]/70 border border-border-color/40 text-[9px] text-muted-foreground leading-relaxed">
+                  <span className="text-foreground font-bold uppercase block mb-1">Step-by-Step Deployment:</span>
+                  {activeSuggestion.steps.map((step, idx) => (
+                    <div key={idx}>{step}</div>
+                  ))}
+                </div>
+
+                {/* Auto build click button */}
+                <button
+                  onClick={handleBuildArchitectSuggestion}
+                  className="w-full py-2 bg-purple-color hover:bg-purple-color/90 text-white font-bold rounded-lg transition-colors cursor-pointer text-center text-xs flex items-center justify-center gap-1.5 shadow"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Accept Concept & Build Agent</span>
+                </button>
+              </div>
+            ) : (
+              <div className="text-center text-xs font-mono text-muted-foreground py-4">
+                No active concepts in memory.
+              </div>
+            )}
+          </div>
+          
+          {/* Panel 2: Agent Inspector */}
           <AnimatePresence>
             {inspectingAgent ? (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="p-5 rounded-2xl bg-muted/15 border border-border-color/60 shadow-lg space-y-4 animate-fade-in"
+                className="p-5 rounded-2xl bg-muted/15 border border-border-color/60 shadow-lg space-y-4"
               >
                 <div className="flex items-center justify-between border-b border-border-color/40 pb-2 font-mono text-xs">
                   <div className="flex items-center gap-2">
@@ -1071,8 +1273,6 @@ export default function AgentsHub() {
                 </div>
 
                 <div className="space-y-4 font-mono text-xs">
-                  
-                  {/* CPU & RAM progress gauges */}
                   <div className="space-y-3 p-3 rounded-lg bg-background/40 border border-border-color/30">
                     <div className="space-y-1">
                       <div className="flex justify-between text-[9px] uppercase tracking-wider text-muted-foreground">
@@ -1100,7 +1300,6 @@ export default function AgentsHub() {
                     {inspectingAgent.roboticTraits}
                   </div>
 
-                  {/* Queued tasks list */}
                   {inspectingAgent.taskQueue.length > 0 && (
                     <div className="p-2.5 rounded bg-[#0f172a] border border-cyan/20 text-[10px] text-cyan leading-relaxed">
                       <span className="text-foreground font-bold uppercase block mb-1">Pending Task Queue:</span>
@@ -1119,7 +1318,6 @@ export default function AgentsHub() {
                     <div className="col-span-2"><strong>Status:</strong> {inspectingAgent.status}</div>
                   </div>
 
-                  {/* Actions inside inspector */}
                   <div className="flex flex-wrap gap-2 pt-2.5 border-t border-border-color/30">
                     <button
                       onClick={() => handleTogglePauseAgent(inspectingAgent.id)}
@@ -1151,7 +1349,7 @@ export default function AgentsHub() {
             )}
           </AnimatePresence>
 
-          {/* Panel 2: Task Dispatcher & Predefined Actions */}
+          {/* Panel 3: Task Dispatcher & Predefined Actions */}
           <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Bot className="w-4 h-4 text-cyan" />
@@ -1214,7 +1412,7 @@ export default function AgentsHub() {
             </form>
           </div>
 
-          {/* Panel 3: Add Predefined Actions Form */}
+          {/* Panel 4: Add Predefined Actions Form */}
           <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Plus className="w-4 h-4 text-purple-color" />
@@ -1244,7 +1442,7 @@ export default function AgentsHub() {
             </form>
           </div>
 
-          {/* Panel 4: Agent Factory */}
+          {/* Panel 5: Agent Spawner Factory */}
           <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
             <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Plus className="w-4 h-4 text-emerald-color" />
@@ -1294,7 +1492,6 @@ export default function AgentsHub() {
                 </div>
               </div>
 
-              {/* Sprite Selector dropdown matching Pokemon list */}
               <div className="space-y-1">
                 <label className="block text-[10px] text-muted-foreground uppercase font-bold">Select Pokémon Sprite</label>
                 <select
@@ -1322,10 +1519,9 @@ export default function AgentsHub() {
         </div>
       </div>
 
-      {/* Retro RPG Dialogue Box ( Scrolling Typewriter Feed ) */}
-      <div className="p-5 rounded-2xl bg-[#080d16] border-4 border-amber-color shadow-[0_0_15px_rgba(251,191,36,0.2)] space-y-2 relative font-mono text-xs text-foreground selection:bg-amber-color/30">
+      {/* Retro RPG Dialogue Box */}
+      <div className="p-5 rounded-2xl bg-[#080d16] border-4 border-amber-color shadow-[0_0_15px_rgba(251,191,36,0.2)] space-y-2 relative font-mono text-xs text-foreground selection:bg-amber-color/30 animate-fade-in">
         
-        {/* Decorative corner brackets */}
         <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 border-t-2 border-l-2 border-amber-color/50" />
         <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 border-t-2 border-r-2 border-amber-color/50" />
         <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 border-b-2 border-l-2 border-amber-color/50" />
@@ -1335,7 +1531,6 @@ export default function AgentsHub() {
           <span>Active RPG Dialog Log</span>
         </div>
 
-        {/* Scrolling dialogue */}
         <div className="h-20 flex flex-col justify-between py-1 leading-relaxed selection:bg-amber-color/20 text-foreground/90 font-semibold select-text">
           <div>
             {typedDialogText}
@@ -1344,7 +1539,6 @@ export default function AgentsHub() {
             )}
           </div>
 
-          {/* Flashing RPG pointer cursor arrow when idle */}
           {typingIndex >= currentDialogMessage.length && (
             <div className="flex justify-end animate-bounce">
               <span className="text-[10px] text-amber-color font-bold">▼</span>
