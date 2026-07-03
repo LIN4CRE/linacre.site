@@ -11,6 +11,8 @@ interface Agent {
   color: string;
   x: number;
   y: number;
+  startX: number;
+  startY: number;
   targetX: number;
   targetY: number;
   status: string;
@@ -29,23 +31,16 @@ interface LogMessage {
   type: 'info' | 'success' | 'warning';
 }
 
+interface WalkingParticle {
+  id: string;
+  x: number;
+  y: number;
+}
+
 const GRID_SIZE = 10;
 
 // Pokémon Showdown Sprite Database URL
 const SPRITE_BASE_URL = 'https://play.pokemonshowdown.com/sprites/ani/';
-
-const AVAILABLE_POKEMON = [
-  { name: 'Rotom-Wash', file: 'rotom-wash', description: 'Plasma mechanical appliance robot. Fits DevOps/Networking.' },
-  { name: 'Magnezone', file: 'magnezone', description: 'Triple magnetic eye robot drone. Ideal for Security scans.' },
-  { name: 'Porygon2', file: 'porygon2', description: 'Fully virtual digital construct robot. Best for Code Development.' },
-  { name: 'Slowking', file: 'slowking', description: 'Shellder-crowned royal writer. Great for library documentation.' },
-  { name: 'Metagross', file: 'metagross', description: 'Four-legged steel supercomputer mech. Heavy data compute.' },
-  { name: 'Aegislash', file: 'aegislash-blade', description: 'Steel floating shield and sword construct. Perimeter defenses.' },
-  { name: 'Genesect', file: 'genesect', description: 'Ancient insectoid cyborg with back-mounted cannon. Speed builds.' },
-  { name: 'Pikachu', file: 'pikachu', description: 'Electric rodent dynamo. Ideal for powering grids.' },
-  { name: 'Mewtwo', file: 'mewtwo', description: 'Genetically modified ultimate cybernetic psychic.' },
-  { name: 'Scizor', file: 'scizor', description: 'Metallic scissor-claw developer. Fast compiler.' }
-];
 
 const WORKSTATIONS = [
   { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]', rgb: '251, 191, 36' },
@@ -62,6 +57,120 @@ const isPathTile = (x: number, y: number): boolean => {
   return false;
 };
 
+const AVAILABLE_POKEMON = [
+  { name: 'Rotom-Wash', file: 'rotom-wash', description: 'Plasma mechanical appliance robot. Fits DevOps/Networking.' },
+  { name: 'Magnezone', file: 'magnezone', description: 'Triple magnetic eye robot drone. Ideal for Security scans.' },
+  { name: 'Porygon2', file: 'porygon2', description: 'Fully virtual digital construct robot. Best for Code Development.' },
+  { name: 'Slowking', file: 'slowking', description: 'Shellder-crowned royal writer. Great for library documentation.' },
+  { name: 'Metagross', file: 'metagross', description: 'Four-legged steel supercomputer mech. Heavy data compute.' },
+  { name: 'Aegislash', file: 'aegislash-blade', description: 'Steel floating shield and sword construct. Perimeter defenses.' },
+  { name: 'Genesect', file: 'genesect', description: 'Ancient insectoid cyborg with back-mounted cannon. Speed builds.' },
+  { name: 'Pikachu', file: 'pikachu', description: 'Electric rodent dynamo. Ideal for powering grids.' },
+  { name: 'Mewtwo', file: 'mewtwo', description: 'Genetically modified ultimate cybernetic psychic.' },
+  { name: 'Scizor', file: 'scizor', description: 'Metallic scissor-claw developer. Fast compiler.' }
+];
+
+// Complex high-resolution SVG artwork buildings
+const CyberCastleSVG = () => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    {/* Foundation */}
+    <rect x="15" y="60" width="70" height="30" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="2" />
+    <line x1="15" y1="75" x2="85" y2="75" stroke="#334155" strokeWidth="1.5" />
+    {/* Outer walls & masonry blocks */}
+    <rect x="25" y="30" width="50" height="30" fill="#334155" stroke="#475569" strokeWidth="2" />
+    <rect x="20" y="20" width="12" height="15" fill="#475569" stroke="#64748b" strokeWidth="1.5" />
+    <rect x="68" y="20" width="12" height="15" fill="#475569" stroke="#64748b" strokeWidth="1.5" />
+    {/* Blinking Beacon Mast */}
+    <line x1="50" y1="30" x2="50" y2="5" stroke="#fbbf24" strokeWidth="2.5" />
+    <circle cx="50" cy="5" r="4" fill="#fbbf24" className="animate-pulse" />
+    {/* Cyber Shield Grid */}
+    <ellipse cx="50" cy="50" rx="35" ry="12" fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 4" opacity="0.4" />
+    {/* Portcullis Gateway */}
+    <rect x="42" y="68" width="16" height="22" rx="4" fill="#0f172a" stroke="#fbbf24" strokeWidth="2" />
+    <line x1="50" y1="68" x2="50" y2="90" stroke="#fbbf24" strokeWidth="1" />
+    <line x1="42" y1="78" x2="58" y2="78" stroke="#fbbf24" strokeWidth="1" />
+  </svg>
+);
+
+const PokeCenterSVG = () => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    {/* Clean medical center walls */}
+    <rect x="15" y="35" width="70" height="55" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2.5" />
+    {/* Curved Red Gabled Roof */}
+    <path d="M 10 35 Q 50 12 90 35 Z" fill="#ef4444" stroke="#dc2626" strokeWidth="3" />
+    {/* Glowing Medical Cross */}
+    <circle cx="50" cy="28" r="9" fill="#0f172a" stroke="#5ccfe6" strokeWidth="2" />
+    <path d="M 50 23 L 50 33 M 45 28 L 55 28" fill="none" stroke="#5ccfe6" strokeWidth="2.5" strokeLinecap="round" />
+    {/* Double Automatic Glass Doors */}
+    <rect x="38" y="60" width="24" height="30" rx="2" fill="#0f172a" stroke="#5ccfe6" strokeWidth="2" />
+    <line x1="50" y1="60" x2="50" y2="90" stroke="#5ccfe6" strokeWidth="1.5" />
+    {/* Status Windows */}
+    <rect x="23" y="48" width="10" height="12" rx="2" fill="#1e293b" stroke="#cbd5e1" strokeWidth="1" />
+    <rect x="67" y="48" width="10" height="12" rx="2" fill="#1e293b" stroke="#cbd5e1" strokeWidth="1" />
+  </svg>
+);
+
+const FlaskLabSVG = () => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    {/* Laboratory framework */}
+    <rect x="20" y="40" width="60" height="50" rx="4" fill="#0f172a" stroke="#a855f7" strokeWidth="2" />
+    {/* Glass Chamber */}
+    <rect x="35" y="15" width="30" height="55" rx="15" fill="#a855f7" opacity="0.15" />
+    <rect x="35" y="15" width="30" height="55" rx="15" fill="none" stroke="#a855f7" strokeWidth="2.5" />
+    {/* Bubbling Fluid Level */}
+    <path d="M 36 50 Q 50 46 64 50 L 64 68 Q 50 68 36 68 Z" fill="#c084fc" opacity="0.75" />
+    {/* Bubble particles */}
+    <circle cx="45" cy="40" r="2.5" fill="#ffffff" className="animate-bounce" />
+    <circle cx="55" cy="30" r="2" fill="#ffffff" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
+    <circle cx="48" cy="22" r="1.5" fill="#ffffff" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
+    {/* Pipe connectors */}
+    <path d="M 20 60 H 35 M 65 60 H 80" fill="none" stroke="#a855f7" strokeWidth="3" />
+    {/* Pressure gauge */}
+    <circle cx="50" cy="78" r="6" fill="#1e293b" stroke="#a855f7" strokeWidth="1.5" />
+    <line x1="50" y1="78" x2="53" y2="74" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+const WindmillGeneratorSVG = () => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    {/* Tower Base */}
+    <path d="M 38 90 L 46 35 L 54 35 L 62 90 Z" fill="#1e293b" stroke="#334155" strokeWidth="2.5" />
+    {/* Mechanical Turbine Hub */}
+    <circle cx="50" cy="35" r="8" fill="#0f172a" stroke="#10b981" strokeWidth="2" />
+    {/* CSS Animated Spinning Blades */}
+    <g className="animate-spin" style={{ transformOrigin: '50px 35px', animationDuration: '6s' }}>
+      <path d="M 50 35 L 50 2 M 49 2 L 51 2" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
+      <path d="M 50 35 L 20 52" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
+      <path d="M 50 35 L 80 52" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
+    </g>
+    {/* Generator power lines */}
+    <path d="M 38 90 L 15 90 H 5 M 62 90 L 85 90 H 95" fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" />
+  </svg>
+);
+
+const TavernCafeSVG = () => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    {/* Timber framing log walls */}
+    <rect x="15" y="45" width="70" height="45" fill="#451a03" stroke="#78350f" strokeWidth="2.5" />
+    {/* Tudor style plaster upper floor */}
+    <polygon points="10,45 50,15 90,45" fill="#fef08a" stroke="#78350f" strokeWidth="3" />
+    {/* Wood crossbeams */}
+    <line x1="30" y1="45" x2="30" y2="90" stroke="#78350f" strokeWidth="2" />
+    <line x1="70" y1="45" x2="70" y2="90" stroke="#78350f" strokeWidth="2" />
+    {/* Tavern Signpost */}
+    <line x1="78" y1="45" x2="92" y2="45" stroke="#78350f" strokeWidth="2" />
+    <rect x="82" y="49" width="8" height="8" fill="#f59e0b" stroke="#78350f" strokeWidth="1" />
+    <circle cx="86" cy="53" r="2" fill="#ef4444" />
+    {/* Cozy Stone Chimney */}
+    <rect x="22" y="10" width="10" height="20" fill="#4b5563" stroke="#374151" strokeWidth="1.5" />
+    {/* Steam Smoke particles */}
+    <circle cx="27" cy="5" r="2.5" fill="#9ca3af" className="animate-ping" opacity="0.7" />
+    {/* Welcoming Door */}
+    <rect x="44" y="65" width="14" height="25" rx="1" fill="#78350f" stroke="#b45309" strokeWidth="1.5" />
+    <circle cx="48" cy="78" r="1" fill="#f59e0b" />
+  </svg>
+);
+
 export default function AgentsHub() {
   const [agents, setAgents] = useState<Agent[]>([
     {
@@ -73,6 +182,8 @@ export default function AgentsHub() {
       color: '#5ccfe6',
       x: 1,
       y: 8,
+      startX: 1,
+      startY: 8,
       targetX: 1,
       targetY: 8,
       status: 'Awaiting tasks',
@@ -91,6 +202,8 @@ export default function AgentsHub() {
       color: '#fbbf24',
       x: 1,
       y: 1,
+      startX: 1,
+      startY: 1,
       targetX: 1,
       targetY: 1,
       status: 'Monitoring registry integrity',
@@ -107,7 +220,7 @@ export default function AgentsHub() {
       id: 'log-initial-1',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       agentName: 'System',
-      message: 'Autonomous GBA simulation grid initialized. Standing by.',
+      message: 'Welcome to the Autonomous Pokémon Simulation Grid! Dispatch a command to start.',
       type: 'info'
     }
   ]);
@@ -123,6 +236,14 @@ export default function AgentsHub() {
   // Historical lists for live plotting
   const [bandwidthHistory, setBandwidthHistory] = useState<number[]>([12, 15, 10, 8, 14, 18, 11, 13, 16, 12]);
   const [loadHistory, setLoadHistory] = useState<number[]>([20, 25, 22, 18, 24, 28, 21, 23, 26, 22]);
+
+  // Footprint / Dust particle tracking for 60fps movement trail
+  const [particles, setParticles] = useState<WalkingParticle[]>([]);
+
+  // Dialog Typing effect state
+  const [typedDialogText, setTypedDialogText] = useState('');
+  const [typingIndex, setTypingIndex] = useState(0);
+  const [currentDialogMessage, setCurrentDialogMessage] = useState('System: Welcome to the Autonomous Pokémon Simulation Grid! Dispatch a command to start.');
 
   const [predefinedActions, setPredefinedActions] = useState<string[]>([
     'Audit PATH registry keys',
@@ -150,6 +271,22 @@ export default function AgentsHub() {
   useEffect(() => {
     consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
+
+  // Dialog typewriter effect loop
+  useEffect(() => {
+    setTypedDialogText('');
+    setTypingIndex(0);
+  }, [currentDialogMessage]);
+
+  useEffect(() => {
+    if (typingIndex < currentDialogMessage.length) {
+      const timeout = setTimeout(() => {
+        setTypedDialogText((prev) => prev + currentDialogMessage[typingIndex]);
+        setTypingIndex((prev) => prev + 1);
+      }, 25);
+      return () => clearTimeout(timeout);
+    }
+  }, [typingIndex, currentDialogMessage]);
 
   // Telemetry fluctuation loop to make passive watching enjoyable
   useEffect(() => {
@@ -207,13 +344,13 @@ export default function AgentsHub() {
           if (x === targetX && y === targetY) {
             if (personality === 'caffeinated' && Math.random() < 0.25 && (x !== 5 || y !== 5)) {
               addLog(name, 'Feeling low on charge. Relocating to Game Corner Cafe for quick power recharge.', 'info');
-              return { ...agent, targetX: 5, targetY: 5, status: 'Charging at Cafe' };
+              return { ...agent, startX: x, startY: y, targetX: 5, targetY: 5, status: 'Charging at Cafe' };
             }
             
             if (personality === 'chaotic' && Math.random() < 0.2 && agent.task === 'Idle') {
               const nextStation = WORKSTATIONS[Math.floor(Math.random() * WORKSTATIONS.length)];
               addLog(name, `Matrix anomaly triggered. Routing chaotic sweep to: ${nextStation.name}`, 'warning');
-              return { ...agent, targetX: nextStation.x, targetY: nextStation.y, status: `Sweeping ${nextStation.name}` };
+              return { ...agent, startX: x, startY: y, targetX: nextStation.x, targetY: nextStation.y, status: `Sweeping ${nextStation.name}` };
             }
 
             if (agent.task !== 'Idle' && x !== 5 && y !== 5) {
@@ -240,6 +377,13 @@ export default function AgentsHub() {
             else nextY = y - 1;
           }
 
+          // Spawn footprint particle at current coordinate before moving
+          const particleId = `part-${Date.now()}-${Math.random()}`;
+          setParticles((prev) => [...prev, { id: particleId, x, y }]);
+          setTimeout(() => {
+            setParticles((prev) => prev.filter(p => p.id !== particleId));
+          }, 1100);
+
           return {
             ...agent,
             x: nextX,
@@ -265,6 +409,7 @@ export default function AgentsHub() {
       ...prev,
       { id: `log-${Date.now()}-${Math.random()}`, timestamp, agentName, message, type }
     ]);
+    setCurrentDialogMessage(`${agentName}: ${message}`);
   };
 
   const handleAssignAction = async (e: FormEvent) => {
@@ -290,6 +435,8 @@ export default function AgentsHub() {
           const updated = {
             ...agent,
             task: finalActionText,
+            startX: agent.x,
+            startY: agent.y,
             targetX: targetStation.x,
             targetY: targetStation.y,
             status: `Active load: ${finalActionText}`
@@ -361,6 +508,8 @@ export default function AgentsHub() {
       color: colors[newAgentRole],
       x: 5,
       y: 5,
+      startX: 5,
+      startY: 5,
       targetX: 5,
       targetY: 5,
       status: 'Initial boot success',
@@ -422,6 +571,14 @@ export default function AgentsHub() {
     }).join(' ');
   };
 
+  // Calculates the current pathing percentage completion
+  const getPathProgress = (agent: Agent) => {
+    const totalDist = Math.abs(agent.startX - agent.targetX) + Math.abs(agent.startY - agent.targetY);
+    if (totalDist === 0) return 100;
+    const currDist = Math.abs(agent.x - agent.targetX) + Math.abs(agent.y - agent.targetY);
+    return Math.floor(((totalDist - currDist) / totalDist) * 100);
+  };
+
   return (
     <div className="space-y-12 animate-fade-in">
       {/* NO-SPEND GUARD: Prominent Billing Alert Warning Sign */}
@@ -435,8 +592,8 @@ export default function AgentsHub() {
         </div>
       </div>
 
-      {/* Global Telemetry Metrics Dashboard with real-time SVG charts */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" id="telemetry-dashboard">
+      {/* Global Telemetry Metrics Dashboard */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" id="telemetry-dashboard">
         <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
             <span>Matrix Load</span>
@@ -447,7 +604,6 @@ export default function AgentsHub() {
             <span className="font-mono text-xs text-muted-foreground">%</span>
           </div>
           
-          {/* Neon Mini Sparkline Chart */}
           <div className="absolute right-2 bottom-1 w-28 h-6 opacity-35">
             <svg viewBox="0 0 120 24" className="w-full h-full">
               <path
@@ -472,7 +628,6 @@ export default function AgentsHub() {
             <span className="font-mono text-xs text-muted-foreground">MB/s</span>
           </div>
           
-          {/* Neon Mini Sparkline Chart */}
           <div className="absolute right-2 bottom-1 w-28 h-6 opacity-35">
             <svg viewBox="0 0 120 24" className="w-full h-full">
               <path
@@ -519,13 +674,13 @@ export default function AgentsHub() {
       {/* Grid & Control Panel Split */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Side: 2-D Grid Simulation Card (No emulator borders, clean visuals) */}
+        {/* Left Side: Game Screen Simulation Grid (60 FPS Visuals) */}
         <div className="lg:col-span-7 space-y-6">
           <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border border-border-color shadow-xl overflow-hidden">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808007_1px,transparent_1px),linear-gradient(to_bottom,#80808007_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
             
-            {/* Clean Simulation Grid */}
-            <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/75 rounded-xl overflow-hidden p-1 shadow-inner">
+            {/* Clean Simulation Screen */}
+            <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/75 rounded-xl overflow-hidden p-1 shadow-inner select-none">
               
               {/* Target lines vector paths for active agents */}
               <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
@@ -558,53 +713,74 @@ export default function AgentsHub() {
                 const cellX = index % GRID_SIZE;
                 const cellY = Math.floor(index / GRID_SIZE);
 
-                const station = WORKSTATIONS.find(w => w.x === cellX && w.y === cellY);
-                const Icon = station?.icon;
                 const isRoad = isPathTile(cellX, cellY);
 
-                // Check if any active bot is currently occupying this station
+                // Identify if a workstation is at this coordinate
+                const hasMainframe = cellX === 1 && cellY === 1;
+                const hasGit = cellX === 1 && cellY === 8;
+                const hasFlask = cellX === 8 && cellY === 1;
+                const hasWindmill = cellX === 8 && cellY === 8;
+                const hasTavern = cellX === 5 && cellY === 5;
+
+                const stationRGB = 
+                  hasMainframe ? '251, 191, 36' :
+                  hasGit ? '92, 207, 230' :
+                  hasFlask ? '168, 85, 247' :
+                  hasWindmill ? '127, 216, 143' :
+                  hasTavern ? '248, 113, 113' : '';
+
                 const isOccupied = agents.some(a => !a.isPaused && a.x === cellX && a.y === cellY && (a.x !== a.targetX || a.y !== a.targetY || a.task !== 'Idle'));
 
                 return (
                   <div
                     key={index}
                     className={`relative aspect-square flex items-center justify-center transition-all ${
-                      station 
+                      hasMainframe || hasGit || hasFlask || hasWindmill || hasTavern
                         ? 'bg-[#1b2c1f]/40 border border-[#3e684a]/50 shadow-md' 
                         : isRoad 
                         ? 'bg-[#d2b48c]/10 border-[0.5px] border-[#c2a47c]/10' // Clean path styling
                         : 'bg-[#182315]/10 border-[0.5px] border-border-color/5' // Grass matrix style
                     }`}
                   >
-                    {station && Icon && (
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        {/* Radial Rippling Processing Waves when occupied */}
-                        {isOccupied && (
-                          <div 
-                            className="absolute w-full h-full rounded-full opacity-60 pointer-events-none scale-110 animate-ping"
-                            style={{ border: `1.5px solid rgba(${station.rgb}, 0.6)` }}
-                          />
-                        )}
-                        
-                        <div className={`flex flex-col items-center justify-center p-1 rounded border text-center ${station.color} w-11/12 h-11/12 scale-95 z-10 transition-shadow`}>
-                          <Icon className="w-3.5 h-3.5 mb-0.5" />
-                          <span className="text-[4px] leading-tight font-mono font-bold scale-90 truncate max-w-full">
-                            {station.name}
-                          </span>
-                        </div>
-                      </div>
+                    {/* Render rippling active rings if occupied */}
+                    {isOccupied && stationRGB && (
+                      <div 
+                        className="absolute w-full h-full rounded-full opacity-60 pointer-events-none scale-110 animate-ping z-0"
+                        style={{ border: `1.5px solid rgba(${stationRGB}, 0.6)` }}
+                      />
                     )}
+
+                    {/* Rendering RPG High Resolution SVGs */}
+                    {hasMainframe && <div className="w-11/12 h-11/12 z-10"><CyberCastleSVG /></div>}
+                    {hasGit && <div className="w-11/12 h-11/12 z-10"><PokeCenterSVG /></div>}
+                    {hasFlask && <div className="w-11/12 h-11/12 z-10"><FlaskLabSVG /></div>}
+                    {hasWindmill && <div className="w-11/12 h-11/12 z-10"><WindmillGeneratorSVG /></div>}
+                    {hasTavern && <div className="w-11/12 h-11/12 z-10"><TavernCafeSVG /></div>}
                   </div>
                 );
               })}
 
-              {/* Render Animated Pokémon Agents */}
+              {/* Render 60fps Walk Footprint/Dust Particles */}
+              {particles.map((part) => {
+                const partLeft = `calc(${part.x * 10}% + 5% - 4px)`;
+                const partTop = `calc(${part.y * 10}% + 5% - 4px)`;
+                return (
+                  <div 
+                    key={part.id}
+                    className="absolute w-2 h-2 rounded-full bg-slate-500/30 blur-[0.5px] animate-ping"
+                    style={{ left: partLeft, top: partTop }}
+                  />
+                );
+              })}
+
+              {/* Render Animated Pokémon Agents with detailed Game HUD */}
               {agents.map((agent) => {
                 const leftPos = `calc(${agent.x * 10}% + 5% - 20px)`;
                 const topPos = `calc(${agent.y * 10}% + 5% - 20px)`;
 
                 const isCarrying = agent.task !== 'Idle';
                 const isMoving = !agent.isPaused && (agent.x !== agent.targetX || agent.y !== agent.targetY);
+                const progress = getPathProgress(agent);
 
                 return (
                   <motion.div
@@ -621,18 +797,43 @@ export default function AgentsHub() {
                       transition: { type: 'spring', stiffness: 130, damping: 14 }
                     }}
                   >
-                    {/* Speech Bubble above carrying box */}
-                    <div className="absolute bottom-[110%] left-1/2 transform -translate-x-1/2 bg-[#0c101a]/95 border border-border-color rounded px-2 py-0.5 text-[7px] font-mono text-foreground font-semibold leading-normal w-24 shadow-2xl pointer-events-none z-30 transition-all duration-200">
-                      <div className="relative text-center">
-                        I'm just doing this job
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-t-[3.5px] border-t-border-color mt-[1px]" />
-                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-t-[3px] border-t-[#0c101a]" />
+                    {/* Floating RPG HUD Panel (Lvl 99, HP, EXP) */}
+                    <div className="absolute bottom-[110%] w-24 bg-[#0a0f1d]/95 border border-border-color rounded p-1 shadow-2xl space-y-1 text-[6px] font-mono pointer-events-none z-30">
+                      
+                      {/* Name & Lvl */}
+                      <div className="flex justify-between text-foreground font-bold">
+                        <span className="truncate max-w-[60%]">{agent.name}</span>
+                        <span className="text-amber-color">Lv99</span>
                       </div>
+
+                      {/* HP Bar */}
+                      <div className="space-y-0.5">
+                        <div className="flex justify-between text-[4px] text-muted-foreground uppercase">
+                          <span>HP</span>
+                          <span>100%</span>
+                        </div>
+                        <div className="w-full bg-slate-800 h-1 rounded overflow-hidden">
+                          <div className="bg-emerald-color h-full" style={{ width: '100%' }} />
+                        </div>
+                      </div>
+
+                      {/* EXP Bar (Visible during active tasks) */}
+                      {isCarrying && (
+                        <div className="space-y-0.5">
+                          <div className="flex justify-between text-[4px] text-muted-foreground uppercase">
+                            <span>EXP</span>
+                            <span>{progress}%</span>
+                          </div>
+                          <div className="w-full bg-slate-800 h-1 rounded overflow-hidden">
+                            <div className="bg-cyan h-full transition-all duration-500" style={{ width: `${progress}%` }} />
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Cargo Carrying Animation */}
                     {isCarrying && !agent.isPaused && (
-                      <div className="absolute bottom-[70%] left-1/2 transform -translate-x-1/2 text-xs cargo-box z-30">
+                      <div className="absolute bottom-[65%] left-1/2 transform -translate-x-1/2 text-xs cargo-box z-30">
                         📦
                       </div>
                     )}
@@ -669,7 +870,7 @@ export default function AgentsHub() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="p-5 rounded-2xl bg-muted/15 border border-border-color/60 shadow-lg space-y-4"
+                className="p-5 rounded-2xl bg-muted/15 border border-border-color/60 shadow-lg space-y-4 animate-fade-in"
               >
                 <div className="flex items-center justify-between border-b border-border-color/40 pb-2 font-mono text-xs">
                   <div className="flex items-center gap-2">
@@ -932,27 +1133,34 @@ export default function AgentsHub() {
         </div>
       </div>
 
-      {/* Thought Terminal / Console Logs Stream */}
-      <div className="p-5 rounded-2xl bg-muted/15 border border-border-color space-y-4">
-        <h3 className="font-mono text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-          <Terminal className="w-4 h-4 text-amber-color" />
-          <span>Agent Logs & Reasonings</span>
-        </h3>
+      {/* Retro RPG Dialogue Box ( Scrolling Typewriter Feed ) */}
+      <div className="p-5 rounded-2xl bg-[#080d16] border-4 border-amber-color shadow-[0_0_15px_rgba(251,191,36,0.2)] space-y-2 relative font-mono text-xs text-foreground selection:bg-amber-color/30">
         
-        <div className="h-60 bg-[#070b12] rounded-xl border border-border-color/60 p-4 font-mono text-[11px] overflow-y-auto space-y-2 select-text selection:bg-amber-color/30 scrollbar-thin">
-          {logs.map((log) => (
-            <div key={log.id} className="flex items-start gap-2 leading-relaxed">
-              <span className="text-muted-foreground/60">{log.timestamp}</span>
-              <span className="text-cyan font-bold">[{log.agentName}]</span>
-              <span className={
-                log.type === 'success' ? 'text-emerald-color' : 
-                log.type === 'warning' ? 'text-amber-color' : 'text-foreground/90'
-              }>
-                {log.message}
-              </span>
+        {/* Decorative corner brackets */}
+        <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 border-t-2 border-l-2 border-amber-color/50" />
+        <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 border-t-2 border-r-2 border-amber-color/50" />
+        <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 border-b-2 border-l-2 border-amber-color/50" />
+        <div className="absolute bottom-1.5 right-1.5 w-2.5 h-2.5 border-b-2 border-r-2 border-amber-color/50" />
+
+        <div className="flex items-center gap-1.5 border-b border-border-color/30 pb-1.5 text-[10px] text-amber-color font-bold tracking-widest uppercase">
+          <span>Active RPG Dialog Log</span>
+        </div>
+
+        {/* Scrolling dialogue */}
+        <div className="h-20 flex flex-col justify-between py-1 leading-relaxed selection:bg-amber-color/20 text-foreground/90 font-semibold select-text">
+          <div>
+            {typedDialogText}
+            {typingIndex < currentDialogMessage.length && (
+              <span className="w-1.5 h-3 bg-foreground inline-block ml-0.5 animate-pulse" />
+            )}
+          </div>
+
+          {/* Flashing RPG pointer cursor arrow when idle */}
+          {typingIndex >= currentDialogMessage.length && (
+            <div className="flex justify-end animate-bounce">
+              <span className="text-[10px] text-amber-color font-bold">▼</span>
             </div>
-          ))}
-          <div ref={consoleEndRef} />
+          )}
         </div>
       </div>
     </div>
