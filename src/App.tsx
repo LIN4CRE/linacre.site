@@ -1,17 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import Header from './components/Header';
 import TerminalIntro from './components/TerminalIntro';
 import Toolkit from './components/Toolkit';
-import Learn from './components/Learn';
-import Lab from './components/Lab';
-import Dashboard from './components/Dashboard';
-import IdentityHub from './components/IdentityHub';
-import CommandPalette from './components/CommandPalette';
-import DevPlayground from './components/DevPlayground';
 import Footer from './components/Footer';
+import CommandPalette from './components/CommandPalette';
 import { CHANGELOG } from './data';
 import { ToolCategory } from './types';
+
+// Lazy-loaded page components for optimization (code splitting)
+const Learn = lazy(() => import('./components/Learn'));
+const Lab = lazy(() => import('./components/Lab'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const IdentityHub = lazy(() => import('./components/IdentityHub'));
+const DevPlayground = lazy(() => import('./components/DevPlayground'));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('toolkit');
@@ -42,6 +44,11 @@ export default function App() {
     if (currentHash !== activeTab) {
       window.history.pushState(null, '', `#${activeTab}`);
     }
+  }, [activeTab]);
+
+  // Scroll to top on active tab navigation changes to resolve SPA scroll retention
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' as any });
   }, [activeTab]);
 
   // Identity and Brand custom values synchronized from localStorage
@@ -279,8 +286,14 @@ export default function App() {
       />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
-        <AnimatePresence mode="wait">
-          {activeTab === 'toolkit' && (
+        <Suspense fallback={
+          <div className="py-20 text-center font-mono text-xs text-muted-foreground flex flex-col items-center justify-center gap-3">
+            <div className="w-6 h-6 border-2 border-amber-color border-t-transparent rounded-full animate-spin"></div>
+            <span>Loading interface module...</span>
+          </div>
+        }>
+          <AnimatePresence mode="wait">
+            {activeTab === 'toolkit' && (
             <motion.div
               key="toolkit"
               variants={containerVariants}
@@ -464,7 +477,8 @@ export default function App() {
               <DevPlayground />
             </motion.div>
           )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </Suspense>
       </main>
 
       {/* Global command palette */}
