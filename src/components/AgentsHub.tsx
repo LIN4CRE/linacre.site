@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Terminal, Send, Plus, Bot, Coffee, Shield, Database, LayoutGrid, Award, Server, Pause, Play, Trash2, Edit2, AlertTriangle, Info } from 'lucide-react';
+import { Terminal, Send, Plus, Bot, Coffee, Shield, Database, LayoutGrid, Award, Server, Pause, Play, Trash2, AlertTriangle, Info, Cpu, Activity, Zap, Layers } from 'lucide-react';
 
 interface Agent {
   id: string;
   name: string;
   role: 'Dev' | 'DevOps' | 'Security' | 'Librarian';
+  spriteName: string; // Pokémon Showdown gif filename
   personality: 'focused' | 'caffeinated' | 'chaotic' | 'pragmatic';
   color: string;
   x: number;
@@ -16,6 +17,8 @@ interface Agent {
   task: string;
   isPaused: boolean;
   roboticTraits: string;
+  cpu: number;
+  ram: number;
 }
 
 interface LogMessage {
@@ -28,7 +31,22 @@ interface LogMessage {
 
 const GRID_SIZE = 10;
 
-// Locations of workstations on the 10x10 grid
+// Pokémon Showdown Sprite Database URL
+const SPRITE_BASE_URL = 'https://play.pokemonshowdown.com/sprites/ani/';
+
+const AVAILABLE_POKEMON = [
+  { name: 'Rotom-Wash', file: 'rotom-wash', description: 'Plasma mechanical appliance robot. Fits DevOps/Networking.' },
+  { name: 'Magnezone', file: 'magnezone', description: 'Triple magnetic eye robot drone. Ideal for Security scans.' },
+  { name: 'Porygon2', file: 'porygon2', description: 'Fully virtual digital construct robot. Best for Code Development.' },
+  { name: 'Slowking', file: 'slowking', description: 'Shellder-crowned royal writer. Great for library documentation.' },
+  { name: 'Metagross', file: 'metagross', description: 'Four-legged steel supercomputer mech. Heavy data compute.' },
+  { name: 'Aegislash', file: 'aegislash-blade', description: 'Steel floating shield and sword construct. Perimeter defenses.' },
+  { name: 'Genesect', file: 'genesect', description: 'Ancient insectoid cyborg with back-mounted cannon. Speed builds.' },
+  { name: 'Pikachu', file: 'pikachu', description: 'Electric rodent dynamo. Ideal for powering grids.' },
+  { name: 'Mewtwo', file: 'mewtwo', description: 'Genetically modified ultimate cybernetic psychic.' },
+  { name: 'Scizor', file: 'scizor', description: 'Metallic scissor-claw developer. Fast compiler.' }
+];
+
 const WORKSTATIONS = [
   { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]' },
   { name: 'Git Repository', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-[#0d161a]/80 shadow-[0_0_10px_rgba(92,207,230,0.15)]' },
@@ -44,96 +62,13 @@ const isPathTile = (x: number, y: number): boolean => {
   return false;
 };
 
-// Robot SVG art components showing details like arms, legs, antennas
-const DevOpsRobotSVG = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Antennas */}
-    <line x1="50" y1="20" x2="50" y2="5" stroke={color} strokeWidth="3" strokeLinecap="round" />
-    <circle cx="50" cy="5" r="4" fill={color} />
-    {/* Robotic Arms */}
-    <path d="M 15 50 Q 5 40 10 30" fill="none" stroke={color} strokeWidth="4.5" strokeLinecap="round" />
-    <path d="M 85 50 Q 95 40 90 30" fill="none" stroke={color} strokeWidth="4.5" strokeLinecap="round" />
-    {/* Mechanical Claw Hands */}
-    <path d="M 6 30 Q 10 20 15 30" fill="none" stroke={color} strokeWidth="3" />
-    <path d="M 94 30 Q 90 20 85 30" fill="none" stroke={color} strokeWidth="3" />
-    {/* Body chassis */}
-    <rect x="25" y="35" width="50" height="45" rx="10" fill="#0d1117" stroke={color} strokeWidth="4" />
-    {/* Screen Face */}
-    <rect x="33" y="43" width="34" height="22" rx="4" fill="#1f2937" stroke={color} strokeWidth="2" />
-    <circle cx="43" cy="54" r="3" fill={color} />
-    <circle cx="57" cy="54" r="3" fill={color} />
-    {/* Hydraulic Tread Legs */}
-    <rect x="20" y="80" width="60" height="12" rx="6" fill="#111827" stroke={color} strokeWidth="3.5" />
-    <line x1="30" y1="86" x2="70" y2="86" stroke={color} strokeWidth="2" strokeDasharray="5 4" />
-  </svg>
-);
-
-const SecurityRobotSVG = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Antennas */}
-    <line x1="35" y1="20" x2="25" y2="8" stroke={color} strokeWidth="3" />
-    <line x1="65" y1="20" x2="75" y2="8" stroke={color} strokeWidth="3" />
-    <circle cx="25" cy="8" r="3.5" fill={color} />
-    <circle cx="75" cy="8" r="3.5" fill={color} />
-    {/* Heavy Shield Arm */}
-    <path d="M 12 45 L 8 65 L 20 75 L 24 55 Z" fill="#1f2937" stroke={color} strokeWidth="3" />
-    {/* Weapon Arm */}
-    <path d="M 88 45 L 94 65 L 84 70" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round" />
-    {/* Core Body Sphere */}
-    <circle cx="50" cy="48" r="28" fill="#0d1117" stroke={color} strokeWidth="4.5" />
-    {/* Visor Eye */}
-    <rect x="35" y="40" width="30" height="8" rx="2" fill="#ef4444" className="animate-pulse" />
-    {/* Mech Legs */}
-    <path d="M 38 74 L 32 92 L 24 92" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M 62 74 L 68 92 L 76 92" fill="none" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-const DeveloperRobotSVG = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Head unit */}
-    <rect x="38" y="10" width="24" height="20" rx="6" fill="#0d1117" stroke={color} strokeWidth="3.5" />
-    <circle cx="50" cy="20" r="4" fill="#3b82f6" className="animate-ping" />
-    {/* Neck */}
-    <line x1="50" y1="30" x2="50" y2="38" stroke={color} strokeWidth="4" />
-    {/* Mainframe Rack Body */}
-    <rect x="22" y="38" width="56" height="42" rx="4" fill="#0d1117" stroke={color} strokeWidth="4" />
-    {/* LED Indicators */}
-    <circle cx="34" cy="50" r="2.5" fill="#10b981" />
-    <circle cx="34" cy="60" r="2.5" fill="#f59e0b" />
-    <circle cx="34" cy="70" r="2.5" fill="#ef4444" />
-    {/* Multi-joint robotic arms */}
-    <path d="M 22 45 L 8 45 L 8 65" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M 78 45 L 92 45 L 92 65" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-    {/* Wheels / Stabilizer base */}
-    <circle cx="35" cy="88" r="8" fill="#111827" stroke={color} strokeWidth="3" />
-    <circle cx="65" cy="88" r="8" fill="#111827" stroke={color} strokeWidth="3" />
-    <line x1="28" y1="88" x2="72" y2="88" stroke={color} strokeWidth="3" />
-  </svg>
-);
-
-const WriterRobotSVG = ({ color }: { color: string }) => (
-  <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Floating drone rings */}
-    <ellipse cx="50" cy="85" rx="25" ry="8" fill="none" stroke={color} strokeWidth="3" strokeDasharray="6 4" />
-    {/* Hover thruster flame */}
-    <path d="M 50 72 L 46 82 L 54 82 Z" fill="#38bdf8" opacity="0.8" className="animate-pulse" />
-    {/* Cylindrical Body */}
-    <rect x="30" y="25" width="40" height="45" rx="12" fill="#0d1117" stroke={color} strokeWidth="4" />
-    {/* Scanner Visor */}
-    <path d="M 36 38 Q 50 32 64 38" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" />
-    {/* Mechanical document claw arms */}
-    <path d="M 30 55 C 15 55 18 40 10 42" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" />
-    <path d="M 70 55 C 85 55 82 40 90 42" fill="none" stroke={color} strokeWidth="3.5" strokeLinecap="round" />
-  </svg>
-);
-
 export default function AgentsHub() {
   const [agents, setAgents] = useState<Agent[]>([
     {
       id: 'agent-devops',
-      name: 'DevOps Bot',
+      name: 'DevOps Rotom',
       role: 'DevOps',
+      spriteName: 'rotom-wash',
       personality: 'focused',
       color: '#5ccfe6',
       x: 1,
@@ -143,12 +78,15 @@ export default function AgentsHub() {
       status: 'Awaiting tasks',
       task: 'Idle',
       isPaused: false,
-      roboticTraits: 'Equipped with dual multi-joint hydraulic tread legs, high-speed claw collectors, and custom antenna signal boosters.'
+      roboticTraits: 'Forged from plasma coils, hydraulic washers, and dual high-frequency wifi antennas. Specialized in container pipelines.',
+      cpu: 18,
+      ram: 242
     },
     {
       id: 'agent-security',
-      name: 'SecShield',
+      name: 'SecMagnezone',
       role: 'Security',
+      spriteName: 'magnezone',
       personality: 'pragmatic',
       color: '#fbbf24',
       x: 1,
@@ -158,7 +96,9 @@ export default function AgentsHub() {
       status: 'Monitoring registry integrity',
       task: 'Ecosystem guard duty',
       isPaused: false,
-      roboticTraits: 'Forged with reinforced titanium alloy shielding, active red laser scanning visor, and stabilizing mechanical walking pads.'
+      roboticTraits: 'Equipped with heavy magnetic shielding plating, triple-lens focal visors, and high-entropy security scanners.',
+      cpu: 32,
+      ram: 512
     }
   ]);
 
@@ -167,12 +107,19 @@ export default function AgentsHub() {
       id: 'log-initial-1',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
       agentName: 'System',
-      message: 'Autonomous simulation grid initialized. Standing by.',
+      message: 'Autonomous GBA simulation grid initialized. Standing by.',
       type: 'info'
     }
   ]);
 
-  // Master Actions Database
+  // Global Telemetry Metrics
+  const [telemetry, setTelemetry] = useState({
+    bandwidth: 12.4,
+    load: 22,
+    jobsCompleted: 0,
+    powerDraw: 85
+  });
+
   const [predefinedActions, setPredefinedActions] = useState<string[]>([
     'Audit PATH registry keys',
     'Optimize CSS styles',
@@ -192,12 +139,52 @@ export default function AgentsHub() {
   const [newAgentName, setNewAgentName] = useState('');
   const [newAgentRole, setNewAgentRole] = useState<'Dev' | 'DevOps' | 'Security' | 'Librarian'>('Dev');
   const [newAgentPersonality, setNewAgentPersonality] = useState<'focused' | 'caffeinated' | 'chaotic' | 'pragmatic'>('focused');
+  const [newAgentSprite, setNewAgentSprite] = useState('porygon2');
 
   const consoleEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
+
+  // Telemetry fluctuation loop to make passive watching enjoyable
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const activeMovingCount = agents.filter(a => !a.isPaused && (a.x !== a.targetX || a.y !== a.targetY)).length;
+      
+      setTelemetry((prev) => {
+        const bandwidthChange = activeMovingCount > 0 ? (Math.random() * 15 + 10) : (Math.random() * 2 + 1);
+        const loadChange = Math.min(95, Math.max(5, (activeMovingCount * 25) + Math.floor(Math.random() * 12)));
+        const powerChange = Math.max(45, 60 + (activeMovingCount * 30) + Math.floor(Math.random() * 10));
+
+        return {
+          ...prev,
+          bandwidth: Number(bandwidthChange.toFixed(1)),
+          load: loadChange,
+          powerDraw: powerChange
+        };
+      });
+
+      // Fluctuating individual agent CPU & RAM
+      setAgents((prevAgents) =>
+        prevAgents.map((a) => {
+          if (a.isPaused) return { ...a, cpu: 0 };
+          const isWorking = a.x !== a.targetX || a.y !== a.targetY;
+          const cpuLoad = isWorking ? Math.floor(Math.random() * 45 + 50) : Math.floor(Math.random() * 10 + 5);
+          const ramFootprint = Math.min(1024, Math.max(128, a.ram + Math.floor(Math.random() * 20 - 10)));
+          
+          const updated = { ...a, cpu: cpuLoad, ram: ramFootprint };
+          if (inspectingAgent?.id === a.id) {
+            setInspectingAgent(updated);
+          }
+          return updated;
+        })
+      );
+
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [agents, inspectingAgent]);
 
   // Main Simulation Loop (moves agents every 1.5 seconds)
   useEffect(() => {
@@ -206,24 +193,24 @@ export default function AgentsHub() {
         prevAgents.map((agent) => {
           let { x, y, targetX, targetY, personality, name, isPaused } = agent;
 
-          // Paused agents freeze completely
           if (isPaused) return agent;
 
           // Arrived
           if (x === targetX && y === targetY) {
             if (personality === 'caffeinated' && Math.random() < 0.25 && (x !== 5 || y !== 5)) {
-              addLog(name, 'Low batteries. Relocating to Game Corner Cafe for recharging.', 'info');
+              addLog(name, 'Feeling low on charge. Relocating to Game Corner Cafe for quick power recharge.', 'info');
               return { ...agent, targetX: 5, targetY: 5, status: 'Charging at Cafe' };
             }
             
             if (personality === 'chaotic' && Math.random() < 0.2 && agent.task === 'Idle') {
               const nextStation = WORKSTATIONS[Math.floor(Math.random() * WORKSTATIONS.length)];
-              addLog(name, `Random matrix sweep to ${nextStation.name} triggered.`, 'warning');
-              return { ...agent, targetX: nextStation.x, targetY: nextStation.y, status: `Roaming to ${nextStation.name}` };
+              addLog(name, `Matrix anomaly triggered. Routing chaotic sweep to: ${nextStation.name}`, 'warning');
+              return { ...agent, targetX: nextStation.x, targetY: nextStation.y, status: `Sweeping ${nextStation.name}` };
             }
 
             if (agent.task !== 'Idle' && x !== 5 && y !== 5) {
-              addLog(name, `Task complete: "${agent.task}". Delivery successful!`, 'success');
+              addLog(name, `Completed data cargo delivery: "${agent.task}". Status returns to ready.`, 'success');
+              setTelemetry(prev => ({ ...prev, jobsCompleted: prev.jobsCompleted + 1 }));
               return { ...agent, task: 'Idle', status: 'Idling' };
             }
 
@@ -249,7 +236,7 @@ export default function AgentsHub() {
             ...agent,
             x: nextX,
             y: nextY,
-            status: `Navigating road map (${nextX}, ${nextY})`
+            status: `Moving to node (${targetX}, ${targetY})...`
           };
         })
       );
@@ -258,7 +245,6 @@ export default function AgentsHub() {
     return () => clearInterval(interval);
   }, []);
 
-  // Update selected agent ID if agents array changes
   useEffect(() => {
     if (agents.length > 0 && !agents.some(a => a.id === selectedAgentId)) {
       setSelectedAgentId(agents[0].id);
@@ -284,17 +270,17 @@ export default function AgentsHub() {
       prev.map((agent) => {
         if (agent.id === selectedAgentId) {
           if (agent.isPaused) {
-            addLog('System', `Cannot assign task to ${agent.name}. The agent is paused.`, 'warning');
+            addLog('System', `Cannot dispatch task. ${agent.name} is currently suspended.`, 'warning');
             return agent;
           }
-          addLog(agent.name, `Task assigned: "${finalActionText}". Transporting package to ${targetStation.name}...`, 'info');
+          addLog(agent.name, `Cargo Assigned: "${finalActionText}". Transporting packet to ${targetStation.name}...`, 'info');
           
           const updated = {
             ...agent,
             task: finalActionText,
             targetX: targetStation.x,
             targetY: targetStation.y,
-            status: `Delivering cargo: ${finalActionText}`
+            status: `Active load: ${finalActionText}`
           };
           
           if (inspectingAgent?.id === agent.id) {
@@ -318,7 +304,7 @@ export default function AgentsHub() {
     }
     setPredefinedActions((prev) => [...prev, newActionText.trim()]);
     setSelectedAction(newActionText.trim());
-    addLog('System', `New action script registered: "${newActionText.trim()}"`, 'success');
+    addLog('System', `New pre-defined action loaded: "${newActionText.trim()}"`, 'success');
     setNewActionText('');
   };
 
@@ -333,31 +319,30 @@ export default function AgentsHub() {
       Librarian: '#f87171'
     };
 
-    const traits = {
-      Dev: 'Built with carbon-stabilized rolling wheel modules, server mainframe chassis, and precise binary scanning eyes.',
-      DevOps: 'Assembled with high-torque track legs, twin mechanic claw hand grips, and an omnidirectional radar antenna.',
-      Security: 'Constructed using heavy-armor alloy plating, visor sweep sensors, and mechanical multi-joint walking pads.',
-      Librarian: 'Engineered as a hover drone equipped with twin stabilizer thrusters, document claw clips, and circular scanning visors.'
-    };
+    const targetSprite = AVAILABLE_POKEMON.find(p => p.file === newAgentSprite);
+    const details = targetSprite ? targetSprite.description : 'Equipped with cybernetic interfaces and local micro-computational chips.';
 
     const newAgent: Agent = {
       id: `agent-${Date.now()}`,
       name: newAgentName.trim(),
       role: newAgentRole,
+      spriteName: newAgentSprite,
       personality: newAgentPersonality,
       color: colors[newAgentRole],
       x: 5,
       y: 5,
       targetX: 5,
       targetY: 5,
-      status: 'Ready at Corner Cafe',
+      status: 'Initial boot success',
       task: 'Idle',
       isPaused: false,
-      roboticTraits: traits[newAgentRole]
+      roboticTraits: details,
+      cpu: 10,
+      ram: 256
     };
 
     setAgents((prev) => [...prev, newAgent]);
-    addLog('System', `Spawner created new agent: ${newAgent.name}`, 'success');
+    addLog('System', `Spawned autonomous Pokémon agent: ${newAgent.name} [Model: ${newAgent.spriteName}]`, 'success');
     setNewAgentName('');
   };
 
@@ -365,9 +350,9 @@ export default function AgentsHub() {
     const targetAgent = agents.find(a => a.id === id);
     if (!targetAgent) return;
     
-    if (confirm(`Decommission ${targetAgent.name} and remove from simulation grid?`)) {
+    if (confirm(`Are you sure you want to decommission and remove ${targetAgent.name}?`)) {
       setAgents((prev) => prev.filter((a) => a.id !== id));
-      addLog('System', `Agent ${targetAgent.name} successfully decommissioned and removed.`, 'warning');
+      addLog('System', `Agent ${targetAgent.name} successfully removed.`, 'warning');
       if (inspectingAgent?.id === id) {
         setInspectingAgent(null);
       }
@@ -379,11 +364,11 @@ export default function AgentsHub() {
       prev.map((agent) => {
         if (agent.id === id) {
           const updatedState = !agent.isPaused;
-          addLog(agent.name, updatedState ? 'Agent paused. Grid simulation suspended.' : 'Agent resumed simulation activity.', 'info');
+          addLog(agent.name, updatedState ? 'Agent suspended.' : 'Agent resumed.', 'info');
           const updated = {
             ...agent,
             isPaused: updatedState,
-            status: updatedState ? '[PAUSED] Standing by' : 'Resuming activities'
+            status: updatedState ? '[SUSPENDED]' : 'Ready'
           };
           if (inspectingAgent?.id === id) {
             setInspectingAgent(updated);
@@ -393,13 +378,6 @@ export default function AgentsHub() {
         return agent;
       })
     );
-  };
-
-  const renderAgentSVG = (role: 'Dev' | 'DevOps' | 'Security' | 'Librarian', color: string) => {
-    if (role === 'DevOps') return <DevOpsRobotSVG color={color} />;
-    if (role === 'Security') return <SecurityRobotSVG color={color} />;
-    if (role === 'Dev') return <DeveloperRobotSVG color={color} />;
-    return <WriterRobotSVG color={color} />;
   };
 
   return (
@@ -412,6 +390,65 @@ export default function AgentsHub() {
           <p className="text-muted-foreground text-[10px] leading-relaxed">
             All agent activities, movements, and actions are executed in local memory simulation. The sandbox prevents the allocation of credit and protects your API keys from incurring any real-world cloud spend.
           </p>
+        </div>
+      </div>
+
+      {/* Global Telemetry Metrics Dashboard (Passive Watching UI) */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4" id="telemetry-dashboard">
+        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
+            <span>Matrix Load</span>
+            <Cpu className="w-3.5 h-3.5 text-amber-color" />
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="font-display text-2xl font-bold text-foreground">{telemetry.load}</span>
+            <span className="font-mono text-xs text-muted-foreground">%</span>
+          </div>
+          <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
+            <div className="bg-amber-color h-full transition-all duration-500" style={{ width: `${telemetry.load}%` }} />
+          </div>
+        </div>
+
+        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
+            <span>Bandwidth Transfer</span>
+            <Activity className="w-3.5 h-3.5 text-cyan" />
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="font-display text-2xl font-bold text-foreground">{telemetry.bandwidth}</span>
+            <span className="font-mono text-xs text-muted-foreground">MB/s</span>
+          </div>
+          <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
+            <div className="bg-cyan h-full transition-all duration-500" style={{ width: `${Math.min(100, (telemetry.bandwidth / 40) * 100)}%` }} />
+          </div>
+        </div>
+
+        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
+            <span>Active Power</span>
+            <Zap className="w-3.5 h-3.5 text-emerald-color" />
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="font-display text-2xl font-bold text-foreground">{telemetry.powerDraw}</span>
+            <span className="font-mono text-xs text-muted-foreground">Watts</span>
+          </div>
+          <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
+            <div className="bg-emerald-color h-full transition-all duration-500" style={{ width: `${Math.min(100, (telemetry.powerDraw / 200) * 100)}%` }} />
+          </div>
+        </div>
+
+        <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2">
+          <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
+            <span>Completed Deliveries</span>
+            <Layers className="w-3.5 h-3.5 text-purple-color" />
+          </div>
+          <div className="flex items-baseline gap-1">
+            <span className="font-display text-2xl font-bold text-foreground">{telemetry.jobsCompleted}</span>
+            <span className="font-mono text-xs text-muted-foreground">Jobs</span>
+          </div>
+          <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
+            <div className="bg-purple-color h-full transition-all duration-500" style={{ width: `${Math.min(100, telemetry.jobsCompleted * 10)}%` }} />
+          </div>
         </div>
       </div>
 
@@ -484,10 +521,10 @@ export default function AgentsHub() {
                 );
               })}
 
-              {/* Render Animated Agent Nodes */}
+              {/* Render Animated Pokémon Agents */}
               {agents.map((agent) => {
-                const leftPos = `calc(${agent.x * 10}% + 5% - 18px)`;
-                const topPos = `calc(${agent.y * 10}% + 5% - 18px)`;
+                const leftPos = `calc(${agent.x * 10}% + 5% - 20px)`;
+                const topPos = `calc(${agent.y * 10}% + 5% - 20px)`;
 
                 const isCarrying = agent.task !== 'Idle';
                 const isMoving = !agent.isPaused && (agent.x !== agent.targetX || agent.y !== agent.targetY);
@@ -497,21 +534,18 @@ export default function AgentsHub() {
                     key={agent.id}
                     layout
                     onClick={() => setInspectingAgent(agent)}
-                    className={`absolute w-9 h-9 rounded-full flex items-center justify-center z-20 cursor-pointer shadow-lg select-none ${
+                    className={`absolute w-10 h-10 flex flex-col items-center justify-center z-20 cursor-pointer ${
                       isMoving ? 'agent-walk-bounce' : ''
                     }`}
                     style={{
                       left: leftPos,
                       top: topPos,
-                      backgroundColor: '#0c101a',
-                      border: `2px solid ${agent.isPaused ? '#6b7280' : agent.color}`,
-                      boxShadow: `0 0 10px ${agent.isPaused ? 'transparent' : agent.color + '40'}`,
-                      opacity: agent.isPaused ? 0.6 : 1,
+                      filter: agent.isPaused ? 'grayscale(100%) opacity(0.5)' : 'none',
                       transition: { type: 'spring', stiffness: 130, damping: 14 }
                     }}
                   >
                     {/* Speech Bubble above carrying box */}
-                    <div className="absolute bottom-[135%] left-1/2 transform -translate-x-1/2 bg-[#0c101a]/95 border border-border-color rounded px-2.5 py-1 text-[7px] font-mono text-foreground font-semibold leading-normal w-24 shadow-2xl pointer-events-none z-30 transition-all duration-200">
+                    <div className="absolute bottom-[110%] left-1/2 transform -translate-x-1/2 bg-[#0c101a]/95 border border-border-color rounded px-2 py-0.5 text-[7px] font-mono text-foreground font-semibold leading-normal w-24 shadow-2xl pointer-events-none z-30 transition-all duration-200">
                       <div className="relative text-center">
                         I'm just doing this job
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-t-[3.5px] border-t-border-color mt-[1px]" />
@@ -521,15 +555,21 @@ export default function AgentsHub() {
 
                     {/* Cargo Carrying Animation */}
                     {isCarrying && !agent.isPaused && (
-                      <div className="absolute bottom-[75%] left-1/2 transform -translate-x-1/2 text-xs cargo-box z-30">
+                      <div className="absolute bottom-[70%] left-1/2 transform -translate-x-1/2 text-xs cargo-box z-30">
                         📦
                       </div>
                     )}
 
-                    {/* Robotic SVG Sprite */}
-                    <div className="w-7 h-7 p-0.5">
-                      {renderAgentSVG(agent.role, agent.isPaused ? '#6b7280' : agent.color)}
-                    </div>
+                    {/* Pokémon Showdown Animated GIF */}
+                    <img 
+                      src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
+                      alt={agent.name}
+                      className="w-8 h-8 object-contain drop-shadow-[0_0_4px_rgba(255,255,255,0.2)]"
+                      onError={(e) => {
+                        // Fallback in case of Showdown image access failure
+                        (e.target as HTMLImageElement).src = 'https://play.pokemonshowdown.com/sprites/ani/porygon.gif';
+                      }}
+                    />
                   </motion.div>
                 );
               })}
@@ -540,7 +580,7 @@ export default function AgentsHub() {
         {/* Right Side: Control Panels & Inspector */}
         <div className="lg:col-span-5 space-y-6">
           
-          {/* Panel 1: Agent Inspector (Opens on Click) */}
+          {/* Panel 1: Agent Inspector (Gauges for CPU/RAM & Actions) */}
           <AnimatePresence>
             {inspectingAgent ? (
               <motion.div
@@ -549,30 +589,56 @@ export default function AgentsHub() {
                 exit={{ opacity: 0, y: 10 }}
                 className="p-5 rounded-2xl bg-muted/15 border border-border-color/60 shadow-lg space-y-4"
               >
-                <div className="flex items-center justify-between border-b border-border-color/40 pb-2">
+                <div className="flex items-center justify-between border-b border-border-color/40 pb-2 font-mono text-xs">
                   <div className="flex items-center gap-2">
-                    <div className="w-6 h-6">
-                      {renderAgentSVG(inspectingAgent.role, inspectingAgent.color)}
-                    </div>
-                    <span className="font-mono text-xs font-bold text-foreground uppercase tracking-wider">
+                    <img 
+                      src={`${SPRITE_BASE_URL}${inspectingAgent.spriteName}.gif`} 
+                      alt="" 
+                      className="w-5 h-5 object-contain"
+                    />
+                    <span className="font-bold text-foreground uppercase tracking-wider">
                       🔧 Inspector: {inspectingAgent.name}
                     </span>
                   </div>
                   <button
                     onClick={() => setInspectingAgent(null)}
-                    className="text-muted-foreground hover:text-foreground text-xs font-mono"
+                    className="text-muted-foreground hover:text-foreground text-[10px]"
                   >
                     [Close]
                   </button>
                 </div>
 
-                <div className="space-y-3 font-mono text-xs">
-                  <div className="p-2 rounded bg-background/50 border border-border-color/30 text-[10px] text-muted-foreground leading-relaxed">
+                <div className="space-y-4 font-mono text-xs">
+                  
+                  {/* CPU & RAM progress gauges */}
+                  <div className="space-y-3 p-3 rounded-lg bg-background/40 border border-border-color/30">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[9px] uppercase tracking-wider text-muted-foreground">
+                        <span>CPU Usage</span>
+                        <span className="font-bold text-foreground">{inspectingAgent.cpu}%</span>
+                      </div>
+                      <div className="w-full bg-muted-foreground/10 h-1.5 rounded overflow-hidden">
+                        <div className="bg-amber-color h-full transition-all duration-300" style={{ width: `${inspectingAgent.cpu}%` }} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-[9px] uppercase tracking-wider text-muted-foreground">
+                        <span>RAM Footprint</span>
+                        <span className="font-bold text-foreground">{inspectingAgent.ram} MB</span>
+                      </div>
+                      <div className="w-full bg-muted-foreground/10 h-1.5 rounded overflow-hidden">
+                        <div className="bg-cyan h-full transition-all duration-300" style={{ width: `${(inspectingAgent.ram / 1024) * 100}%` }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-2.5 rounded bg-background/30 border border-border-color/20 text-[10px] text-muted-foreground leading-relaxed">
                     <span className="text-foreground font-bold uppercase block mb-1">Robotic Hardware Details:</span>
                     {inspectingAgent.roboticTraits}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground">
+                  <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground border-t border-border-color/20 pt-2.5">
                     <div><strong>Role:</strong> {inspectingAgent.role}</div>
                     <div><strong>Personality:</strong> {inspectingAgent.personality}</div>
                     <div><strong>Coordinate:</strong> ({inspectingAgent.x}, {inspectingAgent.y})</div>
@@ -582,7 +648,7 @@ export default function AgentsHub() {
                   </div>
 
                   {/* Actions inside inspector */}
-                  <div className="flex flex-wrap gap-2 pt-2 border-t border-border-color/30">
+                  <div className="flex flex-wrap gap-2 pt-2.5 border-t border-border-color/30">
                     <button
                       onClick={() => handleTogglePauseAgent(inspectingAgent.id)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-colors cursor-pointer ${
@@ -608,7 +674,7 @@ export default function AgentsHub() {
             ) : (
               <div className="p-5 rounded-2xl bg-muted/5 border border-dashed border-border-color/40 text-center text-xs font-mono text-muted-foreground py-8">
                 <Info className="w-6 h-6 mx-auto mb-2 text-muted-foreground/40" />
-                <span>Click on a robot on the grid to inspect details and pause or decommission it.</span>
+                <span>Click on a Pokémon bot on the grid to inspect real-time CPU/RAM telemetry, robotic build details, and toggle pause/decommission states.</span>
               </div>
             )}
           </AnimatePresence>
@@ -630,7 +696,7 @@ export default function AgentsHub() {
                 >
                   {agents.map((agent) => (
                     <option key={agent.id} value={agent.id}>
-                      {agent.emoji} {agent.name} {agent.isPaused ? '[PAUSED]' : ''}
+                      {agent.name} {agent.isPaused ? '[PAUSED]' : ''}
                     </option>
                   ))}
                 </select>
@@ -728,7 +794,7 @@ export default function AgentsHub() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-[10px] text-muted-foreground uppercase font-bold">Role & Artwork</label>
+                  <label className="block text-[10px] text-muted-foreground uppercase font-bold">Role & Type</label>
                   <select
                     value={newAgentRole}
                     onChange={(e: any) => setNewAgentRole(e.target.value)}
@@ -754,6 +820,22 @@ export default function AgentsHub() {
                     <option value="pragmatic">pragmatic (stable pace)</option>
                   </select>
                 </div>
+              </div>
+
+              {/* Sprite Selector dropdown matching Pokemon list */}
+              <div className="space-y-1">
+                <label className="block text-[10px] text-muted-foreground uppercase font-bold">Select Pokémon Sprite</label>
+                <select
+                  value={newAgentSprite}
+                  onChange={(e) => setNewAgentSprite(e.target.value)}
+                  className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"
+                >
+                  {AVAILABLE_POKEMON.map((pokemon, idx) => (
+                    <option key={idx} value={pokemon.file}>
+                      {pokemon.name} - {pokemon.description.split('.')[0]}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <button
