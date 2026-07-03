@@ -80,7 +80,12 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
     meta: tool.description
   }));
 
-  const allItems: CommandItem[] = [...navCommands, ...catCommands, ...toolCommands];
+  const allItems: CommandItem[] = [...navCommands, ...catCommands, ...toolCommands].filter(
+    (item) =>
+      !query ||
+      item.label.toLowerCase().includes(query.toLowerCase()) ||
+      (item.meta && item.meta.toLowerCase().includes(query.toLowerCase()))
+  );
 
   // Keyboard navigation
   useEffect(() => {
@@ -92,10 +97,10 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
         onClose();
       } else if (e.key === 'ArrowDown') {
         e.preventDefault();
-        setActiveIndex((prev) => (prev + 1) % allItems.length);
+        setActiveIndex((prev) => (allItems.length > 0 ? (prev + 1) % allItems.length : 0));
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
-        setActiveIndex((prev) => (prev - 1 + allItems.length) % allItems.length);
+        setActiveIndex((prev) => (allItems.length > 0 ? (prev - 1 + allItems.length) % allItems.length : 0));
       } else if (e.key === 'Enter') {
         e.preventDefault();
         if (allItems[activeIndex]) {
@@ -110,6 +115,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
 
   // Adjust scroll position automatically
   useEffect(() => {
+    if (allItems.length === 0) return;
     const activeEl = scrollContainerRef.current?.children[activeIndex] as HTMLElement;
     if (activeEl && scrollContainerRef.current) {
       const container = scrollContainerRef.current;
@@ -124,7 +130,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
         container.scrollTop = elTop + elHeight - containerHeight;
       }
     }
-  }, [activeIndex]);
+  }, [activeIndex, allItems.length]);
 
   return (
     <AnimatePresence>
