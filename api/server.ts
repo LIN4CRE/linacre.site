@@ -160,6 +160,15 @@ async function startServer() {
       active = false;
     });
 
+    const ensureHeaders = () => {
+      if (!res.headersSent) {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.flushHeaders();
+      }
+    };
+
     const contents: any[] = [];
     if (history && Array.isArray(history)) {
       history.forEach((msg: any) => {
@@ -203,19 +212,16 @@ async function startServer() {
         contents,
       });
 
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.flushHeaders();
-
       for await (const chunk of responseStream) {
         if (!active) break;
         if (chunk.text) {
+          ensureHeaders();
           res.write(`data: ${JSON.stringify({ text: chunk.text })}\n\n`);
         }
       }
 
       if (active) {
+        ensureHeaders();
         res.write('data: [DONE]\n\n');
       }
       res.end();
@@ -249,11 +255,6 @@ async function startServer() {
       const reader = response.body;
       if (!reader) throw new Error("No OpenAI stream body");
 
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.flushHeaders();
-
       const decoder = new TextDecoder();
       let buffer = '';
 
@@ -272,6 +273,7 @@ async function startServer() {
               const parsed = JSON.parse(dataStr);
               const text = parsed.choices?.[0]?.delta?.content;
               if (text) {
+                ensureHeaders();
                 res.write(`data: ${JSON.stringify({ text })}\n\n`);
               }
             } catch (e) {}
@@ -281,6 +283,7 @@ async function startServer() {
       }
 
       if (active) {
+        ensureHeaders();
         res.write('data: [DONE]\n\n');
       }
       res.end();
@@ -317,11 +320,6 @@ async function startServer() {
       const reader = response.body;
       if (!reader) throw new Error("No Claude stream body");
 
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.flushHeaders();
-
       const decoder = new TextDecoder();
       let buffer = '';
 
@@ -339,6 +337,7 @@ async function startServer() {
               try {
                 const parsed = JSON.parse(dataStr);
                 if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+                  ensureHeaders();
                   res.write(`data: ${JSON.stringify({ text: parsed.delta.text })}\n\n`);
                 }
               } catch (e) {}
@@ -349,6 +348,7 @@ async function startServer() {
       }
 
       if (active) {
+        ensureHeaders();
         res.write('data: [DONE]\n\n');
       }
       res.end();
@@ -361,10 +361,7 @@ async function startServer() {
     try {
       const mockText = "Hello! I am the local system proxy. Currently, the server's Gemini, OpenAI, and Claude API keys are exhausted or depleted. \n\nPlease expand the **Configuration Panel** at the top of the page to input your own API keys to chat with the live models! This sandbox runs entirely in your browser and will connect directly using your keys.";
       
-      res.setHeader('Content-Type', 'text/event-stream');
-      res.setHeader('Cache-Control', 'no-cache');
-      res.setHeader('Connection', 'keep-alive');
-      res.flushHeaders();
+      ensureHeaders();
 
       const words = mockText.split(" ");
       for (const word of words) {
