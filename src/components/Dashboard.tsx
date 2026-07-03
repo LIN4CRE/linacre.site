@@ -1,6 +1,6 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, Terminal, Cpu, Key, Copy, Check, Lock, ArrowRight, Server, Play, Code, Eye, EyeOff, Search, FileCode } from 'lucide-react';
+import { ShieldAlert, Terminal, Cpu, Key, Copy, Check, Lock, ArrowRight, Server, Play, Code, Eye, EyeOff, Search, FileCode, CheckCircle2 } from 'lucide-react';
 import { MCP_SERVERS, SKILL_TEMPLATES, ENV_TEMPLATE } from '../data';
 import { MCPServer, SkillTemplate } from '../types';
 
@@ -8,6 +8,14 @@ export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return localStorage.getItem('linacre_dashboard_auth') === 'true';
   });
+  
+  useEffect(() => {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      setIsAuthenticated(true);
+      localStorage.setItem('linacre_dashboard_auth', 'true');
+    }
+  }, []);
+
   const [activeSubTab, setActiveSubTab] = useState<'mcp' | 'skills' | 'env'>('mcp');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');

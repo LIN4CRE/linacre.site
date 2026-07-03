@@ -9,6 +9,7 @@ Usage:
     python linacre.py sync       Push secrets to Vercel
     python linacre.py dev        Install deps if needed → sync env → start dev server
     python linacre.py build      Sync env → production build
+    python linacre.py boot       Zero-click PC boot sequence (bg server + agent + browser)
     python linacre.py open       Open linacre.site in default browser
     python linacre.py status     Show project health: Node, keys, Vercel login
     python linacre.py help       Show this help
@@ -20,6 +21,7 @@ import json
 import subprocess
 import shutil
 import webbrowser
+import time
 from pathlib import Path
 
 # ─── Constants ───────────────────────────────────────────────────────────────
@@ -355,6 +357,48 @@ def cmd_status():
     print()
 
 
+def cmd_boot():
+    """Zero-click auto-startup for Windows."""
+    _banner("Zero-Click PC Boot Sequence")
+    
+    # 1. Start Dev Server
+    _info("Starting dev server in background...")
+    tsx_bin = "tsx.cmd" if sys.platform == "win32" else "tsx"
+    local_tsx = PROJECT_DIR / "node_modules" / ".bin" / ("tsx.cmd" if sys.platform == "win32" else "tsx")
+    if local_tsx.exists():
+        tsx_bin = str(local_tsx)
+        
+    subprocess.Popen(
+        [tsx_bin, "api/server.ts"],
+        cwd=str(PROJECT_DIR),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+    )
+    
+    _info("Waiting for port 3000 to be ready...")
+    time.sleep(4)
+    
+    # 2. Open Browser
+    cmd_open()
+    
+    # 3. Spawn AI Agent
+    agent_script = PROJECT_DIR / "scripts" / "autonomous_agent.ts"
+    if agent_script.exists():
+        _info("Spawning background AI Agent monitor...")
+        subprocess.Popen(
+            [tsx_bin, str(agent_script)],
+            cwd=str(PROJECT_DIR),
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+        )
+    else:
+        _warn("Agent script not found, skipping.")
+        
+    _ok("Boot sequence complete! System is fully autonomous.")
+
+
 def cmd_help():
     """Show help message."""
     print(__doc__)
@@ -369,6 +413,7 @@ COMMANDS = {
     "build": cmd_build,
     "open": cmd_open,
     "status": cmd_status,
+    "boot": cmd_boot,
     "help": cmd_help,
 }
 
