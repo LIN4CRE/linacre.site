@@ -267,20 +267,24 @@ export default function AgentsHub() {
     ]);
   };
 
-  const handleAssignAction = (e: FormEvent) => {
+  const handleAssignAction = async (e: FormEvent) => {
     e.preventDefault();
     const finalActionText = customActionText.trim() || selectedAction;
     if (!finalActionText) return;
+
+    const targetAgent = agents.find(a => a.id === selectedAgentId);
+    if (!targetAgent) return;
+
+    if (targetAgent.isPaused) {
+      addLog('System', `Cannot dispatch task. ${targetAgent.name} is currently suspended.`, 'warning');
+      return;
+    }
 
     const targetStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
 
     setAgents((prev) =>
       prev.map((agent) => {
         if (agent.id === selectedAgentId) {
-          if (agent.isPaused) {
-            addLog('System', `Cannot dispatch task. ${agent.name} is currently suspended.`, 'warning');
-            return agent;
-          }
           addLog(agent.name, `Cargo Assigned: "${finalActionText}". Transporting packet to ${targetStation.name}...`, 'info');
           
           const updated = {
@@ -301,6 +305,24 @@ export default function AgentsHub() {
     );
 
     setCustomActionText('');
+
+    try {
+      const response = await fetch('/api/agents/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentName: targetAgent.name, task: finalActionText })
+      });
+      const data = await response.json();
+      if (data.reply) {
+        addLog(targetAgent.name, data.reply, 'success');
+      } else {
+        throw new Error("Invalid reply");
+      }
+    } catch (err) {
+      setTimeout(() => {
+        addLog(targetAgent.name, `[Local Simulation Fallback] Executed script task: "${finalActionText}". Completed successfully inside local workspace sandbox.`, 'success');
+      }, 3000);
+    }
   };
 
   const handleAddNewAction = (e: FormEvent) => {
