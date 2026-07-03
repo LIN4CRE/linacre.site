@@ -262,7 +262,10 @@ border-radius: 12px;`;
   // Highlighting helper for Regex matches
   const renderRegexHighlightedText = () => {
     if (regexError || !regexPattern || regexMatches.length === 0) {
-      return regexText;
+      return regexText
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
     }
 
     try {
@@ -286,8 +289,14 @@ border-radius: 12px;`;
           .replace(/</g, '&lt;')
           .replace(/>/g, '&gt;');
 
+        // Escape highlighted match text to prevent XSS
+        const escapedMatched = matchedText
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+
         // Append highlighted match
-        output += `<span class="bg-amber-color/25 text-amber-color font-bold border-b border-amber-color/60 px-0.5 rounded px-1" title="Match ${count}">${matchedText}</span>`;
+        output += `<span class="bg-amber-color/25 text-amber-color font-bold border-b border-amber-color/60 px-0.5 rounded px-1" title="Match ${count}">${escapedMatched}</span>`;
         
         lastIndex = re.lastIndex;
         if (matchedText === '') {
@@ -303,7 +312,10 @@ border-radius: 12px;`;
 
       return output;
     } catch (e) {
-      return regexText;
+      return regexText
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
     }
   };
 
