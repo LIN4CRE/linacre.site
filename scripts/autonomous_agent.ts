@@ -108,10 +108,25 @@ async function main() {
     } catch(e) {}
   }
 
+  // 5. Trigger Daily Automations
+  log('Triggering Daily Agent Automations...');
+  const tsxBin = process.platform === 'win32' ? 'tsx.cmd' : 'tsx';
+  const agentsToRun = ['janitor', 'security', 'seo', 'doc', 'release'];
+  for (const agent of agentsToRun) {
+    log(`Executing: ${agent}`);
+    const scriptPath = path.join(PROJECT_ROOT, 'scripts', 'agents', `${agent}.ts`);
+    const res = runCmd(`${tsxBin} "${scriptPath}"`);
+    if (!res.ok) {
+      log(`Failed to run ${agent} automation: ${res.out}`);
+    } else {
+      report.actionsTaken.push(`Ran ${agent} automation successfully.`);
+    }
+  }
+
   // Save report
   writeReport(report);
   log('Task complete. Report saved.');
 }
 
 main();
-setInterval(main, 4 * 60 * 60 * 1000);
+setInterval(main, 24 * 60 * 60 * 1000); // Run daily

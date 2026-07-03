@@ -694,6 +694,34 @@ async function startServer() {
     }
   });
 
+  // Agent Automations Spawn endpoint
+  app.post("/api/agents/spawn/:agentId", (req, res) => {
+    const { agentId } = req.params;
+    const allowedAgents = ['janitor', 'security', 'seo', 'doc', 'release'];
+    
+    if (!allowedAgents.includes(agentId)) {
+      return res.status(400).json({ error: `Unknown agent: ${agentId}` });
+    }
+
+    const scriptPath = path.join(process.cwd(), 'scripts', 'agents', `${agentId}.ts`);
+    const tsxBin = process.platform === "win32" ? "tsx.cmd" : "tsx";
+
+    try {
+      const { exec } = require("child_process");
+      // Fire and forget so we don't block the UI
+      exec(`${tsxBin} "${scriptPath}"`, { cwd: process.cwd() }, (error: any, stdout: any, stderr: any) => {
+        if (error) {
+          console.error(`[Agent ${agentId}] Error:`, error);
+        }
+        if (stdout) console.log(`[Agent ${agentId}]`, stdout);
+        if (stderr) console.error(`[Agent ${agentId}]`, stderr);
+      });
+      return res.json({ success: true, message: `Agent ${agentId} spawned in the background.` });
+    } catch (e: any) {
+      return res.status(500).json({ error: e.message });
+    }
+  });
+
   // Server health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });

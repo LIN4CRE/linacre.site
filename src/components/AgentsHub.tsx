@@ -307,68 +307,68 @@ export default function AgentsHub() {
   // Pre-coded agent suggestions database
   const ARCHITECT_SUGGESTIONS: AgentSuggestion[] = [
     {
-      name: 'Git-Sentinel',
-      role: 'Security',
-      spriteName: 'scizor',
-      personality: 'focused',
-      concept: 'Staged Version Control & Push Sentinel',
-      detailedPrompt: 'Crawl staging indices, compile diff reports, and push to GitHub automatically using AI commits.',
-      steps: [
-        '1. Inspects modified file headers.',
-        '2. Generates conventional commit logs.',
-        '3. Sweeps code branches and pushes changes to Git.'
-      ]
-    },
-    {
-      name: 'SysEnv-Healer',
+      name: 'Repository Janitor',
       role: 'DevOps',
-      spriteName: 'metagross',
+      spriteName: 'rotom-wash',
       personality: 'pragmatic',
-      concept: 'Windows PATH Registry Sweeper',
-      detailedPrompt: 'Inspect Windows system environment PATH variables, eliminate redundant/broken link paths, and synchronize SDK runtimes.',
+      concept: 'Git Branch & Dependency Cleaner',
+      detailedPrompt: 'Automatically prunes dead remote tracking branches, deletes merged local branches, and deduplicates NPM modules to keep the workspace lightweight.',
       steps: [
-        '1. Crawls system PATH variables.',
-        '2. Checks for dead binary executables.',
-        '3. Flushes invalid paths to heal build commands.'
+        '1. Checks Git branch status.',
+        '2. Prunes dead refs and merged branches.',
+        '3. Runs npm dedupe to optimize node_modules.'
       ]
     },
     {
-      name: 'Query-Optimizer',
-      role: 'Dev',
-      spriteName: 'genesect',
+      name: 'Security Guard',
+      role: 'Security',
+      spriteName: 'magnezone',
       personality: 'focused',
-      concept: 'Database Query Optimizer',
-      detailedPrompt: 'Scan SQL tables, inspect key references, run execution EXPLAIN statements, and automatically build optimal indexes.',
+      concept: 'Environment Scanner & NPM Audit',
+      detailedPrompt: 'Scans your local .gitignore to ensure .env is safely ignored, auto-patches if missing, and runs a high-severity NPM audit to detect vulnerabilities.',
       steps: [
-        '1. Intercepts local DB queries.',
-        '2. Assesses table structures.',
-        '3. Injects Postgres index proposals.'
+        '1. Audits .gitignore configuration.',
+        '2. Auto-patches missing .env rules.',
+        '3. Runs strict NPM vulnerability scans.'
       ]
     },
     {
-      name: 'Style-Guard',
-      role: 'Dev',
-      spriteName: 'pikachu',
-      personality: 'chaotic',
-      concept: 'CSS margin & mobile flexbox healer',
-      detailedPrompt: 'Review CSS styles, repair flexbox alignments, remove redundant spacing, and optimize responsive mobile layout rules.',
-      steps: [
-        '1. Scans styles sheet files.',
-        '2. Validates alignment parameters.',
-        '3. Heals flexbox bugs.'
-      ]
-    },
-    {
-      name: 'Doc-Writer',
+      name: 'SEO Optimizer',
       role: 'Librarian',
       spriteName: 'slowking',
       personality: 'caffeinated',
-      concept: 'Sitemap XML & Walkthrough compiler',
-      detailedPrompt: 'Scan file tree additions, document component relationships, and automatically generate sitemaps or walkthrough logs.',
+      concept: 'SEO Meta, Robots & Sitemap Enforcer',
+      detailedPrompt: 'Scans the public directory to ensure robots.txt allows crawling, and validates the presence of a baseline sitemap.xml.',
       steps: [
-        '1. Indexes file structural modifications.',
-        '2. Writes walkthrough updates.',
-        '3. Keeps sitemap xml directories synchronized.'
+        '1. Generates missing robots.txt rules.',
+        '2. Builds daily sitemap.xml stubs.',
+        '3. Validates public indexing.'
+      ]
+    },
+    {
+      name: 'Code Documenter',
+      role: 'Dev',
+      spriteName: 'porygon2',
+      personality: 'focused',
+      concept: 'Automated Documentation Tracker',
+      detailedPrompt: 'Analyzes recently modified TypeScript files and ensures README/JSDoc architectures remain up to date.',
+      steps: [
+        '1. Tracks git ls-tree modifications.',
+        '2. Validates README.md presence.',
+        '3. Audits inline JSDoc coverage.'
+      ]
+    },
+    {
+      name: 'Release Manager',
+      role: 'Dev',
+      spriteName: 'scizor',
+      personality: 'pragmatic',
+      concept: 'Version Bumping & Git Tagging',
+      detailedPrompt: 'Safely checks the working directory status and validates version tracking against current Git tags before deployments.',
+      steps: [
+        '1. Assesses git working directory state.',
+        '2. Validates semantic versioning tags.',
+        '3. Prepares the build environment.'
       ]
     }
   ];
@@ -842,11 +842,19 @@ export default function AgentsHub() {
   };
 
   // Build recommendation spawner automatically
-  const handleBuildArchitectSuggestion = () => {
-    if (agents.some(a => a.name.toLowerCase() === activeSuggestion.name.toLowerCase())) {
-      alert('This recommended agent is already synthesized and active on the grid!');
-      return;
-    }
+  const handleBuildArchitectSuggestion = async () => {
+    if (!activeSuggestion) return;
+    
+    // Map UI suggestion name to backend API script name
+    const agentMapping: Record<string, string> = {
+      'Repository Janitor': 'janitor',
+      'Security Guard': 'security',
+      'SEO Optimizer': 'seo',
+      'Code Documenter': 'doc',
+      'Release Manager': 'release'
+    };
+    
+    const targetAgentId = agentMapping[activeSuggestion.name];
 
     playSynthSound('success', isMuted);
     const colors = {
@@ -869,18 +877,32 @@ export default function AgentsHub() {
       startY: 5,
       targetX: 5,
       targetY: 5,
-      status: 'Booted by Architect',
-      task: 'Idle',
+      status: 'Spawning active script...',
+      task: 'Executing',
       taskQueue: [],
       isPaused: false,
       roboticTraits: activeSuggestion.detailedPrompt,
-      cpu: 15,
-      ram: 256
+      cpu: 45,
+      ram: 512
     };
 
     setAgents((prev) => [...prev, newAgent]);
-    addLog('Agent Architect', `Successfully compiled and spawned recommended bot: ${newAgent.name}!`, 'success');
+    addLog('Agent Architect', `Dispatching real execution for: ${newAgent.name}...`, 'info');
     
+    if (targetAgentId) {
+      try {
+        const res = await fetch(`/api/agents/spawn/${targetAgentId}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          addLog('Agent Architect', data.message || `Successfully launched ${newAgent.name}!`, 'success');
+        } else {
+          addLog('Agent Architect', `Failed to launch ${newAgent.name}: ${data.error}`, 'warning');
+        }
+      } catch (err) {
+        addLog('Agent Architect', `API Error launching ${newAgent.name}.`, 'warning');
+      }
+    }
+
     // Auto-advance suggestion index
     setCurrentSuggestionIndex((prev) => (prev + 1) % ARCHITECT_SUGGESTIONS.length);
   };
