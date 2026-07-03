@@ -98,7 +98,7 @@ export default function AgentsHub() {
     consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
 
-  // Main Simulation Loop (runs movement every 2.5 seconds)
+  // Main Simulation Loop (runs movement every 1.5 seconds)
   useEffect(() => {
     const interval = setInterval(() => {
       setAgents((prevAgents) =>
@@ -166,7 +166,7 @@ export default function AgentsHub() {
     if (!taskText.trim()) return;
 
     // Pick a workstation randomly to "do the work"
-    const targetStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))]; // avoid coffee lounge for task destination
+    const targetStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
 
     setAgents((prev) =>
       prev.map((agent) => {
@@ -235,13 +235,70 @@ export default function AgentsHub() {
         </p>
       </section>
 
+      {/* CSS Animation Injector for Glitch/Shake effects */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes mini-shake {
+          0%, 100% { transform: translate(0, 0); }
+          20% { transform: translate(-1px, 1px); }
+          40% { transform: translate(1px, -1px); }
+          60% { transform: translate(-1px, -1px); }
+          80% { transform: translate(1px, 1px); }
+        }
+        .agent-shake {
+          animation: mini-shake 0.3s infinite alternate;
+        }
+        @keyframes float-up {
+          0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
+          100% { transform: translateY(-20px) scale(1.1); opacity: 0; }
+        }
+        .caffeine-steam::after {
+          content: '☕';
+          position: absolute;
+          bottom: 100%;
+          left: 50%;
+          font-size: 10px;
+          animation: float-up 1.2s infinite ease-out;
+        }
+      `}} />
+
       {/* Main Grid & Controllers Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Side: 2-D Grid Simulation (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
           <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border border-border-color shadow-xl overflow-hidden">
+            {/* Ambient grid lines behind */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
+            
             {/* Grid Container */}
-            <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/70 rounded-xl overflow-hidden p-1">
+            <div className="relative aspect-square w-full grid grid-cols-10 border border-border-color/60 bg-[#090d14]/75 rounded-xl overflow-hidden p-1 shadow-2xl">
+              
+              {/* Render dynamic pathing target vectors under the bots */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+                {agents.map((agent) => {
+                  if (agent.x === agent.targetX && agent.y === agent.targetY) return null;
+                  
+                  // Compute start and end pixel percentages
+                  const startX = `${agent.x * 10 + 5}%`;
+                  const startY = `${agent.y * 10 + 5}%`;
+                  const endX = `${agent.targetX * 10 + 5}%`;
+                  const endY = `${agent.targetY * 10 + 5}%`;
+
+                  return (
+                    <line
+                      key={agent.id}
+                      x1={startX}
+                      y1={startY}
+                      x2={endX}
+                      y2={endY}
+                      stroke={agent.color}
+                      strokeWidth="1.5"
+                      strokeDasharray="4 3"
+                      opacity="0.55"
+                    />
+                  );
+                })}
+              </svg>
+
               {/* Draw 100 tiles */}
               {Array.from({ length: GRID_SIZE * GRID_SIZE }).map((_, index) => {
                 const cellX = index % GRID_SIZE;
@@ -255,12 +312,12 @@ export default function AgentsHub() {
                   <div
                     key={index}
                     className={`relative aspect-square border border-border-color/10 flex items-center justify-center font-mono text-[8px] text-muted-foreground/35 select-none ${
-                      station ? 'bg-muted/10 border-border-color/40 shadow-inner' : ''
+                      station ? 'bg-muted/15 border-border-color/40 shadow-lg' : ''
                     }`}
                   >
                     {/* Render Workstation */}
                     {station && Icon && (
-                      <div className={`flex flex-col items-center justify-center p-0.5 rounded border text-center ${station.color} w-11/12 h-11/12`}>
+                      <div className={`flex flex-col items-center justify-center p-1 rounded border text-center ${station.color} w-11/12 h-11/12 transition-all duration-300 hover:scale-102 hover:border-border-hi`}>
                         <Icon className="w-4 h-4 mb-0.5" />
                         <span className="text-[5px] leading-tight font-bold scale-90 truncate max-w-full">
                           {station.name.split(' ')[0]}
@@ -270,34 +327,49 @@ export default function AgentsHub() {
                     
                     {/* Render grid coordinates for corners */}
                     {!station && (cellX === 0 || cellX === 9) && (cellY === 0 || cellY === 9) && (
-                      <span>{cellX},{cellY}</span>
+                      <span className="opacity-40">{cellX},{cellY}</span>
                     )}
                   </div>
                 );
               })}
 
-              {/* Render Animated Agent Nodes */}
+              {/* Render Animated Agent Nodes & Speech Bubbles */}
               {agents.map((agent) => {
                 // Calculate percentage positions for CSS rendering
-                const leftPos = `calc(${agent.x * 10}% + 5% - 16px)`;
-                const topPos = `calc(${agent.y * 10}% + 5% - 16px)`;
+                const leftPos = `calc(${agent.x * 10}% + 5% - 18px)`;
+                const topPos = `calc(${agent.y * 10}% + 5% - 18px)`;
+
+                const isChaotic = agent.personality === 'chaotic';
+                const isCaffeinatedAtCoffee = agent.personality === 'caffeinated' && agent.x === 5 && agent.y === 5;
 
                 return (
                   <motion.div
                     key={agent.id}
                     layout
-                    className="absolute w-8 h-8 rounded-full flex items-center justify-center text-lg z-20 cursor-pointer shadow-lg select-none"
+                    className={`absolute w-9 h-9 rounded-full flex items-center justify-center text-lg z-20 cursor-pointer shadow-lg select-none ${
+                      isChaotic ? 'agent-shake' : ''
+                    } ${isCaffeinatedAtCoffee ? 'caffeine-steam' : ''}`}
                     style={{
                       left: leftPos,
                       top: topPos,
-                      backgroundColor: `${agent.color}20`,
+                      backgroundColor: '#0c101a',
                       border: `2.5px solid ${agent.color}`,
-                      boxShadow: `0 0 10px ${agent.color}40`,
-                      transition: { type: 'spring', stiffness: 100, damping: 12 }
+                      boxShadow: `0 0 12px ${agent.color}50`,
+                      transition: { type: 'spring', stiffness: 120, damping: 14 }
                     }}
                     title={`${agent.name} (${agent.role}) - ${agent.status}`}
                   >
-                    {agent.emoji}
+                    {/* Speech Bubble */}
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-[#0c101a]/95 border border-border-color rounded-lg px-2.5 py-1 text-[8px] font-mono text-foreground font-semibold leading-normal w-36 shadow-2xl pointer-events-none select-none z-30 transition-all duration-200">
+                      <div className="relative text-center leading-relaxed">
+                        I'm just doing this job{agent.task !== 'Idle' ? `: ${agent.task}` : ''}
+                        {/* Tooltip arrow pointer */}
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-border-color mt-[1px]" />
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-t-[3.5px] border-t-[#0c101a]" />
+                      </div>
+                    </div>
+
+                    <span className="relative z-10">{agent.emoji}</span>
                   </motion.div>
                 );
               })}
