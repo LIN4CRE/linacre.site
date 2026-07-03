@@ -1157,19 +1157,21 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                 if (dataStr === '[DONE]') {
                   break;
                 }
+                let parsed;
                 try {
-                  const parsed = JSON.parse(dataStr);
-                  if (parsed.error) {
-                    throw new Error(parsed.error);
-                  }
-                  if (parsed.text) {
-                    assistantContent += parsed.text;
-                    setMessages(prev => 
-                      prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
-                    );
-                  }
+                  parsed = JSON.parse(dataStr);
                 } catch (e) {
                   // Partial JSON, await next buffers
+                  continue;
+                }
+                if (parsed.error) {
+                  throw new Error(parsed.error);
+                }
+                if (parsed.text) {
+                  assistantContent += parsed.text;
+                  setMessages(prev => 
+                    prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
+                  );
                 }
               }
             }
@@ -1220,20 +1222,22 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                 const dataStr = line.slice(6).trim();
                 if (dataStr === '[DONE]') break;
                 
+                let parsed;
                 try {
-                  const parsed = JSON.parse(dataStr);
-                  if (parsed.error) {
-                    throw new Error(parsed.error);
-                  }
-                  const text = parsed.choices?.[0]?.delta?.content;
-                  if (text) {
-                    assistantContent += text;
-                    setMessages(prev => 
-                      prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
-                    );
-                  }
+                  parsed = JSON.parse(dataStr);
                 } catch (e) {
-                  // Partial JSON
+                  // Partial JSON, await next buffers
+                  continue;
+                }
+                if (parsed.error) {
+                  throw new Error(parsed.error);
+                }
+                const text = parsed.choices?.[0]?.delta?.content;
+                if (text) {
+                  assistantContent += text;
+                  setMessages(prev => 
+                    prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
+                  );
                 }
               }
             }
@@ -1284,20 +1288,22 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                 const dataStr = line.slice(6).trim();
                 if (dataStr === '[DONE]') break;
                 
+                let parsed;
                 try {
-                  const parsed = JSON.parse(dataStr);
-                  if (parsed.error) {
-                    throw new Error(parsed.error);
-                  }
-                  const text = parsed.choices?.[0]?.delta?.content;
-                  if (text) {
-                    assistantContent += text;
-                    setMessages(prev => 
-                      prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
-                    );
-                  }
+                  parsed = JSON.parse(dataStr);
                 } catch (e) {
-                  // Partial JSON
+                  // Partial JSON, await next buffers
+                  continue;
+                }
+                if (parsed.error) {
+                  throw new Error(parsed.error);
+                }
+                const text = parsed.choices?.[0]?.delta?.content;
+                if (text) {
+                  assistantContent += text;
+                  setMessages(prev => 
+                    prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
+                  );
                 }
               }
             }
@@ -1377,17 +1383,22 @@ export default function Lab({ theme = 'dark' }: LabProps) {
               buffer = buffer.slice(boundary + 1);
 
               if (line) {
+                let parsed;
                 try {
-                  const parsed = JSON.parse(line);
-                  const text = parsed.message?.content || parsed.response;
-                  if (text) {
-                    assistantContent += text;
-                    setMessages(prev => 
-                      prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
-                    );
-                  }
+                  parsed = JSON.parse(line);
                 } catch (e) {
-                  // Partial JSON
+                  // Partial JSON, await next buffers
+                  continue;
+                }
+                if (parsed.error) {
+                  throw new Error(parsed.error);
+                }
+                const text = parsed.message?.content || parsed.response;
+                if (text) {
+                  assistantContent += text;
+                  setMessages(prev => 
+                    prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
+                  );
                 }
               }
               boundary = buffer.indexOf('\n');
@@ -1404,16 +1415,24 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                 if (line.startsWith('data: ')) {
                   const dataStr = line.slice(6).trim();
                   if (dataStr === '[DONE]') break;
+                  
+                  let parsed;
                   try {
-                    const parsed = JSON.parse(dataStr);
-                    const text = parsed.choices?.[0]?.delta?.content;
-                    if (text) {
-                      assistantContent += text;
-                      setMessages(prev => 
-                        prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
-                      );
-                    }
-                  } catch (e) {}
+                    parsed = JSON.parse(dataStr);
+                  } catch (e) {
+                    // Partial JSON, await next buffers
+                    continue;
+                  }
+                  if (parsed.error) {
+                    throw new Error(parsed.error);
+                  }
+                  const text = parsed.choices?.[0]?.delta?.content;
+                  if (text) {
+                    assistantContent += text;
+                    setMessages(prev => 
+                      prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
+                    );
+                  }
                 }
               }
               boundary = buffer.indexOf('\n\n');
