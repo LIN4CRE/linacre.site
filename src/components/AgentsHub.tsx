@@ -340,6 +340,10 @@ export default function AgentsHub() {
   // Sound Engine mute/unmute state
   const [isMuted, setIsMuted] = useState(false);
 
+  // Live Tracking state for Pixel Agents workspace integrations
+  const [isLiveTracking, setIsLiveTracking] = useState(false);
+  const lastStepIndexRef = useRef<number>(-1);
+
   // Spend/Rate limits budget slider control
   const [spendLimit, setSpendLimit] = useState(0.00);
 
@@ -602,6 +606,142 @@ export default function AgentsHub() {
 
     return () => clearInterval(interval);
   }, [isMuted]);
+
+  // Clean up Live Agent when toggled off
+  useEffect(() => {
+    if (!isLiveTracking) {
+      setAgents(prev => prev.filter(a => a.id !== 'antigravity-live'));
+      lastStepIndexRef.current = -1;
+    }
+  }, [isLiveTracking]);
+
+  // Poll active logs endpoint when Live Tracking is enabled
+  useEffect(() => {
+    if (!isLiveTracking) return;
+
+    const pollLogs = async () => {
+      try {
+        const res = await fetch('/api/active-logs');
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        if (data.logs && Array.isArray(data.logs) && data.logs.length > 0) {
+          const latestStep = data.logs[data.logs.length - 1];
+          const stepIndex = latestStep.step_index ?? -1;
+
+          if (stepIndex > lastStepIndexRef.current) {
+            lastStepIndexRef.current = stepIndex;
+            
+            let targetStation = WORKSTATIONS[4]; // Default: Game Corner Cafe (5, 5)
+            let agentStatus = 'Connected to workspace';
+            let agentTask = 'Idle';
+            let cpuLoad = 5;
+
+            if (latestStep.source === 'MODEL') {
+              if (latestStep.tool_calls && latestStep.tool_calls.length > 0) {
+                const toolCall = latestStep.tool_calls[0];
+                const toolName = toolCall.name;
+                agentTask = `Running tool: ${toolName}`;
+                cpuLoad = 85;
+
+                if (toolName === 'run_command') {
+                  targetStation = WORKSTATIONS[0]; // Mainframe Node (1,1)
+                  agentStatus = `Running command: ${toolCall.args?.CommandLine ?? ''}`;
+                } else if (['replace_file_content', 'multi_replace_file_content', 'write_to_file'].includes(toolName)) {
+                  targetStation = WORKSTATIONS[1]; // Git Repository (1,8)
+                  agentStatus = `Writing file: ${toolCall.args?.TargetFile ?? ''}`;
+                } else if (['search_web', 'read_url_content'].includes(toolName)) {
+                  targetStation = WORKSTATIONS[3]; // Edge Server (8,8)
+                  agentStatus = `Searching: ${toolCall.args?.query ?? toolCall.args?.Url ?? ''}`;
+                } else if (['view_file', 'list_dir', 'grep_search'].includes(toolName)) {
+                  targetStation = WORKSTATIONS[2]; // Database Cluster (8,1)
+                  agentStatus = `Inspecting: ${toolCall.args?.AbsolutePath ?? toolCall.args?.SearchPath ?? ''}`;
+                } else {
+                  targetStation = WORKSTATIONS[2]; // Database Cluster (8,1)
+                  agentStatus = `Calling tool: ${toolName}`;
+                }
+              } else {
+                targetStation = WORKSTATIONS[2]; // Database Cluster (8,1)
+                agentStatus = 'Analyzing workspace context...';
+                agentTask = 'Reasoning';
+                cpuLoad = 45;
+              }
+            } else if (latestStep.source === 'USER_EXPLICIT' || latestStep.type === 'USER_INPUT') {
+              targetStation = WORKSTATIONS[4]; // Game Corner Cafe (5,5)
+              agentStatus = 'Waiting for user input...';
+              agentTask = 'Enjoying coffee';
+              cpuLoad = 8;
+            } else {
+              targetStation = WORKSTATIONS[4]; // Game Corner Cafe
+              agentStatus = 'Idle';
+              agentTask = 'Idling';
+            }
+
+            if (agentStatus.length > 80) {
+              agentStatus = agentStatus.substring(0, 80) + '...';
+            }
+
+            setAgents((prevAgents) => {
+              const hasAntigravity = prevAgents.some(a => a.id === 'antigravity-live');
+              const actionMsg = latestStep.tool_calls && latestStep.tool_calls.length > 0 
+                ? `Tool Invoked: ${latestStep.tool_calls[0].name}` 
+                : latestStep.source === 'MODEL' ? 'Thinking' : 'Awaiting input';
+
+              addLog('Antigravity', `${actionMsg} - "${agentStatus}"`, latestStep.source === 'MODEL' ? 'info' : 'success');
+
+              if (!hasAntigravity) {
+                const liveAgent: Agent = {
+                  id: 'antigravity-live',
+                  name: 'Antigravity (Live)',
+                  role: 'Dev',
+                  spriteName: 'porygon2',
+                  personality: 'focused',
+                  color: '#5ccfe6',
+                  x: 5,
+                  y: 5,
+                  startX: 5,
+                  startY: 5,
+                  targetX: targetStation.x,
+                  targetY: targetStation.y,
+                  status: agentStatus,
+                  task: agentTask,
+                  taskQueue: [],
+                  isPaused: false,
+                  roboticTraits: 'Real-time developer agent mapped directly to the workspace transcript logs.',
+                  cpu: cpuLoad,
+                  ram: 512
+                };
+                return [...prevAgents, liveAgent];
+              } else {
+                return prevAgents.map(a => {
+                  if (a.id === 'antigravity-live') {
+                    return {
+                      ...a,
+                      startX: a.x,
+                      startY: a.y,
+                      targetX: targetStation.x,
+                      targetY: targetStation.y,
+                      status: agentStatus,
+                      task: agentTask,
+                      cpu: cpuLoad,
+                      isPaused: false
+                    };
+                  }
+                  return a;
+                });
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to poll active logs', err);
+      }
+    };
+
+    pollLogs();
+    const interval = setInterval(pollLogs, 2500);
+    return () => clearInterval(interval);
+  }, [isLiveTracking]);
 
   useEffect(() => {
     if (agents.length > 0 && !agents.some(a => a.id === selectedAgentId)) {
@@ -901,7 +1041,22 @@ export default function AgentsHub() {
       </div>
 
       {/* Header bar controls: Sound Toggle */}
-      <div className="flex justify-end pr-1">
+      <div className="flex justify-end gap-2 pr-1">
+        <button
+          onClick={() => {
+            playSynthSound('click', isMuted);
+            setIsLiveTracking(!isLiveTracking);
+          }}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all cursor-pointer ${
+            isLiveTracking 
+              ? 'border-cyan bg-cyan/10 text-cyan shadow-[0_0_8px_rgba(92,207,230,0.2)]'
+              : 'border-border-color bg-muted/10 hover:bg-muted/20 text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          <Bot className={`w-4 h-4 ${isLiveTracking ? 'animate-pulse' : ''}`} />
+          <span>{isLiveTracking ? 'Pixel Agent (Active)' : 'Pixel Agent Mode'}</span>
+        </button>
+
         <button
           onClick={() => {
             setIsMuted(!isMuted);

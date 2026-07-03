@@ -629,6 +629,71 @@ async function startServer() {
     }
   });
 
+  // Secure route to read and return active Antigravity workspace transcript logs
+  app.get("/api/active-logs", async (req, res) => {
+    try {
+      const fs = await import("fs");
+      const os = await import("os");
+      
+      const brainDir = path.join(os.homedir(), ".gemini", "antigravity-ide", "brain");
+      if (!fs.existsSync(brainDir)) {
+        return res.json({ error: "Brain directory not found", logs: [] });
+      }
+
+      const items = fs.readdirSync(brainDir);
+      const dirs = items
+        .map(name => {
+          const fullPath = path.join(brainDir, name);
+          try {
+            return {
+              name,
+              path: fullPath,
+              stat: fs.statSync(fullPath)
+            };
+          } catch (e) {
+            return null;
+          }
+        })
+        .filter((item): item is any => !!item && item.stat.isDirectory() && item.name !== "tempmediaStorage")
+        .sort((a, b) => b.stat.mtimeMs - a.stat.mtimeMs);
+
+      if (dirs.length === 0) {
+        return res.json({ error: "No active conversation directory found", logs: [] });
+      }
+
+      const latestDir = dirs[0].path;
+      const logFilePath = path.join(latestDir, ".system_generated", "logs", "transcript.jsonl");
+
+      if (!fs.existsSync(logFilePath)) {
+        return res.json({ error: "Transcript file not found", folder: dirs[0].name, logs: [] });
+      }
+
+      const content = fs.readFileSync(logFilePath, "utf8");
+      const lines = content.split("\n").filter(Boolean);
+      
+      // Parse the last 40 lines
+      const parsedLogs = lines.slice(-40).map(line => {
+        try {
+          const parsed = JSON.parse(line);
+          // Prune large fields for performance
+          if (parsed.content && typeof parsed.content === "string" && parsed.content.length > 500) {
+            parsed.content = parsed.content.substring(0, 500) + "... [truncated]";
+          }
+          return parsed;
+        } catch (e) {
+          return { error: "Failed to parse line" };
+        }
+      });
+
+      res.json({
+        folder: dirs[0].name,
+        logs: parsedLogs
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message, logs: [] });
+    }
+  });
+
   // Server health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
