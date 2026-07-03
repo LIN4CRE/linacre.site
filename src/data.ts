@@ -1,4 +1,5 @@
 import { Tool, Project, MCPServer, SkillTemplate, ChangelogItem } from './types';
+import ecosystem from './data/ecosystem.json';
 
 export const TOOLS: Tool[] = [
   // START
@@ -432,7 +433,7 @@ export const TOOLS: Tool[] = [
   }
 ];
 
-export const PROJECTS: Project[] = [
+export const MANUAL_PROJECTS: Project[] = [
   {
     name: 'linacre.site',
     category: 'deploy',
@@ -458,6 +459,18 @@ export const PROJECTS: Project[] = [
     tag: 'Open Source'
   }
 ];
+
+// Automatically append ecosystem projects to the dashboard
+const ecoProjects: Project[] = ecosystem.map((item: any) => ({
+  name: item.name,
+  category: item.type.includes('Infrastructure') ? 'deploy' : (item.technologies.length > 0 ? 'build' : 'start'),
+  description: item.description || `Auto-indexed ${item.type} project at ${item.path}`,
+  url: item.remote || `file:///${item.path.replace(/\\/g, '/')}`,
+  host: item.remote ? 'GitHub' : 'Local Drive',
+  tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Local Module')
+}));
+
+export const PROJECTS: Project[] = [...MANUAL_PROJECTS, ...ecoProjects];
 
 export const CHANGELOG: ChangelogItem[] = [
   {

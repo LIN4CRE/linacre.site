@@ -1,0 +1,218 @@
+[
+  {
+    "name": "ai",
+    "path": "V:\\\\EV\\ai",
+    "type": "Infrastructure",
+    "description": "",
+    "technologies": [
+      "Docker"
+    ],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "telegram-bot",
+    "path": "V:\\\\EV\\ai\\telegram-bot",
+    "type": "Python App",
+    "description": "",
+    "technologies": [
+      "Python",
+      "Docker"
+    ],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "ev-backend",
+    "path": "V:\\\\EV\\ev-backend",
+    "type": "Node.js App / Python",
+    "description": "",
+    "technologies": [
+      "Python",
+      "Docker"
+    ],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "@evbot/companion",
+    "path": "V:\\\\EV\\ev-bot-companion",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Express",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "ev-bot-companion",
+    "path": "V:\\\\EV\\ev-companion\\companion",
+    "type": "Node.js App",
+    "description": "EV-Bot Companion \u2014 an interactive AI desktop companion. A modern, charming successor to the classic desktop assistant: an animated character that lives on your screen, chats, reacts, and helps you stay productive.",
+    "technologies": [],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "facerater-ai-next",
+    "path": "V:\\\\LIN4CRE\\ai-face-rater-next",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Next.js",
+      "TypeScript"
+    ],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "DoD",
+    "path": "V:\\\\LIN4CRE\\DoD",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "react-vite-tailwind",
+    "path": "V:\\\\LIN4CRE\\GhostMail",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": "https://github.com/LIN4CRE/GhostMail.git",
+    "has_git": true
+  },
+  {
+    "name": "kushcloud",
+    "path": "V:\\\\LIN4CRE\\KushCloud",
+    "type": "Node.js App",
+    "description": "Flappy bird style arcade game with canvas physics, unlockable skins, and power-ups.",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": "https://github.com/LIN4CRE/KushCloud",
+    "has_git": true
+  },
+  {
+    "name": "react-example",
+    "path": "V:\\\\LIN4CRE\\linacre-site-repo",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Express",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": "https://github.com/LIN4CRE/linacre.site.git",
+    "has_git": true
+  },
+  {
+    "name": "logi-pro-setup",
+    "path": "V:\\\\LIN4CRE\\logi-pro-setup",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS"
+    ],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "myhub-pipeline",
+    "path": "V:\\\\LIN4CRE\\myhub-pipeline",
+    "type": "Python App",
+    "description": "",
+    "technologies": [
+      "Python"
+    ],
+    "remote": "https://github.com/LIN4CRE/myhub-pipeline.git",
+    "has_git": true
+  },
+  {
+    "name": "react-vite-tailwind",
+    "path": "V:\\\\LIN4CRE\\NixLabs",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "react-vite-tailwind",
+    "path": "V:\\\\LIN4CRE\\OpAgent\\OpAgent",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "react-vite-tailwind",
+    "path": "V:\\\\LIN4CRE\\OPAI Improved",
+    "type": "Node.js App",
+    "description": "",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "pokeguru",
+    "path": "V:\\\\LIN4CRE\\PokeGuru",
+    "type": "Node.js App",
+    "description": "Pok\u00e9mon TCG card database with pricing, set browsing, and card scanning",
+    "technologies": [
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "TypeScript"
+    ],
+    "remote": "https://github.com/LIN4CRE/PokeGuru.git",
+    "has_git": true
+  },
+  {
+    "name": "neon-snake-rush",
+    "path": "V:\\\\LIN4CRE\\Snake Rush",
+    "type": "Node.js App",
+    "description": "A polished browser Snake remix with adaptive quality, gamepad support, achievements, PWA offline support, and an optional global leaderboard backend.",
+    "technologies": [
+      "Express",
+      "Docker"
+    ],
+    "remote": null,
+    "has_git": true
+  }
+]
