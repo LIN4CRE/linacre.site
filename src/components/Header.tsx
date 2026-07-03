@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -16,6 +16,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   const navItems = [
     { id: 'toolkit', label: 'Toolkit', icon: Layers },
     { id: 'projects', label: 'Projects', icon: Briefcase },
+    { id: 'agents', label: 'Agents', icon: Bot },
     { id: 'learn', label: 'Learn', icon: BookOpen },
     { id: 'lab', label: 'Lab', icon: Cpu },
     { id: 'playground', label: 'Playground', icon: Sliders },

@@ -15,6 +15,7 @@ const Dashboard = lazy(() => import('./components/Dashboard'));
 const IdentityHub = lazy(() => import('./components/IdentityHub'));
 const DevPlayground = lazy(() => import('./components/DevPlayground'));
 const Projects = lazy(() => import('./components/Projects'));
+const AgentsHub = lazy(() => import('./components/AgentsHub'));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('toolkit');
@@ -27,7 +28,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects'];
+      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents'];
       if (hash && validTabs.includes(hash)) {
         setActiveTab(hash);
       }
@@ -488,6 +489,18 @@ export default function App() {
               transition={{ type: "spring", stiffness: 100, damping: 15 }}
             >
               <Projects />
+            </motion.div>
+          )}
+
+          {activeTab === 'agents' && (
+            <motion.div
+              key="agents"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <AgentsHub />
             </motion.div>
           )}
           </AnimatePresence>
