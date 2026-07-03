@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Terminal, Send, Plus, Bot, Coffee, Shield, Database, LayoutGrid, Award, Server, Pause, Play, Trash2, AlertTriangle, Info, Cpu, Activity, Zap, Layers } from 'lucide-react';
+import { Terminal, Send, Plus, Bot, Coffee, Shield, Database, LayoutGrid, Award, Server, Pause, Play, Trash2, AlertTriangle, Info, Cpu, Activity, Zap, Layers, Volume2, VolumeX } from 'lucide-react';
 
 interface Agent {
   id: string;
@@ -17,6 +17,7 @@ interface Agent {
   targetY: number;
   status: string;
   task: string;
+  taskQueue: string[]; // Sequential task queuing
   isPaused: boolean;
   roboticTraits: string;
   cpu: number;
@@ -42,6 +43,19 @@ const GRID_SIZE = 10;
 // Pokémon Showdown Sprite Database URL
 const SPRITE_BASE_URL = 'https://play.pokemonshowdown.com/sprites/ani/';
 
+const AVAILABLE_POKEMON = [
+  { name: 'Rotom-Wash', file: 'rotom-wash', description: 'Plasma mechanical appliance robot. Fits DevOps/Networking.' },
+  { name: 'Magnezone', file: 'magnezone', description: 'Triple magnetic eye robot drone. Ideal for Security scans.' },
+  { name: 'Porygon2', file: 'porygon2', description: 'Fully virtual digital construct robot. Best for Code Development.' },
+  { name: 'Slowking', file: 'slowking', description: 'Shellder-crowned royal writer. Great for library documentation.' },
+  { name: 'Metagross', file: 'metagross', description: 'Four-legged steel supercomputer mech. Heavy data compute.' },
+  { name: 'Aegislash', file: 'aegislash-blade', description: 'Steel floating shield and sword construct. Perimeter defenses.' },
+  { name: 'Genesect', file: 'genesect', description: 'Ancient insectoid cyborg with back-mounted cannon. Speed builds.' },
+  { name: 'Pikachu', file: 'pikachu', description: 'Electric rodent dynamo. Ideal for powering grids.' },
+  { name: 'Mewtwo', file: 'mewtwo', description: 'Genetically modified ultimate cybernetic psychic.' },
+  { name: 'Scizor', file: 'scizor', description: 'Metallic scissor-claw developer. Fast compiler.' }
+];
+
 const WORKSTATIONS = [
   { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]', rgb: '251, 191, 36' },
   { name: 'Git Repository', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-[#0d161a]/80 shadow-[0_0_10px_rgba(92,207,230,0.15)]', rgb: '92, 207, 230' },
@@ -57,117 +71,166 @@ const isPathTile = (x: number, y: number): boolean => {
   return false;
 };
 
-const AVAILABLE_POKEMON = [
-  { name: 'Rotom-Wash', file: 'rotom-wash', description: 'Plasma mechanical appliance robot. Fits DevOps/Networking.' },
-  { name: 'Magnezone', file: 'magnezone', description: 'Triple magnetic eye robot drone. Ideal for Security scans.' },
-  { name: 'Porygon2', file: 'porygon2', description: 'Fully virtual digital construct robot. Best for Code Development.' },
-  { name: 'Slowking', file: 'slowking', description: 'Shellder-crowned royal writer. Great for library documentation.' },
-  { name: 'Metagross', file: 'metagross', description: 'Four-legged steel supercomputer mech. Heavy data compute.' },
-  { name: 'Aegislash', file: 'aegislash-blade', description: 'Steel floating shield and sword construct. Perimeter defenses.' },
-  { name: 'Genesect', file: 'genesect', description: 'Ancient insectoid cyborg with back-mounted cannon. Speed builds.' },
-  { name: 'Pikachu', file: 'pikachu', description: 'Electric rodent dynamo. Ideal for powering grids.' },
-  { name: 'Mewtwo', file: 'mewtwo', description: 'Genetically modified ultimate cybernetic psychic.' },
-  { name: 'Scizor', file: 'scizor', description: 'Metallic scissor-claw developer. Fast compiler.' }
-];
+// Web Audio API Retro Sound Synthesizer
+const playSynthSound = (type: 'click' | 'success' | 'error', isMuted: boolean) => {
+  if (isMuted) return;
+  try {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const ctx = new AudioContextClass();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
 
-// Complex high-resolution SVG artwork buildings
+    if (type === 'click') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.005, ctx.currentTime + 0.08);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.08);
+    } else if (type === 'success') {
+      // RPG Chiptune Level-Up fanfare arpeggio
+      osc.type = 'triangle';
+      const now = ctx.currentTime;
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.4);
+      
+      const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5 -> E5 -> G5 -> C6
+      osc.start(now);
+      freqs.forEach((freq, idx) => {
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+      });
+      osc.stop(now + 0.4);
+    } else if (type === 'error') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(120, ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(60, ctx.currentTime + 0.22);
+      gain.gain.setValueAtTime(0.06, ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.005, ctx.currentTime + 0.22);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.22);
+    }
+  } catch (e) {
+    // Audio Context blocked by browser autoplay settings
+  }
+};
+
+// Robot SVG art components showing details like arms, legs, antennas
+const DevOpsRobotSVG = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    <line x1="50" y1="20" x2="50" y2="5" stroke={color} strokeWidth="3" />
+    <circle cx="50" cy="5" r="4" fill={color} />
+    <path d="M 15 50 Q 5 40 10 30" fill="none" stroke={color} strokeWidth="4.5" />
+    <path d="M 85 50 Q 95 40 90 30" fill="none" stroke={color} strokeWidth="4.5" />
+    <rect x="25" y="35" width="50" height="45" rx="10" fill="#0d1117" stroke={color} strokeWidth="4" />
+    <rect x="33" y="43" width="34" height="22" rx="4" fill="#1f2937" stroke={color} strokeWidth="2" />
+    <circle cx="43" cy="54" r="3" fill={color} />
+    <circle cx="57" cy="54" r="3" fill={color} />
+    <rect x="20" y="80" width="60" height="12" rx="6" fill="#111827" stroke={color} strokeWidth="3.5" />
+  </svg>
+);
+
+const SecurityRobotSVG = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    <line x1="35" y1="20" x2="25" y2="8" stroke={color} strokeWidth="3" />
+    <line x1="65" y1="20" x2="75" y2="8" stroke={color} strokeWidth="3" />
+    <circle cx="25" cy="8" r="3.5" fill={color} />
+    <circle cx="75" cy="8" r="3.5" fill={color} />
+    <path d="M 12 45 L 8 65 L 20 75 L 24 55 Z" fill="#1f2937" stroke={color} strokeWidth="3" />
+    <circle cx="50" cy="48" r="28" fill="#0d1117" stroke={color} strokeWidth="4.5" />
+    <rect x="35" y="40" width="30" height="8" rx="2" fill="#ef4444" className="animate-pulse" />
+    <path d="M 38 74 L 32 92 L 24 92" fill="none" stroke={color} strokeWidth="4" />
+    <path d="M 62 74 L 68 92 L 76 92" fill="none" stroke={color} strokeWidth="4" />
+  </svg>
+);
+
+const DeveloperRobotSVG = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    <rect x="38" y="10" width="24" height="20" rx="6" fill="#0d1117" stroke={color} strokeWidth="3.5" />
+    <circle cx="50" cy="20" r="4" fill="#3b82f6" className="animate-ping" />
+    <line x1="50" y1="30" x2="50" y2="38" stroke={color} strokeWidth="4" />
+    <rect x="22" y="38" width="56" height="42" rx="4" fill="#0d1117" stroke={color} strokeWidth="4" />
+    <circle cx="34" cy="50" r="2.5" fill="#10b981" />
+    <circle cx="34" cy="60" r="2.5" fill="#f59e0b" />
+    <circle cx="34" cy="70" r="2.5" fill="#ef4444" />
+    <path d="M 22 45 L 8 45 L 8 65" fill="none" stroke={color} strokeWidth="3.5" />
+    <path d="M 78 45 L 92 45 L 92 65" fill="none" stroke={color} strokeWidth="3.5" />
+    <circle cx="35" cy="88" r="8" fill="#111827" stroke={color} strokeWidth="3" />
+    <circle cx="65" cy="88" r="8" fill="#111827" stroke={color} strokeWidth="3" />
+  </svg>
+);
+
+const WriterRobotSVG = ({ color }: { color: string }) => (
+  <svg viewBox="0 0 100 100" className="w-full h-full">
+    <ellipse cx="50" cy="85" rx="25" ry="8" fill="none" stroke={color} strokeWidth="3" strokeDasharray="6 4" />
+    <path d="M 50 72 L 46 82 L 54 82 Z" fill="#38bdf8" opacity="0.8" className="animate-pulse" />
+    <rect x="30" y="25" width="40" height="45" rx="12" fill="#0d1117" stroke={color} strokeWidth="4" />
+    <path d="M 36 38 Q 50 32 64 38" fill="none" stroke={color} strokeWidth="3.5" />
+    <path d="M 30 55 C 15 55 18 40 10 42" fill="none" stroke={color} strokeWidth="3.5" />
+    <path d="M 70 55 C 85 55 82 40 90 42" fill="none" stroke={color} strokeWidth="3.5" />
+  </svg>
+);
+
+// Custom High-Resolution SVG artwork buildings
 const CyberCastleSVG = () => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Foundation */}
     <rect x="15" y="60" width="70" height="30" rx="2" fill="#1e293b" stroke="#334155" strokeWidth="2" />
     <line x1="15" y1="75" x2="85" y2="75" stroke="#334155" strokeWidth="1.5" />
-    {/* Outer walls & masonry blocks */}
     <rect x="25" y="30" width="50" height="30" fill="#334155" stroke="#475569" strokeWidth="2" />
     <rect x="20" y="20" width="12" height="15" fill="#475569" stroke="#64748b" strokeWidth="1.5" />
     <rect x="68" y="20" width="12" height="15" fill="#475569" stroke="#64748b" strokeWidth="1.5" />
-    {/* Blinking Beacon Mast */}
     <line x1="50" y1="30" x2="50" y2="5" stroke="#fbbf24" strokeWidth="2.5" />
     <circle cx="50" cy="5" r="4" fill="#fbbf24" className="animate-pulse" />
-    {/* Cyber Shield Grid */}
     <ellipse cx="50" cy="50" rx="35" ry="12" fill="none" stroke="#f59e0b" strokeWidth="1" strokeDasharray="3 4" opacity="0.4" />
-    {/* Portcullis Gateway */}
     <rect x="42" y="68" width="16" height="22" rx="4" fill="#0f172a" stroke="#fbbf24" strokeWidth="2" />
-    <line x1="50" y1="68" x2="50" y2="90" stroke="#fbbf24" strokeWidth="1" />
-    <line x1="42" y1="78" x2="58" y2="78" stroke="#fbbf24" strokeWidth="1" />
   </svg>
 );
 
 const PokeCenterSVG = () => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Clean medical center walls */}
     <rect x="15" y="35" width="70" height="55" rx="8" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="2.5" />
-    {/* Curved Red Gabled Roof */}
     <path d="M 10 35 Q 50 12 90 35 Z" fill="#ef4444" stroke="#dc2626" strokeWidth="3" />
-    {/* Glowing Medical Cross */}
     <circle cx="50" cy="28" r="9" fill="#0f172a" stroke="#5ccfe6" strokeWidth="2" />
-    <path d="M 50 23 L 50 33 M 45 28 L 55 28" fill="none" stroke="#5ccfe6" strokeWidth="2.5" strokeLinecap="round" />
-    {/* Double Automatic Glass Doors */}
+    <path d="M 50 23 L 50 33 M 45 28 L 55 28" fill="none" stroke="#5ccfe6" strokeWidth="2.5" />
     <rect x="38" y="60" width="24" height="30" rx="2" fill="#0f172a" stroke="#5ccfe6" strokeWidth="2" />
-    <line x1="50" y1="60" x2="50" y2="90" stroke="#5ccfe6" strokeWidth="1.5" />
-    {/* Status Windows */}
-    <rect x="23" y="48" width="10" height="12" rx="2" fill="#1e293b" stroke="#cbd5e1" strokeWidth="1" />
-    <rect x="67" y="48" width="10" height="12" rx="2" fill="#1e293b" stroke="#cbd5e1" strokeWidth="1" />
   </svg>
 );
 
 const FlaskLabSVG = () => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Laboratory framework */}
     <rect x="20" y="40" width="60" height="50" rx="4" fill="#0f172a" stroke="#a855f7" strokeWidth="2" />
-    {/* Glass Chamber */}
     <rect x="35" y="15" width="30" height="55" rx="15" fill="#a855f7" opacity="0.15" />
     <rect x="35" y="15" width="30" height="55" rx="15" fill="none" stroke="#a855f7" strokeWidth="2.5" />
-    {/* Bubbling Fluid Level */}
     <path d="M 36 50 Q 50 46 64 50 L 64 68 Q 50 68 36 68 Z" fill="#c084fc" opacity="0.75" />
-    {/* Bubble particles */}
     <circle cx="45" cy="40" r="2.5" fill="#ffffff" className="animate-bounce" />
     <circle cx="55" cy="30" r="2" fill="#ffffff" className="animate-bounce" style={{ animationDelay: '0.4s' }} />
     <circle cx="48" cy="22" r="1.5" fill="#ffffff" className="animate-bounce" style={{ animationDelay: '0.8s' }} />
-    {/* Pipe connectors */}
-    <path d="M 20 60 H 35 M 65 60 H 80" fill="none" stroke="#a855f7" strokeWidth="3" />
-    {/* Pressure gauge */}
-    <circle cx="50" cy="78" r="6" fill="#1e293b" stroke="#a855f7" strokeWidth="1.5" />
-    <line x1="50" y1="78" x2="53" y2="74" stroke="#ef4444" strokeWidth="1.5" strokeLinecap="round" />
   </svg>
 );
 
 const WindmillGeneratorSVG = () => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Tower Base */}
     <path d="M 38 90 L 46 35 L 54 35 L 62 90 Z" fill="#1e293b" stroke="#334155" strokeWidth="2.5" />
-    {/* Mechanical Turbine Hub */}
     <circle cx="50" cy="35" r="8" fill="#0f172a" stroke="#10b981" strokeWidth="2" />
-    {/* CSS Animated Spinning Blades */}
     <g className="animate-spin" style={{ transformOrigin: '50px 35px', animationDuration: '6s' }}>
-      <path d="M 50 35 L 50 2 M 49 2 L 51 2" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
-      <path d="M 50 35 L 20 52" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
-      <path d="M 50 35 L 80 52" stroke="#10b981" strokeWidth="3" strokeLinecap="round" />
+      <path d="M 50 35 L 50 2 M 49 2 L 51 2" stroke="#10b981" strokeWidth="3" />
+      <path d="M 50 35 L 20 52" stroke="#10b981" strokeWidth="3" />
+      <path d="M 50 35 L 80 52" stroke="#10b981" strokeWidth="3" />
     </g>
-    {/* Generator power lines */}
-    <path d="M 38 90 L 15 90 H 5 M 62 90 L 85 90 H 95" fill="none" stroke="#10b981" strokeWidth="1.5" strokeDasharray="3 3" />
   </svg>
 );
 
 const TavernCafeSVG = () => (
   <svg viewBox="0 0 100 100" className="w-full h-full">
-    {/* Timber framing log walls */}
     <rect x="15" y="45" width="70" height="45" fill="#451a03" stroke="#78350f" strokeWidth="2.5" />
-    {/* Tudor style plaster upper floor */}
     <polygon points="10,45 50,15 90,45" fill="#fef08a" stroke="#78350f" strokeWidth="3" />
-    {/* Wood crossbeams */}
     <line x1="30" y1="45" x2="30" y2="90" stroke="#78350f" strokeWidth="2" />
     <line x1="70" y1="45" x2="70" y2="90" stroke="#78350f" strokeWidth="2" />
-    {/* Tavern Signpost */}
-    <line x1="78" y1="45" x2="92" y2="45" stroke="#78350f" strokeWidth="2" />
-    <rect x="82" y="49" width="8" height="8" fill="#f59e0b" stroke="#78350f" strokeWidth="1" />
-    <circle cx="86" cy="53" r="2" fill="#ef4444" />
-    {/* Cozy Stone Chimney */}
     <rect x="22" y="10" width="10" height="20" fill="#4b5563" stroke="#374151" strokeWidth="1.5" />
-    {/* Steam Smoke particles */}
     <circle cx="27" cy="5" r="2.5" fill="#9ca3af" className="animate-ping" opacity="0.7" />
-    {/* Welcoming Door */}
-    <rect x="44" y="65" width="14" height="25" rx="1" fill="#78350f" stroke="#b45309" strokeWidth="1.5" />
-    <circle cx="48" cy="78" r="1" fill="#f59e0b" />
   </svg>
 );
 
@@ -188,6 +251,7 @@ export default function AgentsHub() {
       targetY: 8,
       status: 'Awaiting tasks',
       task: 'Idle',
+      taskQueue: [],
       isPaused: false,
       roboticTraits: 'Forged from plasma coils, hydraulic washers, and dual high-frequency wifi antennas. Specialized in container pipelines.',
       cpu: 18,
@@ -208,6 +272,7 @@ export default function AgentsHub() {
       targetY: 1,
       status: 'Monitoring registry integrity',
       task: 'Ecosystem guard duty',
+      taskQueue: [],
       isPaused: false,
       roboticTraits: 'Equipped with heavy magnetic shielding plating, triple-lens focal visors, and high-entropy security scanners.',
       cpu: 32,
@@ -225,6 +290,15 @@ export default function AgentsHub() {
     }
   ]);
 
+  const addLog = (agentName: string, message: string, type: 'info' | 'success' | 'warning' = 'info') => {
+    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setLogs((prev) => [
+      ...prev,
+      { id: `log-${Date.now()}-${Math.random()}`, timestamp, agentName, message, type }
+    ]);
+    setCurrentDialogMessage(`${agentName}: ${message}`);
+  };
+
   // Global Telemetry Metrics
   const [telemetry, setTelemetry] = useState({
     bandwidth: 12.4,
@@ -233,12 +307,21 @@ export default function AgentsHub() {
     powerDraw: 85
   });
 
+  // Sound Engine mute/unmute state
+  const [isMuted, setIsMuted] = useState(false);
+
+  // Spend/Rate limits budget slider control
+  const [spendLimit, setSpendLimit] = useState(0.00);
+
   // Historical lists for live plotting
   const [bandwidthHistory, setBandwidthHistory] = useState<number[]>([12, 15, 10, 8, 14, 18, 11, 13, 16, 12]);
   const [loadHistory, setLoadHistory] = useState<number[]>([20, 25, 22, 18, 24, 28, 21, 23, 26, 22]);
 
   // Footprint / Dust particle tracking for 60fps movement trail
   const [particles, setParticles] = useState<WalkingParticle[]>([]);
+
+  // Showdown GIF load failures tracking
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   // Dialog Typing effect state
   const [typedDialogText, setTypedDialogText] = useState('');
@@ -336,7 +419,7 @@ export default function AgentsHub() {
     const interval = setInterval(() => {
       setAgents((prevAgents) =>
         prevAgents.map((agent) => {
-          let { x, y, targetX, targetY, personality, name, isPaused } = agent;
+          let { x, y, targetX, targetY, personality, name, isPaused, taskQueue } = agent;
 
           if (isPaused) return agent;
 
@@ -355,7 +438,28 @@ export default function AgentsHub() {
 
             if (agent.task !== 'Idle' && x !== 5 && y !== 5) {
               addLog(name, `Completed data cargo delivery: "${agent.task}". Status returns to ready.`, 'success');
+              playSynthSound('success', isMuted);
               setTelemetry(prev => ({ ...prev, jobsCompleted: prev.jobsCompleted + 1 }));
+
+              // Task Queue Handler: Dequeue next task automatically if queued
+              if (taskQueue.length > 0) {
+                const nextTask = taskQueue[0];
+                const newQueue = taskQueue.slice(1);
+                const nextStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
+                addLog(name, `Dequeued next script: "${nextTask}". Routing to ${nextStation.name}...`, 'info');
+                
+                return {
+                  ...agent,
+                  task: nextTask,
+                  taskQueue: newQueue,
+                  startX: x,
+                  startY: y,
+                  targetX: nextStation.x,
+                  targetY: nextStation.y,
+                  status: `Processing queue: ${nextTask}`
+                };
+              }
+
               return { ...agent, task: 'Idle', status: 'Idling' };
             }
 
@@ -395,22 +499,13 @@ export default function AgentsHub() {
     }, 1500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isMuted]);
 
   useEffect(() => {
     if (agents.length > 0 && !agents.some(a => a.id === selectedAgentId)) {
       setSelectedAgentId(agents[0].id);
     }
   }, [agents]);
-
-  const addLog = (agentName: string, message: string, type: 'info' | 'success' | 'warning' = 'info') => {
-    const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    setLogs((prev) => [
-      ...prev,
-      { id: `log-${Date.now()}-${Math.random()}`, timestamp, agentName, message, type }
-    ]);
-    setCurrentDialogMessage(`${agentName}: ${message}`);
-  };
 
   const handleAssignAction = async (e: FormEvent) => {
     e.preventDefault();
@@ -422,10 +517,37 @@ export default function AgentsHub() {
 
     if (targetAgent.isPaused) {
       addLog('System', `Cannot dispatch task. ${targetAgent.name} is currently suspended.`, 'warning');
+      playSynthSound('error', isMuted);
       return;
     }
 
+    playSynthSound('click', isMuted);
     const targetStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
+
+    // If already doing a job, push to queue instead of overwriting
+    if (targetAgent.task !== 'Idle') {
+      if (targetAgent.taskQueue.length >= 3) {
+        addLog('System', `Request rejected: ${targetAgent.name}'s task pipeline queue is full (max 3 queued jobs).`, 'warning');
+        playSynthSound('error', isMuted);
+        return;
+      }
+      setAgents((prev) =>
+        prev.map((agent) => {
+          if (agent.id === selectedAgentId) {
+            const newQueue = [...agent.taskQueue, finalActionText];
+            addLog(agent.name, `Task Queued: "${finalActionText}" (Position: ${newQueue.length})`, 'info');
+            const updated = { ...agent, taskQueue: newQueue };
+            if (inspectingAgent?.id === agent.id) {
+              setInspectingAgent(updated);
+            }
+            return updated;
+          }
+          return agent;
+        })
+      );
+      setCustomActionText('');
+      return;
+    }
 
     setAgents((prev) =>
       prev.map((agent) => {
@@ -479,6 +601,7 @@ export default function AgentsHub() {
       alert('Action already exists.');
       return;
     }
+    playSynthSound('click', isMuted);
     setPredefinedActions((prev) => [...prev, newActionText.trim()]);
     setSelectedAction(newActionText.trim());
     addLog('System', `New pre-defined action loaded: "${newActionText.trim()}"`, 'success');
@@ -489,6 +612,7 @@ export default function AgentsHub() {
     e.preventDefault();
     if (!newAgentName.trim()) return;
 
+    playSynthSound('click', isMuted);
     const colors = {
       Dev: '#5ccfe6',
       DevOps: '#7fd88f',
@@ -514,6 +638,7 @@ export default function AgentsHub() {
       targetY: 5,
       status: 'Initial boot success',
       task: 'Idle',
+      taskQueue: [],
       isPaused: false,
       roboticTraits: details,
       cpu: 10,
@@ -530,6 +655,7 @@ export default function AgentsHub() {
     if (!targetAgent) return;
     
     if (confirm(`Are you sure you want to decommission and remove ${targetAgent.name}?`)) {
+      playSynthSound('click', isMuted);
       setAgents((prev) => prev.filter((a) => a.id !== id));
       addLog('System', `Agent ${targetAgent.name} successfully removed.`, 'warning');
       if (inspectingAgent?.id === id) {
@@ -539,6 +665,7 @@ export default function AgentsHub() {
   };
 
   const handleTogglePauseAgent = (id: string) => {
+    playSynthSound('click', isMuted);
     setAgents((prev) =>
       prev.map((agent) => {
         if (agent.id === id) {
@@ -571,7 +698,6 @@ export default function AgentsHub() {
     }).join(' ');
   };
 
-  // Calculates the current pathing percentage completion
   const getPathProgress = (agent: Agent) => {
     const totalDist = Math.abs(agent.startX - agent.targetX) + Math.abs(agent.startY - agent.targetY);
     if (totalDist === 0) return 100;
@@ -579,21 +705,64 @@ export default function AgentsHub() {
     return Math.floor(((totalDist - currDist) / totalDist) * 100);
   };
 
+  const renderAgentSVG = (role: 'Dev' | 'DevOps' | 'Security' | 'Librarian', color: string) => {
+    if (role === 'DevOps') return <DevOpsRobotSVG color={color} />;
+    if (role === 'Security') return <SecurityRobotSVG color={color} />;
+    if (role === 'Dev') return <DeveloperRobotSVG color={color} />;
+    return <WriterRobotSVG color={color} />;
+  };
+
   return (
-    <div className="space-y-12 animate-fade-in">
+    <div className="space-y-12 animate-fade-in text-foreground">
       {/* NO-SPEND GUARD: Prominent Billing Alert Warning Sign */}
-      <div className="flex items-center gap-3 p-4 rounded-xl border border-amber-color/30 bg-[#161310] text-amber-color font-mono text-xs shadow-md">
-        <AlertTriangle className="w-5 h-5 flex-shrink-0 animate-pulse text-amber-color" />
-        <div className="space-y-0.5">
-          <div className="font-bold uppercase tracking-wider">Simulated Sandbox Sandbox Guard</div>
-          <p className="text-muted-foreground text-[10px] leading-relaxed">
-            All agent activities, movements, and actions are executed in local memory simulation. The sandbox prevents the allocation of credit and protects your API keys from incurring any real-world cloud spend.
-          </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-amber-color/30 bg-[#161310] text-amber-color font-mono text-xs shadow-md">
+        <div className="flex items-center gap-3">
+          <AlertTriangle className="w-5 h-5 flex-shrink-0 animate-pulse text-amber-color" />
+          <div className="space-y-0.5">
+            <div className="font-bold uppercase tracking-wider">Simulated Sandbox Sandbox Guard</div>
+            <p className="text-muted-foreground text-[10px] leading-relaxed">
+              All agent activities are executed in local memory simulation. The sandbox prevents credit allocation and blocks external real-world cloud spend.
+            </p>
+          </div>
+        </div>
+
+        {/* Interactive Spend limit Budget controller */}
+        <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-amber-color/20 pt-3 md:pt-0 md:pl-4">
+          <div className="text-right">
+            <span className="block text-[9px] uppercase text-muted-foreground font-bold">Anti-Overcharge Budget</span>
+            <span className="font-bold text-foreground text-xs">${spendLimit.toFixed(2)} / Session</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="5.0"
+            step="0.5"
+            value={spendLimit}
+            onChange={(e) => {
+              playSynthSound('click', isMuted);
+              setSpendLimit(parseFloat(e.target.value));
+            }}
+            className="w-24 accent-amber-color cursor-pointer"
+          />
         </div>
       </div>
 
+      {/* Header bar controls: Sound Toggle */}
+      <div className="flex justify-end pr-1">
+        <button
+          onClick={() => {
+            setIsMuted(!isMuted);
+            playSynthSound('click', !isMuted);
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border-color bg-muted/10 hover:bg-muted/20 text-muted-foreground hover:text-foreground text-xs font-mono transition-colors cursor-pointer"
+        >
+          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-cyan" />}
+          <span>{isMuted ? 'Unmute SFX' : 'Mute SFX'}</span>
+        </button>
+      </div>
+
       {/* Global Telemetry Metrics Dashboard */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in" id="telemetry-dashboard">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in animate-duration-300" id="telemetry-dashboard">
         <div className="bg-muted/15 border border-border-color p-4 rounded-xl flex flex-col justify-between space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between text-muted-foreground text-[10px] font-mono uppercase tracking-wider">
             <span>Matrix Load</span>
@@ -781,12 +950,16 @@ export default function AgentsHub() {
                 const isCarrying = agent.task !== 'Idle';
                 const isMoving = !agent.isPaused && (agent.x !== agent.targetX || agent.y !== agent.targetY);
                 const progress = getPathProgress(agent);
+                const hasImageError = imageErrors[agent.id];
 
                 return (
                   <motion.div
                     key={agent.id}
                     layout
-                    onClick={() => setInspectingAgent(agent)}
+                    onClick={() => {
+                      playSynthSound('click', isMuted);
+                      setInspectingAgent(agent);
+                    }}
                     className={`absolute w-10 h-10 flex flex-col items-center justify-center z-20 cursor-pointer ${
                       isMoving ? 'agent-walk-bounce' : ''
                     }`}
@@ -800,10 +973,12 @@ export default function AgentsHub() {
                     {/* Floating RPG HUD Panel (Lvl 99, HP, EXP) */}
                     <div className="absolute bottom-[110%] w-24 bg-[#0a0f1d]/95 border border-border-color rounded p-1 shadow-2xl space-y-1 text-[6px] font-mono pointer-events-none z-30">
                       
-                      {/* Name & Lvl */}
+                      {/* Name, Lvl, and Queued jobs indicator */}
                       <div className="flex justify-between text-foreground font-bold">
-                        <span className="truncate max-w-[60%]">{agent.name}</span>
-                        <span className="text-amber-color">Lv99</span>
+                        <span className="truncate max-w-[55%]">{agent.name}</span>
+                        <span className="text-amber-color">
+                          {agent.taskQueue.length > 0 ? `+${agent.taskQueue.length}Q` : 'Lv99'}
+                        </span>
                       </div>
 
                       {/* HP Bar */}
@@ -844,15 +1019,21 @@ export default function AgentsHub() {
                       style={{ transform: isMoving ? 'scale(0.85)' : 'scale(1)' }}
                     />
 
-                    {/* Pokémon Showdown Animated GIF */}
-                    <img 
-                      src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
-                      alt={agent.name}
-                      className="w-8 h-8 object-contain drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] z-10"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://play.pokemonshowdown.com/sprites/ani/porygon.gif';
-                      }}
-                    />
+                    {/* Bulletproof image load fallback: If Showdown down, draw local robot SVG instead */}
+                    {hasImageError ? (
+                      <div className="w-8 h-8 p-0.5 z-10">
+                        {renderAgentSVG(agent.role, agent.color)}
+                      </div>
+                    ) : (
+                      <img 
+                        src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
+                        alt={agent.name}
+                        className="w-8 h-8 object-contain drop-shadow-[0_0_4px_rgba(255,255,255,0.2)] z-10"
+                        onError={() => {
+                          setImageErrors(prev => ({ ...prev, [agent.id]: true }));
+                        }}
+                      />
+                    )}
                   </motion.div>
                 );
               })}
@@ -874,17 +1055,15 @@ export default function AgentsHub() {
               >
                 <div className="flex items-center justify-between border-b border-border-color/40 pb-2 font-mono text-xs">
                   <div className="flex items-center gap-2">
-                    <img 
-                      src={`${SPRITE_BASE_URL}${inspectingAgent.spriteName}.gif`} 
-                      alt="" 
-                      className="w-5 h-5 object-contain"
-                    />
                     <span className="font-bold text-foreground uppercase tracking-wider">
                       🔧 Inspector: {inspectingAgent.name}
                     </span>
                   </div>
                   <button
-                    onClick={() => setInspectingAgent(null)}
+                    onClick={() => {
+                      playSynthSound('click', isMuted);
+                      setInspectingAgent(null);
+                    }}
                     className="text-muted-foreground hover:text-foreground text-[10px]"
                   >
                     [Close]
@@ -920,6 +1099,16 @@ export default function AgentsHub() {
                     <span className="text-foreground font-bold uppercase block mb-1">Robotic Hardware Details:</span>
                     {inspectingAgent.roboticTraits}
                   </div>
+
+                  {/* Queued tasks list */}
+                  {inspectingAgent.taskQueue.length > 0 && (
+                    <div className="p-2.5 rounded bg-[#0f172a] border border-cyan/20 text-[10px] text-cyan leading-relaxed">
+                      <span className="text-foreground font-bold uppercase block mb-1">Pending Task Queue:</span>
+                      {inspectingAgent.taskQueue.map((t, idx) => (
+                        <div key={idx}>- [{idx + 1}] {t}</div>
+                      ))}
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-2 gap-2 text-[10px] text-muted-foreground border-t border-border-color/20 pt-2.5">
                     <div><strong>Role:</strong> {inspectingAgent.role}</div>
@@ -979,7 +1168,7 @@ export default function AgentsHub() {
                 >
                   {agents.map((agent) => (
                     <option key={agent.id} value={agent.id}>
-                      {agent.name} {agent.isPaused ? '[PAUSED]' : ''}
+                      {agent.name} {agent.isPaused ? '[PAUSED]' : ''} {agent.taskQueue.length > 0 ? `(${agent.taskQueue.length} queued)` : ''}
                     </option>
                   ))}
                 </select>
