@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Compass, Cpu, BookOpen, Terminal, Github, ExternalLink, Hash, CornerDownLeft, Star, Sparkles } from 'lucide-react';
+import { Search, Compass, Cpu, BookOpen, Terminal, Github, ExternalLink, Hash, CornerDownLeft, Star, Sparkles, Sliders } from 'lucide-react';
 import { TOOLS } from '../data';
 import { Tool } from '../types';
 
@@ -49,6 +49,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
     { id: 'nav-toolkit', label: 'Go to Toolkit Directory', icon: Compass, action: () => { setActiveTab('toolkit'); onClose(); }, meta: 'View 40+ curated developer tools' },
     { id: 'nav-learn', label: 'Go to Curriculum & Learn', icon: BookOpen, action: () => { setActiveTab('learn'); onClose(); }, meta: 'Free roadmaps and learning paths' },
     { id: 'nav-lab', label: 'Go to AI Dev Assistant Lab', icon: Cpu, action: () => { setActiveTab('lab'); onClose(); }, meta: 'Interactive multi-provider AI terminal' },
+    { id: 'nav-playground', label: 'Go to Developer Playground', icon: Sliders, action: () => { setActiveTab('playground'); onClose(); }, meta: 'JWT decoder, Glassmorphism builder, RegEx tester, and generators' },
     { id: 'nav-dashboard', label: 'Go to David\'s Private Dashboard', icon: Terminal, action: () => { setActiveTab('dashboard'); onClose(); }, meta: 'MCP server configurations and private console' },
     { id: 'nav-identity', label: 'Go to Identity & Brand Hub', icon: Sparkles, action: () => { setActiveTab('identity'); onClose(); }, meta: 'Sleek custom SVG emblems, social banners and embeddable badges' },
   ];

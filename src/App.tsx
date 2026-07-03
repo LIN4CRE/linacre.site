@@ -8,6 +8,7 @@ import Lab from './components/Lab';
 import Dashboard from './components/Dashboard';
 import IdentityHub from './components/IdentityHub';
 import CommandPalette from './components/CommandPalette';
+import DevPlayground from './components/DevPlayground';
 import Footer from './components/Footer';
 import { CHANGELOG } from './data';
 import { ToolCategory } from './types';
@@ -23,7 +24,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity'];
+      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground'];
       if (hash && validTabs.includes(hash)) {
         setActiveTab(hash);
       }
@@ -449,6 +450,18 @@ export default function App() {
               transition={{ type: "spring", stiffness: 100, damping: 15 }}
             >
               <IdentityHub />
+            </motion.div>
+          )}
+
+          {activeTab === 'playground' && (
+            <motion.div
+              key="playground"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <DevPlayground />
             </motion.div>
           )}
         </AnimatePresence>
