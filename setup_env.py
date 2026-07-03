@@ -47,7 +47,7 @@ def main():
 
     print("[INFO] Scanning Windows Registry for developer API keys...")
     
-    keys = ["GEMINI_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"]
+    keys = ["GEMINI_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "CLAUDE_API_KEY", "LITELLM_API_KEY"]
     env_vars = {}
     
     # Load existing .env
