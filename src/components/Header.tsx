@@ -31,7 +31,14 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border-color bg-background/80 backdrop-blur-md transition-colors duration-200">
+    <header className="sticky top-0 z-50 w-full border-b border-border-color bg-background/80 backdrop-blur-md transition-colors duration-200" role="banner">
+      {/* Skip-to-content link for keyboard/screen reader accessibility */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-amber-color focus:text-[#0b0e14] focus:rounded-md focus:font-mono focus:text-sm focus:font-bold focus:shadow-lg"
+      >
+        Skip to content
+      </a>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}

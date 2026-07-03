@@ -285,7 +285,7 @@ export default function App() {
         openPalette={() => setPaletteOpen(true)}
       />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
+      <main id="main-content" role="main" className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
         <Suspense fallback={
           <div className="py-20 text-center font-mono text-xs text-muted-foreground flex flex-col items-center justify-center gap-3">
             <div className="w-6 h-6 border-2 border-amber-color border-t-transparent rounded-full animate-spin"></div>
