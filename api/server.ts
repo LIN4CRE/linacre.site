@@ -156,7 +156,7 @@ async function startServer() {
     }
 
     let active = true;
-    req.on('close', () => {
+    res.on('close', () => {
       active = false;
     });
 
@@ -361,11 +361,15 @@ async function startServer() {
     try {
       const mockText = "Hello! I am the local system proxy. Currently, the server's Gemini, OpenAI, and Claude API keys are exhausted or depleted. \n\nPlease expand the **Configuration Panel** at the top of the page to input your own API keys to chat with the live models! This sandbox runs entirely in your browser and will connect directly using your keys.";
       
+      console.log("Ultimate Mock Fallback triggered. Active state:", active);
       ensureHeaders();
 
       const words = mockText.split(" ");
       for (const word of words) {
-        if (!active) break;
+        if (!active) {
+          console.log("Mock Fallback interrupted because active is false");
+          break;
+        }
         res.write(`data: ${JSON.stringify({ text: word + " " })}\n\n`);
         await new Promise(resolve => setTimeout(resolve, 50));
       }
