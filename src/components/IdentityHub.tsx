@@ -35,10 +35,10 @@ export default function IdentityHub() {
 
   // Shield Frames
   const frames = [
-    { id: 'hexagon', name: 'Cyber Hexagon' },
-    { id: 'circle', name: 'Infinite Orbit' },
-    { id: 'brackets', name: 'Code Brackets' },
-    { id: 'minimal', name: 'Pure Monogram' }
+    { id: 'hexagon', name: 'Pipeline Nexus' },
+    { id: 'circle', name: 'Aether Orb' },
+    { id: 'brackets', name: 'Cyber Brackets' },
+    { id: 'minimal', name: 'Minimalist Spark' }
   ];
 
   // Premium Typography Pairings (dynamically loaded via Google Fonts link)
@@ -146,23 +146,7 @@ export default function IdentityHub() {
     const p = activeColor.primary;
     const s = activeColor.secondary;
     const shadowSize = glowIntensity * 4;
-
-    let frameSVG = '';
-    if (activeFrame === 'hexagon') {
-      frameSVG = `<polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke="${p}" stroke-width="3.5" stroke-linejoin="round" filter="url(#glow)" />
-      <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke="${s}" stroke-width="1" stroke-dasharray="8 4" stroke-linejoin="round" opacity="0.4" />`;
-    } else if (activeFrame === 'circle') {
-      frameSVG = `<circle cx="50" cy="50" r="44" fill="none" stroke="${p}" stroke-width="3" filter="url(#glow)" />
-      <circle cx="50" cy="50" r="39" fill="none" stroke="${s}" stroke-width="1" stroke-dasharray="6 3" opacity="0.5" />
-      <circle cx="50" cy="50" r="47" fill="none" stroke="${p}" stroke-width="1" opacity="0.2" />`;
-    } else if (activeFrame === 'brackets') {
-      frameSVG = `<path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke="${p}" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
-      <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke="${p}" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
-      <line x1="20" y1="50" x2="80" y2="50" stroke="${s}" stroke-width="1" stroke-dasharray="5 5" opacity="0.3" />`;
-    } else {
-      // Minimal
-      frameSVG = `<rect x="5" y="5" width="90" height="90" rx="10" fill="none" stroke="${p}" stroke-width="1.5" stroke-dasharray="10 5" opacity="0.2" />`;
-    }
+    const frame = activeFrame;
 
     let styleBlock = '';
     const speedSeconds = activePulseSpeed === 'fast' ? '1.0s' : activePulseSpeed === 'breathe' ? '5.0s' : '2.5s';
@@ -171,8 +155,8 @@ export default function IdentityHub() {
       styleBlock = `
     <style>
       @keyframes dPulse {
-        0%, 100% { opacity: 0.3; stroke-width: 4px; }
-        50% { opacity: 0.95; stroke-width: 5.5px; }
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.95; }
       }
       .d-pulse-path {
         animation: dPulse ${speedSeconds} ease-in-out infinite;
@@ -192,34 +176,55 @@ export default function IdentityHub() {
     </style>`;
     }
 
-    let emblemContents = `
-  <!-- Outer Frame -->
-  ${frameSVG}
-
-  <!-- Abstract Monogram 'L' & 'D' Inner Emblem -->
-  <g transform="translate(0, 0)">
-    <!-- L shape stem and futuristic horizontal terminal line -->
-    <path d="M 44,26 L 44,66 L 68,66" fill="none" stroke="url(#brandGrad)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
-    
-    <!-- Luminous node dot representing execution pulse -->
-    <circle cx="68" cy="66" r="3.5" fill="${s}" filter="url(#glow)" />
-    
-    <!-- Integrated D-Chevron that forms a D in the L -->
-    <path 
-      d="M 44,26 L 58,46 L 44,66" 
-      fill="none" 
-      stroke="${activeMotion === 'pulse' ? 'url(#brandGrad)' : p}" 
-      stroke-width="4.5" 
-      stroke-linecap="round" 
-      stroke-linejoin="round" 
-      ${activeMotion === 'pulse' ? 'class="d-pulse-path" filter="url(#glow)"' : 'opacity="0.8"'} 
-    />
-
-    <!-- Subtle digital backdrop grid -->
-    <circle cx="50" cy="50" r="1.5" fill="${s}" opacity="0.4" />
-    <circle cx="34" cy="44" r="1" fill="${s}" opacity="0.2" />
-    <circle cx="66" cy="36" r="1" fill="${s}" opacity="0.2" />
+    let emblemContents = '';
+    if (frame === 'hexagon') {
+      emblemContents = `
+  <!-- Pipeline Nexus Hexagon -->
+  <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke="${p}" stroke-width="3" stroke-linejoin="round" filter="url(#glow)" />
+  <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke="${s}" stroke-width="1" stroke-dasharray="6 4" opacity="0.3" />
+  
+  <g transform="translate(20, 20)" fill="url(#brandGrad)" filter="url(#glow)">
+    <rect x="5" y="5" width="8" height="8" rx="2" opacity="0.4" />
+    <rect x="18" y="5" width="8" height="8" rx="2" opacity="0.6" />
+    <rect x="31" y="5" width="8" height="8" rx="2" />
+    <rect x="44" y="5" width="8" height="8" rx="2" opacity="0.6" />
+    <rect x="5" y="18" width="8" height="8" rx="2" opacity="0.5" />
+    <rect x="18" y="18" width="8" height="8" rx="2" opacity="0.8" />
+    <rect x="31" y="18" width="8" height="8" rx="2" fill="${s}" />
+    <rect x="44" y="18" width="8" height="8" rx="2" opacity="0.5" />
+    <rect x="18" y="31" width="22" height="8" rx="2" fill="#ff6b9d" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
+    <rect x="5" y="31" width="8" height="8" rx="2" opacity="0.6" />
+    <rect x="44" y="31" width="8" height="8" rx="2" opacity="0.6" />
+    <rect x="5" y="44" width="8" height="8" rx="2" opacity="0.4" />
+    <rect x="18" y="44" width="8" height="8" rx="2" opacity="0.6" />
+    <rect x="31" y="44" width="8" height="8" rx="2" />
+    <rect x="44" y="44" width="8" height="8" rx="2" opacity="0.4" />
   </g>`;
+    } else if (frame === 'circle') {
+      emblemContents = `
+  <!-- Aether Orb Center -->
+  <circle cx="50" cy="50" r="44" fill="none" stroke="${p}" stroke-width="2.5" filter="url(#glow)" />
+  <circle cx="50" cy="50" r="39" fill="none" stroke="${s}" stroke-width="1" stroke-dasharray="5 3" opacity="0.4" />
+  
+  <circle cx="50" cy="50" r="16" fill="url(#brandGrad)" filter="url(#glow)" />
+  <circle cx="50" cy="50" r="22" fill="none" stroke="${s}" stroke-width="1.5" filter="url(#glow)" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
+  <path d="M 50,43 L 52,48 L 57,50 L 52,52 L 50,57 L 48,52 L 43,50 L 48,48 Z" fill="#ffffff" filter="url(#glow)" />`;
+    } else if (frame === 'brackets') {
+      emblemContents = `
+  <!-- Code Brackets Frame -->
+  <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke="${p}" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
+  <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke="${p}" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
+  
+  <g transform="translate(34, 40)" fill="url(#brandGrad)" filter="url(#glow)">
+    <path d="M 0,4 L 12,10 L 0,16" fill="none" stroke="${p}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    <rect x="18" y="15" width="14" height="3" rx="1.5" fill="${s}" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
+  </g>`;
+    } else {
+      emblemContents = `
+  <!-- Minimalist Spark Frame -->
+  <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke="${p}" stroke-width="2.5" opacity="0.3" filter="url(#glow)" />
+  <path d="M 50,22 Q 50,50 22,50 Q 50,50 50,78 Q 50,50 78,50 Q 50,50 50,22 Z" fill="url(#brandGrad)" filter="url(#glow)" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />`;
+    }
 
     if (activeMotion === 'spin') {
       emblemContents = `<g class="spin-logo-g">${emblemContents}</g>`;
@@ -245,6 +250,61 @@ export default function IdentityHub() {
 
   // Generate the tailored React / JSX Code
   const getReactCode = () => {
+    const p = activeColor.primary;
+    const s = activeColor.secondary;
+    const frame = activeFrame;
+    const speedSeconds = activePulseSpeed === 'fast' ? '1.0s' : activePulseSpeed === 'breathe' ? '5.0s' : '2.5s';
+
+    let emblemJSX = '';
+    if (frame === 'hexagon') {
+      emblemJSX = `
+        {/* Pipeline Nexus Hexagon */}
+        <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke="${p}" strokeWidth="3" strokeLinejoin="round" />
+        <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke="${s}" strokeWidth="1" strokeDasharray="6 4" opacity="0.3" />
+        
+        <g transform="translate(20, 20)" fill="url(#linacreGrad)">
+          <rect x="5" y="5" width="8" height="8" rx="2" opacity="0.4" />
+          <rect x="18" y="5" width="8" height="8" rx="2" opacity="0.6" />
+          <rect x="31" y="5" width="8" height="8" rx="2" />
+          <rect x="44" y="5" width="8" height="8" rx="2" opacity="0.6" />
+          <rect x="5" y="18" width="8" height="8" rx="2" opacity="0.5" />
+          <rect x="18" y="18" width="8" height="8" rx="2" opacity="0.8" />
+          <rect x="31" y="18" width="8" height="8" rx="2" fill="${s}" />
+          <rect x="44" y="18" width="8" height="8" rx="2" opacity="0.5" />
+          <rect x="18" y="31" width="22" height="8" rx="2" fill="#ff6b9d" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />
+          <rect x="5" y="31" width="8" height="8" rx="2" opacity="0.6" />
+          <rect x="44" y="31" width="8" height="8" rx="2" opacity="0.6" />
+          <rect x="5" y="44" width="8" height="8" rx="2" opacity="0.4" />
+          <rect x="18" y="44" width="8" height="8" rx="2" opacity="0.6" />
+          <rect x="31" y="44" width="8" height="8" rx="2" />
+          <rect x="44" y="44" width="8" height="8" rx="2" opacity="0.4" />
+        </g>`;
+    } else if (frame === 'circle') {
+      emblemJSX = `
+        {/* Aether Orb Center */}
+        <circle cx="50" cy="50" r="44" fill="none" stroke="${p}" strokeWidth="2.5" />
+        <circle cx="50" cy="50" r="39" fill="none" stroke="${s}" strokeWidth="1" strokeDasharray="5 3" opacity="0.4" />
+        
+        <circle cx="50" cy="50" r="16" fill="url(#linacreGrad)" />
+        <circle cx="50" cy="50" r="22" fill="none" stroke="${s}" strokeWidth="1.5" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />
+        <path d="M 50,43 L 52,48 L 57,50 L 52,52 L 50,57 L 48,52 L 43,50 L 48,48 Z" fill="#ffffff" />`;
+    } else if (frame === 'brackets') {
+      emblemJSX = `
+        {/* Code Brackets Frame */}
+        <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke="${p}" strokeWidth="4.5" strokeLinecap="round" />
+        <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke="${p}" strokeWidth="4.5" strokeLinecap="round" />
+        
+        <g transform="translate(34, 40)" fill="url(#linacreGrad)">
+          <path d="M 0,4 L 12,10 L 0,16" fill="none" stroke="${p}" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="18" y="15" width="14" height="3" rx="1.5" fill="${s}" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />
+        </g>`;
+    } else {
+      emblemJSX = `
+        {/* Minimalist Spark Frame */}
+        <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke="${p}" strokeWidth="2.5" opacity="0.3" />
+        <path d="M 50,22 Q 50,50 22,50 Q 50,50 50,78 Q 50,50 78,50 Q 50,50 50,22 Z" fill="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />`;
+    }
+
     return `import React from 'react';
 
 export function LinacreEmblem({ className = 'w-16 h-16' }) {
@@ -259,20 +319,20 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
           </feMerge>
         </filter>
         <linearGradient id="linacreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="${activeColor.primary}" />
-          <stop offset="100%" stopColor="${activeColor.secondary}" />
+          <stop offset="0%" stopColor="${p}" />
+          <stop offset="100%" stopColor="${s}" />
         </linearGradient>
-        ${activeMotion === 'pulse' ? `
+        \${activeMotion === 'pulse' ? \`
         <style>
           @keyframes dPulse {
-            0%, 100% { opacity: 0.3; strokeWidth: 4px; }
-            50% { opacity: 0.95; strokeWidth: 5.5px; }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.95; }
           }
           .d-pulse-path {
-            animation: dPulse ${activePulseSpeed === 'fast' ? '1.0s' : activePulseSpeed === 'breathe' ? '5.0s' : '2.5s'} ease-in-out infinite;
+            animation: dPulse ${speedSeconds} ease-in-out infinite;
           }
-        </style>` : ''}
-        ${activeMotion === 'spin' ? `
+        </style>\` : ''}
+        \${activeMotion === 'spin' ? \`
         <style>
           @keyframes spinLogo {
             from { transform: rotate(0deg); }
@@ -282,97 +342,15 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
             transform-origin: 50px 50px;
             animation: spinLogo 8s linear infinite;
           }
-        </style>` : ''}
+        </style>\` : ''}
       </defs>
       
-      <g className="${activeMotion === 'spin' ? 'spin-logo-g' : ''}">
-        {/* Outer Shield Frame (${activeFrame}) */}
-        ${activeFrame === 'hexagon' ? `
-        <polygon 
-          points="50,3 91,25 91,75 50,97 9,75 9,25" 
-          fill="none" 
-          stroke="${activeColor.primary}" 
-          strokeWidth="3.5" 
-          strokeLinejoin="round" 
-          filter="url(#linacreGlow)" 
-        />
-        <polygon 
-          points="50,8 87,28 87,72 50,92 13,72 13,28" 
-          fill="none" 
-          stroke="${activeColor.secondary}" 
-          strokeWidth="1" 
-          strokeDasharray="8 4" 
-          strokeLinejoin="round" 
-          opacity="0.4" 
-        />` : activeFrame === 'circle' ? `
-        <circle 
-          cx="50" cy="50" r="44" 
-          fill="none" 
-          stroke="${activeColor.primary}" 
-          strokeWidth="3" 
-          filter="url(#linacreGlow)" 
-        />
-        <circle 
-          cx="50" cy="50" r="39" 
-          fill="none" 
-          stroke="${activeColor.secondary}" 
-          strokeWidth="1" 
-          strokeDasharray="6 3" 
-          opacity="0.5" 
-        />` : activeFrame === 'brackets' ? `
-        <path 
-          d="M 24,12 L 10,12 L 10,88 L 24,88" 
-          fill="none" 
-          stroke="${activeColor.primary}" 
-          strokeWidth="4.5" 
-          strokeLinecap="round" 
-          filter="url(#linacreGlow)" 
-        />
-        <path 
-          d="M 76,12 L 90,12 L 90,88 L 76,88" 
-          fill="none" 
-          stroke="${activeColor.primary}" 
-          strokeWidth="4.5" 
-          strokeLinecap="round" 
-          filter="url(#linacreGlow)" 
-        />` : `
-        <rect 
-          x="5" y="5" width="90" height="90" rx="10" 
-          fill="none" 
-          stroke="${activeColor.primary}" 
-          strokeWidth="1.5" 
-          strokeDasharray="10 5" 
-          opacity="0.2" 
-        />`}
-
-        {/* Futuristic Inner 'L' & 'D' Emblem */}
-        <g>
-          <path 
-            d="M 44,26 L 44,66 L 68,66" 
-            fill="none" 
-            stroke="url(#linacreGrad)" 
-            strokeWidth="5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            filter="url(#linacreGlow)" 
-          />
-          <circle cx="68" cy="66" r="3.5" fill="${activeColor.secondary}" filter="url(#linacreGlow)" />
-          
-          <path 
-            className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}"
-            d="M 44,26 L 58,46 L 44,66" 
-            fill="none" 
-            stroke="${activeMotion === 'pulse' ? 'url(#linacreGrad)' : activeColor.primary}" 
-            strokeWidth="4.5" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            ${activeMotion === 'pulse' ? 'filter="url(#linacreGlow)"' : 'opacity="0.8"'}
-          />
-        </g>
+      <g className="\${activeMotion === 'spin' ? 'spin-logo-g' : ''}" filter="url(#linacreGlow)">
+        \${emblemJSX}
       </g>
     </svg>
   );
-}`;
+};`;
   };
 
   // Generate Email Signature HTML (Clean tables based HTML for cross-client compatibility)
@@ -754,7 +732,7 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     The Linacre Emblem
                   </h4>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    A luxurious geometry fusing the terminal execution path `<span className={activeColor.text}>&gt;</span>` with a structural modern <span className={activeColor.text}>L</span> monogram. Perfect as a profile icon, repo shield, or digital avatar.
+                    An abstract representation of the modern digital builder. Fuses DevOps pipeline elements, conic-gradient orb systems, and clean terminal brackets to represent code orchestration and AI automation.
                   </p>
                 </div>
 

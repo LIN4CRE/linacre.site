@@ -183,39 +183,10 @@ export default function App() {
     const glowIntensity = identity.glow;
     const shadowSize = glowIntensity * 4;
 
-    let frameSVG = null;
-    if (frame === 'hexagon') {
-      frameSVG = (
-        <>
-          <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke={p} strokeWidth="3.5" strokeLinejoin="round" filter="url(#heroGlow)" />
-          <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke={s} strokeWidth="1" strokeDasharray="8 4" strokeLinejoin="round" opacity="0.4" />
-        </>
-      );
-    } else if (frame === 'circle') {
-      frameSVG = (
-        <>
-          <circle cx="50" cy="50" r="44" fill="none" stroke={p} strokeWidth="3" filter="url(#heroGlow)" />
-          <circle cx="50" cy="50" r="39" fill="none" stroke={s} strokeWidth="1" strokeDasharray="6 3" opacity="0.5" />
-          <circle cx="50" cy="50" r="47" fill="none" stroke={p} strokeWidth="1" opacity="0.2" />
-        </>
-      );
-    } else if (frame === 'brackets') {
-      frameSVG = (
-        <>
-          <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke={p} strokeWidth="4.5" strokeLinecap="round" filter="url(#heroGlow)" />
-          <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke={p} strokeWidth="4.5" strokeLinecap="round" filter="url(#heroGlow)" />
-          <line x1="20" y1="50" x2="80" y2="50" stroke={s} strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
-        </>
-      );
-    } else {
-      // minimal
-      frameSVG = <rect x="5" y="5" width="90" height="90" rx="10" fill="none" stroke={p} strokeWidth="1.5" strokeDasharray="10 5" opacity="0.2" />;
-    }
-
     return (
       <svg className="w-24 h-24 sm:w-28 sm:h-28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <filter id="heroGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id="heroGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation={shadowSize / 4} result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
@@ -227,43 +198,86 @@ export default function App() {
             <stop offset="100%" stopColor={s} />
           </linearGradient>
         </defs>
-        
-        {frameSVG}
 
-        <g>
-          <path d="M 44,26 L 44,66 L 68,66" fill="none" stroke="url(#heroBrandGrad)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" filter="url(#heroGlow)" />
-          <circle cx="68" cy="66" r="3.5" fill={s} filter="url(#heroGlow)" />
-          {identity.motionId === 'pulse' ? (
-            <motion.path
-              d="M 44,26 L 58,46 L 44,66"
-              fill="none"
-              stroke="url(#heroBrandGrad)"
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              filter="url(#heroGlow)"
-              animate={{
-                opacity: [0.3, 0.95, 0.3],
-                strokeWidth: [4, 5.5, 4]
-              }}
-              transition={{
-                duration: identity.pulseSpeed === 'fast' ? 1.0 : identity.pulseSpeed === 'breathe' ? 5.0 : 2.5,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
+        {frame === 'hexagon' && (
+          <g filter="url(#heroGlow)">
+            {/* Pipeline Nexus Hexagon */}
+            <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke={p} strokeWidth="3" strokeLinejoin="round" />
+            <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke={s} strokeWidth="1" strokeDasharray="6 4" opacity="0.3" />
+            
+            {/* 5x5 pipeline block grid */}
+            <g transform="translate(20, 20)" fill="url(#heroBrandGrad)">
+              <rect x="5" y="5" width="8" height="8" rx="2" opacity="0.4" />
+              <rect x="18" y="5" width="8" height="8" rx="2" opacity="0.6" />
+              <rect x="31" y="5" width="8" height="8" rx="2" />
+              <rect x="44" y="5" width="8" height="8" rx="2" opacity="0.6" />
+              <rect x="5" y="18" width="8" height="8" rx="2" opacity="0.5" />
+              <rect x="18" y="18" width="8" height="8" rx="2" opacity="0.8" />
+              <rect x="31" y="18" width="8" height="8" rx="2" fill={s} />
+              <rect x="44" y="18" width="8" height="8" rx="2" opacity="0.5" />
+              <motion.rect 
+                x="18" y="31" width="22" height="8" rx="2" fill="#ff6b9d"
+                animate={{ opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
+              <rect x="5" y="31" width="8" height="8" rx="2" opacity="0.6" />
+              <rect x="44" y="31" width="8" height="8" rx="2" opacity="0.6" />
+              <rect x="5" y="44" width="8" height="8" rx="2" opacity="0.4" />
+              <rect x="18" y="44" width="8" height="8" rx="2" opacity="0.6" />
+              <rect x="31" y="44" width="8" height="8" rx="2" />
+              <rect x="44" y="44" width="8" height="8" rx="2" opacity="0.4" />
+            </g>
+          </g>
+        )}
+
+        {frame === 'circle' && (
+          <g filter="url(#heroGlow)">
+            {/* Aether Orb Center */}
+            <circle cx="50" cy="50" r="44" fill="none" stroke={p} strokeWidth="2.5" />
+            <circle cx="50" cy="50" r="39" fill="none" stroke={s} strokeWidth="1" strokeDasharray="5 3" opacity="0.4" />
+            
+            <circle cx="50" cy="50" r="16" fill="url(#heroBrandGrad)" />
+            
+            <motion.circle 
+              cx="50" cy="50" r="22" fill="none" stroke={s} strokeWidth="1.5"
+              animate={{ r: [16, 26, 16], opacity: [0.6, 0.1, 0.6] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
             />
-          ) : (
-            <path
-              d="M 44,26 L 58,46 L 44,66"
-              fill="none"
-              stroke={p}
-              strokeWidth="4.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity="0.8"
+            <path d="M 50,43 L 52,48 L 57,50 L 52,52 L 50,57 L 48,52 L 43,50 L 48,48 Z" fill="#ffffff" />
+          </g>
+        )}
+
+        {frame === 'brackets' && (
+          <g filter="url(#heroGlow)">
+            {/* Code Brackets Frame */}
+            <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke={p} strokeWidth="4.5" strokeLinecap="round" />
+            <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke={p} strokeWidth="4.5" strokeLinecap="round" />
+            
+            <g transform="translate(34, 40)" fill="url(#heroBrandGrad)">
+              <path d="M 0,4 L 12,10 L 0,16" fill="none" stroke={p} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <motion.rect 
+                x="18" y="15" width="14" height="3" rx="1.5" fill={s}
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              />
+            </g>
+          </g>
+        )}
+
+        {frame === 'minimal' && (
+          <g filter="url(#heroGlow)">
+            {/* Minimalist Spark Frame */}
+            <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke={p} strokeWidth="2.5" opacity="0.3" />
+            
+            <motion.path 
+              d="M 50,22 Q 50,50 22,50 Q 50,50 50,78 Q 50,50 78,50 Q 50,50 50,22 Z" 
+              fill="url(#heroBrandGrad)"
+              animate={{ scale: [0.95, 1.05, 0.95] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              style={{ transformOrigin: '50px 50px' }}
             />
-          )}
-        </g>
+          </g>
+        )}
       </svg>
     );
   };
