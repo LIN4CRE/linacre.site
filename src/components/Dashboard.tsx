@@ -1,6 +1,6 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, Terminal, Cpu, Key, Copy, Check, Lock, ArrowRight, Server, Play, Code, Eye, EyeOff, Search, FileCode, CheckCircle2, RefreshCw, AlertCircle } from 'lucide-react';
+import { ShieldAlert, Terminal, Cpu, Key, Copy, Check, Lock, ArrowRight, Server, Play, Code, Eye, EyeOff, Search, FileCode, CheckCircle2, RefreshCw, AlertCircle, Info } from 'lucide-react';
 import { MCP_SERVERS, SKILL_TEMPLATES, ENV_TEMPLATE } from '../data';
 import { MCPServer, SkillTemplate } from '../types';
 import {
