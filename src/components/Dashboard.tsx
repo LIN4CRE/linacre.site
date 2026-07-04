@@ -643,7 +643,7 @@ export default function Dashboard() {
                 
                 {/* List of Mesh components */}
                 <div className="space-y-3">
-                  {(Object.keys(meshStatus) as Array<keyof typeof meshStatus>).map((key) => {
+                  {(Object.keys(meshStatus) as Array<'fastapi' | 'express' | 'phone' | 'agent' | 'gemini'>).map((key) => {
                     const comp = meshStatus[key];
                     const labelMap: Record<string, string> = {
                       'fastapi': 'FastAPI server (port 8000)',
