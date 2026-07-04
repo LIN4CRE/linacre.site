@@ -17,6 +17,18 @@ const PORT = Number(process.env.PORT) || 3000;
 // Body parser middleware
 app.use(express.json());
 
+// Enable CORS for all origins (specifically file:// for Lively Wallpaper)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  if (req.method === "OPTIONS") {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 async function startServer() {
 
   // API route for Gemini Chat proxying securely
