@@ -1,8 +1,28 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ShieldAlert, Terminal, Cpu, Key, Copy, Check, Lock, ArrowRight, Server, Play, Code, Eye, EyeOff, Search, FileCode, CheckCircle2 } from 'lucide-react';
+import { ShieldAlert, Terminal, Cpu, Key, Copy, Check, Lock, ArrowRight, Server, Play, Code, Eye, EyeOff, Search, FileCode, CheckCircle2, RefreshCw, AlertCircle } from 'lucide-react';
 import { MCP_SERVERS, SKILL_TEMPLATES, ENV_TEMPLATE } from '../data';
 import { MCPServer, SkillTemplate } from '../types';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip as ChartTooltip,
+  Legend
+} from 'chart.js';
+import { Radar } from 'react-chartjs-2';
+
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  ChartTooltip,
+  Legend
+);
+
 
 export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -26,6 +46,109 @@ export default function Dashboard() {
   // Authentication bypass password
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const [meshStatus, setMeshStatus] = useState<Record<string, {
+    status: 'connected' | 'disconnected' | 'connecting';
+    latency: number;
+    reason: string;
+  }>>({
+    'fastapi': { status: 'disconnected', latency: 0, reason: 'FastAPI backend has not been pinged yet.' },
+    'express': { status: 'connected', latency: 5, reason: 'Express server running locally on port 3000.' },
+    'phone': { status: 'disconnected', latency: 0, reason: 'Waiting for device handshake.' },
+    'agent': { status: 'disconnected', latency: 0, reason: 'Waiting for active status report.' },
+    'gemini': { status: 'connected', latency: 24, reason: 'Active proxy link to Google Gemini Studio.' }
+  });
+
+  const runEcosystemPing = async () => {
+    setMeshStatus(prev => ({
+      ...prev,
+      'fastapi': { ...prev['fastapi'], status: 'connecting' },
+      'phone': { ...prev['phone'], status: 'connecting' },
+      'agent': { ...prev['agent'], status: 'connecting' }
+    }));
+
+    // 1. Ping FastAPI
+    try {
+      const start = Date.now();
+      const res = await fetch("http://localhost:8000/api/v1/evbot/health");
+      const latency = Date.now() - start;
+      if (res.ok) {
+        setMeshStatus(prev => ({
+          ...prev,
+          'fastapi': { status: 'connected', latency, reason: 'FastAPI backend active on port 8000 over Tailscale.' }
+        }));
+      } else {
+        throw new Error("HTTP Status: " + res.status);
+      }
+    } catch (e: any) {
+      setMeshStatus(prev => ({
+        ...prev,
+        'fastapi': { status: 'disconnected', latency: 0, reason: 'FastAPI backend is unreachable on port 8000. Start the server using python linacre.py boot.' }
+      }));
+    }
+
+    // 2. Check Phone
+    try {
+      const start = Date.now();
+      const res = await fetch("http://localhost:8000/api/v1/evbot/state");
+      const latency = Date.now() - start;
+      if (res.ok) {
+        const data = await res.json();
+        if (data.pcConnection && data.pcConnection.status === 'connected') {
+          setMeshStatus(prev => ({
+            ...prev,
+            'phone': { status: 'connected', latency, reason: `Linked to Poco F7 at 100.102.1.7 (Handshake OK).` }
+          }));
+        } else {
+          setMeshStatus(prev => ({
+            ...prev,
+            'phone': { status: 'disconnected', latency: 0, reason: 'Poco F7 is disconnected or app is not running.' }
+          }));
+        }
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      setMeshStatus(prev => ({
+        ...prev,
+        'phone': { status: 'disconnected', latency: 0, reason: 'Tailscale routing down. Verify the companion app is running on the Poco F7.' }
+      }));
+    }
+
+    // 3. Check AI Agent
+    try {
+      const res = await fetch("/agent-report.json");
+      if (res.ok) {
+        const data = await res.json();
+        const lastRun = new Date(data.lastRun);
+        const diffMin = (Date.now() - lastRun.getTime()) / (1000 * 60);
+        if (diffMin < 60) {
+          setMeshStatus(prev => ({
+            ...prev,
+            'agent': { status: 'connected', latency: 2, reason: `Agent daemon active. Last run ${Math.round(diffMin)}m ago.` }
+          }));
+        } else {
+          setMeshStatus(prev => ({
+            ...prev,
+            'agent': { status: 'disconnected', latency: 0, reason: `Agent daemon inactive (last run ${Math.round(diffMin)}m ago).` }
+          }));
+        }
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      setMeshStatus(prev => ({
+        ...prev,
+        'agent': { status: 'disconnected', latency: 0, reason: 'agent-report.json not found. Run python linacre.py boot to start background agent daemon.' }
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (activeSubTab === 'ecosystem') {
+      runEcosystemPing();
+    }
+  }, [activeSubTab]);
 
   const handleAuthSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -444,49 +567,150 @@ export default function Dashboard() {
             <div className="flex items-center justify-between border-b border-border-color/50 pb-4">
               <div className="flex items-center gap-2.5 font-mono">
                 <Cpu className="w-5 h-5 text-cyan animate-pulse" />
-                <span className="text-sm font-semibold text-foreground">Tailscale AI Mesh Connection</span>
+                <span className="text-sm font-semibold text-foreground">Tailscale AI Mesh Connection Monitor</span>
               </div>
-              <span className="px-2.5 py-0.5 text-[9px] font-mono bg-emerald-color/10 text-emerald-color border border-emerald-color/20 rounded-md">
-                Active Mesh
-              </span>
+              <button
+                onClick={runEcosystemPing}
+                className="px-3 py-1 bg-cyan hover:bg-cyan/90 text-background hover:text-black font-mono text-[10px] font-bold rounded-lg uppercase tracking-wider transition cursor-pointer flex items-center gap-1"
+              >
+                <RefreshCw className="w-3 h-3" />
+                Global Reconnect Mesh
+              </button>
             </div>
 
             <p className="text-xs text-muted-foreground font-mono leading-relaxed">
-              // This panel connects your linacre.site platform with the local ev-bot.uk voice/Android assistant service over the Tailscale mesh.
+              // Real-time visualization of the connection strength, status, and network routing logs of the Tailscale Mesh ecosystem.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-black/30 dark:bg-black/15 border border-border-color/40 p-4 rounded-xl space-y-2">
-                <span className="block text-[9px] font-mono text-muted-foreground">POCO-F7-1 (Android 16)</span>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-foreground font-bold">100.102.1.7</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-color" />
+            {/* Split Screen: Chart/SVG on Left, Diagnostics on Right */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+              
+              {/* Topology / Graph display */}
+              <div className="col-span-1 lg:col-span-6 bg-black/20 dark:bg-black/10 border border-border-color/40 rounded-xl p-5 flex flex-col justify-between items-center min-h-[350px]">
+                <h4 className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider self-start">Network Latency & Connection Strength</h4>
+                
+                {/* Radar Chart from ChartJS */}
+                <div className="w-full h-[240px] flex items-center justify-center">
+                  <Radar
+                    data={{
+                      labels: ['FastAPI', 'Express', 'Poco F7', 'Agent Daemon', 'Gemini Link'],
+                      datasets: [
+                        {
+                          label: 'Connection Strength (%)',
+                          data: [
+                            meshStatus.fastapi.status === 'connected' ? Math.max(30, 100 - meshStatus.fastapi.latency) : (meshStatus.fastapi.status === 'connecting' ? 50 : 0),
+                            meshStatus.express.status === 'connected' ? 95 : 0,
+                            meshStatus.phone.status === 'connected' ? 90 : (meshStatus.phone.status === 'connecting' ? 50 : 0),
+                            meshStatus.agent.status === 'connected' ? 85 : (meshStatus.agent.status === 'connecting' ? 50 : 0),
+                            meshStatus.gemini.status === 'connected' ? 90 : 0,
+                          ],
+                          backgroundColor: 'rgba(6, 182, 212, 0.15)',
+                          borderColor: '#06b6d4',
+                          borderWidth: 2,
+                          pointBackgroundColor: '#06b6d4',
+                          pointBorderColor: '#fff',
+                        }
+                      ]
+                    }}
+                    options={{
+                      scales: {
+                        r: {
+                          angleLines: { color: 'rgba(255, 255, 255, 0.08)' },
+                          grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                          pointLabels: { color: '#94a3b8', font: { size: 9, family: 'monospace' } },
+                          ticks: { display: false },
+                          suggestedMin: 0,
+                          suggestedMax: 100
+                        }
+                      },
+                      plugins: {
+                        legend: { display: false }
+                      },
+                      responsive: true,
+                      maintainAspectRatio: false
+                    }}
+                  />
+                </div>
+
+                <div className="flex gap-4 text-[10px] font-mono text-slate-500">
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-cyan" /> Mesh Core Link</span>
+                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-color" /> Handshake OK</span>
                 </div>
               </div>
-              <div className="bg-black/30 dark:bg-black/15 border border-border-color/40 p-4 rounded-xl space-y-2">
-                <span className="block text-[9px] font-mono text-muted-foreground">DL (PC HOST)</span>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-foreground font-bold">100.91.217.7</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-color" />
+
+              {/* Diagnostic Panel & Retry list */}
+              <div className="col-span-1 lg:col-span-6 space-y-4 flex flex-col justify-between">
+                
+                {/* List of Mesh components */}
+                <div className="space-y-3">
+                  {(Object.keys(meshStatus) as Array<keyof typeof meshStatus>).map((key) => {
+                    const comp = meshStatus[key];
+                    const labelMap: Record<string, string> = {
+                      'fastapi': 'FastAPI server (port 8000)',
+                      'express': 'Express web portal (port 3000)',
+                      'phone': 'Poco F7 Android Client',
+                      'agent': 'Background AI Agent Monitor',
+                      'gemini': 'Google Gemini API Link'
+                    };
+
+                    return (
+                      <div 
+                        key={key} 
+                        className="bg-black/30 dark:bg-[#111622] border border-border-color/60 rounded-xl p-3.5 flex items-center justify-between gap-3 group relative hover:border-cyan/40 transition duration-200"
+                        title={comp.reason}
+                      >
+                        <div className="flex items-center gap-3">
+                          {/* Animated health indicator */}
+                          <div className="relative">
+                            <div className={`w-3.5 h-3.5 rounded-full border border-black/20 ${
+                              comp.status === 'connected' ? 'bg-emerald-color animate-pulse' :
+                              comp.status === 'connecting' ? 'bg-amber-color animate-spin border-dashed border-2' : 'bg-red-400'
+                            }`} />
+                          </div>
+
+                          <div>
+                            <span className="block text-xs font-mono font-bold text-slate-200">{labelMap[key]}</span>
+                            <span className="block text-[10px] font-mono text-slate-500 truncate max-w-[280px]">
+                              {comp.status === 'connected' ? `Latency: ${comp.latency}ms` : comp.reason}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Individual Retry action */}
+                        {comp.status === 'disconnected' && (
+                          <button
+                            onClick={runEcosystemPing}
+                            className="px-2 py-1 bg-red-400/10 hover:bg-red-400/20 border border-red-500/20 text-red-400 hover:text-red-300 font-mono text-[9px] rounded uppercase tracking-wider transition cursor-pointer flex items-center gap-1"
+                          >
+                            <AlertCircle className="w-2.5 h-2.5" />
+                            Retry
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
-              <div className="bg-black/30 dark:bg-black/15 border border-border-color/40 p-4 rounded-xl space-y-2">
-                <span className="block text-[9px] font-mono text-muted-foreground">DL-DOCKER-DESKTOP (Linux)</span>
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs text-foreground font-bold">100.119.229.89</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-color" />
+
+                {/* Mesh Info Card */}
+                <div className="bg-cyan/5 border border-cyan/10 rounded-xl p-4 flex gap-3">
+                  <Info className="w-5 h-5 text-cyan shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <h5 className="text-xs font-mono font-bold text-cyan uppercase">Tailscale Mesh Info</h5>
+                    <p className="text-[10px] text-slate-400 leading-relaxed">
+                      Your devices communicate over Tailscale encrypted subnets. Pinging utilizes secure cross-origin HTTP checks. Hover over any component to read diagnostic tooltips.
+                    </p>
+                  </div>
                 </div>
+
               </div>
+
             </div>
 
-            {/* EV-Bot controller inside Linacre site */}
+            {/* Simulated manual trigger actions */}
             <div className="border-t border-border-color/40 pt-6 space-y-4">
               <h3 className="font-mono text-xs font-bold text-amber-color uppercase tracking-wider">
-                🤖 EV-Bot Service Controller (ev-bot.uk)
+                🤖 Direct Ecosystem Action Webhooks
               </h3>
-              <p className="text-[11px] text-muted-foreground font-mono">
-                Trigger a voice macro simulation or verify client handshake directly from this panel:
-              </p>
               
               <div className="flex flex-wrap gap-2.5">
                 <button
