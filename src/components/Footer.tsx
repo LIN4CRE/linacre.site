@@ -23,7 +23,7 @@ export default function Footer() {
       {showTopBtn && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 p-3 bg-amber-color text-[#070A0F] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
+          className="fixed bottom-6 right-6 z-40 p-3 bg-amber-color text-[#0b0e14] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
           style={{ boxShadow: 'var(--linacre-glow-strong)' }}
           aria-label="Scroll to top"
           id="btn-scroll-top"

@@ -51,18 +51,18 @@
 
 /* ── Dark Theme (Brand-Kit Canonical) ── */
 .dark {
-  --background: #070A0F;
+  --background: #0b0e14;
   --foreground: #f4f4f5;
-  --muted: #0B1220;
-  --muted-foreground: #8b93a7;
+  --muted: #111622;
+  --muted-foreground: #888888;
   --border-color: rgba(245, 158, 11, 0.16);
   --border-hi: rgba(245, 158, 11, 0.36);
 
   /* Brand tokens */
-  --linacre-ink: #070A0F;
-  --linacre-deep-slate: #0B1220;
-  --linacre-panel: #111827;
-  --linacre-panel-soft: #172033;
+  --linacre-ink: #0b0e14;
+  --linacre-deep-slate: #111622;
+  --linacre-panel: #161a23;
+  --linacre-panel-soft: #1e2533;
   --linacre-border: rgba(245, 158, 11, 0.22);
   --linacre-border-strong: rgba(245, 158, 11, 0.46);
   --linacre-glow-soft: 0 0 24px rgba(245, 158, 11, 0.18);
@@ -71,11 +71,11 @@
 
   /* Gradients (dark — brand canonical) */
   --linacre-gradient-hero:
-    radial-gradient(circle at 18% 18%, rgba(255, 176, 0, 0.18), transparent 34%),
-    radial-gradient(circle at 82% 16%, rgba(34, 211, 238, 0.08), transparent 26%),
-    linear-gradient(135deg, #070A0F 0%, #0B1220 52%, #070A0F 100%);
+    radial-gradient(circle at 18% 18%, rgba(245, 158, 11, 0.12), transparent 34%),
+    radial-gradient(circle at 82% 16%, rgba(198, 40, 40, 0.06), transparent 26%),
+    linear-gradient(135deg, #0b0e14 0%, #111622 52%, #0b0e14 100%);
   --linacre-gradient-card:
-    linear-gradient(180deg, rgba(17, 24, 39, 0.92), rgba(11, 18, 32, 0.92));
+    linear-gradient(180deg, rgba(22, 26, 35, 0.92), rgba(17, 22, 30, 0.92));
 }
 
 /* ── Base Resets & Theme Transitions ── */

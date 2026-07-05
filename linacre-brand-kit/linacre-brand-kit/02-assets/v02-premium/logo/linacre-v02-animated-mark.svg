@@ -1,8 +1,0 @@
-<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
-<style>
-.hex{stroke-dasharray:2400;stroke-dashoffset:2400;animation:draw 1.6s cubic-bezier(.2,.8,.2,1) forwards}.pulse{stroke-dasharray:900;stroke-dashoffset:900;animation:draw .9s cubic-bezier(.2,.8,.2,1) .65s forwards}.dot{opacity:0;animation:pop .45s ease 1.35s forwards}.glow{animation:breathe 3s ease-in-out infinite}@keyframes draw{to{stroke-dashoffset:0}}@keyframes pop{to{opacity:1}}@keyframes breathe{50%{filter:drop-shadow(0 0 42px #ffb000)}}</style>
-<rect width="1024" height="1024" rx="224" fill="#070A0F"/>
-<path class="hex glow" d="M512 118 853.5 315v394L512 906 170.5 709V315L512 118Z" stroke="#FFB000" stroke-width="34" stroke-linejoin="round"/>
-<path class="pulse" d="M333 691V332M333 691H463M280 537H402L455 407 565 681 628 537H744" stroke="#F5E7C8" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
-<circle class="dot" cx="744" cy="537" r="23" fill="#22D3EE"/>
-</svg>

@@ -470,7 +470,10 @@ const ecoProjects: Project[] = ecosystem.map((item: any) => ({
   tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Local Module')
 }));
 
-export const PROJECTS: Project[] = [...MANUAL_PROJECTS, ...ecoProjects];
+const allProjects = [...MANUAL_PROJECTS, ...ecoProjects];
+export const PROJECTS: Project[] = allProjects.filter((project, index) => 
+  allProjects.findIndex(p => p.name.toLowerCase() === project.name.toLowerCase()) === index
+);
 
 export const CHANGELOG: ChangelogItem[] = [
   {

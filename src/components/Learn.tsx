@@ -39,7 +39,7 @@ export default function Learn() {
             >
               {/* Bullet Node */}
               <div className="absolute -left-[45px] sm:-left-[49px] top-0 flex items-center justify-center">
-                <div className="w-8 h-8 rounded-full bg-background dark:bg-[#070A0F] border-2 border-amber-color flex items-center justify-center font-mono text-xs font-bold text-amber-color group-hover:scale-115 group-hover:bg-amber-color group-hover:text-background transition-all shadow-[0_0_0_rgba(245,158,11,0)] group-hover:shadow-[0_0_16px_rgba(245,158,11,0.35)]" style={{ transitionDuration: 'var(--linacre-duration-base)' }}>
+                <div className="w-8 h-8 rounded-full bg-background dark:bg-[#0b0e14] border-2 border-amber-color flex items-center justify-center font-mono text-xs font-bold text-amber-color group-hover:scale-115 group-hover:bg-amber-color group-hover:text-background transition-all shadow-[0_0_0_rgba(245,158,11,0)] group-hover:shadow-[0_0_16px_rgba(245,158,11,0.35)]" style={{ transitionDuration: 'var(--linacre-duration-base)' }}>
                   {step.n}
                 </div>
               </div>

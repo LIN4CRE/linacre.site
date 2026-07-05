@@ -14,16 +14,437 @@ import {
   HelpCircle,
   Code,
   Lock,
-  Compass
+  Compass,
+  Play,
+  Pause,
+  SkipForward,
+  SkipBack,
+  Cpu,
+  Layers,
+  Terminal
 } from 'lucide-react';
+
+interface CProgram {
+  id: string;
+  name: string;
+  code: string;
+  wat: string;
+  memorySize: number;
+  initialArray: number[];
+  steps: {
+    line: number;
+    explanation: string;
+    watLine: number;
+    pointers: Record<string, number>;
+    memory: number[];
+    watHighlightIndex: number;
+  }[];
+}
+
+const C_PROGRAMS: CProgram[] = [
+  {
+    id: 'bubble',
+    name: 'Bubble Sort (Pointer Swap)',
+    code: `void bubble_sort(int* arr, int size) {
+    int *p, *q;
+    for (int i = 0; i < size-1; i++) {
+        for (int j = 0; j < size-i-1; j++) {
+            p = arr + j;
+            q = arr + j + 1;
+            if (*p > *q) {
+                int temp = *p;
+                *p = *q;
+                *q = temp;
+            }
+        }
+    }
+}`,
+    wat: `(module
+  (memory (export "memory") 1)
+  (func $bubble_sort (param $arr i32) (param $size i32)
+    (local $i i32) (local $j i32) (local $p i32) (local $q i32) (local $temp i32)
+    (local.set $i (i32.const 0))
+    (block
+      (loop
+        ;; Inner Loop start
+        (local.set $j (i32.const 0))
+        (local.set $p (i32.add (local.get $arr) (i32.mul (local.get $j) (i32.const 4))))
+        (local.set $q (i32.add (local.get $p) (i32.const 4)))
+        (i32.gt_s (i32.load (local.get $p)) (i32.load (local.get $q)))
+        (if
+          (then
+            (local.set $temp (i32.load (local.get $p)))
+            (i32.store (local.get $p) (i32.load (local.get $q)))
+            (i32.store (local.get $q) (local.get $temp))
+          )
+        )
+      )
+    )
+  )
+)`,
+    memorySize: 5,
+    initialArray: [24, 8, 41, 15, 3],
+    steps: [
+      {
+        line: 1,
+        explanation: 'Initialize function bubble_sort with array: [24, 8, 41, 15, 3] and pointers p, q.',
+        watLine: 3,
+        watHighlightIndex: 3,
+        pointers: { arr: 0 },
+        memory: [24, 8, 41, 15, 3]
+      },
+      {
+        line: 5,
+        explanation: 'Set pointer p = arr + 0 (address 0x1000, value 24).',
+        watLine: 10,
+        watHighlightIndex: 10,
+        pointers: { arr: 0, p: 0 },
+        memory: [24, 8, 41, 15, 3]
+      },
+      {
+        line: 6,
+        explanation: 'Set pointer q = arr + 1 (address 0x1004, value 8).',
+        watLine: 11,
+        watHighlightIndex: 11,
+        pointers: { arr: 0, p: 0, q: 1 },
+        memory: [24, 8, 41, 15, 3]
+      },
+      {
+        line: 7,
+        explanation: 'Compare value at p (*p = 24) with value at q (*q = 8). Since 24 > 8, prepare to swap.',
+        watLine: 12,
+        watHighlightIndex: 12,
+        pointers: { arr: 0, p: 0, q: 1 },
+        memory: [24, 8, 41, 15, 3]
+      },
+      {
+        line: 8,
+        explanation: 'Load *p (24) into stack temporary variable temp.',
+        watLine: 15,
+        watHighlightIndex: 15,
+        pointers: { arr: 0, p: 0, q: 1 },
+        memory: [24, 8, 41, 15, 3]
+      },
+      {
+        line: 9,
+        explanation: 'Write value of *q (8) to memory address p (0x1000).',
+        watLine: 16,
+        watHighlightIndex: 16,
+        pointers: { arr: 0, p: 0, q: 1 },
+        memory: [8, 8, 41, 15, 3]
+      },
+      {
+        line: 10,
+        explanation: 'Write temp (24) to memory address q (0x1004). Array is now [8, 24, 41, 15, 3].',
+        watLine: 17,
+        watHighlightIndex: 17,
+        pointers: { arr: 0, p: 0, q: 1 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 5,
+        explanation: 'Next iteration. Set p = arr + 1 (address 0x1004, value 24).',
+        watLine: 10,
+        watHighlightIndex: 10,
+        pointers: { arr: 0, p: 1 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 6,
+        explanation: 'Set q = arr + 2 (address 0x1008, value 41).',
+        watLine: 11,
+        watHighlightIndex: 11,
+        pointers: { arr: 0, p: 1, q: 2 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 7,
+        explanation: 'Compare *p (24) and *q (41). Since 24 < 41, no swap is needed.',
+        watLine: 12,
+        watHighlightIndex: 12,
+        pointers: { arr: 0, p: 1, q: 2 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 5,
+        explanation: 'Next iteration. Set p = arr + 2 (address 0x1008, value 41).',
+        watLine: 10,
+        watHighlightIndex: 10,
+        pointers: { arr: 0, p: 2 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 6,
+        explanation: 'Set q = arr + 3 (address 0x100c, value 15).',
+        watLine: 11,
+        watHighlightIndex: 11,
+        pointers: { arr: 0, p: 2, q: 3 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 7,
+        explanation: 'Compare *p (41) and *q (15). Since 41 > 15, prepare to swap.',
+        watLine: 12,
+        watHighlightIndex: 12,
+        pointers: { arr: 0, p: 2, q: 3 },
+        memory: [8, 24, 41, 15, 3]
+      },
+      {
+        line: 9,
+        explanation: 'Write value of *q (15) to memory address p (0x1008).',
+        watLine: 16,
+        watHighlightIndex: 16,
+        pointers: { arr: 0, p: 2, q: 3 },
+        memory: [8, 24, 15, 15, 3]
+      },
+      {
+        line: 10,
+        explanation: 'Write temp (41) to memory address q (0x100c). Array is now [8, 24, 15, 41, 3].',
+        watLine: 17,
+        watHighlightIndex: 17,
+        pointers: { arr: 0, p: 2, q: 3 },
+        memory: [8, 24, 15, 41, 3]
+      },
+      {
+        line: 5,
+        explanation: 'Next iteration. Set p = arr + 3 (address 0x100c, value 41).',
+        watLine: 10,
+        watHighlightIndex: 10,
+        pointers: { arr: 0, p: 3 },
+        memory: [8, 24, 15, 41, 3]
+      },
+      {
+        line: 6,
+        explanation: 'Set q = arr + 4 (address 0x1010, value 3).',
+        watLine: 11,
+        watHighlightIndex: 11,
+        pointers: { arr: 0, p: 3, q: 4 },
+        memory: [8, 24, 15, 41, 3]
+      },
+      {
+        line: 7,
+        explanation: 'Compare *p (41) and *q (3). Since 41 > 3, prepare swap.',
+        watLine: 12,
+        watHighlightIndex: 12,
+        pointers: { arr: 0, p: 3, q: 4 },
+        memory: [8, 24, 15, 41, 3]
+      },
+      {
+        line: 9,
+        explanation: 'Write value of *q (3) to memory address p (0x100c).',
+        watLine: 16,
+        watHighlightIndex: 16,
+        pointers: { arr: 0, p: 3, q: 4 },
+        memory: [8, 24, 15, 3, 3]
+      },
+      {
+        line: 10,
+        explanation: 'Write temp (41) to memory address q (0x1010). Array is now [8, 24, 15, 3, 41]. Max element (41) bubbled up!',
+        watLine: 17,
+        watHighlightIndex: 17,
+        pointers: { arr: 0, p: 3, q: 4 },
+        memory: [8, 24, 15, 3, 41]
+      },
+      {
+        line: 12,
+        explanation: 'Completed outer pass. Next iterations bubble up remaining elements: [8, 15, 3, 24, 41] -> [8, 3, 15, 24, 41] -> [3, 8, 15, 24, 41].',
+        watLine: 18,
+        watHighlightIndex: 18,
+        pointers: { arr: 0 },
+        memory: [3, 8, 15, 24, 41]
+      }
+    ]
+  },
+  {
+    id: 'binary_search',
+    name: 'Binary Search (Pointers)',
+    code: `int binary_search(int* arr, int size, int key) {
+    int *low = arr;
+    int *high = arr + size - 1;
+    while (low <= high) {
+        int *mid = low + (high - low) / 2;
+        if (*mid == key) return 1;
+        if (*mid < key) low = mid + 1;
+        else high = mid - 1;
+    }
+    return 0;
+}`,
+    wat: `(module
+  (memory (export "memory") 1)
+  (func $binary_search (param $arr i32) (param $size i32) (param $key i32) (result i32)
+    (local $low i32) (local $high i32) (local $mid i32)
+    (local.set $low (local.get $arr))
+    (local.set $high (i32.add (local.get $arr) (i32.mul (i32.sub (local.get $size) (i32.const 1)) (i32.const 4))))
+    (block
+      (loop
+        (br_if 1 (i32.gt_u (local.get $low) (local.get $high)))
+        (local.set $mid (i32.add (local.get $low) (i32.div_u (i32.sub (local.get $high) (local.get $low)) (i32.const 2))))
+        (i32.eq (i32.load (local.get $mid)) (local.get $key))
+        (if (then (return (i32.const 1))))
+        ;; Rest of branching...
+      )
+    )
+    (i32.const 0)
+  )
+)`,
+    memorySize: 5,
+    initialArray: [3, 8, 15, 24, 41],
+    steps: [
+      {
+        line: 1,
+        explanation: 'Starting binary search in memory looking for key: 24. Array is [3, 8, 15, 24, 41].',
+        watLine: 3,
+        watHighlightIndex: 3,
+        pointers: { arr: 0 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 2,
+        explanation: 'Initialize low pointer to arr start (address 0x1000, value 3).',
+        watLine: 5,
+        watHighlightIndex: 5,
+        pointers: { arr: 0, low: 0 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 3,
+        explanation: 'Initialize high pointer to arr end (address 0x1010, value 41).',
+        watLine: 6,
+        watHighlightIndex: 6,
+        pointers: { arr: 0, low: 0, high: 4 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 4,
+        explanation: 'Check loop condition: low <= high. Since 0x1000 <= 0x1010, enter loop.',
+        watLine: 9,
+        watHighlightIndex: 9,
+        pointers: { arr: 0, low: 0, high: 4 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 5,
+        explanation: 'Calculate mid: low + (high - low) / 2 = index 2 (address 0x1008, value 15).',
+        watLine: 10,
+        watHighlightIndex: 10,
+        pointers: { arr: 0, low: 0, high: 4, mid: 2 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 6,
+        explanation: 'Check if *mid == key (15 == 24). False.',
+        watLine: 11,
+        watHighlightIndex: 11,
+        pointers: { arr: 0, low: 0, high: 4, mid: 2 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 7,
+        explanation: 'Check if *mid < key (15 < 24). True! Move low = mid + 1 (index 3, address 0x100c, value 24).',
+        watLine: 13,
+        watHighlightIndex: 13,
+        pointers: { arr: 0, low: 3, high: 4, mid: 2 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 4,
+        explanation: 'Loop condition check: low <= high. Since index 3 <= 4, loop continues.',
+        watLine: 9,
+        watHighlightIndex: 9,
+        pointers: { arr: 0, low: 3, high: 4 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 5,
+        explanation: 'Recalculate mid: index 3 + (4-3)/2 = index 3 (address 0x100c, value 24).',
+        watLine: 10,
+        watHighlightIndex: 10,
+        pointers: { arr: 0, low: 3, high: 4, mid: 3 },
+        memory: [3, 8, 15, 24, 41]
+      },
+      {
+        line: 6,
+        explanation: 'Check *mid == key (24 == 24). Match found! Returning 1 (match index 3).',
+        watLine: 12,
+        watHighlightIndex: 12,
+        pointers: { arr: 0, low: 3, high: 4, mid: 3 },
+        memory: [3, 8, 15, 24, 41]
+      }
+    ]
+  }
+];
 
 interface DevPlaygroundProps {
   theme?: 'dark' | 'light';
 }
 
 export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
-  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen'>('jwt');
+  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm'>('jwt');
   const [copiedType, setCopiedType] = useState<string | null>(null);
+
+  // C-to-Wasm compiler simulation states
+  const [selectedProgram, setSelectedProgram] = useState<CProgram>(C_PROGRAMS[0]);
+  const [isCompiling, setIsCompiling] = useState(false);
+  const [compileSuccess, setCompileSuccess] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playSpeed, setPlaySpeed] = useState<number>(1500); // ms per step
+  const [compileLogs, setCompileLogs] = useState<string[]>([]);
+  const [editableCode, setEditableCode] = useState(C_PROGRAMS[0].code);
+
+  // Auto-play steps simulation
+  useEffect(() => {
+    let timer: any;
+    if (isPlaying && compileSuccess) {
+      timer = setInterval(() => {
+        setCurrentStepIndex((prev) => {
+          if (prev >= selectedProgram.steps.length - 1) {
+            setIsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, playSpeed);
+    }
+    return () => clearInterval(timer);
+  }, [isPlaying, compileSuccess, playSpeed, selectedProgram]);
+
+  // Sync editable code editor when selectedProgram changes
+  useEffect(() => {
+    setEditableCode(selectedProgram.code);
+    setCurrentStepIndex(0);
+    setCompileSuccess(false);
+    setIsPlaying(false);
+    setCompileLogs([]);
+  }, [selectedProgram]);
+
+  const handleCompile = () => {
+    setIsCompiling(true);
+    setCompileSuccess(false);
+    setCompileLogs([]);
+    setCurrentStepIndex(0);
+    setIsPlaying(false);
+
+    const logs = [
+      '[INFO] Initializing clang compiler core...',
+      '[INFO] Emscripten C-to-Web WASM pipeline selected.',
+      '[INFO] Parsing AST for pointers and memory allocations...',
+      '[INFO] Optimization level -O3 enabled.',
+      '[INFO] Resolving memory bounds: 1 Stack Frame allocated.',
+      '[INFO] Mapping pointers to 32-bit offset register arrays...',
+      '[INFO] WebAssembly bytecode output generation complete (216 bytes).'
+    ];
+
+    logs.forEach((log, idx) => {
+      setTimeout(() => {
+        setCompileLogs((prev) => [...prev, log]);
+        if (idx === logs.length - 1) {
+          setIsCompiling(false);
+          setCompileSuccess(true);
+        }
+      }, (idx + 1) * 350);
+    });
+  };
 
   // Sync identity parameters for active theme colors
   const [activeColor, setActiveColor] = useState({
@@ -477,6 +898,21 @@ border-radius: 12px;`;
             <div className="flex-1">
               <div>Secure Generator</div>
               <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">UUID v4 & password keys</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTool('c_to_wasm')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
+              activeTool === 'c_to_wasm'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
+                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Code className="w-4 h-4 text-cyan" />
+            <div className="flex-1">
+              <div>C-to-Wasm Compiler</div>
+              <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Wasm memory & pointer visualizer</div>
             </div>
           </button>
         </div>
@@ -1028,6 +1464,276 @@ border-radius: 12px;`;
                       </motion.div>
                     )}
                   </AnimatePresence>
+                </div>
+              )}
+
+              {/* C-TO-WASM VIEWER */}
+              {activeTool === 'c_to_wasm' && (
+                <div className="space-y-6" id="c-to-wasm-lab">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-color/50 pb-4">
+                    <div className="flex items-center gap-2">
+                      <Code className="w-5 h-5 text-amber-color animate-pulse" />
+                      <div>
+                        <h2 className="font-display text-base font-bold text-foreground">C-to-Wasm Compiler & Memory Visualizer</h2>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">Explore how registers, pointer offsets, and stacks behave when compiled into low-level WebAssembly (Wasm) bytecode.</p>
+                      </div>
+                    </div>
+                    
+                    {/* Select active algorithm preset */}
+                    <div className="flex items-center gap-2 font-mono text-xs">
+                      <span className="text-muted-foreground">Preset:</span>
+                      <select
+                        value={selectedProgram.id}
+                        onChange={(e) => {
+                          const prog = C_PROGRAMS.find(p => p.id === e.target.value);
+                          if (prog) setSelectedProgram(prog);
+                        }}
+                        className="bg-[#070a0f] border border-border-color/60 text-foreground text-[10px] rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer font-bold"
+                      >
+                        {C_PROGRAMS.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                    {/* Left Panel: The Code Window (5 columns) */}
+                    <div className="xl:col-span-5 space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono">
+                          <span className="text-muted-foreground">C Source Editor (Clang v16)</span>
+                          <span className="text-[10px] text-cyan">[read-only preset]</span>
+                        </div>
+                        <div className="relative border border-border-color/60 rounded-lg overflow-hidden bg-[#070a0f] p-4 font-mono text-xs text-foreground min-h-[280px] leading-relaxed">
+                          {/* Code with step line highlighting! */}
+                          <pre className="overflow-x-auto whitespace-pre">
+                            {editableCode.split('\n').map((lineText, lineIdx) => {
+                              const isCurrentLine = compileSuccess && selectedProgram.steps[currentStepIndex]?.line === (lineIdx + 1);
+                              return (
+                                <div 
+                                  key={lineIdx} 
+                                  className={`flex gap-3 px-2 py-0.5 transition-all ${
+                                    isCurrentLine 
+                                      ? 'bg-amber-color/15 border-l-2 border-amber-color text-amber-color font-bold shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]' 
+                                      : 'opacity-75'
+                                  }`}
+                                >
+                                  <span className="w-5 text-right opacity-30 select-none text-[10px]">{lineIdx + 1}</span>
+                                  <span>{lineText}</span>
+                                </div>
+                              );
+                            })}
+                          </pre>
+                        </div>
+                      </div>
+
+                      {/* Compilation controls */}
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleCompile}
+                          disabled={isCompiling}
+                          className="flex-1 py-2 bg-amber-color hover:bg-amber-color/90 text-black font-bold font-mono text-xs rounded-lg transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                          <Cpu className={`w-4 h-4 ${isCompiling ? 'animate-spin' : ''}`} />
+                          <span>{isCompiling ? 'Compiling to WASM...' : 'Compile to Wasm'}</span>
+                        </button>
+                        
+                        <button
+                          onClick={() => {
+                            setCompileSuccess(false);
+                            setCurrentStepIndex(0);
+                            setIsPlaying(false);
+                            setCompileLogs([]);
+                          }}
+                          className="px-3.5 border border-border-color bg-[#070a0f] hover:text-rose-400 transition-colors rounded-lg font-mono text-xs flex items-center justify-center cursor-pointer"
+                          title="Flush compiler buffer"
+                        >
+                          Reset
+                        </button>
+                      </div>
+
+                      {/* Compiler terminal diagnostics log */}
+                      <div className="p-3 bg-black/95 rounded-lg border border-border-color/40 h-44 overflow-y-auto scrollbar-thin flex flex-col space-y-1.5 font-mono text-[10px] text-muted-foreground leading-relaxed">
+                        <div className="flex items-center gap-1 text-cyan border-b border-border-color/20 pb-1 mb-1 font-bold uppercase tracking-wider">
+                          <Terminal className="w-3.5 h-3.5" />
+                          <span>Compiler Stdout Logs</span>
+                        </div>
+                        {isCompiling && (
+                          <div className="text-amber-color/80 animate-pulse">[BUSY] clang -O3 --target=wasm32-unknown-unknown ...</div>
+                        )}
+                        {compileLogs.map((log, lIdx) => (
+                          <div key={lIdx} className={log.includes('[SUCCESS]') ? 'text-emerald-color font-bold' : ''}>
+                            {log}
+                          </div>
+                        ))}
+                        {!isCompiling && !compileSuccess && (
+                          <div className="text-muted-foreground/40 italic">Standby. Click "Compile to Wasm" to launch compilation pipeline.</div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right Panel: Wasm Simulation & Visualizations (7 columns) */}
+                    <div className="xl:col-span-7 space-y-5">
+                      {compileSuccess ? (
+                        <div className="space-y-5">
+                          {/* Controls header */}
+                          <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-[#0a0f1d]/50 border border-border-color/60 rounded-xl font-mono text-xs">
+                            <div className="flex items-center gap-1 text-amber-color font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-color animate-ping" />
+                              <span>Wasm Module Ready (wasm-module)</span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {/* Step Back */}
+                              <button
+                                onClick={() => {
+                                  setIsPlaying(false);
+                                  setCurrentStepIndex(prev => Math.max(0, prev - 1));
+                                }}
+                                disabled={currentStepIndex === 0}
+                                className="p-1.5 border border-border-color/80 hover:text-amber-color disabled:opacity-30 rounded cursor-pointer transition-colors"
+                                title="Step Back"
+                              >
+                                <SkipBack className="w-3.5 h-3.5" />
+                              </button>
+
+                              {/* Play / Pause */}
+                              <button
+                                onClick={() => setIsPlaying(!isPlaying)}
+                                className="px-3 py-1.5 bg-amber-color/15 border border-amber-color text-amber-color rounded hover:bg-amber-color/25 cursor-pointer transition-colors font-bold text-[10px] uppercase tracking-wider flex items-center gap-1"
+                              >
+                                {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                                <span>{isPlaying ? 'Pause' : 'Autoplay'}</span>
+                              </button>
+
+                              {/* Step Forward */}
+                              <button
+                                onClick={() => {
+                                  setIsPlaying(false);
+                                  setCurrentStepIndex(prev => Math.min(selectedProgram.steps.length - 1, prev + 1));
+                                }}
+                                disabled={currentStepIndex === selectedProgram.steps.length - 1}
+                                className="p-1.5 border border-border-color/80 hover:text-amber-color disabled:opacity-30 rounded cursor-pointer transition-colors"
+                                title="Step Forward"
+                              >
+                                <SkipForward className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* 1. Register Execution Logs dialogue */}
+                          <div className="p-3 bg-amber-color/[0.03] border border-amber-color/20 rounded-xl space-y-1.5">
+                            <span className="block text-[8px] text-amber-color font-bold uppercase font-mono tracking-widest">Execution Trace Output</span>
+                            <p className="text-xs font-mono font-medium leading-relaxed text-[#F5E7C8]">
+                              {selectedProgram.steps[currentStepIndex]?.explanation}
+                            </p>
+                          </div>
+
+                          {/* 2. Visual Memory & Pointer Address Grid (Stack and Heap representation) */}
+                          <div className="p-4 bg-[#070a0f] border border-border-color rounded-xl space-y-3 font-mono">
+                            <div className="flex items-center justify-between text-xs border-b border-border-color/20 pb-2">
+                              <span className="text-muted-foreground uppercase text-[10px] font-bold">Dynamic Wasm linear memory block</span>
+                              <span className="text-xs text-amber-color">Address base: 0x1000</span>
+                            </div>
+
+                            {/* Pointer pointers row rendering */}
+                            <div className="relative pt-6 pb-2">
+                              <div className="grid grid-cols-5 gap-3">
+                                {Array.from({ length: 5 }).map((_, mIdx) => {
+                                  const cellPointers = Object.entries(selectedProgram.steps[currentStepIndex]?.pointers || {})
+                                    .filter(([_, ptrIdx]) => ptrIdx === mIdx)
+                                    .map(([ptrName, _]) => ptrName);
+
+                                  return (
+                                    <div key={mIdx} className="relative flex flex-col items-center min-h-[44px]">
+                                      {cellPointers.length > 0 && (
+                                        <div className="absolute bottom-1 flex flex-col items-center space-y-1 animate-bounce">
+                                          <div className="flex gap-1">
+                                            {cellPointers.map(pName => (
+                                              <span 
+                                                key={pName} 
+                                                className={`text-[8px] font-bold px-1 py-0.5 rounded border uppercase ${
+                                                  pName === 'arr' || pName === 'low' 
+                                                    ? 'bg-cyan/10 border-cyan text-cyan' 
+                                                    : pName === 'high' 
+                                                    ? 'bg-purple-500/10 border-purple-500 text-purple-400' 
+                                                    : 'bg-amber-color/10 border-amber-color text-amber-color'
+                                                }`}
+                                              >
+                                                {pName}
+                                              </span>
+                                            ))}
+                                          </div>
+                                          <span className="text-muted-foreground text-[8px] leading-none">▼</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Memory boxes */}
+                              <div className="grid grid-cols-5 gap-3 mt-1">
+                                {Array.from({ length: 5 }).map((_, mIdx) => {
+                                  const cellValue = selectedProgram.steps[currentStepIndex]?.memory[mIdx];
+                                  const hexAddress = `0x100${(mIdx * 4).toString(16)}`;
+                                  const hasPointers = Object.values(selectedProgram.steps[currentStepIndex]?.pointers || {}).includes(mIdx);
+
+                                  return (
+                                    <div 
+                                      key={mIdx} 
+                                      className={`p-3 rounded-lg border text-center transition-all ${
+                                        hasPointers 
+                                          ? 'border-amber-color/50 bg-amber-color/[0.03] shadow-[0_0_10px_rgba(245,158,11,0.08)]' 
+                                          : 'border-border-color/60 bg-[#0a0f1d]/40'
+                                      }`}
+                                    >
+                                      <div className="text-xs font-bold text-foreground">{cellValue !== undefined ? cellValue : '??'}</div>
+                                      <div className="text-[7px] text-muted-foreground/60 mt-1 font-mono">{hexAddress}</div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* 3. Assembly instruction block (WAT view) */}
+                          <div className="space-y-2">
+                            <span className="block text-xs font-mono text-muted-foreground">Compiled WebAssembly Text (WAT instructions)</span>
+                            <div className="p-4 bg-[#070a0f] border border-border-color rounded-xl h-44 overflow-y-auto scrollbar-thin text-[10px] font-mono leading-relaxed text-[#8be9fd]">
+                              {selectedProgram.wat.split('\n').map((watLine, wIdx) => {
+                                const isCurrentWatLine = selectedProgram.steps[currentStepIndex]?.watHighlightIndex === (wIdx + 1);
+                                return (
+                                  <div 
+                                    key={wIdx} 
+                                    className={`px-2 py-0.5 rounded transition-all flex gap-3 ${
+                                      isCurrentWatLine 
+                                        ? 'bg-cyan/15 text-cyan font-bold border-l-2 border-cyan shadow-[inset_0_0_8px_rgba(34,211,238,0.05)]' 
+                                        : 'opacity-65'
+                                    }`}
+                                  >
+                                    <span className="w-5 text-right opacity-20 select-none">{wIdx + 1}</span>
+                                    <span>{watLine}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-center p-10 border border-border-color/40 bg-[#070a0f]/40 rounded-xl min-h-[380px] space-y-4">
+                          <Cpu className="w-10 h-10 text-muted-foreground/30 animate-pulse" />
+                          <div className="space-y-1">
+                            <h3 className="font-mono text-sm font-bold text-foreground uppercase tracking-wider">Compiler Standby</h3>
+                            <p className="font-mono text-[10px] text-muted-foreground max-w-sm leading-relaxed">
+                              C source code is mapped to 32-bit local memory base offsets. Compile the C code above to generate WebAssembly text registers, step animations, and pointer traces.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
             </motion.div>

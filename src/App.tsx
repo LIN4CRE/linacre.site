@@ -1,10 +1,12 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { WifiOff } from 'lucide-react';
 import Header from './components/Header';
 import TerminalIntro from './components/TerminalIntro';
 import Toolkit from './components/Toolkit';
 import Footer from './components/Footer';
 import CommandPalette from './components/CommandPalette';
+import ErrorBoundary from './components/ErrorBoundary';
 import { CHANGELOG } from './data';
 import { ToolCategory } from './types';
 
@@ -18,11 +20,36 @@ const Projects = lazy(() => import('./components/Projects'));
 const AgentsHub = lazy(() => import('./components/AgentsHub'));
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<string>('toolkit');
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const hash = window.location.hash.replace('#', '');
+    const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents'];
+    if (hash && validTabs.includes(hash)) {
+      return hash;
+    }
+    try {
+      return localStorage.getItem('linacre_active_tab') || 'projects';
+    } catch (e) {
+      return 'projects';
+    }
+  });
   const [activeCategory, setActiveCategory] = useState<ToolCategory | 'all'>('all');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Synchronize activeTab with URL Hash for back/forward navigation support
   useEffect(() => {
@@ -40,11 +67,16 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Update URL Hash when activeTab changes
+  // Update URL Hash and localStorage when activeTab changes
   useEffect(() => {
     const currentHash = window.location.hash.replace('#', '');
     if (currentHash !== activeTab) {
       window.history.pushState(null, '', `#${activeTab}`);
+    }
+    try {
+      localStorage.setItem('linacre_active_tab', activeTab);
+    } catch (e) {
+      console.error('Failed to save active tab', e);
     }
   }, [activeTab]);
 
@@ -169,7 +201,7 @@ export default function App() {
       opacity: 1, 
       y: 0,
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 110,
         damping: 14
       }
@@ -293,6 +325,20 @@ export default function App() {
           --font-mono: ${activeFont.mono} !important;
         }
       `}} />
+      <AnimatePresence>
+        {isOffline && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-amber-color text-[#0b0e14] font-mono text-[11px] font-bold text-center flex items-center justify-center gap-2 py-2 px-4 shadow-[0_4px_12px_rgba(245,158,11,0.25)] relative z-50 select-none overflow-hidden"
+            id="offline-banner"
+          >
+            <WifiOff className="w-3.5 h-3.5 animate-pulse" />
+            <span>CONNECTIVITY INTERRUPTED: Running in offline mode. Local state and custom projects are preserved.</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -302,12 +348,13 @@ export default function App() {
       />
 
       <main id="main-content" role="main" className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
-        <Suspense fallback={
-          <div className="py-20 text-center font-mono text-xs text-muted-foreground flex flex-col items-center justify-center gap-3">
-            <div className="w-6 h-6 border-2 border-amber-color border-t-transparent rounded-full animate-spin"></div>
-            <span>Loading interface module...</span>
-          </div>
-        }>
+        <ErrorBoundary>
+          <Suspense fallback={
+            <div className="py-20 text-center font-mono text-xs text-muted-foreground flex flex-col items-center justify-center gap-3">
+              <div className="w-6 h-6 border-2 border-amber-color border-t-transparent rounded-full animate-spin"></div>
+              <span>Loading interface module...</span>
+            </div>
+          }>
           <AnimatePresence mode="wait">
             {activeTab === 'toolkit' && (
             <motion.div
@@ -327,7 +374,7 @@ export default function App() {
                 {/* Hex-grid subtle background pattern */}
                 <div className="absolute inset-0 linacre-grid-bg opacity-40 pointer-events-none" />
                 {/* Ambient amber orb */}
-                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)` }} />
+                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)`, mixBlendMode: 'screen' }} />
 
                 <div className="md:col-span-8 space-y-5 text-center md:text-left relative z-10">
                   <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/20 px-2.5 py-1 rounded-full">
@@ -346,7 +393,7 @@ export default function App() {
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
                       onClick={() => { setActiveTab('toolkit'); }}
-                      className="px-5 py-2.5 bg-amber-color text-[#070A0F] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:-translate-y-0.5"
+                      className="px-5 py-2.5 bg-amber-color text-[#0b0e14] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:-translate-y-0.5"
                       id="cta-explore-toolkit"
                     >
                       Explore Toolkit
@@ -372,7 +419,8 @@ export default function App() {
                     <div 
                       className="absolute -inset-10 opacity-20 group-hover:opacity-35 blur-2xl rounded-full transition-opacity pointer-events-none"
                       style={{ 
-                        background: `radial-gradient(circle, ${activeColor.primary} 0%, transparent 70%)` 
+                        background: `radial-gradient(circle, ${activeColor.primary} 0%, transparent 70%)`,
+                        mixBlendMode: 'screen'
                       }} 
                     />
                     
@@ -438,7 +486,7 @@ export default function App() {
                       id={`changelog-item-${item.version}`}
                     >
                       {/* node dot */}
-                      <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#070A0F] border-2 border-cyan group-hover:scale-125 transition-transform" />
+                      <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#0b0e14] border-2 border-cyan group-hover:scale-125 transition-transform" />
                       
                       <div className="space-y-1">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
@@ -544,6 +592,7 @@ export default function App() {
           )}
           </AnimatePresence>
         </Suspense>
+        </ErrorBoundary>
       </main>
 
       {/* Global command palette */}

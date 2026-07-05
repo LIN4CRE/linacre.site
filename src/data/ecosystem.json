@@ -109,10 +109,10 @@
     "has_git": true
   },
   {
-    "name": "react-example",
+    "name": "linacre.site",
     "path": "V:\\\\LIN4CRE\\linacre-site-repo",
     "type": "Node.js App",
-    "description": "",
+    "description": "David Linacre's personal developer site, toolkit directory, learning portal, AI assistant Lab, and private dashboard.",
     "technologies": [
       "React",
       "Vite",
@@ -211,6 +211,55 @@
     "technologies": [
       "Express",
       "Docker"
+    ],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "pixel-agents",
+    "path": "V:\\\\LIN4CRE\\pixel-agents",
+    "type": "VS Code Extension / Node.js App",
+    "description": "Pixel art office where AI agents (Claude Code terminals today, any tool tomorrow) become animated characters.",
+    "technologies": [
+      "React",
+      "Vite",
+      "Express",
+      "TypeScript"
+    ],
+    "remote": "https://github.com/pixel-agents-hq/pixel-agents",
+    "has_git": true
+  },
+  {
+    "name": "linacre-toolkit",
+    "path": "V:\\\\LIN4CRE\\linacre-toolkit",
+    "type": "HTML Utilities",
+    "description": "Single-file HTML tools, apps, and references consolidated from standalone files across the workspace.",
+    "technologies": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "remote": null,
+    "has_git": true
+  },
+  {
+    "name": "knowledge-vault",
+    "path": "V:\\\\LIN4CRE\\knowledge-vault",
+    "type": "Obsidian Vault",
+    "description": "Obsidian central knowledge base and backlog for the digital ecosystem.",
+    "technologies": [
+      "Markdown"
+    ],
+    "remote": null,
+    "has_git": false
+  },
+  {
+    "name": "dev-scaffold",
+    "path": "V:\\\\LIN4CRE\\dev-scaffold",
+    "type": "Template Repository",
+    "description": "Preconfigured Git repository template for starting new development projects.",
+    "technologies": [
+      "Git"
     ],
     "remote": null,
     "has_git": true

@@ -283,7 +283,7 @@ export default function AgentsHub() {
   const [isMuted, setIsMuted] = useState(false);
 
   // Live Tracking state for Pixel Agents workspace integrations
-  const [isLiveTracking, setIsLiveTracking] = useState(false);
+  const [isLiveTracking, setIsLiveTracking] = useState(true);
   const lastStepIndexRef = useRef<number>(-1);
 
   // Spend/Rate limits budget slider control
@@ -298,6 +298,19 @@ export default function AgentsHub() {
 
   // Showdown GIF load failures tracking
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+
+  // Grid visual state
+  const [gridProjection, setGridProjection] = useState<'isometric' | 'flat'>('isometric');
+  const [selectedNode, setSelectedNode] = useState<typeof WORKSTATIONS[0] | null>(null);
+  const [tacticalAgentId, setTacticalAgentId] = useState<string>('');
+  const [tacticalAction, setTacticalAction] = useState<string>('Audit PATH registry keys');
+
+  // Sync tacticalAgentId initially
+  useEffect(() => {
+    if (agents.length > 0 && !tacticalAgentId) {
+      setTacticalAgentId(agents[0].id);
+    }
+  }, [agents, tacticalAgentId]);
 
   // Dialog Typing effect state
   const [typedDialogText, setTypedDialogText] = useState('');
@@ -589,7 +602,7 @@ export default function AgentsHub() {
                 if (toolName === 'run_command') {
                   targetStation = WORKSTATIONS[0]; // Mainframe Node (1,1)
                   agentStatus = `Running command: ${toolCall.args?.CommandLine ?? ''}`;
-                } else if (['replace_file_content', 'multi_replace_file_content', 'write_to_file'].includes(toolName)) {
+                } else if (['replace_file_content', 'multi_replace_file_content', 'write_to_file', 'edit_file', 'multi_edit_file', 'create_file'].includes(toolName)) {
                   targetStation = WORKSTATIONS[1]; // Git Repository (1,8)
                   agentStatus = `Writing file: ${toolCall.args?.TargetFile ?? ''}`;
                 } else if (['search_web', 'read_url_content'].includes(toolName)) {
@@ -782,6 +795,61 @@ export default function AgentsHub() {
       setTimeout(() => {
         addLog(targetAgent.name, `[Local Simulation Fallback] Executed script task: "${finalActionText}". Completed successfully inside local workspace sandbox.`, 'success');
       }, 3000);
+    }
+  };
+
+  const handleTacticalDispatch = async (agentId: string, action: string) => {
+    const targetAgent = agents.find(a => a.id === agentId);
+    if (!targetAgent || !selectedNode) return;
+
+    if (targetAgent.isPaused) {
+      addLog('System', `Cannot dispatch task. ${targetAgent.name} is currently suspended.`, 'warning');
+      playSynthSound('error', isMuted);
+      return;
+    }
+
+    playSynthSound('click', isMuted);
+    
+    // Set destination to selectedNode coordinate
+    setAgents((prev) =>
+      prev.map((agent) => {
+        if (agent.id === agentId) {
+          addLog(agent.name, `Coordinated Tactical Dispatch: "${action}". Routing along matrix crossbars to ${selectedNode.name} (${selectedNode.x}, ${selectedNode.y})...`, 'info');
+          return {
+            ...agent,
+            task: action,
+            startX: agent.x,
+            startY: agent.y,
+            targetX: selectedNode.x,
+            targetY: selectedNode.y,
+            status: `Moving to scan node: ${action}`
+          };
+        }
+        return agent;
+      })
+    );
+
+    // Call backend
+    try {
+      const response = await fetch('/api/agents/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agentName: targetAgent.name, task: action })
+      });
+      const data = await response.json();
+      if (data.reply) {
+        setTimeout(() => {
+          addLog(targetAgent.name, `Completed node scan: Arrived at ${selectedNode.name}. Data report: ${data.reply}`, 'success');
+          playSynthSound('success', isMuted);
+        }, 6000);
+      } else {
+        throw new Error("Invalid reply");
+      }
+    } catch (err) {
+      setTimeout(() => {
+        addLog(targetAgent.name, `[Tactical Arrival] Successfully docked at ${selectedNode.name}. Code audit completed successfully within local sandbox frame.`, 'success');
+        playSynthSound('success', isMuted);
+      }, 6000);
     }
   };
 
@@ -1108,6 +1176,256 @@ export default function AgentsHub() {
           </div>
           <div className="w-full bg-muted-foreground/10 h-1 rounded overflow-hidden">
             <div className="bg-purple-color h-full transition-all duration-500" style={{ width: `${Math.min(100, telemetry.jobsCompleted * 10)}%` }} />
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION: 3D Isometric Tactical Agent Grid & Radar */}
+      <div className="relative p-6 rounded-2xl bg-[#0a0f1d]/65 border-2 border-amber-color/25 shadow-[0_0_20px_rgba(245,158,11,0.04)] space-y-6 overflow-hidden" id="agent-grid-tactical-radar">
+        {/* Decorative scan lines / grid overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
+        
+        {/* Glowing spotlight effect */}
+        <div className="absolute -left-16 -top-16 w-32 h-32 bg-amber-color/5 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -right-16 -bottom-16 w-32 h-32 bg-cyan/5 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-color/30 pb-4 relative z-10">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-amber-color rounded-full animate-pulse" />
+              <h2 className="font-mono text-xs font-bold text-amber-color uppercase tracking-widest">
+                3D Tactical Agent Radar & Grid
+              </h2>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Live visualization of active units walking Manhattan paths to coordinate background processes.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                playSynthSound('click', isMuted);
+                setGridProjection(gridProjection === 'isometric' ? 'flat' : 'isometric');
+              }}
+              className="px-3 py-1.5 border border-border-color rounded-lg bg-background/50 text-[10px] font-mono hover:text-amber-color transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <Cpu className="w-3.5 h-3.5" />
+              <span>Perspective: {gridProjection === 'isometric' ? '3D Isometric' : 'Flat 2D'}</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          {/* Left Column: The actual Canvas Grid rendering */}
+          <div className="lg:col-span-8 flex justify-center items-center py-6 relative overflow-hidden bg-[#070a0f]/80 rounded-xl border border-border-color/30 min-h-[380px]">
+            {/* Grid Map View container */}
+            <div className={`relative transition-all duration-700 ease-out p-6 ${
+              gridProjection === 'isometric' 
+                ? 'scale-[0.82] [transform:rotateX(55deg)_rotateZ(-45deg)] [transform-style:preserve-3d]' 
+                : 'scale-[0.95]'
+            }`}>
+              
+              {/* Actual 10x10 Matrix Board */}
+              <div className="grid grid-cols-10 gap-1 w-[280px] sm:w-[340px] md:w-[380px] aspect-square relative z-10">
+                {Array.from({ length: 100 }).map((_, idx) => {
+                  const r = Math.floor(idx / 10);
+                  const c = idx % 10;
+                  const workstation = WORKSTATIONS.find(w => w.x === c && w.y === r);
+                  const cellAgents = agents.filter(a => !a.isPaused && Math.round(a.x) === c && Math.round(a.y) === r);
+                  const hasTrail = particles.some(p => p.x === c && p.y === r);
+                  const isPath = isPathTile(c, r);
+
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => {
+                        if (workstation) {
+                          playSynthSound('click', isMuted);
+                          setSelectedNode(workstation);
+                        }
+                      }}
+                      className={`relative aspect-square flex items-center justify-center rounded transition-all duration-300 group ${
+                        workstation 
+                          ? 'cursor-pointer hover:scale-110 z-20' 
+                          : isPath 
+                          ? 'bg-[#111827]/40 border border-amber-color/5' 
+                          : 'opacity-25 hover:opacity-50'
+                      }`}
+                      style={{
+                        transformStyle: 'preserve-3d',
+                        transform: gridProjection === 'isometric' ? 'translateZ(2px)' : undefined
+                      }}
+                      title={workstation ? workstation.name : `Grid Node (${c}, ${r})`}
+                    >
+                      {/* Grid background coordinate/dot indicator for non-paths */}
+                      {!isPath && !workstation && (
+                        <span className="text-[8px] font-mono text-muted-foreground/30 select-none">+</span>
+                      )}
+
+                      {/* Path lane indicators */}
+                      {isPath && !workstation && cellAgents.length === 0 && (
+                        <div className="absolute inset-0.5 rounded bg-amber-color/[0.02] border border-amber-color/[0.04]" />
+                      )}
+
+                      {/* Spark / Footprint trail */}
+                      {hasTrail && !workstation && cellAgents.length === 0 && (
+                        <motion.div 
+                          initial={{ opacity: 0.8, scale: 0.5 }}
+                          animate={{ opacity: 0, scale: 1.5 }}
+                          transition={{ duration: 1 }}
+                          className="w-2 h-2 bg-amber-color/60 rounded-full blur-[1px]"
+                        />
+                      )}
+
+                      {/* Workstation render */}
+                      {workstation && (
+                        <div className={`relative w-full h-full flex items-center justify-center rounded-lg border-2 transition-all p-1 ${
+                          workstation.color
+                        } ${
+                          selectedNode?.name === workstation.name 
+                            ? 'ring-2 ring-amber-color border-amber-color shadow-[0_0_12px_rgba(245,158,11,0.4)] scale-105' 
+                            : 'hover:border-amber-color hover:shadow-[0_0_8px_rgba(245,158,11,0.2)]'
+                        }`}
+                        style={{
+                          transform: gridProjection === 'isometric' ? 'translateZ(12px)' : undefined
+                        }}
+                        >
+                          <workstation.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                          
+                          {/* Pulsing indicator under workstation */}
+                          <div className="absolute -inset-0.5 bg-current rounded-lg opacity-10 animate-ping pointer-events-none" />
+
+                          {/* Hover badge name */}
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-black/95 text-[8px] text-foreground font-mono px-1.5 py-0.5 rounded border border-border-color opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap mb-1 z-30 shadow-md">
+                            {workstation.name}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Agent Avatar render */}
+                      {cellAgents.length > 0 && (
+                        <div 
+                          className="absolute flex flex-col items-center justify-center z-25 pointer-events-none"
+                          style={{
+                            transform: gridProjection === 'isometric' ? 'translateZ(20px)' : undefined
+                          }}
+                        >
+                          {cellAgents.map((agent) => {
+                            const hasImageError = imageErrors[agent.id];
+                            return (
+                              <div key={agent.id} className="relative w-8 h-8 flex items-center justify-center">
+                                {/* Bottom glowing shadow ring */}
+                                <div className="absolute bottom-0 w-6 h-1.5 bg-black/50 rounded-full border border-current opacity-75 blur-[1px]" style={{ color: agent.color }} />
+                                
+                                {hasImageError ? (
+                                  <div className="w-7 h-7">
+                                    {renderAgentSVG(agent.role, agent.color)}
+                                  </div>
+                                ) : (
+                                  <img
+                                    src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
+                                    alt={agent.name}
+                                    className="w-8 h-8 object-contain drop-shadow-[0_-2px_6px_rgba(255,255,255,0.4)] animate-bounce relative z-10"
+                                    onError={() => setImageErrors(prev => ({ ...prev, [agent.id]: true }))}
+                                    referrerPolicy="no-referrer"
+                                  />
+                                )}
+
+                                {/* Little bubble showing their status */}
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 bg-black/90 text-[7px] text-foreground font-mono px-1 rounded border border-border-color opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap mb-0.5 z-30 shadow">
+                                  {agent.name} ({agent.task !== 'Idle' ? agent.task : 'Ready'})
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* 3D Grid shadow backdrop */}
+              {gridProjection === 'isometric' && (
+                <div className="absolute inset-4 bg-amber-color/3 border border-amber-color/10 rounded-xl filter blur-sm -z-10 [transform:translateZ(-10px)]" />
+              )}
+            </div>
+          </div>
+
+          {/* Right Column: Interaction Trigger Control Room */}
+          <div className="lg:col-span-4 flex flex-col justify-center h-full min-h-[300px] border-t lg:border-t-0 lg:border-l border-border-color/30 pt-6 lg:pt-0 lg:pl-6 space-y-4 relative z-10">
+            {selectedNode ? (
+              <div className="space-y-4 font-mono text-xs animate-fade-in">
+                <div className="p-3 bg-muted/10 border border-amber-color/20 rounded-xl space-y-2">
+                  <div className="flex items-center gap-1.5 text-amber-color font-bold uppercase tracking-wider text-[10px]">
+                    <selectedNode.icon className="w-4 h-4 text-amber-color" />
+                    <span>Selected: {selectedNode.name}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 text-[10px] text-muted-foreground">
+                    <div><strong>Coordinate:</strong> ({selectedNode.x}, {selectedNode.y})</div>
+                    <div><strong>Bus Node:</strong> H-System</div>
+                  </div>
+                </div>
+
+                {/* Dispatch Trigger Form */}
+                <div className="space-y-3 p-3 bg-background/40 border border-border-color/40 rounded-xl">
+                  <h4 className="text-[10px] text-foreground font-bold uppercase tracking-wider">Dispatch Tactical Unit</h4>
+                  
+                  <div className="space-y-1">
+                    <label className="block text-[8px] text-muted-foreground uppercase font-bold">Select Agent</label>
+                    <select
+                      value={tacticalAgentId}
+                      onChange={(e) => setTacticalAgentId(e.target.value)}
+                      className="w-full bg-[#070a0f] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
+                    >
+                      {agents.map((agent) => (
+                        <option key={agent.id} value={agent.id}>
+                          {agent.name} {agent.isPaused ? '[PAUSED]' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-[8px] text-muted-foreground uppercase font-bold">Audit Command Script</label>
+                    <select
+                      value={tacticalAction}
+                      onChange={(e) => setTacticalAction(e.target.value)}
+                      className="w-full bg-[#070a0f] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
+                    >
+                      {predefinedActions.map((action, idx) => (
+                        <option key={idx} value={action}>
+                          {action}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <button
+                    onClick={() => handleTacticalDispatch(tacticalAgentId, tacticalAction)}
+                    className="w-full py-1.5 bg-amber-color hover:bg-amber-color/90 text-black font-bold rounded text-[10px] tracking-wider uppercase transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <Bot className="w-3.5 h-3.5" />
+                    <span>Launch Audit Dispatch</span>
+                  </button>
+                </div>
+
+                <p className="text-[9px] text-muted-foreground leading-normal italic text-center">
+                  * Clicking dispatch launches physical pathing. The bot will slide along grid roads to complete scan.
+                </p>
+              </div>
+            ) : (
+              <div className="h-full flex flex-col justify-center items-center text-center p-6 space-y-3 font-mono text-xs text-muted-foreground">
+                <Bot className="w-8 h-8 text-muted-foreground/30 animate-pulse" />
+                <div className="space-y-1">
+                  <div className="font-bold text-foreground text-[11px] uppercase tracking-wider">Tactical Node Radar Standby</div>
+                  <p className="text-[10px] leading-relaxed max-w-[220px] mx-auto">
+                    Click any highlighted **Workstation Node** on the grid map (e.g. Git, DB, Cafe) to set target destination and dispatch an autonomous agent task force.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
