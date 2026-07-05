@@ -1,7 +1,7 @@
 [
   {
     "name": "ai",
-    "path": "V:\\\\EV\\ai",
+    "path": "D:\\\\LIN4CRE\\\\EV\\ai",
     "type": "Infrastructure",
     "description": "",
     "technologies": [
@@ -12,7 +12,7 @@
   },
   {
     "name": "telegram-bot",
-    "path": "V:\\\\EV\\ai\\telegram-bot",
+    "path": "D:\\\\LIN4CRE\\\\EV\\ai\\telegram-bot",
     "type": "Python App",
     "description": "",
     "technologies": [
@@ -24,7 +24,7 @@
   },
   {
     "name": "ev-backend",
-    "path": "V:\\\\EV\\ev-backend",
+    "path": "D:\\\\LIN4CRE\\\\EV\\ev-backend",
     "type": "Node.js App / Python",
     "description": "",
     "technologies": [
@@ -36,7 +36,7 @@
   },
   {
     "name": "@evbot/companion",
-    "path": "V:\\\\EV\\ev-bot-companion",
+    "path": "D:\\\\LIN4CRE\\\\EV\\ev-bot-companion",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -51,7 +51,7 @@
   },
   {
     "name": "ev-bot-companion",
-    "path": "V:\\\\EV\\ev-companion\\companion",
+    "path": "D:\\\\LIN4CRE\\\\EV\\ev-companion\\companion",
     "type": "Node.js App",
     "description": "EV-Bot Companion \u2014 an interactive AI desktop companion. A modern, charming successor to the classic desktop assistant: an animated character that lives on your screen, chats, reacts, and helps you stay productive.",
     "technologies": [],
@@ -60,7 +60,7 @@
   },
   {
     "name": "facerater-ai-next",
-    "path": "V:\\\\LIN4CRE\\ai-face-rater-next",
+    "path": "D:\\\\LIN4CRE\\ai-face-rater-next",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -73,7 +73,7 @@
   },
   {
     "name": "DoD",
-    "path": "V:\\\\LIN4CRE\\DoD",
+    "path": "D:\\\\LIN4CRE\\DoD",
     "type": "Node.js App",
     "description": "",
     "technologies": [],
@@ -82,7 +82,7 @@
   },
   {
     "name": "react-vite-tailwind",
-    "path": "V:\\\\LIN4CRE\\GhostMail",
+    "path": "D:\\\\LIN4CRE\\GhostMail",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -96,7 +96,7 @@
   },
   {
     "name": "kushcloud",
-    "path": "V:\\\\LIN4CRE\\KushCloud",
+    "path": "D:\\\\LIN4CRE\\KushCloud",
     "type": "Node.js App",
     "description": "Flappy bird style arcade game with canvas physics, unlockable skins, and power-ups.",
     "technologies": [
@@ -110,7 +110,7 @@
   },
   {
     "name": "linacre.site",
-    "path": "V:\\\\LIN4CRE\\linacre-site-repo",
+    "path": "D:\\\\LIN4CRE\\linacre-site-repo",
     "type": "Node.js App",
     "description": "David Linacre's personal developer site, toolkit directory, learning portal, AI assistant Lab, and private dashboard.",
     "technologies": [
@@ -125,7 +125,7 @@
   },
   {
     "name": "logi-pro-setup",
-    "path": "V:\\\\LIN4CRE\\logi-pro-setup",
+    "path": "D:\\\\LIN4CRE\\logi-pro-setup",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -138,7 +138,7 @@
   },
   {
     "name": "myhub-pipeline",
-    "path": "V:\\\\LIN4CRE\\myhub-pipeline",
+    "path": "D:\\\\LIN4CRE\\myhub-pipeline",
     "type": "Python App",
     "description": "",
     "technologies": [
@@ -149,7 +149,7 @@
   },
   {
     "name": "react-vite-tailwind",
-    "path": "V:\\\\LIN4CRE\\NixLabs",
+    "path": "D:\\\\LIN4CRE\\NixLabs",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -163,7 +163,7 @@
   },
   {
     "name": "react-vite-tailwind",
-    "path": "V:\\\\LIN4CRE\\OpAgent\\OpAgent",
+    "path": "D:\\\\LIN4CRE\\OpAgent\\OpAgent",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -177,7 +177,7 @@
   },
   {
     "name": "react-vite-tailwind",
-    "path": "V:\\\\LIN4CRE\\OPAI Improved",
+    "path": "D:\\\\LIN4CRE\\OPAI Improved",
     "type": "Node.js App",
     "description": "",
     "technologies": [
@@ -191,7 +191,7 @@
   },
   {
     "name": "pokeguru",
-    "path": "V:\\\\LIN4CRE\\PokeGuru",
+    "path": "D:\\\\LIN4CRE\\PokeGuru",
     "type": "Node.js App",
     "description": "Pok\u00e9mon TCG card database with pricing, set browsing, and card scanning",
     "technologies": [
@@ -205,7 +205,7 @@
   },
   {
     "name": "neon-snake-rush",
-    "path": "V:\\\\LIN4CRE\\Snake Rush",
+    "path": "D:\\\\LIN4CRE\\Snake Rush",
     "type": "Node.js App",
     "description": "A polished browser Snake remix with adaptive quality, gamepad support, achievements, PWA offline support, and an optional global leaderboard backend.",
     "technologies": [
@@ -217,7 +217,7 @@
   },
   {
     "name": "pixel-agents",
-    "path": "V:\\\\LIN4CRE\\pixel-agents",
+    "path": "D:\\\\LIN4CRE\\pixel-agents",
     "type": "VS Code Extension / Node.js App",
     "description": "Pixel art office where AI agents (Claude Code terminals today, any tool tomorrow) become animated characters.",
     "technologies": [
@@ -231,7 +231,7 @@
   },
   {
     "name": "linacre-toolkit",
-    "path": "V:\\\\LIN4CRE\\linacre-toolkit",
+    "path": "D:\\\\LIN4CRE\\linacre-toolkit",
     "type": "HTML Utilities",
     "description": "Single-file HTML tools, apps, and references consolidated from standalone files across the workspace.",
     "technologies": [
@@ -244,7 +244,7 @@
   },
   {
     "name": "knowledge-vault",
-    "path": "V:\\\\LIN4CRE\\knowledge-vault",
+    "path": "D:\\\\LIN4CRE\\knowledge-vault",
     "type": "Obsidian Vault",
     "description": "Obsidian central knowledge base and backlog for the digital ecosystem.",
     "technologies": [
@@ -255,7 +255,7 @@
   },
   {
     "name": "dev-scaffold",
-    "path": "V:\\\\LIN4CRE\\dev-scaffold",
+    "path": "D:\\\\LIN4CRE\\dev-scaffold",
     "type": "Template Repository",
     "description": "Preconfigured Git repository template for starting new development projects.",
     "technologies": [
@@ -263,5 +263,18 @@
     ],
     "remote": null,
     "has_git": true
+  },
+  {
+    "name": "linacre-devops-hub",
+    "path": "D:\\\\LIN4CRE\\\\linacre-devops-hub",
+    "type": "Live Wallpaper / HTML widget",
+    "description": "Lively Wallpaper dual-monitor desktop control center with HUD, clock, CPU/RAM/GPU diagnostics, and workers floor.",
+    "technologies": [
+      "HTML",
+      "CSS",
+      "JavaScript"
+    ],
+    "remote": null,
+    "has_git": false
   }
 ]
