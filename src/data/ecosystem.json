@@ -50,15 +50,6 @@
     "has_git": false
   },
   {
-    "name": "ev-bot-companion",
-    "path": "D:\\\\LIN4CRE\\\\EV\\ev-companion\\companion",
-    "type": "Node.js App",
-    "description": "EV-Bot Companion \u2014 an interactive AI desktop companion. A modern, charming successor to the classic desktop assistant: an animated character that lives on your screen, chats, reacts, and helps you stay productive.",
-    "technologies": [],
-    "remote": null,
-    "has_git": false
-  },
-  {
     "name": "facerater-ai-next",
     "path": "D:\\\\LIN4CRE\\ai-face-rater-next",
     "type": "Node.js App",
@@ -162,34 +153,6 @@
     "has_git": true
   },
   {
-    "name": "react-vite-tailwind",
-    "path": "D:\\\\LIN4CRE\\OpAgent\\OpAgent",
-    "type": "Node.js App",
-    "description": "",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
-    "remote": null,
-    "has_git": false
-  },
-  {
-    "name": "react-vite-tailwind",
-    "path": "D:\\\\LIN4CRE\\OPAI Improved",
-    "type": "Node.js App",
-    "description": "",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
-    "remote": null,
-    "has_git": true
-  },
-  {
     "name": "pokeguru",
     "path": "D:\\\\LIN4CRE\\PokeGuru",
     "type": "Node.js App",
@@ -254,17 +217,6 @@
     "has_git": false
   },
   {
-    "name": "dev-scaffold",
-    "path": "D:\\\\LIN4CRE\\dev-scaffold",
-    "type": "Template Repository",
-    "description": "Preconfigured Git repository template for starting new development projects.",
-    "technologies": [
-      "Git"
-    ],
-    "remote": null,
-    "has_git": true
-  },
-  {
     "name": "linacre-devops-hub",
     "path": "D:\\\\LIN4CRE\\\\linacre-devops-hub",
     "type": "Live Wallpaper / HTML widget",
@@ -274,7 +226,7 @@
       "CSS",
       "JavaScript"
     ],
-    "remote": null,
-    "has_git": false
+    "remote": "https://github.com/LIN4CRE/linacre-devops-hub.git",
+    "has_git": true
   }
 ]
