@@ -396,6 +396,20 @@ def cmd_boot():
     else:
         _warn("Agent script not found, skipping.")
         
+    # 4. Spawn Background Git Auto-Sync
+    sync_script = Path("D:/LIN4CRE/linacre-toolkit/git-sync.ps1")
+    if sync_script.exists():
+        _info("Spawning background Git Auto-Sync loop (every 30 mins)...")
+        ps_cmd = f"& {{ powershell -ExecutionPolicy Bypass -File '{sync_script}'; while($true) {{ Start-Sleep -Seconds 1800; powershell -ExecutionPolicy Bypass -File '{sync_script}' }} }}"
+        subprocess.Popen(
+            ["powershell", "-NoProfile", "-WindowStyle", "Hidden", "-Command", ps_cmd],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+        )
+    else:
+        _warn("Git sync script not found, skipping.")
+        
     _ok("Boot sequence complete! System is fully autonomous.")
 
 
