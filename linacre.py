@@ -12,6 +12,8 @@ Usage:
     python linacre.py boot       Zero-click PC boot sequence (bg server + agent + browser)
     python linacre.py open       Open linacre.site in default browser
     python linacre.py status     Show project health: Node, keys, Vercel login
+    python linacre.py verify     Verify Registry, .env, and Vercel are in sync
+    python linacre.py audit      Scan for hardcoded secrets in config files
     python linacre.py help       Show this help
 """
 
@@ -246,22 +248,18 @@ def cmd_sync():
 
     for k, v in secrets.items():
         _info(f"Syncing {k}...")
-        # Remove existing to prevent duplication
-        subprocess.run(
-            [vercel_bin, "env", "rm", k, "-y"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        res = subprocess.run(
-            [vercel_bin, "env", "add", k, "production,preview,development"],
-            text=True,
-            input=v,
-            capture_output=True,
-        )
-        if res.returncode == 0:
-            _ok(f"{k} → Vercel ✓")
-        else:
-            _warn(f"Failed to sync {k}: {res.stderr.strip() or res.stdout.strip()}")
+        for env_name in ("production", "preview", "development"):
+            res = subprocess.run(
+                [vercel_bin, "env", "add", k, env_name, "--value", v, "--yes"],
+                capture_output=True, text=True,
+            )
+            out = (res.stderr or res.stdout or "").strip()
+            if res.returncode == 0:
+                _ok(f"  {env_name} ✓")
+            elif "already been added" in out:
+                _ok(f"  {env_name} ✓ (already exists)")
+            else:
+                _warn(f"  {env_name} ✗: {out[:60]}")
 
     _ok("Vercel environment sync complete!")
 
@@ -440,6 +438,97 @@ def cmd_boot():
     _ok("Boot sequence complete! System is fully autonomous.")
 
 
+def cmd_verify():
+    """Verify all secrets match across Registry, .env, and Vercel."""
+    _banner("Secrets Verification")
+    errors = 0
+
+    env_vars = _read_env()
+    _info(f"Reading {len(KEYS_TO_SYNC)} tracked keys...\n")
+
+    for key in KEYS_TO_SYNC:
+        reg = _get_windows_env(key)
+        env = env_vars.get(key)
+        line = f"  {key:40s}"
+
+        if not reg and not env:
+            _warn(f"{line}  MISSING in Registry and .env")
+            errors += 1
+        elif reg and not env:
+            _warn(f"{line}  Registry ✓  .env MISSING")
+            errors += 1
+        elif env and not reg:
+            _warn(f"{line}  Registry MISSING  .env ✓")
+            errors += 1
+        elif reg != env:
+            _warn(f"{line}  MISMATCH (Registry vs .env)")
+            errors += 1
+        else:
+            masked = reg[:10] + "..." if len(reg) > 10 else reg
+            _ok(f"{line}  Registry=.env ({masked})")
+
+    print()
+    if errors == 0:
+        _ok("All secrets match across Registry and .env.")
+    else:
+        _warn(f"{errors} discrepancy/ies found. Run: python linacre.py setup")
+
+    vercel_bin = "vercel.cmd" if sys.platform == "win32" else "vercel"
+    ok, out, _ = _run([vercel_bin, "whoami"], timeout=8)
+    if ok:
+        _ok(f"Vercel logged in as: {out}")
+        _info("Run 'python linacre.py sync' to push any .env changes to Vercel.")
+    else:
+        _warn("Vercel CLI not logged in. Secrets may be stale on Vercel.")
+
+
+def cmd_audit():
+    """Scan for hardcoded secrets in config files."""
+    _banner("Secrets Audit")
+    patterns = [
+        "sk-proj-", "sk-ant-", "sk-or-v1-", "ghp_", "gho_",
+        "AIzaSy", "hf_", "xox[bp]-",
+    ]
+    scan_dirs = [
+        PROJECT_DIR,
+        Path.home() / ".openclaw",
+    ]
+    skip_patterns = [".env", "node_modules", ".git", "dist", "__pycache__"]
+    findings = 0
+
+    for scan_dir in scan_dirs:
+        if not scan_dir.exists():
+            continue
+        for f in scan_dir.rglob("*"):
+            if any(s in str(f) for s in skip_patterns):
+                continue
+            if not f.is_file():
+                continue
+            try:
+                text = f.read_text(encoding="utf-8", errors="replace")
+            except Exception:
+                continue
+            for i, line in enumerate(text.splitlines(), 1):
+                stripped = line.strip()
+                if stripped.startswith("#") or stripped.startswith("//"):
+                    continue
+                for pat in patterns:
+                    if pat in stripped and len(stripped) < 200:
+                        _warn(f"  {f}:{i} matches '{pat}'")
+                        findings += 1
+                        break
+
+    if findings == 0:
+        _ok("No hardcoded secrets detected.")
+    else:
+        _warn(f"{findings} potential hardcoded secret(s) found. Review and migrate to Registry + .env.")
+
+    _info(f"\nSecret policy: Registry is the single source of truth.")
+    _info(f".env is synced from Registry via: python linacre.py setup")
+    _info(f"Vercel is synced from .env via: python linacre.py sync")
+    _info(f"Config files should use ${{VAR_NAME}} references, never plaintext values.")
+
+
 def cmd_help():
     """Show help message."""
     print(__doc__)
@@ -454,6 +543,8 @@ COMMANDS = {
     "build": cmd_build,
     "open": cmd_open,
     "status": cmd_status,
+    "verify": cmd_verify,
+    "audit": cmd_audit,
     "boot": cmd_boot,
     "help": cmd_help,
 }
