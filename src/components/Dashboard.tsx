@@ -25,15 +25,20 @@ ChartJS.register(
 
 
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('linacre_dashboard_auth') === 'true';
-  });
-  
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
   useEffect(() => {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       setIsAuthenticated(true);
-      localStorage.setItem('linacre_dashboard_auth', 'true');
+      setAuthChecked(true);
+      return;
     }
+    fetch('/api/auth')
+      .then((r) => r.json())
+      .then((data) => setIsAuthenticated(Boolean(data.authenticated)))
+      .catch(() => setIsAuthenticated(false))
+      .finally(() => setAuthChecked(true));
   }, []);
 
   const [activeSubTab, setActiveSubTab] = useState<'mcp' | 'skills' | 'env' | 'ecosystem'>('mcp');
@@ -150,16 +155,29 @@ export default function Dashboard() {
     }
   }, [activeSubTab]);
 
-  const handleAuthSubmit = (e: FormEvent) => {
+  const handleAuthSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // David Linacre private gate bypass password or click bypass
-    if (password === 'admin' || password === 'david' || password === '') {
-      setIsAuthenticated(true);
-      localStorage.setItem('linacre_dashboard_auth', 'true');
-      setAuthError(null);
-    } else {
-      setAuthError('Access Denied: Invalid credentials.');
+    setAuthError(null);
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (res.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setAuthError('Access Denied: Invalid credentials.');
+      }
+    } catch {
+      setAuthError('Network error — try again.');
     }
+  };
+
+  const handleLock = async () => {
+    await fetch('/api/auth', { method: 'DELETE' }).catch(() => {});
+    setIsAuthenticated(false);
+    setPassword('');
   };
 
   const handleCopyText = (text: string, id: string) => {
@@ -183,6 +201,8 @@ export default function Dashboard() {
       server.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       server.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  if (!authChecked) return null;
 
   if (!isAuthenticated) {
     return (
@@ -232,17 +252,6 @@ export default function Dashboard() {
             </button>
           </form>
 
-          <div className="text-center">
-            <button
-              onClick={() => {
-                setIsAuthenticated(true);
-                localStorage.setItem('linacre_dashboard_auth', 'true');
-              }}
-              className="text-[10px] text-muted-foreground hover:text-cyan transition-colors underline cursor-pointer"
-            >
-              Reviewer / Guest Bypass
-            </button>
-          </div>
         </motion.div>
       </div>
     );
@@ -271,11 +280,7 @@ export default function Dashboard() {
             Active Session
           </span>
           <button
-            onClick={() => {
-              setIsAuthenticated(false);
-              localStorage.removeItem('linacre_dashboard_auth');
-              setPassword('');
-            }}
+            onClick={handleLock}
             className="px-2.5 py-1 text-[10px] bg-muted hover:bg-muted/70 text-muted-foreground border border-border-color/60 hover:text-foreground rounded-md transition-all cursor-pointer"
           >
             Lock Terminal

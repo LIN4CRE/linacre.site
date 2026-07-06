@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import crypto from "crypto";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
@@ -737,6 +738,63 @@ async function startServer() {
   // Server health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
+  });
+
+  // Dashboard session auth
+  const COOKIE_NAME = 'linacre_dash_session';
+  const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
+
+  function sign(payload: string, secret: string): string {
+    return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+  }
+
+  function timingSafeEqualStr(a: string, b: string): boolean {
+    const bufA = Buffer.from(a);
+    const bufB = Buffer.from(b);
+    return bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
+  }
+
+  app.post("/api/auth", (req, res) => {
+    const secret = process.env.DASHBOARD_SESSION_SECRET;
+    const passwordHash = process.env.DASHBOARD_PASSWORD_HASH;
+    if (!secret || !passwordHash) {
+      return res.status(500).json({ error: 'Server not configured' });
+    }
+    const { password } = req.body ?? {};
+    if (typeof password !== 'string' || password.length === 0) {
+      return res.status(400).json({ error: 'Password required' });
+    }
+    const suppliedHash = crypto.createHash('sha256').update(password).digest('hex');
+    if (!timingSafeEqualStr(suppliedHash, passwordHash)) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const expires = Date.now() + SESSION_TTL_MS;
+    const token = `${expires}.${sign(String(expires), secret)}`;
+    res.setHeader(
+      'Set-Cookie',
+      `${COOKIE_NAME}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${SESSION_TTL_MS / 1000}`
+    );
+    return res.status(200).json({ ok: true });
+  });
+
+  app.get("/api/auth", (req, res) => {
+    const secret = process.env.DASHBOARD_SESSION_SECRET;
+    const passwordHash = process.env.DASHBOARD_PASSWORD_HASH;
+    if (!secret || !passwordHash) {
+      return res.status(500).json({ error: 'Server not configured' });
+    }
+    const cookie = req.headers.cookie ?? '';
+    const match = cookie.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
+    if (!match) return res.status(200).json({ authenticated: false });
+    const [expiresStr, sig] = match[1].split('.');
+    if (!expiresStr || !sig) return res.status(200).json({ authenticated: false });
+    const valid = timingSafeEqualStr(sig, sign(expiresStr, secret)) && Number(expiresStr) > Date.now();
+    return res.status(200).json({ authenticated: valid });
+  });
+
+  app.delete("/api/auth", (req, res) => {
+    res.setHeader('Set-Cookie', `${COOKIE_NAME}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0`);
+    return res.status(200).json({ ok: true });
   });
 
   // Vite static file / hot reload serving middleware

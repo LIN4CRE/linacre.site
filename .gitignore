@@ -12,3 +12,6 @@ public/emblem-static.svg
 public/favicon.svg
 public/agent-report.json
 status.txt
+
+.vercel
+.env*

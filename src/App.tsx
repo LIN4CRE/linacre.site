@@ -374,7 +374,7 @@ export default function App() {
                 {/* Hex-grid subtle background pattern */}
                 <div className="absolute inset-0 linacre-grid-bg opacity-40 pointer-events-none" />
                 {/* Ambient amber orb */}
-                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)`, mixBlendMode: 'screen' }} />
+                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)` }} />
 
                 <div className="md:col-span-8 space-y-5 text-center md:text-left relative z-10">
                   <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/20 px-2.5 py-1 rounded-full">
@@ -418,10 +418,7 @@ export default function App() {
                     {/* Pulsing ambient radial aura gradient */}
                     <div 
                       className="absolute -inset-10 opacity-20 group-hover:opacity-35 blur-2xl rounded-full transition-opacity pointer-events-none"
-                      style={{ 
-                        background: `radial-gradient(circle, ${activeColor.primary} 0%, transparent 70%)`,
-                        mixBlendMode: 'screen'
-                      }} 
+                      style={{ background: `radial-gradient(circle, ${activeColor.primary} 0%, transparent 70%)` }} 
                     />
                     
                     {/* Rendered Live SVG Monogram Emblem */}

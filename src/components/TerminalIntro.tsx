@@ -13,15 +13,14 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
   const [currentLineIdx, setCurrentLineIdx] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
   const [isSkipped, setIsSkipped] = useState(false);
-  const terminalEndRef = useRef<HTMLDivElement>(null);
+  const terminalBodyRef = useRef<HTMLDivElement>(null);
 
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Auto scroll terminal body
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    const el = terminalBodyRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
   }, [renderedLines, currentLineText]);
 
   // Initial render when prefers-reduced-motion is true
@@ -133,7 +132,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
         </div>
 
         {/* Terminal Body */}
-        <div className="p-5 min-h-[280px] max-h-[400px] overflow-y-auto text-sm leading-relaxed space-y-2 select-text" style={{ scrollbarColor: 'rgba(245,158,11,0.15) transparent' }}>
+        <div ref={terminalBodyRef} className="p-5 min-h-[280px] max-h-[400px] overflow-y-auto text-sm leading-relaxed space-y-2 select-text" style={{ scrollbarColor: 'rgba(245,158,11,0.15) transparent' }}>
           {renderedLines.map((line, idx) => {
             if (line.type === 'gap') {
               return <div key={idx} className="h-2" />;
@@ -176,7 +175,6 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
             </div>
           )}
 
-          <div ref={terminalEndRef} />
         </div>
       </div>
       
