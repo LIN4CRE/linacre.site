@@ -154,6 +154,7 @@ def _is_vercel_logged_in() -> bool:
     paths = [
         Path(os.environ.get("LOCALAPPDATA", "")) / "com.vercel.cli" / "auth.json",
         Path(os.environ.get("APPDATA", "")) / "com.vercel.cli" / "auth.json",
+        Path(os.environ.get("APPDATA", "")) / "xdg.data" / "com.vercel.cli" / "auth.json",
         Path.home() / ".config" / "vercel" / "auth.json",
     ]
     for p in paths:
