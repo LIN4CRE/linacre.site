@@ -4,9 +4,6 @@ dist
 .env.*
 .vscode
 public/wallpapers
-public/index.html
-public/style.css
-public/app.js
 public/emblem-animated.svg
 public/emblem-static.svg
 public/favicon.svg

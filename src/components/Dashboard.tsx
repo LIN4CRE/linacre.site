@@ -230,7 +230,7 @@ export default function Dashboard() {
               <label className="block text-muted-foreground font-semibold">Access Password</label>
               <input
                 type="password"
-                placeholder="Type admin or click bypass..."
+                placeholder="Enter the workspace access password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-muted/40 dark:bg-[#161b26]/60 border border-border-color rounded-lg px-3.5 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-cyan focus:border-cyan text-foreground placeholder:text-muted-foreground/40"
