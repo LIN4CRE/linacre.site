@@ -22,6 +22,7 @@ vercel.json            (API rewrites and CSP security headers)
 - **Build command:** `python linacre.py build`
 - **Deploy command:** `vercel deploy --prod --yes --project linacre-site-repo --force`
 - **After changes, verify with:** `Invoke-WebRequest -Uri "https://www.linacre.site/"`
+- **Secrets workflow:** Registry is the single source of truth. Never hardcode keys. Use `python linacre.py setup` (Registry → .env), `python linacre.py sync` (.env → Vercel), `python linacre.py verify` (check all match), `python linacre.py audit` (scan for leaks). See D:\AI Truth\AGENTS.md for full inventory.
 
 ## Architecture
 - React SPA with tabbed navigation:
