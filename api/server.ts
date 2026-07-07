@@ -410,6 +410,53 @@ async function startServer() {
     });
   });
 
+  // API route to get Obsidian Ecosystem Tasks
+  app.get("/api/tasks", async (req, res) => {
+    try {
+      const fs = await import("fs");
+      const tasksFilePath = path.join("D:", "LIN4CRE", "knowledge-vault", "Ecosystem_Tasks.md");
+      if (!fs.existsSync(tasksFilePath)) {
+        return res.json({ priorities: [], radar: [] });
+      }
+      const content = fs.readFileSync(tasksFilePath, "utf8");
+      
+      const lines = content.split("\n");
+      const priorities: string[] = [];
+      const radar: string[] = [];
+      let currentSection: 'priorities' | 'radar' | null = null;
+      
+      for (let line of lines) {
+        line = line.trim();
+        if (line.includes("Current Priorities")) {
+          currentSection = 'priorities';
+          continue;
+        } else if (line.includes("On Radar")) {
+          currentSection = 'radar';
+          continue;
+        } else if (line.startsWith("##")) {
+          currentSection = null;
+          continue;
+        }
+        
+        if (currentSection && line.startsWith("-")) {
+          const isCompleted = line.match(/^-\s*\[x\]/i);
+          if (!isCompleted) {
+            let taskText = line.replace(/^-\s*(\[[x\s]?\])?\s*/i, "").trim();
+            // Remove markdown links format [Text](URL) leaving only Text
+            taskText = taskText.replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1");
+            if (taskText) {
+              if (currentSection === 'priorities') priorities.push(taskText);
+              else if (currentSection === 'radar') radar.push(taskText);
+            }
+          }
+        }
+      }
+      res.json({ priorities, radar });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   // Secure Server-side OpenAI Streaming Proxy
   app.post("/api/chat/openai", async (req, res) => {
     const { prompt, history, apiKey: clientApiKey } = req.body;
@@ -590,7 +637,7 @@ async function startServer() {
 
     // 1. Scan Git Status Task
     if (lowercaseTask.includes("git")) {
-      return exec("git status", { cwd: path.join("V:", "LIN4CRE", "linacre-site-repo") }, (error, stdout, stderr) => {
+      return exec("git status", { cwd: path.join("D:", "LIN4CRE", "linacre-site-repo") }, (error, stdout, stderr) => {
         if (error) {
           return res.json({ reply: `[Git Scan Error]: ${stderr || error.message}` });
         }
