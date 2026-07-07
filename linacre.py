@@ -407,19 +407,8 @@ def cmd_boot():
     else:
         _warn("Agent script not found, skipping.")
         
-    # 3b. Spawn Pixel-Agents Office Server
-    pixel_agents_cli = Path("D:/LIN4CRE/pixel-agents/dist/cli.js")
-    if pixel_agents_cli.exists():
-        _info("Spawning background Pixel-Agents Office server on port 3100...")
-        subprocess.Popen(
-            ["node", str(pixel_agents_cli), "--port", "3100"],
-            cwd=str(pixel_agents_cli.parent.parent),
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
-        )
-    else:
-        _warn("Pixel-Agents CLI not found, skipping Office server.")
+    # 3b. Pixel-Agents Office Server (Removed)
+    pass
         
     # 4. Spawn Background Git Auto-Sync
     sync_script = Path("D:/LIN4CRE/linacre-toolkit/git-sync.ps1")
