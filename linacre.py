@@ -132,7 +132,7 @@ def _write_env(env_vars: dict[str, str]):
     ENV_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def _run(cmd_args: list[str], input_data: str | None = None, timeout: int | None = None):
+def _run(cmd_args: list[str], input_data: str | None = None, timeout: int | None = None, cwd: str | None = None):
     """Run a subprocess and return (ok, stdout, stderr)."""
     try:
         stdin_val = None if input_data is not None else subprocess.DEVNULL
@@ -143,6 +143,7 @@ def _run(cmd_args: list[str], input_data: str | None = None, timeout: int | None
             stdin=stdin_val,
             capture_output=True,
             timeout=timeout,
+            cwd=cwd,
         )
         return res.returncode == 0, res.stdout.strip(), res.stderr.strip()
     except subprocess.TimeoutExpired:
@@ -226,7 +227,7 @@ def cmd_sync():
         _info("Run: vercel login")
         return
 
-    ok, stdout, stderr = _run([vercel_bin, "whoami"], timeout=5)
+    ok, stdout, stderr = _run([vercel_bin, "whoami"], timeout=5, cwd=str(PROJECT_DIR))
     if not ok:
         _warn(f"Vercel session validation failed: {stderr}")
         _info("Run: vercel login")
@@ -252,6 +253,7 @@ def cmd_sync():
             res = subprocess.run(
                 [vercel_bin, "env", "add", k, env_name, "--value", v, "--yes"],
                 capture_output=True, text=True,
+                cwd=str(PROJECT_DIR),
             )
             out = (res.stderr or res.stdout or "").strip()
             if res.returncode == 0:
@@ -357,7 +359,7 @@ def cmd_status():
         _warn("node_modules: missing — run: npm install")
 
     # Git
-    ok, out, _ = _run(["git", "rev-parse", "--short", "HEAD"], timeout=5)
+    ok, out, _ = _run(["git", "rev-parse", "--short", "HEAD"], timeout=5, cwd=str(PROJECT_DIR))
     if ok:
         _ok(f"Git HEAD: {out}")
     else:
@@ -463,7 +465,7 @@ def cmd_verify():
         _warn(f"{errors} discrepancy/ies found. Run: python linacre.py setup")
 
     vercel_bin = "vercel.cmd" if sys.platform == "win32" else "vercel"
-    ok, out, _ = _run([vercel_bin, "whoami"], timeout=8)
+    ok, out, _ = _run([vercel_bin, "whoami"], timeout=8, cwd=str(PROJECT_DIR))
     if ok:
         _ok(f"Vercel logged in as: {out}")
         _info("Run 'python linacre.py sync' to push any .env changes to Vercel.")
