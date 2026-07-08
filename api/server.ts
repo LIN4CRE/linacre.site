@@ -30,7 +30,7 @@ app.use((req, res, next) => {
   }
 });
 
-async function startServer() {
+// Start of Express server setup
 
   // API route for Gemini Chat proxying securely
   app.post("/api/chat", async (req, res) => {
@@ -846,26 +846,29 @@ async function startServer() {
 
   // Vite static file / hot reload serving middleware
   if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
+    (async () => {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+      if (!process.env.VERCEL) {
+        app.listen(PORT, "0.0.0.0", () => {
+          console.log(`Express dev server listening on http://0.0.0.0:${PORT}`);
+        });
+      }
+    })();
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });
+    if (!process.env.VERCEL) {
+      app.listen(PORT, "0.0.0.0", () => {
+        console.log(`Express production server listening on http://0.0.0.0:${PORT}`);
+      });
+    }
   }
-
-  if (!process.env.VERCEL) {
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Express full-stack server listening on http://0.0.0.0:${PORT}`);
-    });
-  }
-}
-
-startServer();
 
 export default app;
