@@ -179,20 +179,6 @@
     "has_git": true
   },
   {
-    "name": "pixel-agents",
-    "path": "D:\\\\LIN4CRE\\pixel-agents",
-    "type": "VS Code Extension / Node.js App",
-    "description": "Pixel art office where AI agents (Claude Code terminals today, any tool tomorrow) become animated characters.",
-    "technologies": [
-      "React",
-      "Vite",
-      "Express",
-      "TypeScript"
-    ],
-    "remote": "https://github.com/pixel-agents-hq/pixel-agents",
-    "has_git": true
-  },
-  {
     "name": "linacre-toolkit",
     "path": "D:\\\\LIN4CRE\\linacre-toolkit",
     "type": "HTML Utilities",
