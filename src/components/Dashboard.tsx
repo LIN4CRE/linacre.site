@@ -75,7 +75,7 @@ export default function Dashboard() {
     // 1. Ping FastAPI
     try {
       const start = Date.now();
-      const res = await fetch("http://localhost:8000/api/v1/evbot/health");
+      const res = await fetch("/api/evbot-proxy/health");
       const latency = Date.now() - start;
       if (res.ok) {
         setMeshStatus(prev => ({
@@ -95,7 +95,7 @@ export default function Dashboard() {
     // 2. Check Phone
     try {
       const start = Date.now();
-      const res = await fetch("http://localhost:8000/api/v1/evbot/state");
+      const res = await fetch("/api/evbot-proxy/state");
       const latency = Date.now() - start;
       if (res.ok) {
         const data = await res.json();
@@ -721,7 +721,7 @@ export default function Dashboard() {
                 <button
                   onClick={async () => {
                     try {
-                      const res = await fetch("http://localhost:8000/api/v1/evbot/health");
+                      const res = await fetch("/api/evbot-proxy/health");
                       const data = await res.json();
                       alert(`EV-Bot Service status: ${data.status || 'Offline'}`);
                     } catch (e) {
@@ -735,7 +735,7 @@ export default function Dashboard() {
                 <button
                   onClick={async () => {
                     try {
-                      const res = await fetch("http://localhost:8000/api/v1/evbot/alexa/trigger", {
+                      const res = await fetch("/api/evbot-proxy/alexa/trigger", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ phrase: "Alexa, tell EV-Bot to check PC status" })

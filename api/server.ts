@@ -782,6 +782,55 @@ app.use((req, res, next) => {
     }
   });
 
+  // Proxy endpoint to communicate with FastAPI backend on port 8000
+  app.all("/api/evbot-proxy/*", async (req, res) => {
+    const subPath = req.params[0] || req.path.replace(/^\/api\/evbot-proxy\//, "");
+    
+    // Map health request to FastAPI public health, others to their respective routes
+    let targetPath = `/api/v1/evbot/${subPath}`;
+    if (subPath === "health") {
+      targetPath = "/api/v1/health";
+    }
+
+    const backendUrl = `http://localhost:8000${targetPath}`;
+    
+    try {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (process.env.ADMIN_API_KEY) {
+        headers["X-Admin-Api-Key"] = process.env.ADMIN_API_KEY;
+      }
+
+      const options: RequestInit = {
+        method: req.method,
+        headers,
+      };
+
+      if (["POST", "PUT", "PATCH"].includes(req.method)) {
+        options.body = JSON.stringify(req.body);
+      }
+
+      const backendRes = await fetch(backendUrl, options);
+      if (backendRes.status === 204) {
+        return res.sendStatus(204);
+      }
+      
+      const text = await backendRes.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { raw: text };
+      }
+      
+      return res.status(backendRes.status).json(data);
+    } catch (err: any) {
+      console.error("[EV-Bot Proxy Error]:", err.message || err);
+      return res.status(502).json({ error: "EV-Bot backend offline", details: err.message });
+    }
+  });
+
   // Server health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
