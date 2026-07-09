@@ -464,10 +464,10 @@ export const MANUAL_PROJECTS: Project[] = [
 const ecoProjects: Project[] = ecosystem.map((item: any) => ({
   name: item.name,
   category: item.type.includes('Infrastructure') ? 'deploy' : (item.technologies.length > 0 ? 'build' : 'start'),
-  description: item.description || `Auto-indexed ${item.type} project at ${item.path}`,
-  url: item.remote || `file:///${item.path.replace(/\\/g, '/')}`,
-  host: item.remote ? 'GitHub' : 'Local Drive',
-  tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Local Module')
+  description: item.description || `${item.type} project — details available on request.`,
+  url: item.remote ? item.remote.replace(/\.git$/, '') : '',
+  host: item.remote ? 'GitHub' : 'Private',
+  tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Internal')
 }));
 
 const allProjects = [...MANUAL_PROJECTS, ...ecoProjects];

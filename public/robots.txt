@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://linacre.site/sitemap.xml
+Sitemap: https://www.linacre.site/sitemap.xml

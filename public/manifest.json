@@ -1,8 +1,9 @@
 {
-  "name": "linacre.site — Developer Toolkit",
+  "name": "linacre.site — Developer Portfolio & Toolkit",
   "short_name": "linacre.site",
-  "description": "A curated, searchable kit of free developer tools.",
-  "start_url": ".",
+  "description": "David Linacre's developer portfolio, toolkit directory, project hub, and AI playground.",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0b0e14",
   "theme_color": "#0b0e14",
@@ -16,13 +17,13 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

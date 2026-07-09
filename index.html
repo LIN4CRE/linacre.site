@@ -8,7 +8,7 @@
     <!-- SEO and Discovery -->
     <meta name="description" content="David Linacre's personal developer portfolio, toolkit directory, and live AI playground." />
     <meta name="keywords" content="David Linacre, Developer Portfolio, Toolkit Directory, AI Playground, Developer Utilities, Free Dev Tools" />
-    <link rel="canonical" href="https://linacre.site" />
+    <link rel="canonical" href="https://www.linacre.site/" />
 
     <!-- Web App & PWA Support -->
     <link rel="manifest" href="/manifest.json" />
@@ -21,6 +21,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     
     <!-- Icon Configurations -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0e14'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='700' fill='%23ffb454' text-anchor='middle'%3E%3E%3C/text%3E%3C/svg%3E" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
 
@@ -28,17 +29,76 @@
     <meta property="og:title" content="linacre.site · Developer Portfolio & Toolkit Directory" />
     <meta property="og:description" content="David Linacre's personal developer portfolio, toolkit directory, and live AI playground." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://linacre.site" />
-    <meta property="og:image" content="https://linacre.site/og.png" />
+    <meta property="og:site_name" content="linacre.site" />
+    <meta property="og:url" content="https://www.linacre.site/" />
+    <meta property="og:image" content="https://www.linacre.site/og.png" />
 
     <!-- Twitter Social Cards -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="linacre.site · Developer Portfolio & Toolkit Directory" />
     <meta name="twitter:description" content="David Linacre's personal developer portfolio, toolkit directory, and live AI playground." />
-    <meta name="twitter:image" content="https://linacre.site/og.png" />
+    <meta name="twitter:image" content="https://www.linacre.site/og.png" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://www.linacre.site/#person",
+          "name": "David Linacre",
+          "url": "https://www.linacre.site/",
+          "sameAs": [
+            "https://github.com/LIN4CRE",
+            "https://linkedin.com/in/davidlinacre"
+          ],
+          "jobTitle": "Developer"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.linacre.site/#website",
+          "url": "https://www.linacre.site/",
+          "name": "linacre.site",
+          "description": "Developer portfolio, toolkit directory, project hub, and AI playground.",
+          "publisher": { "@id": "https://www.linacre.site/#person" }
+        },
+        {
+          "@type": "ItemList",
+          "@id": "https://www.linacre.site/#featured-projects",
+          "name": "Featured projects",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "url": "https://github.com/LIN4CRE/GhostMail",
+              "name": "GhostMail"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "url": "https://github.com/LIN4CRE/DomainDeals",
+              "name": "DomainDeals"
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <main id="main-content">
+        <h1>David Linacre — Developer Portfolio, Toolkit &amp; AI Lab</h1>
+        <p>Open-source projects, developer utilities, AI experiments, and learning resources. Enable JavaScript to explore the full interactive experience.</p>
+        <ul>
+          <li><a href="https://github.com/LIN4CRE/GhostMail">GhostMail — Disposable email service</a></li>
+          <li><a href="https://github.com/LIN4CRE/DomainDeals">DomainDeals — Domain marketplace</a></li>
+          <li><a href="https://github.com/LIN4CRE">View all projects on GitHub</a></li>
+        </ul>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,70 +1,46 @@
 [
   {
     "name": "ai",
-    "path": "D:\\\\LIN4CRE\\\\EV\\ai",
     "type": "Infrastructure",
     "description": "",
-    "technologies": [
-      "Docker"
-    ],
+    "technologies": ["Docker"],
     "remote": null,
     "has_git": false
   },
   {
     "name": "telegram-bot",
-    "path": "D:\\\\LIN4CRE\\\\EV\\ai\\telegram-bot",
     "type": "Python App",
     "description": "",
-    "technologies": [
-      "Python",
-      "Docker"
-    ],
+    "technologies": ["Python", "Docker"],
     "remote": null,
     "has_git": false
   },
   {
     "name": "ev-backend",
-    "path": "D:\\\\LIN4CRE\\\\EV\\ev-backend",
     "type": "Node.js App / Python",
     "description": "",
-    "technologies": [
-      "Python",
-      "Docker"
-    ],
+    "technologies": ["Python", "Docker"],
     "remote": null,
     "has_git": false
   },
   {
     "name": "@evbot/companion",
-    "path": "D:\\\\LIN4CRE\\\\EV\\ev-bot-companion",
     "type": "Node.js App",
     "description": "",
-    "technologies": [
-      "React",
-      "Vite",
-      "Express",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
+    "technologies": ["React", "Vite", "Express", "Tailwind CSS", "TypeScript"],
     "remote": null,
     "has_git": false
   },
   {
     "name": "facerater-ai-next",
-    "path": "D:\\\\LIN4CRE\\ai-face-rater-next",
     "type": "Node.js App",
     "description": "",
-    "technologies": [
-      "React",
-      "Next.js",
-      "TypeScript"
-    ],
+    "technologies": ["React", "Next.js", "TypeScript"],
     "remote": null,
     "has_git": true
   },
   {
     "name": "DoD",
-    "path": "D:\\\\LIN4CRE\\DoD",
     "type": "Node.js App",
     "description": "",
     "technologies": [],
@@ -73,145 +49,89 @@
   },
   {
     "name": "react-vite-tailwind",
-    "path": "D:\\\\LIN4CRE\\GhostMail",
     "type": "Node.js App",
     "description": "",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
+    "technologies": ["React", "Vite", "Tailwind CSS", "TypeScript"],
     "remote": "https://github.com/LIN4CRE/GhostMail.git",
     "has_git": true
   },
   {
     "name": "kushcloud",
-    "path": "D:\\\\LIN4CRE\\KushCloud",
     "type": "Node.js App",
     "description": "Flappy bird style arcade game with canvas physics, unlockable skins, and power-ups.",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
+    "technologies": ["React", "Vite", "Tailwind CSS", "TypeScript"],
     "remote": "https://github.com/LIN4CRE/KushCloud",
     "has_git": true
   },
   {
     "name": "linacre.site",
-    "path": "D:\\\\LIN4CRE\\linacre-site-repo",
     "type": "Node.js App",
     "description": "David Linacre's personal developer site, toolkit directory, learning portal, AI assistant Lab, and private dashboard.",
-    "technologies": [
-      "React",
-      "Vite",
-      "Express",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
+    "technologies": ["React", "Vite", "Express", "Tailwind CSS", "TypeScript"],
     "remote": "https://github.com/LIN4CRE/linacre.site.git",
     "has_git": true
   },
   {
     "name": "logi-pro-setup",
-    "path": "D:\\\\LIN4CRE\\logi-pro-setup",
     "type": "Node.js App",
     "description": "",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS"
-    ],
+    "technologies": ["React", "Vite", "Tailwind CSS"],
     "remote": null,
     "has_git": true
   },
   {
     "name": "myhub-pipeline",
-    "path": "D:\\\\LIN4CRE\\myhub-pipeline",
     "type": "Python App",
     "description": "",
-    "technologies": [
-      "Python"
-    ],
+    "technologies": ["Python"],
     "remote": "https://github.com/LIN4CRE/myhub-pipeline.git",
     "has_git": true
   },
   {
     "name": "react-vite-tailwind",
-    "path": "D:\\\\LIN4CRE\\NixLabs",
     "type": "Node.js App",
     "description": "",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
+    "technologies": ["React", "Vite", "Tailwind CSS", "TypeScript"],
     "remote": null,
     "has_git": true
   },
   {
     "name": "pokeguru",
-    "path": "D:\\\\LIN4CRE\\PokeGuru",
     "type": "Node.js App",
-    "description": "Pok\u00e9mon TCG card database with pricing, set browsing, and card scanning",
-    "technologies": [
-      "React",
-      "Vite",
-      "Tailwind CSS",
-      "TypeScript"
-    ],
+    "description": "Pokémon TCG card database with pricing, set browsing, and card scanning",
+    "technologies": ["React", "Vite", "Tailwind CSS", "TypeScript"],
     "remote": "https://github.com/LIN4CRE/PokeGuru.git",
     "has_git": true
   },
   {
     "name": "neon-snake-rush",
-    "path": "D:\\\\LIN4CRE\\Snake Rush",
     "type": "Node.js App",
     "description": "A polished browser Snake remix with adaptive quality, gamepad support, achievements, PWA offline support, and an optional global leaderboard backend.",
-    "technologies": [
-      "Express",
-      "Docker"
-    ],
+    "technologies": ["Express", "Docker"],
     "remote": null,
     "has_git": true
   },
   {
     "name": "linacre-toolkit",
-    "path": "D:\\\\LIN4CRE\\linacre-toolkit",
     "type": "HTML Utilities",
     "description": "Single-file HTML tools, apps, and references consolidated from standalone files across the workspace.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "technologies": ["HTML", "CSS", "JavaScript"],
     "remote": null,
     "has_git": true
   },
   {
     "name": "knowledge-vault",
-    "path": "D:\\\\LIN4CRE\\knowledge-vault",
     "type": "Obsidian Vault",
     "description": "Obsidian central knowledge base and backlog for the digital ecosystem.",
-    "technologies": [
-      "Markdown"
-    ],
+    "technologies": ["Markdown"],
     "remote": null,
     "has_git": false
   },
   {
     "name": "linacre-devops-hub",
-    "path": "D:\\\\LIN4CRE\\\\linacre-devops-hub",
     "type": "Live Wallpaper / HTML widget",
     "description": "Lively Wallpaper dual-monitor desktop control center with HUD, clock, CPU/RAM/GPU diagnostics, and workers floor.",
-    "technologies": [
-      "HTML",
-      "CSS",
-      "JavaScript"
-    ],
+    "technologies": ["HTML", "CSS", "JavaScript"],
     "remote": "https://github.com/LIN4CRE/linacre-devops-hub.git",
     "has_git": true
   }
