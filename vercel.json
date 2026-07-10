@@ -1,13 +1,5 @@
 {
   "buildCommand": "npm run build",
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.linacre.site" }],
-      "destination": "https://linacre.site/:path*",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/assets/(.*)",
