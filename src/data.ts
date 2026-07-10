@@ -437,7 +437,7 @@ export const MANUAL_PROJECTS: Project[] = [
   {
     name: 'linacre.site',
     category: 'deploy',
-    description: 'This very site. Terminal-styled toolkit + AI Lab. Rebuilt in React, Tailwind CSS v4, TypeScript and Node server, deployed on Cloud Run.',
+    description: 'This very site. Terminal-styled toolkit + AI Lab. Rebuilt in React, Tailwind CSS v4, TypeScript and Node server, deployed on Vercel.',
     url: 'https://linacre.site',
     host: 'linacre.site',
     tag: 'Live'

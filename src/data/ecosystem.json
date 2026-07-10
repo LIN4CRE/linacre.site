@@ -48,14 +48,6 @@
     "has_git": true
   },
   {
-    "name": "react-vite-tailwind",
-    "type": "Node.js App",
-    "description": "",
-    "technologies": ["React", "Vite", "Tailwind CSS", "TypeScript"],
-    "remote": "https://github.com/LIN4CRE/GhostMail.git",
-    "has_git": true
-  },
-  {
     "name": "kushcloud",
     "type": "Node.js App",
     "description": "Flappy bird style arcade game with canvas physics, unlockable skins, and power-ups.",

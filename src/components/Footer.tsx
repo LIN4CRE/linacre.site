@@ -64,8 +64,9 @@ export default function Footer() {
                 href="https://github.com/LIN4CRE"
                 target="_blank"
                 rel="noopener"
-                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-color"
                 title="GitHub Profile"
+                aria-label="GitHub profile"
               >
                 <Github className="w-4 h-4" />
               </a>
@@ -73,8 +74,9 @@ export default function Footer() {
                 href="https://linkedin.com/in/davidlinacre"
                 target="_blank"
                 rel="noopener"
-                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-color"
                 title="LinkedIn Profile"
+                aria-label="LinkedIn profile"
               >
                 <Linkedin className="w-4 h-4" />
               </a>

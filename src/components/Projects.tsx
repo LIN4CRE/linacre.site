@@ -200,11 +200,12 @@ export default function Projects() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground uppercase font-bold">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>Sort:</span>
+            <label htmlFor="projects-sort">Sort:</label>
             <select
+              id="projects-sort"
               value={sortBy}
-              onChange={(e: any) => setSortBy(e.target.value)}
-              className="bg-background border border-border-color rounded px-2 py-1 text-[10px] text-foreground focus:outline-none"
+              onChange={(e) => setSortBy(e.target.value as 'name' | 'category' | 'tag')}
+              className="bg-background border border-border-color rounded px-2 py-1 text-[10px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-color"
             >
               <option value="name">Name</option>
               <option value="category">Category</option>
@@ -388,21 +389,17 @@ export default function Projects() {
 
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4" id="projects-grid">
-        {filteredProjects.map((project, idx) => (
-          <a
-            key={idx}
-            href={project.url}
-            target="_blank"
-            rel="noopener"
-            className={`group relative flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi hover:-translate-y-0.5 transition-all duration-200 border-l-[3px] ${
-              project.category === 'deploy'
-                ? 'border-l-emerald-color'
-                : project.category === 'build'
-                ? 'border-l-cyan'
-                : 'border-l-amber-color'
-            }`}
-            id={`project-card-${project.name.toLowerCase().replace('.', '-')}`}
-          >
+        {filteredProjects.map((project, idx) => {
+          const cardClassName = `group relative flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi hover:-translate-y-0.5 transition-all duration-200 border-l-[3px] ${
+            project.category === 'deploy'
+              ? 'border-l-emerald-color'
+              : project.category === 'build'
+              ? 'border-l-cyan'
+              : 'border-l-amber-color'
+          }`;
+          const cardId = `project-card-${project.name.toLowerCase().replace('.', '-')}`;
+          const cardContent = (
+            <>
             {/* Action Buttons on Card */}
             <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
               <button
@@ -436,10 +433,23 @@ export default function Projects() {
             </div>
             <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground/70 border-t border-border-color/40 pt-3">
               <span className="truncate max-w-[180px]">{project.host}</span>
-              <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-cyan" />
+              {project.url && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-cyan" />}
             </div>
-          </a>
-        ))}
+            </>
+          );
+
+          // Cards without a URL (private/internal projects) must not render as links —
+          // an empty href reloads the page on click.
+          return project.url ? (
+            <a key={idx} href={project.url} target="_blank" rel="noopener" className={cardClassName} id={cardId}>
+              {cardContent}
+            </a>
+          ) : (
+            <div key={idx} className={cardClassName} id={cardId}>
+              {cardContent}
+            </div>
+          );
+        })}
 
         {filteredProjects.length === 0 && (
           <div className="col-span-full text-center py-12 bg-muted/5 border border-dashed border-border-color/40 rounded-xl font-mono text-xs text-muted-foreground">

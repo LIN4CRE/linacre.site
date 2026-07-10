@@ -1,4 +1,5 @@
 import express from "express";
+import type { Request, Response, NextFunction } from "express";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
@@ -30,10 +31,48 @@ app.use((req, res, next) => {
   }
 });
 
+// Per-IP sliding-window rate limiter for AI proxy routes.
+// These endpoints spend the server's own API keys, so without a limit any
+// visitor (or any third-party site, given the open CORS policy) can drain them.
+const RATE_LIMIT_PER_MIN = Number(process.env.RATE_LIMIT_PER_MIN) || 20;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const rateLimitLog = new Map<string, number[]>();
+
+function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip =
+    (typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded?.[0]) ||
+    req.socket.remoteAddress ||
+    "unknown";
+
+  const now = Date.now();
+  const hits = (rateLimitLog.get(ip) ?? []).filter(t => t > now - RATE_LIMIT_WINDOW_MS);
+
+  if (hits.length >= RATE_LIMIT_PER_MIN) {
+    rateLimitLog.set(ip, hits);
+    res.setHeader("Retry-After", "60");
+    return res.status(429).json({
+      error: `Rate limit exceeded (${RATE_LIMIT_PER_MIN} requests/minute). Please try again shortly.`
+    });
+  }
+
+  hits.push(now);
+  rateLimitLog.set(ip, hits);
+
+  // Bounded memory: evict fully-expired entries once the map grows large
+  if (rateLimitLog.size > 1000) {
+    for (const [key, times] of rateLimitLog) {
+      if (times[times.length - 1] <= now - RATE_LIMIT_WINDOW_MS) rateLimitLog.delete(key);
+    }
+  }
+
+  next();
+}
+
 // Start of Express server setup
 
   // API route for Gemini Chat proxying securely
-  app.post("/api/chat", async (req, res) => {
+  app.post("/api/chat", aiRateLimiter, async (req, res) => {
     const { prompt, history } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
@@ -162,7 +201,7 @@ app.use((req, res, next) => {
   });
 
   // API route for Gemini Streaming Chat securely (SSE)
-  app.post("/api/chat/stream", async (req, res) => {
+  app.post("/api/chat/stream", aiRateLimiter, async (req, res) => {
     const { prompt, history } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
@@ -458,7 +497,7 @@ app.use((req, res, next) => {
   });
 
   // Secure Server-side OpenAI Streaming Proxy
-  app.post("/api/chat/openai", async (req, res) => {
+  app.post("/api/chat/openai", aiRateLimiter, async (req, res) => {
     const { prompt, history, apiKey: clientApiKey } = req.body;
     const apiKey = clientApiKey || process.env.OPENAI_API_KEY;
     if (!apiKey) {
@@ -521,7 +560,7 @@ app.use((req, res, next) => {
   });
 
   // Secure Server-side Claude Streaming Proxy
-  app.post("/api/chat/claude", async (req, res) => {
+  app.post("/api/chat/claude", aiRateLimiter, async (req, res) => {
     const { prompt, history, apiKey: clientApiKey } = req.body;
     const apiKey = clientApiKey || process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
     if (!apiKey) {
