@@ -7,6 +7,7 @@ import { Project } from '../types';
 export default function Projects() {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [visibilityFilter, setVisibilityFilter] = useState<'all' | 'public' | 'private'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'category' | 'tag'>('name');
 
   // Projects State with localStorage synchronization
@@ -163,11 +164,18 @@ export default function Projects() {
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.tag.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.host.toLowerCase().includes(searchQuery.toLowerCase());
+      project.host.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (project.tech && project.tech.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
       
     const matchesCategory = categoryFilter === 'all' || project.category === categoryFilter;
 
-    return matchesSearch && matchesCategory;
+    const isPrivate = !project.url || project.url.toLowerCase() === 'private' || project.url.toLowerCase() === 'details on request';
+    const matchesVisibility = 
+      visibilityFilter === 'all' || 
+      (visibilityFilter === 'public' && !isPrivate) || 
+      (visibilityFilter === 'private' && isPrivate);
+
+    return matchesSearch && matchesCategory && matchesVisibility;
   }).sort((a, b) => {
     if (sortBy === 'name') return a.name.localeCompare(b.name);
     if (sortBy === 'category') return a.category.localeCompare(b.category);
@@ -225,6 +233,21 @@ export default function Projects() {
               <option value="name">Name</option>
               <option value="category">Category</option>
               <option value="tag">Tag</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground uppercase font-bold">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <label htmlFor="projects-visibility">Access:</label>
+            <select
+              id="projects-visibility"
+              value={visibilityFilter}
+              onChange={(e) => setVisibilityFilter(e.target.value as 'all' | 'public' | 'private')}
+              className="bg-background border border-border-color rounded px-2 py-1 text-[10px] text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-color"
+            >
+              <option value="all">All Access</option>
+              <option value="public">Open Source (Public)</option>
+              <option value="private">Private (Request Details)</option>
             </select>
           </div>
 

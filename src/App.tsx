@@ -119,6 +119,27 @@ export default function App() {
   });
 
   const syncIdentity = () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const pColor = params.get('brand_color');
+      const pFont = params.get('brand_font');
+      const pFrame = params.get('brand_frame');
+      const pMotion = params.get('brand_motion');
+      const pPulseSpeed = params.get('brand_pulse_speed');
+      const pGlow = params.get('brand_glow');
+      const pName = params.get('brand_name');
+
+      if (pColor) localStorage.setItem('linacre_brand_color', pColor);
+      if (pFont) localStorage.setItem('linacre_brand_font', pFont);
+      if (pFrame) localStorage.setItem('linacre_brand_frame', pFrame);
+      if (pMotion) localStorage.setItem('linacre_brand_motion', pMotion);
+      if (pPulseSpeed) localStorage.setItem('linacre_brand_pulse_speed', pPulseSpeed);
+      if (pGlow) localStorage.setItem('linacre_brand_glow', pGlow);
+      if (pName) localStorage.setItem('linacre_brand_name', pName);
+    } catch (e) {
+      console.error('Failed to parse search params', e);
+    }
+
     const colorId = localStorage.getItem('linacre_brand_color') || 'amber';
     const fontId = localStorage.getItem('linacre_brand_font') || 'cyber';
     const frameId = localStorage.getItem('linacre_brand_frame') || 'hexagon';

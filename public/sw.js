@@ -1,5 +1,5 @@
-var CACHE = "linacre-v5"; // bump on every release so returning visitors get fresh assets
-var URLS = [".", "index.html", "manifest.json", "404.html"];
+var CACHE = "linacre-v6"; // bump on every release so returning visitors get fresh assets
+var URLS = [".", "index.html", "manifest.json", "404.html", "about", "contact", "privacy", "accessibility", "blog", "status"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(

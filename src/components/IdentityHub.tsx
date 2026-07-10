@@ -1081,6 +1081,22 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
 </table>`;
   };
 
+  // Generate and copy shareable custom theme link
+  const handleCopyThemeLink = () => {
+    const url = new URL(window.location.origin + window.location.pathname);
+    url.searchParams.set('brand_color', activeColor.id);
+    url.searchParams.set('brand_font', activeFont.id);
+    url.searchParams.set('brand_frame', activeFrame);
+    url.searchParams.set('brand_motion', activeMotion);
+    if (activeMotion === 'pulse') {
+      url.searchParams.set('brand_pulse_speed', activePulseSpeed);
+    }
+    url.searchParams.set('brand_glow', glowIntensity.toString());
+    url.searchParams.set('brand_name', userName);
+
+    handleCopy(url.toString(), 'theme-link');
+  };
+
   // Helper to copy code to clipboard
   const handleCopy = (text: string, type: string) => {
     navigator.clipboard.writeText(text);
@@ -1372,6 +1388,21 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     />
                   </div>
                 </div>
+              </div>
+
+              {/* Share Custom Theme Link */}
+              <div className="space-y-3 pt-4 border-t border-border-color/30">
+                <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-color animate-pulse" />
+                  <span>Share Custom Theme Identity</span>
+                </label>
+                <button
+                  onClick={handleCopyThemeLink}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-amber-color text-[#0b0e14] font-mono text-xs font-bold rounded-lg hover:bg-amber-glow transition-all active:scale-95 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+                >
+                  {copiedType === 'theme-link' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  <span>{copiedType === 'theme-link' ? 'Link Copied to Clipboard!' : 'Copy Shareable Theme Link'}</span>
+                </button>
               </div>
             </div>
           </div>
