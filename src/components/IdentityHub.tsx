@@ -86,6 +86,7 @@ export default function IdentityHub() {
     return fonts.find(f => f.id === saved) || fonts[0];
   });
   const [glowIntensity, setGlowIntensity] = useState<number>(() => Number(localStorage.getItem('linacre_brand_glow') || '3'));
+  const [a11yIdentityMsg, setA11yIdentityMsg] = useState('');
   
   // User Profile Data
   const [userName, setUserName] = useState(() => localStorage.getItem('linacre_brand_name') || 'DAVID LINACRE');
@@ -115,6 +116,13 @@ export default function IdentityHub() {
     
     // Dispatch event to notify other components reactively (e.g. App.tsx)
     window.dispatchEvent(new Event('linacre-identity-updated'));
+
+    // Announce change to screen readers (debounced via the state reset pattern)
+    setA11yIdentityMsg('');
+    const t = setTimeout(() => setA11yIdentityMsg(
+      `Brand updated: ${activeColor.name} colour, ${frames.find(f => f.id === activeFrame)?.name ?? activeFrame} frame, ${activeFont.name} font.`
+    ), 50);
+    return () => clearTimeout(t);
   }, [
     activeColor,
     activeFont,
@@ -1148,6 +1156,16 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
     <div className="space-y-10 pb-16" id="identity-brand-hub">
       {/* Inject Dynamic Google Fonts on the fly */}
       <style dangerouslySetInnerHTML={{ __html: activeFont.import }} />
+
+      {/* Screen-reader live region for brand setting changes */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ position: 'fixed', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+      >
+        {a11yIdentityMsg}
+      </div>
 
       {/* Intro Header */}
       <div className="space-y-3">

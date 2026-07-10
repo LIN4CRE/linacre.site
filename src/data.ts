@@ -445,7 +445,9 @@ export const MANUAL_PROJECTS: Project[] = [
     role: 'Lead Architect & Designer',
     challenges: 'Upgrading from static HTML to dynamic compiled React while preserving the instant-load terminal theme and strict CSP headers.',
     solution: 'Engineered custom lazy-loaded modules, optimized SVG emblems, and integrated Express server routes with auto-fallback proxy limits.',
-    tech: ['React', 'TypeScript', 'Tailwind CSS v4', 'Express', 'Motion']
+    tech: ['React', 'TypeScript', 'Tailwind CSS v4', 'Express', 'Motion'],
+    liveUrl: 'https://linacre.site',
+    repoUrl: 'https://github.com/LIN4CRE/linacre.site'
   },
   {
     name: 'GhostMail',
@@ -457,7 +459,9 @@ export const MANUAL_PROJECTS: Project[] = [
     role: 'Creator & Maintainer',
     challenges: 'Handling thousands of temporary connections concurrently without leaking file descriptors or memory.',
     solution: 'Designed a pool of workers using Go channels, leveraging SQLite for local storage persistence and Docker multi-stage builds.',
-    tech: ['Go', 'Docker', 'SQLite', 'SMTP', 'Linux']
+    tech: ['Go', 'Docker', 'SQLite', 'SMTP', 'Linux'],
+    repoUrl: 'https://github.com/LIN4CRE/GhostMail',
+    liveUrl: 'https://github.com/LIN4CRE/GhostMail'
   },
   {
     name: 'DomainDeals',
@@ -469,9 +473,12 @@ export const MANUAL_PROJECTS: Project[] = [
     role: 'Full Stack Developer',
     challenges: 'Creating a fast domain checker and indexing system that loads search requests in under 100ms.',
     solution: 'Implemented client-side memoized filters and pre-loaded JSON indexes, styled with brutalist wireframe accents.',
-    tech: ['TypeScript', 'React', 'Tailwind CSS', 'Vite', 'JSON Search']
+    tech: ['TypeScript', 'React', 'Tailwind CSS', 'Vite', 'JSON Search'],
+    repoUrl: 'https://github.com/LIN4CRE/DomainDeals',
+    liveUrl: 'https://github.com/LIN4CRE/DomainDeals'
   }
 ];
+
 
 // Automatically append ecosystem projects to the dashboard
 const ecoProjects: Project[] = ecosystem.map((item: any) => ({

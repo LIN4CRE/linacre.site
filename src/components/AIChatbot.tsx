@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Bot, X, Send, Terminal, Loader2, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -19,6 +19,7 @@ export default function AIChatbot() {
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [a11yMsg, setA11yMsg] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -79,6 +80,8 @@ export default function AIChatbot() {
       ]);
     } finally {
       setIsLoading(false);
+      setA11yMsg('');
+      setTimeout(() => setA11yMsg('AI assistant response received.'), 50);
     }
   };
 
@@ -145,6 +148,16 @@ export default function AIChatbot() {
 
   return (
     <>
+      {/* Screen-reader live region â€” always in DOM, invisible */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        style={{ position: 'fixed', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
+      >
+        {a11yMsg}
+      </div>
+
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}

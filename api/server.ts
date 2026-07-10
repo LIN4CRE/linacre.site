@@ -6,6 +6,8 @@ import fs from "fs";
 import { fileURLToPath } from "url";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import { Redis } from "@upstash/redis";
+import { Ratelimit } from "@upstash/ratelimit";
 
 // Load environment variables from .env
 dotenv.config();
@@ -115,19 +117,62 @@ function checkAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 // Per-IP sliding-window rate limiter for AI proxy routes.
-// These endpoints spend the server's own API keys, so without a limit any
-// visitor (or any third-party site, given the open CORS policy) can drain them.
+// Uses Upstash Redis when UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are set
+// (serverless-consistent across all edge replicas). Falls back to an in-memory Map
+// when those env vars are absent so local dev and CI builds work without any Redis config.
 const RATE_LIMIT_PER_MIN = Number(process.env.RATE_LIMIT_PER_MIN) || 20;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const rateLimitLog = new Map<string, number[]>();
 
-function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
+// Lazily create the Upstash limiter once, only if env vars are present.
+let upstashLimiter: ReturnType<typeof Ratelimit.prototype.limit> extends Promise<infer T> ? null : null = null;
+let upstashRatelimit: InstanceType<typeof Ratelimit> | null = null;
+
+if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+  try {
+    const redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+    upstashRatelimit = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(RATE_LIMIT_PER_MIN, "1 m"),
+      analytics: false,
+      prefix: "linacre_ai_rl",
+    });
+  } catch (e) {
+    console.warn('[rate-limit] Upstash init failed, falling back to in-memory:', e);
+  }
+}
+
+async function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   const forwarded = req.headers["x-forwarded-for"];
   const ip =
     (typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded?.[0]) ||
     req.socket.remoteAddress ||
     "unknown";
 
+  // --- Upstash path (serverless-consistent) ---
+  if (upstashRatelimit) {
+    try {
+      const { success, limit, remaining, reset } = await upstashRatelimit.limit(ip);
+      res.setHeader("X-RateLimit-Limit", String(limit));
+      res.setHeader("X-RateLimit-Remaining", String(remaining));
+      res.setHeader("X-RateLimit-Reset", String(reset));
+      if (!success) {
+        res.setHeader("Retry-After", "60");
+        return res.status(429).json({
+          error: `Rate limit exceeded (${RATE_LIMIT_PER_MIN} requests/minute). Please try again shortly.`
+        });
+      }
+      return next();
+    } catch (e) {
+      console.warn('[rate-limit] Upstash check failed, falling back to in-memory:', e);
+      // fall through to in-memory
+    }
+  }
+
+  // --- In-memory fallback (single-instance / local dev) ---
   const now = Date.now();
   const hits = (rateLimitLog.get(ip) ?? []).filter(t => t > now - RATE_LIMIT_WINDOW_MS);
 
@@ -142,7 +187,6 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   hits.push(now);
   rateLimitLog.set(ip, hits);
 
-  // Bounded memory: evict fully-expired entries once the map grows large
   if (rateLimitLog.size > 1000) {
     for (const [key, times] of rateLimitLog) {
       if (times[times.length - 1] <= now - RATE_LIMIT_WINDOW_MS) rateLimitLog.delete(key);

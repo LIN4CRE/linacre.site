@@ -78,7 +78,7 @@ await esbuild({
 const { data } = await import(pathToFileURL(dataBundle).href);
 fs.rmSync(dataBundle, { force: true });
 
-const SITE = 'https://www.linacre.site';
+const SITE = 'https://linacre.site';
 const PERSON = {
   '@type': 'Person', '@id': `${SITE}/#person`, name: 'David Linacre', url: `${SITE}/`,
   sameAs: ['https://github.com/LIN4CRE', 'https://linkedin.com/in/davidlinacre'],
@@ -107,6 +107,49 @@ function jsonLdFor(route, m) {
           applicationCategory: 'DeveloperApplication', operatingSystem: 'Web' },
       })),
     });
+    // Enhanced: SoftwareSourceCode nodes for verifiable open-source case studies
+    const ghostMail = caseStudies.find(p => p.name === 'GhostMail');
+    if (ghostMail) {
+      graph.push({
+        '@type': 'SoftwareSourceCode',
+        '@id': `${SITE}/#ghostmail`,
+        name: 'GhostMail',
+        description: ghostMail.description || 'Disposable email generation tool built with React and Vite.',
+        codeRepository: 'https://github.com/LIN4CRE/GhostMail',
+        url: ghostMail.url || 'https://github.com/LIN4CRE/GhostMail',
+        programmingLanguage: ['TypeScript', 'React'],
+        creator: { '@id': `${SITE}/#person` },
+        license: 'https://opensource.org/licenses/MIT',
+        applicationCategory: 'DeveloperApplication',
+      });
+    }
+    const domainDeals = caseStudies.find(p => p.name === 'DomainDeals');
+    if (domainDeals) {
+      graph.push({
+        '@type': 'SoftwareSourceCode',
+        '@id': `${SITE}/#domaindeals`,
+        name: 'DomainDeals',
+        description: domainDeals.description || 'Domain availability search and deal-finding tool.',
+        codeRepository: 'https://github.com/LIN4CRE/domaindeals',
+        url: domainDeals.url || 'https://github.com/LIN4CRE/domaindeals',
+        programmingLanguage: ['TypeScript', 'Node.js'],
+        creator: { '@id': `${SITE}/#person` },
+        license: 'https://opensource.org/licenses/MIT',
+        applicationCategory: 'DeveloperApplication',
+      });
+    }
+    // linacre.site itself as a SoftwareApplication
+    graph.push({
+      '@type': 'SoftwareApplication',
+      '@id': `${SITE}/#app`,
+      name: 'linacre.site',
+      description: 'Developer portfolio, toolkit directory, AI playground, and knowledge base by David Linacre.',
+      url: `${SITE}/`,
+      applicationCategory: 'DeveloperApplication',
+      operatingSystem: 'Web',
+      creator: { '@id': `${SITE}/#person` },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
+    });
   }
   if (m.type === 'article') {
     const post = data.posts.find(p => `/blog/${p.slug}` === route);
@@ -129,6 +172,7 @@ function jsonLdFor(route, m) {
   if (route === '/contact') graph.push({ '@type': 'ContactPage', '@id': `${SITE}/contact#page`, url: `${SITE}/contact`, name: m.title });
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 }
+
 
 function headFor(route, m) {
   const robots = m.index ? 'index, follow' : 'noindex, nofollow';

@@ -22,6 +22,8 @@ export interface Project {
   challenges?: string;
   solution?: string;
   tech?: string[];
+  repoUrl?: string;
+  liveUrl?: string;
 }
 
 export interface ChatMessage {

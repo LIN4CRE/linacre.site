@@ -599,14 +599,35 @@ export default function Projects() {
                   )}
                 </div>
 
-                <div className="flex justify-end gap-3 pt-4 border-t border-border-color/30">
+                <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border-color/30">
                   <button
                     onClick={() => setSelectedProject(null)}
                     className="px-4 py-2 border border-border-color rounded-lg text-xs font-mono hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
                     Close
                   </button>
-                  {selectedProject.url ? (
+                  {selectedProject.repoUrl && (
+                    <a
+                      href={selectedProject.repoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2 border border-border-color hover:border-cyan text-cyan font-bold rounded-lg text-xs font-mono transition-colors cursor-pointer"
+                    >
+                      <span>Source Code</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                  {selectedProject.liveUrl ? (
+                    <a
+                      href={selectedProject.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-amber-color hover:bg-amber-color/90 text-black font-bold rounded-lg text-xs font-mono transition-colors cursor-pointer"
+                    >
+                      <span>{selectedProject.tag === 'Live' ? 'Visit Live Site' : 'View Project'}</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : selectedProject.url ? (
                     <a
                       href={selectedProject.url}
                       target="_blank"
@@ -626,6 +647,7 @@ export default function Projects() {
                     </button>
                   )}
                 </div>
+
               </div>
             </motion.div>
           </motion.div>
