@@ -1,0 +1,181 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Bot, X, Send, Terminal, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+
+interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
+export default function AIChatbot() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      role: 'assistant',
+      content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like GhostMail and DomainDeals), his skills, or his professional background.",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+  ]);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isOpen]);
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    const newMsg: Message = {
+      role: 'user',
+      content: userMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages(prev => [...prev, newMsg]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          prompt: userMessage,
+          history: messages.map(m => ({
+            role: m.role,
+            content: m.content
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Network error');
+      }
+
+      const data = await response.json();
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: data.reply || "I didn't receive a response. Please try again.",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: "System error: Failed to connect to secure API chat gateway.",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      {/* Floating Action Button */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-6 right-6 z-40 p-3.5 bg-amber-color text-[#0b0e14] rounded-full hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-amber-color flex items-center justify-center cursor-pointer select-none"
+        style={{ boxShadow: 'var(--linacre-glow-strong)' }}
+        aria-label="Toggle AI Assistant"
+        id="btn-chatbot-toggle"
+      >
+        {isOpen ? <X className="w-5 h-5" /> : <Bot className="w-5 h-5 animate-pulse" />}
+      </button>
+
+      {/* Chat Terminal Window */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            className="fixed bottom-22 right-6 z-40 w-[330px] sm:w-[360px] h-[450px] bg-[#0b0e14] border border-border-color rounded-xl overflow-hidden shadow-2xl flex flex-col font-mono text-xs"
+            id="chatbot-window"
+          >
+            {/* Terminal Header */}
+            <div className="bg-[#111622] px-4 py-3 flex items-center justify-between border-b border-border-color/30">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-amber-color" />
+                <span className="text-foreground font-bold text-[11px]">linacre-assistant.sh</span>
+              </div>
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-color animate-ping" />
+                <span className="text-[9px] text-muted-foreground/80">Online</span>
+              </span>
+            </div>
+
+            {/* Messages Area */}
+            <div 
+              ref={scrollRef}
+              className="flex-1 p-4 overflow-y-auto space-y-4 bg-background/40"
+              id="chatbot-messages"
+            >
+              {messages.map((msg, index) => (
+                <div 
+                  key={index} 
+                  className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
+                >
+                  <div 
+                    className={`max-w-[85%] p-3 rounded-lg leading-relaxed ${
+                      msg.role === 'user'
+                        ? 'bg-amber-color/10 border border-amber-color/25 text-amber-color rounded-tr-none'
+                        : 'bg-muted/30 border border-border-color/50 text-foreground rounded-tl-none'
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                  <span className="text-[9px] text-muted-foreground/60 mt-1 px-1 font-mono">
+                    {msg.timestamp}
+                  </span>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex items-center gap-2 text-muted-foreground text-[10px]">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-color" />
+                  <span>Processing query...</span>
+                </div>
+              )}
+            </div>
+
+            {/* Input Form */}
+            <form 
+              onSubmit={handleSend}
+              className="p-3 bg-[#111622] border-t border-border-color/30 flex items-center gap-2"
+            >
+              <input
+                type="text"
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="Ask about David's projects..."
+                className="flex-1 bg-background border border-border-color/60 rounded px-3 py-2 text-xs text-foreground focus:outline-none focus:border-amber-color"
+                disabled={isLoading}
+                id="chatbot-input"
+              />
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="p-2 bg-amber-color hover:bg-amber-color/90 disabled:opacity-40 text-black rounded transition-colors cursor-pointer"
+                id="btn-chatbot-send"
+              >
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

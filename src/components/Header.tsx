@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -14,14 +14,18 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { id: 'toolkit', label: 'Toolkit', icon: Layers },
     { id: 'projects', label: 'Projects', icon: Briefcase },
+    { id: 'toolkit', label: 'Toolkit', icon: Layers },
     { id: 'agents', label: 'Agents', icon: Bot },
+    { id: 'blog', label: 'Blog', icon: FileText },
+    { id: 'status', label: 'Status', icon: Activity },
     { id: 'learn', label: 'Learn', icon: BookOpen },
     { id: 'lab', label: 'Lab', icon: Cpu },
     { id: 'playground', label: 'Playground', icon: Sliders },
     { id: 'dashboard', label: 'Dashboard', icon: Terminal },
     { id: 'identity', label: 'Identity', icon: Sparkles },
+    { id: 'about', label: 'About', icon: User },
+    { id: 'contact', label: 'Contact', icon: Mail },
   ];
 
   const toggleTheme = () => {
@@ -45,14 +49,35 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}
           <button
-            onClick={() => setActiveTab('toolkit')}
-            className="flex items-center gap-2 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded"
+            onClick={() => {
+              window.history.pushState({}, '', '/projects');
+              window.dispatchEvent(new PopStateEvent('popstate'));
+            }}
+            className="flex items-center gap-2.5 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded p-1 transition-all"
             id="nav-logo"
           >
-            <span className="text-amber-color transform group-hover:translate-x-0.5 transition-transform linacre-animate-pulse">&gt;</span>
-            <span className="text-foreground transition-colors">linacre</span>
-            <span className="text-amber-color">.</span>
-            <span className="text-foreground transition-colors">site</span>
+            <div className="relative w-7 h-7 flex items-center justify-center bg-[#11151f] border border-amber-color/30 rounded-lg group-hover:border-amber-color transition-colors overflow-hidden">
+              <div className="absolute -inset-2 opacity-0 group-hover:opacity-15 blur-md bg-amber-color transition-opacity pointer-events-none" />
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-amber-color transform group-hover:scale-110 transition-transform duration-200"
+              >
+                <polyline points="4 17 10 11 4 5" />
+                <line x1="12" y1="19" x2="20" y2="19" />
+              </svg>
+            </div>
+            <div className="flex items-center">
+              <span className="text-foreground transition-colors">linacre</span>
+              <span className="text-amber-color">.</span>
+              <span className="text-foreground transition-colors">site</span>
+            </div>
           </button>
 
           {/* Desktop Navigation */}

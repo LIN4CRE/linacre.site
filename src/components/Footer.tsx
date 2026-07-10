@@ -23,7 +23,7 @@ export default function Footer() {
       {showTopBtn && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 p-3 bg-amber-color text-[#0b0e14] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
+          className="fixed bottom-24 right-6 z-40 p-3 bg-amber-color text-[#0b0e14] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
           style={{ boxShadow: 'var(--linacre-glow-strong)' }}
           aria-label="Scroll to top"
           id="btn-scroll-top"
@@ -52,10 +52,33 @@ export default function Footer() {
               </p>
             </div>
 
-            {/* Center heart indicator */}
-            <div className="text-[10px] font-mono text-muted-foreground/60 flex items-center gap-1">
-              <span>Built with passion and absolute precision</span>
-              <Heart className="w-3 h-3 text-amber-color fill-amber-color linacre-animate-pulse" />
+            {/* Center heart indicator & links */}
+            <div className="text-[10px] font-mono text-muted-foreground/60 flex flex-col items-center gap-1.5">
+              <div className="flex items-center gap-1">
+                <span>Built with passion and absolute precision</span>
+                <Heart className="w-3 h-3 text-amber-color fill-amber-color linacre-animate-pulse" />
+              </div>
+              <div className="flex items-center gap-3 mt-1.5 text-muted-foreground/50">
+                <button
+                  onClick={() => {
+                    window.history.pushState({}, '', '/privacy');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Privacy Policy
+                </button>
+                <span>·</span>
+                <button
+                  onClick={() => {
+                    window.history.pushState({}, '', '/accessibility');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Accessibility Statement
+                </button>
+              </div>
             </div>
 
             {/* Social Links */}

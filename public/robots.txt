@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+# Sitemap
 Sitemap: https://www.linacre.site/sitemap.xml
+
+# Block common crawlers from admin / private paths if any
+Disallow: /api/
+Disallow: /.well-known/

@@ -444,7 +444,9 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
       gemini: !!process.env.GEMINI_API_KEY,
       openai: !!process.env.OPENAI_API_KEY,
       claude: !!process.env.ANTHROPIC_API_KEY || !!process.env.CLAUDE_API_KEY,
-      litellm: !!process.env.LITELLM_API_KEY
+      litellm: !!process.env.LITELLM_API_KEY,
+      openrouter: !!process.env.OPENROUTER_API_KEY,
+      huggingface: !!process.env.HUGGINGFACE_TOKEN
     });
   });
 
@@ -929,6 +931,248 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   app.delete("/api/auth", (req, res) => {
     res.setHeader('Set-Cookie', `${COOKIE_NAME}=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0`);
     return res.status(200).json({ ok: true });
+  });
+
+  // ── Unified multi-provider chat ──────────────────────────────────────────
+  // One endpoint with explicit provider + model selection. Free-tier models
+  // are open to visitors (rate-limited); premium models are gated behind the
+  // owner's dashboard session so only authenticated use spends real money.
+
+  function isDashAuthed(req: Request): boolean {
+    const secret = process.env.DASHBOARD_SESSION_SECRET;
+    if (!secret) return false;
+    const cookie = req.headers.cookie ?? '';
+    const match = cookie.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
+    if (!match) return false;
+    const [expiresStr, sig] = match[1].split('.');
+    if (!expiresStr || !sig) return false;
+    return timingSafeEqualStr(sig, sign(expiresStr, secret)) && Number(expiresStr) > Date.now();
+  }
+
+  type CatalogModel = { id: string; label: string; tier: 'free' | 'premium' };
+  const MODEL_CATALOG: Record<string, {
+    label: string;
+    hasKey: () => boolean;
+    allowCustomModels?: boolean;
+    models: CatalogModel[];
+  }> = {
+    gemini: {
+      label: 'Google Gemini',
+      hasKey: () => !!process.env.GEMINI_API_KEY,
+      models: [
+        { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash', tier: 'free' },
+        { id: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro', tier: 'premium' }
+      ]
+    },
+    claude: {
+      label: 'Anthropic Claude',
+      hasKey: () => !!(process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY),
+      models: [
+        { id: 'claude-fable-5', label: 'Claude Fable 5', tier: 'premium' },
+        { id: 'claude-opus-4-8', label: 'Claude Opus 4.8', tier: 'premium' },
+        { id: 'claude-sonnet-5', label: 'Claude Sonnet 5', tier: 'premium' },
+        { id: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5', tier: 'premium' }
+      ]
+    },
+    openai: {
+      label: 'OpenAI',
+      hasKey: () => !!process.env.OPENAI_API_KEY,
+      models: [
+        { id: 'gpt-4o-mini', label: 'GPT-4o mini', tier: 'premium' },
+        { id: 'gpt-4o', label: 'GPT-4o', tier: 'premium' }
+      ]
+    },
+    openrouter: {
+      label: 'OpenRouter',
+      hasKey: () => !!process.env.OPENROUTER_API_KEY,
+      allowCustomModels: true, // any model id; ':free'-suffixed ids stay free tier
+      models: [
+        { id: 'openrouter/auto', label: 'Auto (best available)', tier: 'premium' },
+        { id: 'meta-llama/llama-3.3-70b-instruct:free', label: 'Llama 3.3 70B (free)', tier: 'free' },
+        { id: 'deepseek/deepseek-chat-v3-0324:free', label: 'DeepSeek V3 (free)', tier: 'free' }
+      ]
+    }
+  };
+
+  app.get("/api/providers", (req, res) => {
+    const authed = isDashAuthed(req);
+    const providers = Object.entries(MODEL_CATALOG).map(([id, p]) => ({
+      id,
+      label: p.label,
+      available: p.hasKey(),
+      allowCustomModels: !!p.allowCustomModels,
+      models: p.models.map(m => ({ ...m, unlocked: m.tier === 'free' || authed }))
+    }));
+    res.json({ authed, providers });
+  });
+
+  app.post("/api/chat/unified", aiRateLimiter, async (req, res) => {
+    const { provider, model, messages, system } = req.body ?? {};
+
+    const catalog = MODEL_CATALOG[provider as string];
+    if (!catalog) {
+      return res.status(400).json({ error: `Unknown provider "${provider}". Valid: ${Object.keys(MODEL_CATALOG).join(', ')}` });
+    }
+    if (typeof model !== 'string' || !model.trim()) {
+      return res.status(400).json({ error: 'Model id is required' });
+    }
+    if (!Array.isArray(messages) || messages.length === 0 ||
+        !messages.every((m: any) => m && typeof m.content === 'string' && (m.role === 'user' || m.role === 'assistant'))) {
+      return res.status(400).json({ error: 'messages must be a non-empty array of { role: "user"|"assistant", content: string }' });
+    }
+    if (!catalog.hasKey()) {
+      return res.status(503).json({ error: `No server key configured for ${provider}` });
+    }
+
+    // Resolve tier: known models use their catalog tier; custom OpenRouter ids
+    // are free only with an explicit ':free' suffix.
+    const known = catalog.models.find(m => m.id === model);
+    let tier: 'free' | 'premium';
+    if (known) {
+      tier = known.tier;
+    } else if (catalog.allowCustomModels) {
+      tier = model.endsWith(':free') ? 'free' : 'premium';
+    } else {
+      return res.status(400).json({ error: `Unknown model "${model}" for provider ${provider}` });
+    }
+    if (tier === 'premium' && !isDashAuthed(req)) {
+      return res.status(401).json({ error: 'This model is owner-gated. Unlock with your dashboard password in the config panel.' });
+    }
+
+    // Bound the payload to keep abuse cheap
+    const trimmed = (messages as any[]).slice(-40).map(m => ({
+      role: m.role as 'user' | 'assistant',
+      content: String(m.content).slice(0, 32_000)
+    }));
+    const systemPrompt = typeof system === 'string' ? system.slice(0, 8_000) : undefined;
+
+    let active = true;
+    res.on('close', () => { active = false; });
+    const sse = (obj: unknown) => { if (active) res.write(`data: ${JSON.stringify(obj)}\n\n`); };
+    const startSSE = () => {
+      if (!res.headersSent) {
+        res.setHeader('Content-Type', 'text/event-stream');
+        res.setHeader('Cache-Control', 'no-cache');
+        res.setHeader('Connection', 'keep-alive');
+        res.flushHeaders();
+      }
+    };
+    const endSSE = () => { if (active) res.write('data: [DONE]\n\n'); res.end(); };
+
+    try {
+      if (provider === 'gemini') {
+        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+        const stream = await ai.models.generateContentStream({
+          model,
+          contents: trimmed.map(m => ({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] })),
+          config: systemPrompt ? { systemInstruction: systemPrompt } : undefined
+        });
+        startSSE();
+        for await (const chunk of stream) {
+          if (!active) break;
+          if (chunk.text) sse({ text: chunk.text });
+        }
+        return endSSE();
+      }
+
+      if (provider === 'claude') {
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': (process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY)!,
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model,
+            messages: trimmed,
+            ...(systemPrompt ? { system: systemPrompt } : {}),
+            max_tokens: 4096,
+            stream: true
+          })
+        });
+        if (!response.ok) {
+          const errText = await response.text();
+          return res.status(502).json({ error: `Anthropic API error ${response.status}: ${errText.slice(0, 400)}` });
+        }
+        startSSE();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        for await (const chunk of response.body as any) {
+          if (!active) break;
+          buffer += decoder.decode(chunk, { stream: true });
+          let boundary = buffer.indexOf('\n');
+          while (boundary !== -1) {
+            const line = buffer.slice(0, boundary).trim();
+            buffer = buffer.slice(boundary + 1);
+            if (line.startsWith('data: ')) {
+              try {
+                const parsed = JSON.parse(line.slice(6));
+                if (parsed.type === 'content_block_delta' && parsed.delta?.text) sse({ text: parsed.delta.text });
+              } catch { /* partial or ping event */ }
+            }
+            boundary = buffer.indexOf('\n');
+          }
+        }
+        return endSSE();
+      }
+
+      // OpenAI-compatible providers (openai, openrouter)
+      const base = provider === 'openrouter' ? 'https://openrouter.ai/api/v1' : 'https://api.openai.com/v1';
+      const key = provider === 'openrouter' ? process.env.OPENROUTER_API_KEY! : process.env.OPENAI_API_KEY!;
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${key}`
+      };
+      if (provider === 'openrouter') {
+        headers['HTTP-Referer'] = 'https://www.linacre.site';
+        headers['X-Title'] = 'Linacre Lab';
+      }
+      const response = await fetch(`${base}/chat/completions`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model,
+          messages: systemPrompt ? [{ role: 'system', content: systemPrompt }, ...trimmed] : trimmed,
+          stream: true
+        })
+      });
+      if (!response.ok) {
+        const errText = await response.text();
+        return res.status(502).json({ error: `${catalog.label} API error ${response.status}: ${errText.slice(0, 400)}` });
+      }
+      startSSE();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      for await (const chunk of response.body as any) {
+        if (!active) break;
+        buffer += decoder.decode(chunk, { stream: true });
+        let boundary = buffer.indexOf('\n');
+        while (boundary !== -1) {
+          const line = buffer.slice(0, boundary).trim();
+          buffer = buffer.slice(boundary + 1);
+          if (line.startsWith('data: ')) {
+            const dataStr = line.slice(6).trim();
+            if (dataStr && dataStr !== '[DONE]') {
+              try {
+                const parsed = JSON.parse(dataStr);
+                const text = parsed.choices?.[0]?.delta?.content;
+                if (text) sse({ text });
+              } catch { /* partial JSON */ }
+            }
+          }
+          boundary = buffer.indexOf('\n');
+        }
+      }
+      return endSSE();
+    } catch (err: any) {
+      console.error(`[Unified Chat Error] ${provider}/${model}:`, err.message || err);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: err.message || 'Provider request failed' });
+      }
+      sse({ error: err.message || 'Stream interrupted' });
+      return res.end();
+    }
   });
 
   // Vite static file / hot reload serving middleware

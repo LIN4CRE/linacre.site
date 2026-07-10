@@ -7,7 +7,7 @@ interface ChatSession {
   id: string;
   title: string;
   messages: ChatMessage[];
-  provider: 'gemini' | 'openai' | 'ollama' | 'litellm' | 'claude';
+  provider: LabProvider;
   timestamp: string;
 }
 
@@ -84,7 +84,7 @@ const MOCK_API_LOGS = [
 ];
 
 export default function Lab({ theme = 'dark' }: LabProps) {
-  const [activeProvider, setActiveProvider] = useState<'gemini' | 'openai' | 'ollama' | 'litellm' | 'claude'>('gemini');
+  const [activeProvider, setActiveProvider] = useState<LabProvider>('gemini');
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string>('');
   const [configOpen, setConfigOpen] = useState(false);
@@ -837,7 +837,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   }, []);
 
   // Save history to localStorage
-  const saveSessionMessages = (sessionId: string, newMessages: ChatMessage[], newProvider?: 'gemini' | 'openai' | 'ollama' | 'litellm' | 'claude') => {
+  const saveSessionMessages = (sessionId: string, newMessages: ChatMessage[], newProvider?: LabProvider) => {
     setSessions(prev => {
       const updated = prev.map(s => {
         if (s.id === sessionId) {
@@ -939,7 +939,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     });
   };
 
-  const handleSelectProvider = (prov: 'gemini' | 'openai' | 'ollama' | 'litellm' | 'claude') => {
+  const handleSelectProvider = (prov: LabProvider) => {
     setActiveProvider(prov);
     setSessions(prev => {
       const updated = prev.map(s => {

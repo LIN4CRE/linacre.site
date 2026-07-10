@@ -18,6 +18,10 @@ export interface Project {
   url: string;
   host: string;
   tag: string;
+  role?: string;
+  challenges?: string;
+  solution?: string;
+  tech?: string[];
 }
 
 export interface ChatMessage {
@@ -48,4 +52,15 @@ export interface ChangelogItem {
   version: string;
   title: string;
   description: string;
+}
+
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  date: string;
+  readTime: string;
+  tags: string[];
+  category: 'concurrency' | 'styling' | 'caching' | 'automation';
 }

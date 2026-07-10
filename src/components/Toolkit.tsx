@@ -214,6 +214,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                             onClick={(e) => toggleBookmark(tool.id, e)}
                             className="p-1 rounded-md text-muted-foreground hover:text-amber-color hover:bg-muted/60 transition-colors cursor-pointer"
                             title={isBookmarked ? 'Remove from stack' : 'Add to stack'}
+                            aria-label={isBookmarked ? 'Remove from stack' : 'Add to stack'}
                           >
                             <Star
                               className={`w-3.5 h-3.5 transition-transform ${

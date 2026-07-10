@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Compass, Cpu, BookOpen, Terminal, Github, ExternalLink, Hash, CornerDownLeft, Star, Sparkles, Sliders, Briefcase, Bot } from 'lucide-react';
+import { Search, Compass, Cpu, BookOpen, Terminal, Github, ExternalLink, Hash, CornerDownLeft, Star, Sparkles, Sliders, Briefcase, Bot, Activity, FileText } from 'lucide-react';
 import { TOOLS } from '../data';
 import { Tool } from '../types';
 
@@ -49,6 +49,8 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
     { id: 'nav-toolkit', label: 'Go to Toolkit Directory', icon: Compass, action: () => { setActiveTab('toolkit'); onClose(); }, meta: 'View 40+ curated developer tools' },
     { id: 'nav-projects', label: 'Go to Projects Portfolio', icon: Briefcase, action: () => { setActiveTab('projects'); onClose(); }, meta: 'Manage, build, and showcase workspace applications' },
     { id: 'nav-agents', label: 'Go to AI Autonomous Agents Hub', icon: Bot, action: () => { setActiveTab('agents'); onClose(); }, meta: 'Create, coordinate, and delegate jobs to simulated bot agents' },
+    { id: 'nav-blog', label: 'Go to Technical Case Studies & Blog', icon: FileText, action: () => { setActiveTab('blog'); onClose(); }, meta: 'Deep dives on concurrency, styling and caching architectures' },
+    { id: 'nav-status', label: 'Go to Systems Status Console', icon: Activity, action: () => { setActiveTab('status'); onClose(); }, meta: 'Check live latency, operational checks and server loads' },
     { id: 'nav-learn', label: 'Go to Curriculum & Learn', icon: BookOpen, action: () => { setActiveTab('learn'); onClose(); }, meta: 'Free roadmaps and learning paths' },
     { id: 'nav-lab', label: 'Go to AI Dev Assistant Lab', icon: Cpu, action: () => { setActiveTab('lab'); onClose(); }, meta: 'Interactive multi-provider AI terminal' },
     { id: 'nav-playground', label: 'Go to Developer Playground', icon: Sliders, action: () => { setActiveTab('playground'); onClose(); }, meta: 'JWT decoder, Glassmorphism builder, RegEx tester, and generators' },

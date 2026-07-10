@@ -7,6 +7,7 @@ import Toolkit from './components/Toolkit';
 import Footer from './components/Footer';
 import CommandPalette from './components/CommandPalette';
 import ErrorBoundary from './components/ErrorBoundary';
+import AIChatbot from './components/AIChatbot';
 import { CHANGELOG } from './data';
 import { ToolCategory } from './types';
 
@@ -18,18 +19,31 @@ const IdentityHub = lazy(() => import('./components/IdentityHub'));
 const DevPlayground = lazy(() => import('./components/DevPlayground'));
 const Projects = lazy(() => import('./components/Projects'));
 const AgentsHub = lazy(() => import('./components/AgentsHub'));
+const About = lazy(() => import('./components/About'));
+const Contact = lazy(() => import('./components/Contact'));
+const Privacy = lazy(() => import('./components/Privacy'));
+const AccessibilityStatement = lazy(() => import('./components/AccessibilityStatement'));
+const Blog = lazy(() => import('./components/Blog'));
+const StatusPage = lazy(() => import('./components/StatusPage'));
 
 export default function App() {
+  const getTabFromPath = () => {
+    const path = window.location.pathname.replace(/^\//, '');
+    const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'];
+    return validTabs.includes(path) ? path : 'projects';
+  };
+
   const [activeTab, setActiveTab] = useState<string>(() => {
+    const initialTab = getTabFromPath();
     const hash = window.location.hash.replace('#', '');
-    const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents'];
+    const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'];
     if (hash && validTabs.includes(hash)) {
       return hash;
     }
     try {
-      return localStorage.getItem('linacre_active_tab') || 'projects';
+      return localStorage.getItem('linacre_active_tab') || initialTab;
     } catch (e) {
-      return 'projects';
+      return initialTab;
     }
   });
   const [activeCategory, setActiveCategory] = useState<ToolCategory | 'all'>('all');
@@ -51,27 +65,33 @@ export default function App() {
     };
   }, []);
 
-  // Synchronize activeTab with URL Hash for back/forward navigation support
+  // Synchronize activeTab with URL path for back/forward navigation support
   useEffect(() => {
+    const handlePopState = () => {
+      setActiveTab(getTabFromPath());
+    };
+
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
-      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents'];
+      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact'];
       if (hash && validTabs.includes(hash)) {
         setActiveTab(hash);
       }
     };
 
-    handleHashChange();
-
+    window.addEventListener('popstate', handlePopState);
     window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
-  // Update URL Hash and localStorage when activeTab changes
+  // Update URL path and localStorage when activeTab changes
   useEffect(() => {
-    const currentHash = window.location.hash.replace('#', '');
-    if (currentHash !== activeTab) {
-      window.history.pushState(null, '', `#${activeTab}`);
+    const currentPath = window.location.pathname.replace(/^\//, '');
+    if (currentPath !== activeTab) {
+      window.history.pushState(null, '', `/${activeTab}`);
     }
     try {
       localStorage.setItem('linacre_active_tab', activeTab);
@@ -587,6 +607,100 @@ export default function App() {
               <AgentsHub />
             </motion.div>
           )}
+
+          {activeTab === 'about' && (
+            <motion.div
+              key="about"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <About />
+            </motion.div>
+          )}
+
+          {activeTab === 'contact' && (
+            <motion.div
+              key="contact"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <Contact />
+            </motion.div>
+          )}
+
+          {activeTab === 'privacy' && (
+            <motion.div
+              key="privacy"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <Privacy />
+            </motion.div>
+          )}
+
+          {activeTab === 'accessibility' && (
+            <motion.div
+              key="accessibility"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <AccessibilityStatement />
+            </motion.div>
+          )}
+
+          {activeTab === 'blog' && (
+            <motion.div
+              key="blog"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <Blog />
+            </motion.div>
+          )}
+
+          {activeTab === 'status' && (
+            <motion.div
+              key="status"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <StatusPage />
+            </motion.div>
+          )}
+
+          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'].includes(activeTab) && (
+            <motion.div
+              key="404"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="py-20 text-center space-y-6 max-w-md mx-auto"
+            >
+              <div className="font-mono text-5xl text-amber-color font-bold animate-pulse">&gt; 404</div>
+              <h2 className="font-display text-xl font-bold text-foreground">ROUTE NOT RESOLVED</h2>
+              <p className="text-xs text-muted-foreground font-mono leading-relaxed">
+                The requested URL path could not be located in David's developer directory files.
+              </p>
+              <button
+                onClick={() => setActiveTab('projects')}
+                className="px-4 py-2 bg-amber-color text-black font-mono text-xs font-bold rounded-lg hover:bg-amber-color/90 transition-all cursor-pointer"
+              >
+                Return to Projects
+              </button>
+            </motion.div>
+          )}
           </AnimatePresence>
         </Suspense>
         </ErrorBoundary>
@@ -600,6 +714,8 @@ export default function App() {
         setSearchQuery={setSearchQuery}
         setActiveCategory={setActiveCategory}
       />
+
+      <AIChatbot />
 
       <Footer />
     </div>

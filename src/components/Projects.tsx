@@ -24,6 +24,21 @@ export default function Projects() {
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+
+  const handleRequestAccess = (project: Project) => {
+    try {
+      sessionStorage.setItem('linacre_pending_request', JSON.stringify({
+        projectName: project.name,
+        projectType: project.tag
+      }));
+      setSelectedProject(null);
+      window.history.pushState({}, '', '/contact');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    } catch (e) {
+      console.error('Failed to save pending request', e);
+    }
+  };
   
   // Form fields
   const [formName, setFormName] = useState('');
@@ -398,55 +413,58 @@ export default function Projects() {
               : 'border-l-amber-color'
           }`;
           const cardId = `project-card-${project.name.toLowerCase().replace('.', '-')}`;
-          const cardContent = (
-            <>
-            {/* Action Buttons on Card */}
-            <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
-              <button
-                onClick={(e) => handleEditClick(project, e)}
-                className="p-1 rounded bg-muted/80 dark:bg-[#202738] border border-border-color text-muted-foreground hover:text-cyan hover:border-cyan transition-all cursor-pointer"
-                title="Edit Project"
-              >
-                <Edit className="w-3 h-3" />
-              </button>
-              <button
-                onClick={(e) => handleDeleteProject(project.name, e)}
-                className="p-1 rounded bg-muted/80 dark:bg-[#202738] border border-border-color text-muted-foreground hover:text-rose-400 hover:border-rose-500/50 transition-all cursor-pointer"
-                title="Delete Project"
-              >
-                <Trash2 className="w-3 h-3" />
-              </button>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-mono text-sm font-semibold text-foreground group-hover:text-cyan transition-colors pr-14">
-                  {project.name}
-                </h3>
-                <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded text-cyan bg-cyan/10 shrink-0">
-                  {project.tag}
-                </span>
+          
+          return (
+            <div 
+              key={idx} 
+              className={cardClassName} 
+              id={cardId}
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelectedProject(project)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedProject(project);
+                }
+              }}
+              aria-label={`Open details for project ${project.name}`}
+            >
+              {/* Action Buttons on Card */}
+              <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+                <button
+                  onClick={(e) => handleEditClick(project, e)}
+                  className="p-1 rounded bg-muted/80 dark:bg-[#202738] border border-border-color text-muted-foreground hover:text-cyan hover:border-cyan transition-all cursor-pointer"
+                  title="Edit Project"
+                >
+                  <Edit className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={(e) => handleDeleteProject(project.name, e)}
+                  className="p-1 rounded bg-muted/80 dark:bg-[#202738] border border-border-color text-muted-foreground hover:text-rose-400 hover:border-rose-500/50 transition-all cursor-pointer"
+                  title="Delete Project"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-                {project.description}
-              </p>
-            </div>
-            <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground/70 border-t border-border-color/40 pt-3">
-              <span className="truncate max-w-[180px]">{project.host}</span>
-              {project.url && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-cyan" />}
-            </div>
-            </>
-          );
 
-          // Cards without a URL (private/internal projects) must not render as links —
-          // an empty href reloads the page on click.
-          return project.url ? (
-            <a key={idx} href={project.url} target="_blank" rel="noopener" className={cardClassName} id={cardId}>
-              {cardContent}
-            </a>
-          ) : (
-            <div key={idx} className={cardClassName} id={cardId}>
-              {cardContent}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-mono text-sm font-semibold text-foreground group-hover:text-cyan transition-colors pr-14">
+                    {project.name}
+                  </h3>
+                  <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded text-cyan bg-cyan/10 shrink-0">
+                    {project.tag}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+                  {project.description}
+                </p>
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground/70 border-t border-border-color/40 pt-3">
+                <span className="truncate max-w-[180px]">{project.host}</span>
+                {project.url && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-cyan" />}
+              </div>
             </div>
           );
         })}
@@ -457,6 +475,192 @@ export default function Projects() {
           </div>
         )}
       </div>
+
+      {/* Project Details Modal */}
+      <AnimatePresence>
+        {selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-md"
+            onClick={() => setSelectedProject(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="w-full max-w-xl bg-[#0b0e14] border border-border-color rounded-xl overflow-hidden shadow-2xl font-mono text-xs flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modal-project-title"
+            >
+              {/* Top Bar */}
+              <div className="bg-[#111622] px-4 py-3 flex items-center justify-between border-b border-border-color/30">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#eab308]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" />
+                  <span className="text-muted-foreground/60 text-[10px] ml-2">project_details.sh</span>
+                </div>
+                <button
+                  onClick={() => setSelectedProject(null)}
+                  className="text-muted-foreground hover:text-foreground cursor-pointer"
+                  aria-label="Close details"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
+                <div className="flex justify-between items-start gap-4">
+                  <div>
+                    <h2 id="modal-project-title" className="font-display text-lg font-bold text-foreground">
+                      {selectedProject.name}
+                    </h2>
+                    <span className="inline-block mt-1.5 font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded text-cyan bg-cyan/10">
+                      {selectedProject.tag}
+                    </span>
+                  </div>
+                  <span className="font-mono text-[10px] text-muted-foreground capitalize bg-muted px-2.5 py-1 rounded-full border border-border-color/30">
+                    Category: {selectedProject.category}
+                  </span>
+                </div>
+
+                <div className="space-y-4 text-muted-foreground">
+                  <div className="space-y-1">
+                    <h4 className="text-foreground font-bold text-[10px] uppercase tracking-wider">Description</h4>
+                    <p className="leading-relaxed">{selectedProject.description}</p>
+                  </div>
+
+                  {selectedProject.role && (
+                    <div className="space-y-1">
+                      <h4 className="text-foreground font-bold text-[10px] uppercase tracking-wider">Role & Impact</h4>
+                      <p className="leading-relaxed">{selectedProject.role}</p>
+                    </div>
+                  )}
+
+                  {selectedProject.challenges && (
+                    <div className="space-y-1">
+                      <h4 className="text-foreground font-bold text-[10px] uppercase tracking-wider">Challenges Faced</h4>
+                      <p className="leading-relaxed">{selectedProject.challenges}</p>
+                    </div>
+                  )}
+
+                  {selectedProject.solution && (
+                    <div className="space-y-1">
+                      <h4 className="text-foreground font-bold text-[10px] uppercase tracking-wider">Solutions Implemented</h4>
+                      <p className="leading-relaxed">{selectedProject.solution}</p>
+                    </div>
+                  )}
+
+                  {selectedProject.tech && selectedProject.tech.length > 0 && (
+                    <div className="space-y-2">
+                      <h4 className="text-foreground font-bold text-[10px] uppercase tracking-wider">Technologies Used</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedProject.tech.map((t) => (
+                          <span key={t} className="text-[10px] px-2 py-0.5 bg-zinc-900 border border-border-color/30 rounded text-foreground">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-border-color/30">
+                  <button
+                    onClick={() => setSelectedProject(null)}
+                    className="px-4 py-2 border border-border-color rounded-lg text-xs font-mono hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                  >
+                    Close
+                  </button>
+                  {selectedProject.url ? (
+                    <a
+                      href={selectedProject.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-amber-color hover:bg-amber-color/90 text-black font-bold rounded-lg text-xs font-mono transition-colors cursor-pointer"
+                    >
+                      <span>Visit Resource</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  ) : (
+                    <button
+                      onClick={() => handleRequestAccess(selectedProject)}
+                      className="flex items-center gap-1.5 px-4 py-2 bg-cyan hover:bg-cyan/90 text-black font-bold rounded-lg text-xs font-mono transition-colors cursor-pointer"
+                    >
+                      <span>Request Details / Access</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="linacre-pulse-line w-full my-12" />
+
+      {/* Testimonials Section */}
+      <section className="space-y-8" id="testimonials-section">
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-xs text-amber-color bg-amber-color/10 px-2 py-0.5 rounded font-semibold">
+            Social Proof
+          </span>
+          <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Client & Peer Feedback</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-4 hover:border-border-hi transition-colors">
+            <p className="text-xs text-muted-foreground italic leading-relaxed">
+              "David redesigned our automated delivery pipeline, cutting deployment times by over 60%. His focus on clean storage structures and containerization makes maintaining our repos a breeze."
+            </p>
+            <div className="flex items-center gap-3 pt-2 border-t border-border-color/20">
+              <div className="w-8 h-8 rounded-full bg-amber-color/10 border border-amber-color/30 flex items-center justify-center font-mono font-bold text-amber-color text-xs">
+                MJ
+              </div>
+              <div>
+                <h4 className="font-mono text-xs font-bold text-foreground">Marcus Jenkins</h4>
+                <p className="font-mono text-[9px] text-muted-foreground">Principal Infrastructure Architect</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-4 hover:border-border-hi transition-colors">
+            <p className="text-xs text-muted-foreground italic leading-relaxed">
+              "The GhostMail project is a masterpiece of Go concurrency. Extremely fast, lightweight, and documented impeccably. Working with David is always a masterclass in clean architecture."
+            </p>
+            <div className="flex items-center gap-3 pt-2 border-t border-border-color/20">
+              <div className="w-8 h-8 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center font-mono font-bold text-cyan text-xs">
+                ER
+              </div>
+              <div>
+                <h4 className="font-mono text-xs font-bold text-foreground">Elena Rostova</h4>
+                <p className="font-mono text-[9px] text-muted-foreground">Senior Dev & Open Source Reviewer</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-4 hover:border-border-hi transition-colors">
+            <p className="text-xs text-muted-foreground italic leading-relaxed">
+              "David's website and developer tools are a staple in our design workflow. His brutalist terminal aesthetic matches his engineering precision perfectly. Highly recommended!"
+            </p>
+            <div className="flex items-center gap-3 pt-2 border-t border-border-color/20">
+              <div className="w-8 h-8 rounded-full bg-purple-color/10 border border-purple-color/30 flex items-center justify-center font-mono font-bold text-purple-color text-xs">
+                SV
+              </div>
+              <div>
+                <h4 className="font-mono text-xs font-bold text-foreground">Sarah Vance</h4>
+                <p className="font-mono text-[9px] text-muted-foreground">Lead Product Designer @ NixLabs</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

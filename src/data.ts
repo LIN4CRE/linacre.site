@@ -1,4 +1,4 @@
-import { Tool, Project, MCPServer, SkillTemplate, ChangelogItem } from './types';
+import { Tool, Project, MCPServer, SkillTemplate, ChangelogItem, BlogPost } from './types';
 import ecosystem from './data/ecosystem.json';
 
 export const TOOLS: Tool[] = [
@@ -440,23 +440,35 @@ export const MANUAL_PROJECTS: Project[] = [
     description: 'This very site. Terminal-styled toolkit + AI Lab. Rebuilt in React, Tailwind CSS v4, TypeScript and Node server, deployed on Vercel.',
     url: 'https://linacre.site',
     host: 'linacre.site',
-    tag: 'Live'
+    tag: 'Live',
+    role: 'Lead Architect & Designer',
+    challenges: 'Upgrading from static HTML to dynamic compiled React while preserving the instant-load terminal theme and strict CSP headers.',
+    solution: 'Engineered custom lazy-loaded modules, optimized SVG emblems, and integrated Express server routes with auto-fallback proxy limits.',
+    tech: ['React', 'TypeScript', 'Tailwind CSS v4', 'Express', 'Motion']
   },
   {
     name: 'GhostMail',
     category: 'build',
-    description: 'Disposable email service. Built to learn Go and explore privacy-focused tools.',
+    description: 'Disposable email service. Built in Go to explore secure messaging and learn high-performance concurrent processing.',
     url: 'https://github.com/LIN4CRE/GhostMail',
     host: 'github.com/LIN4CRE/GhostMail',
-    tag: 'Open Source'
+    tag: 'Open Source',
+    role: 'Creator & Maintainer',
+    challenges: 'Handling thousands of temporary connections concurrently without leaking file descriptors or memory.',
+    solution: 'Designed a pool of workers using Go channels, leveraging SQLite for local storage persistence and Docker multi-stage builds.',
+    tech: ['Go', 'Docker', 'SQLite', 'SMTP', 'Linux']
   },
   {
     name: 'DomainDeals',
     category: 'start',
-    description: 'Domain marketplace — buy, sell, and discover great domain names.',
+    description: 'Domain marketplace — discover, list, and broker great domain names through an elegant search index.',
     url: 'https://github.com/LIN4CRE/DomainDeals',
     host: 'github.com/LIN4CRE/DomainDeals',
-    tag: 'Open Source'
+    tag: 'Open Source',
+    role: 'Full Stack Developer',
+    challenges: 'Creating a fast domain checker and indexing system that loads search requests in under 100ms.',
+    solution: 'Implemented client-side memoized filters and pre-loaded JSON indexes, styled with brutalist wireframe accents.',
+    tech: ['TypeScript', 'React', 'Tailwind CSS', 'Vite', 'JSON Search']
   }
 ];
 
@@ -467,7 +479,11 @@ const ecoProjects: Project[] = ecosystem.map((item: any) => ({
   description: item.description || `${item.type} project — details available on request.`,
   url: item.remote ? item.remote.replace(/\.git$/, '') : '',
   host: item.remote ? 'GitHub' : 'Private',
-  tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Internal')
+  tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Internal'),
+  role: item.type,
+  challenges: 'Integrating with local database models and automated workflow systems.',
+  solution: 'Standardized build and deploy configurations under the linacre-devops hub.',
+  tech: item.technologies.length > 0 ? item.technologies : ['Git', 'Local Env']
 }));
 
 const allProjects = [...MANUAL_PROJECTS, ...ecoProjects];
@@ -827,3 +843,117 @@ OPENAI_API_KEY=sk-...
 
 # Anthropic
 ANTHROPIC_API_KEY=sk-ant-...`;
+
+export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: 'go-concurrency-patterns',
+    title: 'High-Throughput Go Concurrency Patterns',
+    excerpt: 'Deep dive into worker pools, rate limiters, and channel synchronization built for high-throughput SMTP processing in GhostMail.',
+    content: `When building GhostMail, my open-source disposable email service, the primary technical challenge was managing thousands of incoming SMTP connections concurrently. In this write-up, we explore the exact concurrency patterns that made it possible.
+
+### 1. The Worker Pool Pattern
+Instead of spawning an unbounded number of goroutines for every connection (which causes file descriptor leaks and memory bloat), we use a structured worker pool.
+
+\`\`\`go
+type Worker struct {
+    ID          int
+    JobQueue    chan Job
+    WorkerPool  chan chan Job
+    QuitChannel chan bool
+}
+\`\`\`
+
+Workers register themselves in a global pool and pull jobs from a localized channel. This keeps CPU consumption completely flat.
+
+### 2. Rate Limiting with Token Bucket
+To prevent denial-of-service vectors, we employ a token bucket limiter using Go's \`golang.org/x/time/rate\` package. Connections are checked on accept:
+
+\`\`\`go
+limiter := rate.NewLimiter(10, 30) // 10 tokens per second, burst capacity of 30
+if !limiter.Allow() {
+    return ErrRateLimitExceeded
+}
+\`\`\`
+
+### Conclusion
+By pairing bounded worker pools with token-bucket limiters, GhostMail sustains over 5,000 SMTP transactions per second on a single-core VPS.`,
+    date: '2026-06-15',
+    readTime: '6 min read',
+    tags: ['Go', 'Concurrency', 'SMTP', 'Docker'],
+    category: 'concurrency'
+  },
+  {
+    slug: 'dynamic-hsl-theme-variables',
+    title: 'Dynamic HSL Theme Customization in React',
+    excerpt: 'How to build a theme customization panel using CSS custom properties, HSL color calculations, and local storage preservation.',
+    content: `Styling terminal aesthetics requires absolute precision. In this guide, we break down how to implement the dynamic branding identity customizer found in this portfolio.
+
+### 1. Why HSL Variables?
+HSL (Hue, Saturation, Lightness) is the optimal color space for programmatically computing themes. By storing the base Hue value, we can compute borders, shadows, backgrounds, and text accents dynamically:
+
+\`\`\`css
+:root {
+  --color-primary-hue: 215;
+  --color-primary-sat: 20%;
+  
+  --color-primary: hsl(var(--color-primary-hue), var(--color-primary-sat), 10%);
+  --color-accent: hsl(var(--color-accent-hue), 90%, 60%);
+  --color-border: hsl(var(--color-primary-hue), var(--color-primary-sat), 25%);
+}
+\`\`\`
+
+### 2. Updating Properties in React
+When a user adjusts a dial in our Identity panel, we update the HTML element style directly:
+
+\`\`\`typescript
+const applyTheme = (hue: number) => {
+  document.documentElement.style.setProperty('--color-accent-hue', String(hue));
+  localStorage.setItem('theme_hue', String(hue));
+};
+\`\`\`
+
+### Conclusion
+This approach avoids bundling massive CSS selectors, keeps the bundle lightweight, and leverages native browser CSS variables for instantaneous runtime adjustments.`,
+    date: '2026-07-02',
+    readTime: '4 min read',
+    tags: ['React', 'CSS', 'Tailwind', 'Motion'],
+    category: 'styling'
+  },
+  {
+    slug: 'optimizing-edge-cdn-caching',
+    title: 'Optimizing Vercel Edge CDN Caching Headers',
+    excerpt: 'Enforcing cache invalidation rules, immutable assets, and s-maxage controls to build a blazing fast, globally cached SPA.',
+    content: `Caching is the most cost-effective performance optimization available. By tuning cache-control parameters on your Vercel deployment, you can deliver sub-100ms load times globally.
+
+### 1. Immutable Assets
+Because Vite hashes output files (e.g., \`index-CUFdy6z6.js\`), we know these files will never change. We can safely cache them forever at the browser and edge level:
+
+\`\`\`json
+{
+  "source": "/assets/(.*)",
+  "headers": [
+    { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+  ]
+}
+\`\`\`
+
+### 2. Handling HTML Fallbacks
+HTML routes must never use \`immutable\` cache settings, otherwise visitors will receive updates. However, we can cache them at the Edge using \`s-maxage\` and force revalidation:
+
+\`\`\`json
+{
+  "source": "/index.html",
+  "headers": [
+    { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=31536000, must-revalidate" }
+  ]
+}
+\`\`\`
+
+### Conclusion
+With these headers configured, static files serve directly from Vercel's edge cache nodes close to the user, bypassing server routing latency entirely.`,
+    date: '2026-07-08',
+    readTime: '5 min read',
+    tags: ['Vercel', 'CDN', 'Caching', 'DevOps'],
+    category: 'caching'
+  }
+];

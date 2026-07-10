@@ -3,11 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>linacre.site · Developer Portfolio & Toolkit Directory</title>
+    <title>David Linacre | Developer Portfolio, AI Toolkit &amp; Open Source Projects</title>
     
     <!-- SEO and Discovery -->
-    <meta name="description" content="David Linacre's personal developer portfolio, toolkit directory, and live AI playground." />
-    <meta name="keywords" content="David Linacre, Developer Portfolio, Toolkit Directory, AI Playground, Developer Utilities, Free Dev Tools" />
+    <meta name="description" content="David Linacre's professional developer portfolio featuring open-source projects (GhostMail, DomainDeals, PokeGuru), developer utilities, AI experiments, and interactive toolkit. Based in the UK." />
+    <meta name="keywords" content="David Linacre, developer portfolio, React developer, TypeScript, open source, AI tools, developer toolkit, GhostMail, DomainDeals, Vercel" />
+    <meta name="author" content="David Linacre" />
+    <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://www.linacre.site/" />
 
     <!-- Web App & PWA Support -->
@@ -26,17 +28,18 @@
     <link rel="apple-touch-icon" href="/icon-192.png" />
 
     <!-- Open Graph (Facebook / LinkedIn) Social Cards -->
-    <meta property="og:title" content="linacre.site · Developer Portfolio & Toolkit Directory" />
-    <meta property="og:description" content="David Linacre's personal developer portfolio, toolkit directory, and live AI playground." />
+    <meta property="og:title" content="David Linacre | Developer Portfolio &amp; AI Playground" />
+    <meta property="og:description" content="Explore open-source projects, developer tools, and AI experiments by David Linacre." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="linacre.site" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:url" content="https://www.linacre.site/" />
     <meta property="og:image" content="https://www.linacre.site/og.png" />
 
     <!-- Twitter Social Cards -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="linacre.site · Developer Portfolio & Toolkit Directory" />
-    <meta name="twitter:description" content="David Linacre's personal developer portfolio, toolkit directory, and live AI playground." />
+    <meta name="twitter:title" content="David Linacre | Developer Portfolio &amp; AI Playground" />
+    <meta name="twitter:description" content="Open-source projects, developer utilities, AI experiments." />
     <meta name="twitter:image" content="https://www.linacre.site/og.png" />
 
     <!-- JSON-LD Structured Data -->
@@ -53,32 +56,42 @@
             "https://github.com/LIN4CRE",
             "https://linkedin.com/in/davidlinacre"
           ],
-          "jobTitle": "Developer"
+          "jobTitle": "Full Stack Developer & AI Engineer",
+          "description": "Developer building open-source tools, AI applications, and developer utilities.",
+          "knowsAbout": ["React", "TypeScript", "Node.js", "Python", "AI", "Developer Tools"]
         },
         {
           "@type": "WebSite",
           "@id": "https://www.linacre.site/#website",
           "url": "https://www.linacre.site/",
           "name": "linacre.site",
-          "description": "Developer portfolio, toolkit directory, project hub, and AI playground.",
+          "description": "Developer portfolio, toolkit directory, project hub, and AI playground by David Linacre.",
           "publisher": { "@id": "https://www.linacre.site/#person" }
         },
         {
           "@type": "ItemList",
-          "@id": "https://www.linacre.site/#featured-projects",
-          "name": "Featured projects",
+          "@id": "https://www.linacre.site/#projects",
+          "name": "Featured Projects",
           "itemListElement": [
             {
               "@type": "ListItem",
               "position": 1,
-              "url": "https://github.com/LIN4CRE/GhostMail",
-              "name": "GhostMail"
+              "item": {
+                "@type": "SoftwareApplication",
+                "name": "GhostMail",
+                "url": "https://github.com/LIN4CRE/GhostMail",
+                "description": "Disposable email service built to learn Go and explore privacy-focused tools."
+              }
             },
             {
               "@type": "ListItem",
               "position": 2,
-              "url": "https://github.com/LIN4CRE/DomainDeals",
-              "name": "DomainDeals"
+              "item": {
+                "@type": "SoftwareApplication",
+                "name": "DomainDeals",
+                "url": "https://github.com/LIN4CRE/DomainDeals",
+                "description": "Domain marketplace — buy, sell, and discover great domain names."
+              }
             }
           ]
         }
