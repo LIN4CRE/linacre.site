@@ -32,7 +32,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   private handleReset = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
-    window.location.hash = '#projects';
+    window.history.pushState({}, '', '/projects');
     window.location.reload();
   };
 
