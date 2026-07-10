@@ -1,9 +1,11 @@
-var CACHE = "linacre-v6"; // bump on every release so returning visitors get fresh assets
-var URLS = [".", "index.html", "manifest.json", "404.html", "about", "contact", "privacy", "accessibility", "blog", "status"];
+var CACHE = "linacre-v7"; // bump on every release so returning visitors get fresh assets
+var URLS = [".", "index.html", "manifest.json", "404.html", "about", "contact", "privacy", "accessibility", "blog", "status", "agents", "lab", "identity", "projects", "toolkit", "learn", "playground"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
-    caches.open(CACHE).then(function (cache) { return cache.addAll(URLS); })
+    caches.open(CACHE).then(function (cache) {
+      return Promise.all(URLS.map(function (u) { return cache.add(u).catch(function () {}); }));
+    })
   );
   self.skipWaiting();
 });

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Terminal as TerminalIcon, Sparkles } from 'lucide-react';
-import { TERMINAL_LINES } from '../data';
+import { TERMINAL_LINES } from '../data/core';
 
 interface TerminalIntroProps {
   onComplete?: () => void;

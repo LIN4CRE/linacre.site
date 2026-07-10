@@ -5,15 +5,15 @@ import Header from './components/Header';
 import { RouteHead } from './components/RouteHead';
 import routeMeta from '../route-meta.json';
 import TerminalIntro from './components/TerminalIntro';
-import Toolkit from './components/Toolkit';
 import Footer from './components/Footer';
-import CommandPalette from './components/CommandPalette';
 import ErrorBoundary from './components/ErrorBoundary';
-import AIChatbot from './components/AIChatbot';
-import { CHANGELOG } from './data';
+import { CHANGELOG } from './data/core';
 import { ToolCategory } from './types';
 
 // Lazy-loaded page components for optimization (code splitting)
+const Toolkit = lazy(() => import('./components/Toolkit'));
+const CommandPalette = lazy(() => import('./components/CommandPalette'));
+const AIChatbot = lazy(() => import('./components/AIChatbot'));
 const Learn = lazy(() => import('./components/Learn'));
 const Lab = lazy(() => import('./components/Lab'));
 const Dashboard = lazy(() => import('./components/Dashboard'));
@@ -65,6 +65,8 @@ export default function App() {
   const [activeCategory, setActiveCategory] = useState<ToolCategory | 'all'>('all');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteLoaded, setPaletteLoaded] = useState(false);
+  const [chatbotReady, setChatbotReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
 
@@ -180,6 +182,17 @@ export default function App() {
     return () => window.removeEventListener('linacre-identity-updated', syncIdentity);
   }, []);
 
+  // Defer the chatbot chunk to idle time after first paint
+  useEffect(() => {
+    const start = () => setChatbotReady(true);
+    if ('requestIdleCallback' in window) {
+      const id = (window as any).requestIdleCallback(start, { timeout: 3000 });
+      return () => (window as any).cancelIdleCallback?.(id);
+    }
+    const t = setTimeout(start, 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   // Synchronize theme on initial mount
   useEffect(() => {
     try {
@@ -203,7 +216,7 @@ export default function App() {
           return; // Skip if focused on input fields
         }
         e.preventDefault();
-        setPaletteOpen(true);
+        (setPaletteLoaded(true), setPaletteOpen(true));
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -223,7 +236,7 @@ export default function App() {
     cyber: {
       display: '"Space Grotesk", "Inter", sans-serif',
       mono: '"JetBrains Mono", monospace',
-      import: "@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap');"
+      import: "" /* default fonts are self-hosted in /fonts — no external CSS */
     },
     neotech: {
       display: '"Orbitron", sans-serif',
@@ -407,7 +420,7 @@ export default function App() {
         setActiveTab={setActiveTab}
         theme={theme}
         setTheme={setTheme}
-        openPalette={() => setPaletteOpen(true)}
+        openPalette={() => (setPaletteLoaded(true), setPaletteOpen(true))}
       />
 
       <main id="main-content" role="main" className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
@@ -514,7 +527,7 @@ export default function App() {
                 <Toolkit
                   searchQuery={searchQuery}
                   setSearchQuery={setSearchQuery}
-                  openPalette={() => setPaletteOpen(true)}
+                  openPalette={() => (setPaletteLoaded(true), setPaletteOpen(true))}
                   activeCategory={activeCategory}
                   setActiveCategory={setActiveCategory}
                 />
@@ -749,16 +762,25 @@ export default function App() {
         </ErrorBoundary>
       </main>
 
-      {/* Global command palette */}
-      <CommandPalette
-        isOpen={paletteOpen}
-        onClose={() => setPaletteOpen(false)}
-        setActiveTab={setActiveTab}
-        setSearchQuery={setSearchQuery}
-        setActiveCategory={setActiveCategory}
-      />
+      {/* Global command palette — chunk loads on first open */}
+      {paletteLoaded && (
+        <Suspense fallback={null}>
+          <CommandPalette
+            isOpen={paletteOpen}
+            onClose={() => setPaletteOpen(false)}
+            setActiveTab={setActiveTab}
+            setSearchQuery={setSearchQuery}
+            setActiveCategory={setActiveCategory}
+          />
+        </Suspense>
+      )}
 
-      <AIChatbot />
+      {/* Chatbot loads after first paint so it never blocks initial render */}
+      {chatbotReady && (
+        <Suspense fallback={null}>
+          <AIChatbot />
+        </Suspense>
+      )}
 
       <Footer />
     </div>

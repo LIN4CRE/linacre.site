@@ -634,59 +634,98 @@ export default function Projects() {
 
       <div className="linacre-pulse-line w-full my-12" />
 
-      {/* Testimonials Section */}
-      <section className="space-y-8" id="testimonials-section">
+      {/* Proof of work — verifiable sources only (replaces former unverifiable testimonials) */}
+      <section className="space-y-8" id="proof-section" aria-labelledby="proof-heading">
         <div className="flex items-center gap-2">
           <span className="font-mono text-xs text-amber-color bg-amber-color/10 px-2 py-0.5 rounded font-semibold">
-            Social Proof
+            Proof of Work
           </span>
-          <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Client & Peer Feedback</h2>
+          <h2 id="proof-heading" className="font-display text-lg font-bold tracking-tight text-foreground">Verifiable, not testimonial</h2>
         </div>
 
+        <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
+          No anonymous praise here — everything below links to public, checkable sources. Client references
+          are available on request via the contact form.
+        </p>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-4 hover:border-border-hi transition-colors">
-            <p className="text-xs text-muted-foreground italic leading-relaxed">
-              "David redesigned our automated delivery pipeline, cutting deployment times by over 60%. His focus on clean storage structures and containerization makes maintaining our repos a breeze."
+          <a
+            href="https://github.com/LIN4CRE/GhostMail"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-3 hover:border-amber-color/60 transition-colors block"
+          >
+            <h3 className="font-mono text-xs font-bold text-amber-color">GhostMail — source code</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Go concurrency, worker pools and SMTP handling. Read the code, the commits and the README yourself.
             </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-border-color/20">
-              <div className="w-8 h-8 rounded-full bg-amber-color/10 border border-amber-color/30 flex items-center justify-center font-mono font-bold text-amber-color text-xs">
-                MJ
-              </div>
-              <div>
-                <h4 className="font-mono text-xs font-bold text-foreground">Marcus Jenkins</h4>
-                <p className="font-mono text-[9px] text-muted-foreground">Principal Infrastructure Architect</p>
-              </div>
-            </div>
-          </div>
+            <span className="font-mono text-[10px] text-cyan inline-flex items-center gap-1">github.com/LIN4CRE/GhostMail <ExternalLink className="w-3 h-3" /></span>
+          </a>
 
-          <div className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-4 hover:border-border-hi transition-colors">
-            <p className="text-xs text-muted-foreground italic leading-relaxed">
-              "The GhostMail project is a masterpiece of Go concurrency. Extremely fast, lightweight, and documented impeccably. Working with David is always a masterclass in clean architecture."
+          <a
+            href="https://github.com/LIN4CRE/DomainDeals"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-3 hover:border-amber-color/60 transition-colors block"
+          >
+            <h3 className="font-mono text-xs font-bold text-amber-color">DomainDeals — source code</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              TypeScript, React and sub-100ms client-side search indexes. Full case study in the project card above.
             </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-border-color/20">
-              <div className="w-8 h-8 rounded-full bg-cyan/10 border border-cyan/30 flex items-center justify-center font-mono font-bold text-cyan text-xs">
-                ER
-              </div>
-              <div>
-                <h4 className="font-mono text-xs font-bold text-foreground">Elena Rostova</h4>
-                <p className="font-mono text-[9px] text-muted-foreground">Senior Dev & Open Source Reviewer</p>
-              </div>
-            </div>
-          </div>
+            <span className="font-mono text-[10px] text-cyan inline-flex items-center gap-1">github.com/LIN4CRE/DomainDeals <ExternalLink className="w-3 h-3" /></span>
+          </a>
 
-          <div className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-4 hover:border-border-hi transition-colors">
-            <p className="text-xs text-muted-foreground italic leading-relaxed">
-              "David's website and developer tools are a staple in our design workflow. His brutalist terminal aesthetic matches his engineering precision perfectly. Highly recommended!"
+          <a
+            href="https://github.com/LIN4CRE"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-muted/10 border border-border-color/50 rounded-xl p-6 space-y-3 hover:border-amber-color/60 transition-colors block"
+          >
+            <h3 className="font-mono text-xs font-bold text-amber-color">Full GitHub profile</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Commit history, build-in-public activity and every open repository — the unfiltered record.
             </p>
-            <div className="flex items-center gap-3 pt-2 border-t border-border-color/20">
-              <div className="w-8 h-8 rounded-full bg-purple-color/10 border border-purple-color/30 flex items-center justify-center font-mono font-bold text-purple-color text-xs">
-                SV
-              </div>
-              <div>
-                <h4 className="font-mono text-xs font-bold text-foreground">Sarah Vance</h4>
-                <p className="font-mono text-[9px] text-muted-foreground">Lead Product Designer @ NixLabs</p>
-              </div>
-            </div>
+            <span className="font-mono text-[10px] text-cyan inline-flex items-center gap-1">github.com/LIN4CRE <ExternalLink className="w-3 h-3" /></span>
+          </a>
+        </div>
+      </section>
+
+      <div className="linacre-pulse-line w-full my-12" />
+
+      {/* Hire CTA */}
+      <section className="space-y-6" id="hire-section" aria-labelledby="hire-heading">
+        <div className="bg-amber-color/5 border border-amber-color/30 rounded-2xl p-8 space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-color opacity-60 motion-reduce:animate-none"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-color"></span>
+            </span>
+            <span className="font-mono text-[10px] uppercase tracking-widest text-emerald-color font-bold">Available for freelance &amp; contract work</span>
+          </div>
+          <h2 id="hire-heading" className="font-display text-2xl font-bold tracking-tight text-foreground">Have a project in mind?</h2>
+          <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
+            I take on product builds, AI integrations, developer tooling and automation — from scoped
+            two-week engagements to longer contracts. Tell me what you&#39;re building and I&#39;ll reply
+            with an honest assessment of fit, timeline and cost.
+          </p>
+          <div className="flex flex-wrap gap-3 pt-2">
+            <a
+              href="/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                window.history.pushState({}, '', '/contact');
+                window.dispatchEvent(new PopStateEvent('popstate'));
+              }}
+              className="px-5 py-2.5 bg-amber-color hover:bg-amber-color/90 text-black font-bold rounded-lg text-xs font-mono transition-colors cursor-pointer"
+            >
+              Start a conversation →
+            </a>
+            <a
+              href="mailto:david@linacre.site"
+              className="px-5 py-2.5 border border-border-color hover:border-amber-color text-foreground font-mono text-xs rounded-lg transition-colors cursor-pointer"
+            >
+              david@linacre.site
+            </a>
           </div>
         </div>
       </section>

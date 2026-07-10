@@ -14,22 +14,69 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.disable('x-powered-by');
 const PORT = Number(process.env.PORT) || 3000;
 
 // Body parser middleware (restricted to 10kb to prevent denial-of-service)
 app.use(express.json({ limit: "10kb" }));
 
-// Enable CORS for all origins (specifically file:// for Lively Wallpaper)
+// CORS allowlist. Reflects only trusted origins instead of "*" so third-party
+// sites cannot spend this server's AI quota from a visitor's browser.
+// "null" stays allowed intentionally: the Lively Wallpaper client runs from
+// file:// (see AGENTS.md) and is still covered by the per-IP rate limits.
+const CORS_ALLOWED = new Set(["https://www.linacre.site", "https://linacre.site", "null"]);
+function isAllowedOrigin(origin: string): boolean {
+  if (CORS_ALLOWED.has(origin)) return true;
+  try {
+    const { protocol, hostname } = new URL(origin);
+    if (protocol === "http:" && (hostname === "localhost" || hostname === "127.0.0.1")) return true; // local dev
+    if (protocol === "https:" && (hostname.endsWith("-linacres-projects.vercel.app") || hostname === "linacre-site-repo.vercel.app")) return true; // previews
+  } catch { /* not a URL */ }
+  return false;
+}
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+  const origin = req.headers.origin;
+  res.header("Vary", "Origin");
+  if (origin && isAllowedOrigin(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    res.header("Access-Control-Max-Age", "86400");
+  }
   if (req.method === "OPTIONS") {
-    res.sendStatus(200);
+    res.sendStatus(204);
   } else {
     next();
   }
 });
+
+// Structured JSON logs for abuse review (one line per event).
+function logEvent(kind: string, fields: Record<string, unknown> = {}) {
+  console.log(JSON.stringify({ ts: new Date().toISOString(), kind, ...fields }));
+}
+
+// Shared input guard for all AI chat endpoints. Body size is already capped
+// at 10kb by express.json; this adds shape/length checks and a clear 400.
+const MAX_PROMPT_CHARS = 4000;
+const MAX_HISTORY_ITEMS = 24;
+function chatInputGuard(req: Request, res: Response, next: NextFunction) {
+  const { prompt, history, messages } = req.body ?? {};
+  if (prompt !== undefined && (typeof prompt !== "string" || prompt.length === 0 || prompt.length > MAX_PROMPT_CHARS)) {
+    return res.status(400).json({ error: `Prompt must be a non-empty string of at most ${MAX_PROMPT_CHARS} characters.` });
+  }
+  for (const arr of [history, messages]) {
+    if (arr === undefined) continue;
+    if (!Array.isArray(arr) || arr.length > MAX_HISTORY_ITEMS) {
+      return res.status(400).json({ error: `History must be an array of at most ${MAX_HISTORY_ITEMS} messages.` });
+    }
+    for (const m of arr) {
+      if (m && typeof m.content === "string" && m.content.length > 8000) {
+        return res.status(400).json({ error: "A history message exceeds the maximum length of 8000 characters." });
+      }
+    }
+  }
+  next();
+}
 
 // Dashboard session auth helpers (hoisted to the top)
 const COOKIE_NAME = 'linacre_dash_session';
@@ -134,6 +181,23 @@ app.post("/api/contact", (req, res) => {
     return res.status(400).json({ error: "Subject exceeds maximum length of 200 characters." });
   }
 
+  // Bot protection (free, no third-party service):
+  // 1. Honeypot — "company" is invisible to humans; bots that fill it get a
+  //    success response so they do not adapt, but the submission is dropped.
+  // 2. Time gate — forms submitted faster than a human can type are dropped.
+  const { company, startedAt } = req.body ?? {};
+  if (typeof company === "string" && company.trim() !== "") {
+    logEvent("contact.honeypot", { ua: req.headers["user-agent"] ?? "" });
+    return res.status(200).json({ requestId: `req_${crypto.randomBytes(8).toString("hex")}` });
+  }
+  if (typeof startedAt === "number" && Number.isFinite(startedAt)) {
+    const elapsed = Date.now() - startedAt;
+    if (elapsed >= 0 && elapsed < 2500) {
+      logEvent("contact.too_fast", { elapsedMs: elapsed });
+      return res.status(400).json({ error: "Form submitted too quickly. Please review your message and try again." });
+    }
+  }
+
   const forwarded = req.headers["x-forwarded-for"];
   const ip =
     (typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded?.[0]) ||
@@ -165,7 +229,7 @@ app.post("/api/contact", (req, res) => {
 
   const requestId = `req_${crypto.randomBytes(8).toString("hex")}`;
 
-  console.log(`[Contact Submission] Success. RequestID: ${requestId}, Email Hash: ${crypto.createHash('sha256').update(email).digest('hex').substring(0, 16)}`);
+  logEvent("contact.accepted", { requestId, emailHash: crypto.createHash('sha256').update(email).digest('hex').substring(0, 16) });
 
   // Local file-based backup for dev environments (ignores read-only Vercel tmp/root write errors)
   try {
@@ -182,7 +246,7 @@ app.post("/api/contact", (req, res) => {
 });
 
   // API route for Gemini Chat proxying securely
-  app.post("/api/chat", aiRateLimiter, async (req, res) => {
+  app.post("/api/chat", chatInputGuard, aiRateLimiter, async (req, res) => {
     const { prompt, history } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
@@ -311,7 +375,7 @@ app.post("/api/contact", (req, res) => {
   });
 
   // API route for Gemini Streaming Chat securely (SSE)
-  app.post("/api/chat/stream", aiRateLimiter, async (req, res) => {
+  app.post("/api/chat/stream", chatInputGuard, aiRateLimiter, async (req, res) => {
     const { prompt, history } = req.body;
     if (!prompt) {
       return res.status(400).json({ error: "Prompt is required" });
@@ -609,7 +673,7 @@ app.post("/api/contact", (req, res) => {
   });
 
   // Secure Server-side OpenAI Streaming Proxy
-  app.post("/api/chat/openai", aiRateLimiter, async (req, res) => {
+  app.post("/api/chat/openai", chatInputGuard, aiRateLimiter, async (req, res) => {
     const { prompt, history, apiKey: clientApiKey } = req.body;
     const apiKey = clientApiKey || process.env.OPENAI_API_KEY;
     if (!apiKey) {
@@ -672,7 +736,7 @@ app.post("/api/contact", (req, res) => {
   });
 
   // Secure Server-side Claude Streaming Proxy
-  app.post("/api/chat/claude", aiRateLimiter, async (req, res) => {
+  app.post("/api/chat/claude", chatInputGuard, aiRateLimiter, async (req, res) => {
     const { prompt, history, apiKey: clientApiKey } = req.body;
     const apiKey = clientApiKey || process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
     if (!apiKey) {
@@ -1096,7 +1160,7 @@ app.post("/api/contact", (req, res) => {
     res.json({ authed, providers });
   });
 
-  app.post("/api/chat/unified", aiRateLimiter, async (req, res) => {
+  app.post("/api/chat/unified", chatInputGuard, aiRateLimiter, async (req, res) => {
     const { provider, model, messages, system } = req.body ?? {};
 
     const catalog = MODEL_CATALOG[provider as string];

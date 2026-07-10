@@ -10,6 +10,8 @@ export default function Contact() {
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [requestId, setRequestId] = useState('');
+  const [company, setCompany] = useState(''); // honeypot — humans never see or fill this
+  const [startedAt] = useState(() => Date.now()); // server drops sub-human-speed submissions
 
   // Check for access request parameter
   useEffect(() => {
@@ -57,7 +59,7 @@ export default function Contact() {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        body: JSON.stringify({ email, subject, message })
+        body: JSON.stringify({ email, subject, message, company, startedAt })
       });
       
       const body = await response.json().catch(() => ({}));
@@ -145,6 +147,19 @@ export default function Contact() {
                   onSubmit={handleSubmit}
                   className="space-y-5"
                 >
+                  {/* Honeypot: visually hidden, removed from tab order and AT. Bots that fill it are silently dropped server-side. */}
+                  <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}>
+                    <label htmlFor="company">Company (leave blank)</label>
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                    />
+                  </div>
                   <div className="space-y-1">
                     <label htmlFor="email" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Email Address *</label>
                     <input

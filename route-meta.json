@@ -46,19 +46,25 @@
       "title": "Go Concurrency Patterns | David Linacre",
       "description": "Deep dive into worker pools, rate limiters, and channel synchronization in Go.",
       "canonical": "https://www.linacre.site/blog/go-concurrency-patterns",
-      "index": true
+      "index": true,
+      "type": "article",
+      "published": "2026-06-15"
     },
     "/blog/dynamic-hsl-theme-variables": {
       "title": "Dynamic HSL Theme Customization | David Linacre",
       "description": "How to build a theme customization panel using CSS custom properties and HSL in React.",
       "canonical": "https://www.linacre.site/blog/dynamic-hsl-theme-variables",
-      "index": true
+      "index": true,
+      "type": "article",
+      "published": "2026-07-02"
     },
     "/blog/optimizing-edge-cdn-caching": {
       "title": "Optimizing Vercel Edge CDN Caching | David Linacre",
       "description": "Enforcing cache invalidation rules, immutable assets, and s-maxage controls on Vercel.",
       "canonical": "https://www.linacre.site/blog/optimizing-edge-cdn-caching",
-      "index": true
+      "index": true,
+      "type": "article",
+      "published": "2026-07-08"
     },
     "/playground": {
       "title": "Developer utility playground | David Linacre",
@@ -89,6 +95,30 @@
       "description": "",
       "canonical": "https://www.linacre.site/dashboard",
       "index": false
+    },
+    "/agents": {
+      "title": "Agents Hub | Autonomous agent playbooks | David Linacre",
+      "description": "Agent workflows, automation playbooks and executor patterns used across the linacre.site toolchain.",
+      "canonical": "https://www.linacre.site/agents",
+      "index": true
+    },
+    "/lab": {
+      "title": "AI Lab | Model sandbox and experiments | David Linacre",
+      "description": "An interactive AI lab: chat with models, inspect data structures and explore live experiments in the browser.",
+      "canonical": "https://www.linacre.site/lab",
+      "index": true
+    },
+    "/identity": {
+      "title": "Identity Hub | Live brand and monogram builder | David Linacre",
+      "description": "Customise the linacre.site brand system live: colours, frames, motion and typography with exportable SVG monograms.",
+      "canonical": "https://www.linacre.site/identity",
+      "index": true
+    },
+    "/status": {
+      "title": "Site status | linacre.site",
+      "description": "Operational status for linacre.site pages, APIs and deployment pipeline.",
+      "canonical": "https://www.linacre.site/status",
+      "index": true
     }
   }
 }

@@ -1,9 +1,9 @@
 User-agent: *
 Allow: /
+Allow: /.well-known/security.txt
 
-# Sitemap
-Sitemap: https://www.linacre.site/sitemap.xml
-
-# Block common crawlers from admin / private paths if any
+# Keep crawlers out of API endpoints and the private dashboard
 Disallow: /api/
-Disallow: /.well-known/
+Disallow: /dashboard
+
+Sitemap: https://www.linacre.site/sitemap.xml
