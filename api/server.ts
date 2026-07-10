@@ -3,7 +3,6 @@ import type { Request, Response, NextFunction } from "express";
 import path from "path";
 import crypto from "crypto";
 import { fileURLToPath } from "url";
-import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
@@ -935,6 +934,11 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   // Vite static file / hot reload serving middleware
   if (process.env.NODE_ENV !== "production") {
     (async () => {
+      // Dev-only dynamic import: a static top-level `import ... from "vite"`
+      // pulls vite -> rollup -> @rollup/rollup-linux-x64-gnu into the production
+      // serverless cold path, which crashes every function invocation when the
+      // native binding is absent (npm optional-deps bug, npm/cli#4828).
+      const { createServer: createViteServer } = await import("vite");
       const vite = await createViteServer({
         server: { middlewareMode: true },
         appType: "spa",
