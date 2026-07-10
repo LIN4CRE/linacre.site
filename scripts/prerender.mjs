@@ -67,7 +67,10 @@ function mdToHtml(md) {
 }
 
 // ------------------------------------------------------------- site content
-const meta = JSON.parse(fs.readFileSync(path.join(root, 'route-meta.json'), 'utf8'));
+// Strip a possible UTF-8 BOM before parsing -- some Windows editors/tools
+// save JSON with a leading BOM, which breaks JSON.parse silently otherwise.
+const stripBom = (s) => (s.charCodeAt(0) === 0xFEFF ? s.slice(1) : s);
+const meta = JSON.parse(stripBom(fs.readFileSync(path.join(root, 'route-meta.json'), 'utf8')));
 
 // Bundle the typed data module, then import it.
 const dataBundle = path.join(distDir, '.prerender-data.mjs');
