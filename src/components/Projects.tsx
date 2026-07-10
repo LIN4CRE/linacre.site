@@ -442,23 +442,14 @@ export default function Projects() {
               key={idx} 
               className={cardClassName} 
               id={cardId}
-              role="button"
-              tabIndex={0}
-              onClick={() => setSelectedProject(project)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setSelectedProject(project);
-                }
-              }}
-              aria-label={`Open details for project ${project.name}`}
             >
               {/* Action Buttons on Card */}
-              <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+              <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150 z-10">
                 <button
                   onClick={(e) => handleEditClick(project, e)}
                   className="p-1 rounded bg-muted/80 dark:bg-[#202738] border border-border-color text-muted-foreground hover:text-cyan hover:border-cyan transition-all cursor-pointer"
                   title="Edit Project"
+                  aria-label={`Edit project ${project.name}`}
                 >
                   <Edit className="w-3 h-3" />
                 </button>
@@ -466,6 +457,7 @@ export default function Projects() {
                   onClick={(e) => handleDeleteProject(project.name, e)}
                   className="p-1 rounded bg-muted/80 dark:bg-[#202738] border border-border-color text-muted-foreground hover:text-rose-400 hover:border-rose-500/50 transition-all cursor-pointer"
                   title="Delete Project"
+                  aria-label={`Delete project ${project.name}`}
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -473,8 +465,14 @@ export default function Projects() {
 
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-mono text-sm font-semibold text-foreground group-hover:text-cyan transition-colors pr-14">
-                    {project.name}
+                  <h3 className="font-mono text-sm font-semibold text-foreground pr-14">
+                    <button
+                      onClick={() => setSelectedProject(project)}
+                      className="text-left hover:text-cyan transition-colors cursor-pointer focus:outline-none focus:underline font-semibold"
+                      aria-label={`View details for project ${project.name}`}
+                    >
+                      {project.name}
+                    </button>
                   </h3>
                   <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded text-cyan bg-cyan/10 shrink-0">
                     {project.tag}
@@ -484,9 +482,17 @@ export default function Projects() {
                   {project.description}
                 </p>
               </div>
+              
               <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground/70 border-t border-border-color/40 pt-3">
                 <span className="truncate max-w-[180px]">{project.host}</span>
-                {project.url && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-cyan" />}
+                <button
+                  onClick={() => setSelectedProject(project)}
+                  className="text-cyan hover:text-cyan/80 transition-colors flex items-center gap-1 cursor-pointer focus:outline-none focus:underline"
+                  aria-label={`View details for project ${project.name}`}
+                >
+                  <span>Details</span>
+                  <ExternalLink className="w-3 h-3 text-cyan" />
+                </button>
               </div>
             </div>
           );

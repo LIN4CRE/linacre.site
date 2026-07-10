@@ -1,11 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Clock, ArrowRight, X, BookOpen, Hash } from 'lucide-react';
 import { BLOG_POSTS } from '../data';
 import { BlogPost } from '../types';
 
 export default function Blog() {
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const getPostFromUrl = () => {
+    const parts = window.location.pathname.split('/');
+    if (parts.length === 3 && parts[1] === 'blog') {
+      const slug = parts[2];
+      return BLOG_POSTS.find(p => p.slug === slug) || null;
+    }
+    return null;
+  };
+
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(() => getPostFromUrl());
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setSelectedPost(getPostFromUrl());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    if (selectedPost) {
+      const newPath = `/blog/${selectedPost.slug}`;
+      if (window.location.pathname !== newPath) {
+        window.history.pushState(null, '', newPath);
+      }
+    } else {
+      if (window.location.pathname.startsWith('/blog/')) {
+        const newPath = '/blog';
+        if (window.location.pathname !== newPath) {
+          window.history.pushState(null, '', newPath);
+        }
+      }
+    }
+  }, [selectedPost]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -19,7 +52,7 @@ export default function Blog() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 14 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
   };
 
   const getCategoryColor = (cat: string) => {
@@ -58,21 +91,17 @@ export default function Blog() {
       {/* Posts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6" id="blog-posts-grid">
         {BLOG_POSTS.map((post, idx) => (
-          <motion.div
+          <motion.a
             key={post.slug}
+            href={`/blog/${post.slug}`}
             variants={itemVariants}
             whileHover={{ y: -4 }}
-            onClick={() => setSelectedPost(post)}
-            className="group flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi transition-all cursor-pointer border-t-[3px] border-t-border-color"
-            role="button"
-            tabIndex={0}
-            aria-label={`Read article: ${post.title}`}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                setSelectedPost(post);
-              }
+            onClick={(e) => {
+              e.preventDefault();
+              setSelectedPost(post);
             }}
+            className="group flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi transition-all cursor-pointer border-t-[3px] border-t-border-color focus:outline-none focus:ring-2 focus:ring-cyan/50"
+            aria-label={`Read article: ${post.title}`}
           >
             <div>
               {/* Category / Read time */}
@@ -104,7 +133,7 @@ export default function Blog() {
                 Read Logs <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </div>
-          </motion.div>
+          </motion.a>
         ))}
       </div>
 

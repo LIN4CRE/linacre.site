@@ -1001,7 +1001,11 @@ border-radius: 12px;`;
                             </button>
                           )}
                         </div>
-                        <pre className="w-full h-24 p-3 bg-[#090b0f] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-amber-color">
+                        <pre 
+                          tabIndex={0} 
+                          aria-label="Decoded JWT header JSON"
+                          className="w-full h-24 p-3 bg-[#090b0f] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-amber-color focus:outline-none focus:ring-1 focus:ring-amber-color"
+                        >
                           {jwtHeader ? jwtHeader : <span className="text-muted-foreground/40">// waiting for input...</span>}
                         </pre>
                       </div>
@@ -1020,7 +1024,11 @@ border-radius: 12px;`;
                             </button>
                           )}
                         </div>
-                        <pre className="w-full h-44 p-3 bg-[#090b0f] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-cyan">
+                        <pre 
+                          tabIndex={0} 
+                          aria-label="Decoded JWT payload JSON"
+                          className="w-full h-44 p-3 bg-[#090b0f] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-cyan focus:outline-none focus:ring-1 focus:ring-cyan"
+                        >
                           {jwtPayload ? jwtPayload : <span className="text-muted-foreground/40">// waiting for input...</span>}
                         </pre>
                       </div>
@@ -1045,10 +1053,11 @@ border-radius: 12px;`;
                       {/* Blur Slider */}
                       <div className="space-y-1.5">
                         <div className="flex justify-between font-semibold">
-                          <span className="text-muted-foreground">Backdrop Blur</span>
+                          <label htmlFor="glass-blur-slider" className="text-muted-foreground">Backdrop Blur</label>
                           <span className="text-cyan">{glassBlur}px</span>
                         </div>
                         <input
+                          id="glass-blur-slider"
                           type="range"
                           min="0"
                           max="40"
@@ -1061,10 +1070,11 @@ border-radius: 12px;`;
                       {/* Opacity Slider */}
                       <div className="space-y-1.5">
                         <div className="flex justify-between font-semibold">
-                          <span className="text-muted-foreground">Glass Opacity</span>
+                          <label htmlFor="glass-opacity-slider" className="text-muted-foreground">Glass Opacity</label>
                           <span className="text-cyan">{glassOpacity}%</span>
                         </div>
                         <input
+                          id="glass-opacity-slider"
                           type="range"
                           min="5"
                           max="90"
@@ -1077,10 +1087,11 @@ border-radius: 12px;`;
                       {/* Border Width */}
                       <div className="space-y-1.5">
                         <div className="flex justify-between font-semibold">
-                          <span className="text-muted-foreground">Border Stroke</span>
+                          <label htmlFor="glass-border-slider" className="text-muted-foreground">Border Stroke</label>
                           <span className="text-cyan">{glassBorder}px</span>
                         </div>
                         <input
+                          id="glass-border-slider"
                           type="range"
                           min="0"
                           max="5"
@@ -1093,10 +1104,11 @@ border-radius: 12px;`;
                       {/* Glow Slider */}
                       <div className="space-y-1.5">
                         <div className="flex justify-between font-semibold">
-                          <span className="text-muted-foreground">Ambient Glow Size</span>
+                          <label htmlFor="glass-glow-slider" className="text-muted-foreground">Ambient Glow Size</label>
                           <span className="text-cyan">{glassGlow}px</span>
                         </div>
                         <input
+                          id="glass-glow-slider"
                           type="range"
                           min="0"
                           max="12"
@@ -1176,7 +1188,11 @@ border-radius: 12px;`;
                             </button>
                           </div>
                         </div>
-                        <pre className="p-3 bg-[#090b0f] text-[10px] font-mono rounded-lg border border-border-color h-24 overflow-y-auto scrollbar-thin text-muted-foreground select-text">
+                        <pre 
+                          tabIndex={0}
+                          aria-label="Generated CSS code output"
+                          className="p-3 bg-[#090b0f] text-[10px] font-mono rounded-lg border border-border-color h-24 overflow-y-auto scrollbar-thin text-muted-foreground select-text focus:outline-none focus:ring-1 focus:ring-cyan"
+                        >
                           {getGlassCssString()}
                         </pre>
                       </div>
@@ -1406,10 +1422,11 @@ border-radius: 12px;`;
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
                           <div className="space-y-1">
                             <div className="flex justify-between font-semibold">
-                              <span className="text-muted-foreground">Password Length</span>
+                              <label htmlFor="password-length-slider" className="text-muted-foreground">Password Length</label>
                               <span className="text-cyan">{passLength} chars</span>
                             </div>
                             <input
+                              id="password-length-slider"
                               type="range"
                               min="8"
                               max="64"
@@ -1481,8 +1498,9 @@ border-radius: 12px;`;
                     
                     {/* Select active algorithm preset */}
                     <div className="flex items-center gap-2 font-mono text-xs">
-                      <span className="text-muted-foreground">Preset:</span>
+                      <label htmlFor="preset-select" className="text-muted-foreground">Preset:</label>
                       <select
+                        id="preset-select"
                         value={selectedProgram.id}
                         onChange={(e) => {
                           const prog = C_PROGRAMS.find(p => p.id === e.target.value);
@@ -1507,7 +1525,11 @@ border-radius: 12px;`;
                         </div>
                         <div className="relative border border-border-color/60 rounded-lg overflow-hidden bg-[#070a0f] p-4 font-mono text-xs text-foreground min-h-[280px] leading-relaxed">
                           {/* Code with step line highlighting! */}
-                          <pre className="overflow-x-auto whitespace-pre">
+                          <pre 
+                            tabIndex={0}
+                            aria-label="C source editor code"
+                            className="overflow-x-auto whitespace-pre focus:outline-none focus:ring-1 focus:ring-amber-color rounded"
+                          >
                             {editableCode.split('\n').map((lineText, lineIdx) => {
                               const isCurrentLine = compileSuccess && selectedProgram.steps[currentStepIndex]?.line === (lineIdx + 1);
                               return (

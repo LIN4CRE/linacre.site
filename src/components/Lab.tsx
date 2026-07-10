@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Cpu, Settings, ChevronDown, ChevronUp, Send, RefreshCw, Key, Sparkles, AlertCircle, CheckCircle, Info, Lock, Download, Trash2, StopCircle, Plus, MessageSquare, Folder, File, FolderPlus, FilePlus, Upload, Paperclip, ChevronRight, Eye, Save, FileText, Terminal, X, Play, Database } from 'lucide-react';
 import { ChatMessage } from '../types';
 
+export type LabProvider = 'gemini' | 'openai' | 'ollama' | 'litellm' | 'claude';
+
 interface ChatSession {
   id: string;
   title: string;

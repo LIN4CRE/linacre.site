@@ -2,6 +2,7 @@ import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import path from "path";
 import crypto from "crypto";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
@@ -15,8 +16,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
-// Body parser middleware
-app.use(express.json());
+// Body parser middleware (restricted to 10kb to prevent denial-of-service)
+app.use(express.json({ limit: "10kb" }));
 
 // Enable CORS for all origins (specifically file:// for Lively Wallpaper)
 app.use((req, res, next) => {
@@ -29,6 +30,42 @@ app.use((req, res, next) => {
     next();
   }
 });
+
+// Dashboard session auth helpers (hoisted to the top)
+const COOKIE_NAME = 'linacre_dash_session';
+const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
+
+function sign(payload: string, secret: string): string {
+  return crypto.createHmac('sha256', secret).update(payload).digest('hex');
+}
+
+function timingSafeEqualStr(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  return bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
+}
+
+function isDashAuthed(req: Request): boolean {
+  const secret = process.env.DASHBOARD_SESSION_SECRET;
+  if (!secret) return false;
+  const cookie = req.headers.cookie ?? '';
+  const match = cookie.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
+  if (!match) return false;
+  const [expiresStr, sig] = match[1].split('.');
+  if (!expiresStr || !sig) return false;
+  return timingSafeEqualStr(sig, sign(expiresStr, secret)) && Number(expiresStr) > Date.now();
+}
+
+function checkAuth(req: Request, res: Response, next: NextFunction) {
+  if (isDashAuthed(req)) {
+    return next();
+  }
+  const isLocal = req.hostname === "localhost" || req.hostname === "127.0.0.1";
+  if (isLocal && process.env.NODE_ENV !== "production") {
+    return next();
+  }
+  return res.status(401).json({ error: "Unauthorized. Dashboard session required." });
+}
 
 // Per-IP sliding-window rate limiter for AI proxy routes.
 // These endpoints spend the server's own API keys, so without a limit any
@@ -68,7 +105,81 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-// Start of Express server setup
+// Bounded in-memory sliding-window rate limiter for contact form submissions.
+// Max 3 submissions per 5 minutes per IP address.
+const contactRateLimitLog = new Map<string, number[]>();
+
+app.post("/api/contact", (req, res) => {
+  if (req.headers["content-type"] !== "application/json") {
+    return res.status(400).json({ error: "Invalid Content-Type. Must be application/json" });
+  }
+
+  const { email, subject, message } = req.body ?? {};
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (typeof email !== "string" || !emailRegex.test(email)) {
+    return res.status(400).json({ error: "A valid email address is required." });
+  }
+
+  if (subject !== undefined && typeof subject !== "string") {
+    return res.status(400).json({ error: "Subject must be a string." });
+  }
+  if (typeof message !== "string" || message.trim().length < 10) {
+    return res.status(400).json({ error: "Message is required and must be at least 10 characters." });
+  }
+  if (message.length > 5000) {
+    return res.status(400).json({ error: "Message exceeds maximum length of 5000 characters." });
+  }
+  if (subject && subject.length > 200) {
+    return res.status(400).json({ error: "Subject exceeds maximum length of 200 characters." });
+  }
+
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip =
+    (typeof forwarded === "string" ? forwarded.split(",")[0].trim() : forwarded?.[0]) ||
+    req.socket.remoteAddress ||
+    "unknown";
+
+  const now = Date.now();
+  const windowMs = 300_000;
+  const maxRequests = 3;
+  const hits = (contactRateLimitLog.get(ip) ?? []).filter(t => t > now - windowMs);
+
+  if (hits.length >= maxRequests) {
+    contactRateLimitLog.set(ip, hits);
+    res.setHeader("Retry-After", "300");
+    return res.status(429).json({
+      error: "Too many contact submissions. Please wait 5 minutes before trying again."
+    });
+  }
+
+  hits.push(now);
+  contactRateLimitLog.set(ip, hits);
+
+  // Bounded memory eviction
+  if (contactRateLimitLog.size > 1000) {
+    for (const [key, times] of contactRateLimitLog) {
+      if (times[times.length - 1] <= now - windowMs) contactRateLimitLog.delete(key);
+    }
+  }
+
+  const requestId = `req_${crypto.randomBytes(8).toString("hex")}`;
+
+  console.log(`[Contact Submission] Success. RequestID: ${requestId}, Email Hash: ${crypto.createHash('sha256').update(email).digest('hex').substring(0, 16)}`);
+
+  // Local file-based backup for dev environments (ignores read-only Vercel tmp/root write errors)
+  try {
+    const fs = require("fs");
+    const contactsFile = path.join(process.cwd(), "contacts.json");
+    const contactsList = fs.existsSync(contactsFile) ? JSON.parse(fs.readFileSync(contactsFile, "utf8")) : [];
+    contactsList.push({ requestId, email, subject, message, timestamp: new Date().toISOString() });
+    fs.writeFileSync(contactsFile, JSON.stringify(contactsList, null, 2), "utf8");
+  } catch (err) {
+    // Fail silently in cloud environments
+  }
+
+  return res.status(200).json({ requestId });
+});
 
   // API route for Gemini Chat proxying securely
   app.post("/api/chat", aiRateLimiter, async (req, res) => {
@@ -451,7 +562,7 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   });
 
   // API route to get Obsidian Ecosystem Tasks
-  app.get("/api/tasks", async (req, res) => {
+  app.get("/api/tasks", checkAuth, async (req, res) => {
     try {
       const fs = await import("fs");
       const tasksFilePath = path.join("D:", "LIN4CRE", "knowledge-vault", "Ecosystem_Tasks.md");
@@ -654,7 +765,7 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   // Local in-memory store for rate limiting execute requests (prevent key overcharges)
   const executeRequestLog: number[] = [];
 
-  app.post("/api/agents/execute", async (req, res) => {
+  app.post("/api/agents/execute", checkAuth, async (req, res) => {
     const { agentName, task } = req.body;
     if (!task) {
       return res.status(400).json({ error: "Task description is required" });
@@ -730,7 +841,7 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   });
 
   // Secure route to read and return active Antigravity workspace transcript logs
-  app.get("/api/active-logs", async (req, res) => {
+  app.get("/api/active-logs", checkAuth, async (req, res) => {
     try {
       const fs = await import("fs");
       const os = await import("os");
@@ -795,7 +906,7 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   });
 
   // Agent Automations Spawn endpoint
-  app.post("/api/agents/spawn/:agentId", (req, res) => {
+  app.post("/api/agents/spawn/:agentId", checkAuth, (req, res) => {
     const { agentId } = req.params;
     const allowedAgents = ['janitor', 'security', 'seo', 'doc', 'release'];
     
@@ -876,19 +987,7 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
     res.json({ status: "ok" });
   });
 
-  // Dashboard session auth
-  const COOKIE_NAME = 'linacre_dash_session';
-  const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 
-  function sign(payload: string, secret: string): string {
-    return crypto.createHmac('sha256', secret).update(payload).digest('hex');
-  }
-
-  function timingSafeEqualStr(a: string, b: string): boolean {
-    const bufA = Buffer.from(a);
-    const bufB = Buffer.from(b);
-    return bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
-  }
 
   app.post("/api/auth", (req, res) => {
     const secret = process.env.DASHBOARD_SESSION_SECRET;
@@ -938,16 +1037,7 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   // are open to visitors (rate-limited); premium models are gated behind the
   // owner's dashboard session so only authenticated use spends real money.
 
-  function isDashAuthed(req: Request): boolean {
-    const secret = process.env.DASHBOARD_SESSION_SECRET;
-    if (!secret) return false;
-    const cookie = req.headers.cookie ?? '';
-    const match = cookie.match(new RegExp(`${COOKIE_NAME}=([^;]+)`));
-    if (!match) return false;
-    const [expiresStr, sig] = match[1].split('.');
-    if (!expiresStr || !sig) return false;
-    return timingSafeEqualStr(sig, sign(expiresStr, secret)) && Number(expiresStr) > Date.now();
-  }
+
 
   type CatalogModel = { id: string; label: string; tier: 'free' | 'premium' };
   const MODEL_CATALOG: Record<string, {
@@ -1175,6 +1265,11 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
     }
   });
 
+  // Fallback for API routes (returns a clean 404 JSON response instead of HTML index)
+  app.all("/api/*", (req, res) => {
+    res.status(404).json({ error: `API endpoint ${req.method} ${req.path} not found.` });
+  });
+
   // Vite static file / hot reload serving middleware
   if (process.env.NODE_ENV !== "production") {
     (async () => {
@@ -1197,9 +1292,29 @@ function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
   } else {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
+
+    const VALID_ROUTES = new Set([
+      '/', '/projects', '/about', '/toolkit', '/learn', '/blog',
+      '/playground', '/contact', '/privacy', '/accessibility', '/dashboard', '/status', '/agents', '/identity', '/lab'
+    ]);
+
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      const pathname = req.path.replace(/\/$/, '') || '/';
+      const isBlogDetail = pathname.startsWith('/blog/') && pathname.split('/').length === 3;
+      
+      if (VALID_ROUTES.has(pathname) || isBlogDetail) {
+        return res.sendFile(path.join(distPath, 'index.html'));
+      }
+      
+      // Serve a true 404 for any other path
+      res.status(404);
+      const custom404 = path.join(distPath, '404.html');
+      if (fs.existsSync(custom404)) {
+        return res.sendFile(custom404);
+      }
+      return res.send("404 Not Found");
     });
+
     if (!process.env.VERCEL) {
       app.listen(PORT, "0.0.0.0", () => {
         console.log(`Express production server listening on http://0.0.0.0:${PORT}`);

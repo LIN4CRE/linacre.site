@@ -14,7 +14,7 @@ export default function Privacy() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 14 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
   };
 
   return (
@@ -32,7 +32,7 @@ export default function Privacy() {
           Privacy <span className="text-cyan">Policy</span>
         </h1>
         <p className="text-sm">
-          // System transmission date: July 10, 2026. Zero telemetry protocols active.
+          // System transmission date: July 10, 2026. Zero tracking cookies active.
         </p>
       </motion.section>
 
@@ -43,7 +43,7 @@ export default function Privacy() {
             <span>1. DATA COLLECTION PROTOCOLS</span>
           </div>
           <p>
-            linacre.site does not collect or log personal telemetry, analytics, or behavioral cookies. All client-side parameters are kept in local sandboxes.
+            linacre.site does not collect or log personal telemetry, tracking analytics, or behavioral advertising cookies. We use browser Local Storage solely for functional user preferences (such as light/dark theme selection and active tab state).
           </p>
         </motion.div>
 
@@ -53,27 +53,27 @@ export default function Privacy() {
             <span>2. SECURE CONTACT FIELDS</span>
           </div>
           <p>
-            Submissions via the Secure Contact form are buffered and logged locally within your browser's Local Storage for validation. If forwarded to backend dispatch services, they are encrypted in transit via SSL.
+            Submissions via the Contact Form are transmitted securely over SSL to our contact API. Message contents are processed solely to address your inquiries and are retained for a maximum of 30 days following resolution.
           </p>
         </motion.div>
 
         <motion.div variants={itemVariants} className="bg-muted/10 border border-border-color/60 rounded-xl p-6 space-y-3">
           <div className="flex items-center gap-2 text-foreground font-bold">
             <ShieldCheck className="w-4 h-4 text-cyan" />
-            <span>3. CHATBOT RETENTION</span>
+            <span>3. CHATBOT PROCESSING</span>
           </div>
           <p>
-            The floating AI chatbot processes transient prompts via a secure rate-limited `/api/chat` API endpoint. Prompt history is not retained or used for underlying LLM training sets.
+            The floating AI chatbot processes prompts statelessly via our secure rate-limited API, which forwards queries directly to the Gemini API. Chat history is held in transient memory for the current session only and is not retained.
           </p>
         </motion.div>
 
         <motion.div variants={itemVariants} className="bg-muted/10 border border-border-color/60 rounded-xl p-6 space-y-3">
           <div className="flex items-center gap-2 text-foreground font-bold">
             <UserCheck className="w-4 h-4 text-cyan" />
-            <span>4. USER RIGHTS & CONTROL</span>
+            <span>4. DATA CONTROLLER & RIGHTS</span>
           </div>
           <p>
-            As a decentralized architecture, you can clear all active state caches (including newsletter and contact records) by invoking 'Clear Caches' in your browser controls or inside the Identity Hub.
+            David Linacre is the Data Controller. You can clear all local storage cache items directly via browser controls or inside the Identity Hub. For questions, data access, or deletion requests, contact us at david@linacre.site.
           </p>
         </motion.div>
       </div>

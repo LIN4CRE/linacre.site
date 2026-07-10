@@ -1312,12 +1312,13 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
             {/* Customizer Option 4: Glow sliders */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="block text-xs font-semibold text-muted-foreground">Aura Glow Intensity</label>
+                <label htmlFor="aura-glow-intensity" className="block text-xs font-semibold text-muted-foreground">Aura Glow Intensity</label>
                 <span className="text-[10px] font-mono text-amber-color bg-amber-color/10 px-1.5 py-0.2 rounded">
                   {glowIntensity === 1 ? 'Minimal' : glowIntensity === 5 ? 'Max Overclock' : `Level ${glowIntensity}`}
                 </span>
               </div>
               <input
+                id="aura-glow-intensity"
                 type="range"
                 min="1"
                 max="5"

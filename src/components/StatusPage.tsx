@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Activity, ShieldCheck, HardDrive, Cpu, Terminal, RefreshCw } from 'lucide-react';
+import { Activity, ShieldCheck, HardDrive, Cpu, Terminal, RefreshCw, AlertTriangle } from 'lucide-react';
 
 interface Metric {
   name: string;
@@ -80,7 +80,7 @@ export default function StatusPage() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 14 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
   };
 
   return (
@@ -102,6 +102,21 @@ export default function StatusPage() {
           Real-time checkouts of CDN endpoints, API latency distributions, and localized database instances.
         </p>
       </motion.section>
+
+      {/* Simulation Disclosure Banner */}
+      <motion.div 
+        variants={itemVariants} 
+        className="flex items-center gap-3 p-4 rounded-xl border border-amber-color/30 bg-[#161310] text-amber-color font-mono text-xs shadow-md"
+        id="simulated-data-disclosure"
+      >
+        <AlertTriangle className="w-5 h-5 flex-shrink-0 animate-pulse text-amber-color" />
+        <div className="space-y-0.5">
+          <div className="font-bold uppercase tracking-wider">Simulated Console Feed</div>
+          <p className="text-muted-foreground text-[10px] leading-relaxed">
+            All telemetry metrics, server ping logs, and response latency values rendered below are local mock simulations designed to demonstrate console interfaces. No real-world server infrastructure is monitored.
+          </p>
+        </div>
+      </motion.div>
 
       {/* Global Status Banner */}
       <motion.div 

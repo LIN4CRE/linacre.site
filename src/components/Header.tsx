@@ -13,20 +13,25 @@ interface HeaderProps {
 export default function Header({ activeTab, setActiveTab, theme, setTheme, openPalette }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navItems = [
-    { id: 'projects', label: 'Projects', icon: Briefcase },
+  const coreItems = [
+    { id: 'projects', label: 'Work', icon: Briefcase },
     { id: 'toolkit', label: 'Toolkit', icon: Layers },
-    { id: 'agents', label: 'Agents', icon: Bot },
-    { id: 'blog', label: 'Blog', icon: FileText },
-    { id: 'status', label: 'Status', icon: Activity },
     { id: 'learn', label: 'Learn', icon: BookOpen },
-    { id: 'lab', label: 'Lab', icon: Cpu },
-    { id: 'playground', label: 'Playground', icon: Sliders },
-    { id: 'dashboard', label: 'Dashboard', icon: Terminal },
-    { id: 'identity', label: 'Identity', icon: Sparkles },
     { id: 'about', label: 'About', icon: User },
     { id: 'contact', label: 'Contact', icon: Mail },
   ];
+
+  const moreItems = [
+    { id: 'blog', label: 'Blog', icon: FileText },
+    { id: 'agents', label: 'Agents', icon: Bot },
+    { id: 'lab', label: 'AI Lab', icon: Cpu },
+    { id: 'playground', label: 'Playground', icon: Sliders },
+    { id: 'identity', label: 'Identity', icon: Sparkles },
+    { id: 'status', label: 'Status', icon: Activity },
+    { id: 'dashboard', label: 'Dashboard', icon: Terminal },
+  ];
+
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
@@ -48,10 +53,13 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo / Brand */}
-          <button
-            onClick={() => {
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
               window.history.pushState({}, '', '/projects');
               window.dispatchEvent(new PopStateEvent('popstate'));
+              setMobileMenuOpen(false);
             }}
             className="flex items-center gap-2.5 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded p-1 transition-all"
             id="nav-logo"
@@ -78,24 +86,27 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               <span className="text-amber-color">.</span>
               <span className="text-foreground transition-colors">site</span>
             </div>
-          </button>
+          </a>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
-            {navItems.map((item) => {
+            {coreItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
-                <button
+                <a
                   key={item.id}
                   id={`nav-tab-${item.id}`}
-                  onClick={() => {
+                  href={`/${item.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
                     setActiveTab(item.id);
                     setMobileMenuOpen(false);
                   }}
                   className={`relative px-4 py-2 flex items-center gap-1.5 font-mono text-sm transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-cyan/50 ${
                     isActive ? 'text-amber-color font-medium' : 'text-muted-foreground hover:text-foreground'
                   }`}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.label}</span>
@@ -107,9 +118,67 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
-                </button>
+                </a>
               );
             })}
+
+            {/* More dropdown container */}
+            <div className="relative">
+              <button
+                onClick={() => setMoreOpen(!moreOpen)}
+                onBlur={(e) => {
+                  // Close dropdown on focus loss (accessibility)
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                    setTimeout(() => setMoreOpen(false), 150);
+                  }
+                }}
+                className={`px-3 py-2 flex items-center gap-1 font-mono text-sm transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-cyan/50 cursor-pointer ${
+                  moreItems.some(item => item.id === activeTab) ? 'text-amber-color font-medium' : 'text-muted-foreground hover:text-foreground'
+                }`}
+                aria-expanded={moreOpen}
+                aria-haspopup="true"
+                aria-label="More options menu"
+              >
+                <span>More</span>
+                <svg className={`w-3.5 h-3.5 transition-transform ${moreOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              
+              <AnimatePresence>
+                {moreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    transition={{ duration: 0.1 }}
+                    className="absolute right-0 mt-1.5 w-44 bg-background border border-amber-color/10 rounded-lg shadow-xl py-1 z-50 flex flex-col"
+                  >
+                    {moreItems.map((item) => {
+                      const Icon = item.icon;
+                      const isActive = activeTab === item.id;
+                      return (
+                        <a
+                          key={item.id}
+                          href={`/${item.id}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setActiveTab(item.id);
+                            setMoreOpen(false);
+                          }}
+                          className={`px-4 py-2 flex items-center gap-2 font-mono text-xs transition-colors hover:bg-muted/50 ${
+                            isActive ? 'text-amber-color font-semibold' : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          <Icon className="w-3.5 h-3.5" />
+                          <span>{item.label}</span>
+                        </a>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             {/* GitHub external Link */}
             <a
@@ -131,6 +200,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               onClick={openPalette}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/50 flex items-center gap-1.5"
               title="Open Command Palette (Press /)"
+              aria-label="Open command palette"
               id="btn-command-palette"
             >
               <Command className="w-4 h-4" />
@@ -144,6 +214,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               onClick={toggleTheme}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/50"
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label="Toggle visual theme"
               id="btn-theme-toggle"
             >
               {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-color" /> : <Moon className="w-4 h-4 text-cyan" />}
@@ -174,14 +245,16 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             id="mobile-nav-panel"
           >
             <div className="px-4 py-3 space-y-1">
-              {navItems.map((item) => {
+              {[...coreItems, ...moreItems].map((item) => {
                 const Icon = item.icon;
                 const isActive = activeTab === item.id;
                 return (
-                  <button
+                  <a
                     key={item.id}
                     id={`mobile-nav-tab-${item.id}`}
-                    onClick={() => {
+                    href={`/${item.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
                       setActiveTab(item.id);
                       setMobileMenuOpen(false);
                     }}
@@ -193,7 +266,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                   >
                     <Icon className="w-4 h-4" />
                     <span>{item.label}</span>
-                  </button>
+                  </a>
                 );
               })}
 

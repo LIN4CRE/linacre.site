@@ -1,6 +1,5 @@
 import { motion } from 'motion/react';
 import { User, Code, Calendar, Terminal } from 'lucide-react';
-import Newsletter from './Newsletter';
 
 export default function About() {
   const containerVariants = {
@@ -15,7 +14,7 @@ export default function About() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 14 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
   };
 
   const skills = [
@@ -158,12 +157,6 @@ export default function About() {
         </div>
       </motion.section>
 
-      <div className="linacre-pulse-line w-full" />
-
-      {/* Newsletter Section */}
-      <motion.section variants={itemVariants}>
-        <Newsletter />
-      </motion.section>
     </motion.div>
   );
 }

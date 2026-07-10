@@ -1039,6 +1039,19 @@ export default function AgentsHub() {
 
   return (
     <div className="space-y-12 animate-fade-in text-foreground">
+      {/* Title Hero */}
+      <div className="space-y-2">
+        <span className="font-mono text-xs text-purple-color tracking-widest uppercase font-semibold bg-purple-color/10 border border-purple-color/20 px-2.5 py-1 rounded-full">
+          Autonomous Monitor
+        </span>
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mt-3">
+          Agent <span className="text-purple-color">Ecosystem</span>
+        </h1>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Monitor real-time simulated AI agent operations, telemetry metrics, and background task executions.
+        </p>
+      </div>
+
       {/* NO-SPEND GUARD: Prominent Billing Alert Warning Sign */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-amber-color/30 bg-[#161310] text-amber-color font-mono text-xs shadow-md">
         <div className="flex items-center gap-3">
@@ -1054,10 +1067,11 @@ export default function AgentsHub() {
         {/* Interactive Spend limit Budget controller */}
         <div className="flex items-center gap-3 border-t md:border-t-0 md:border-l border-amber-color/20 pt-3 md:pt-0 md:pl-4">
           <div className="text-right">
-            <span className="block text-[9px] uppercase text-muted-foreground font-bold">Anti-Overcharge Budget</span>
+            <label htmlFor="spend-limit-budget" className="block text-[9px] uppercase text-muted-foreground font-bold cursor-pointer">Anti-Overcharge Budget</label>
             <span className="font-bold text-foreground text-xs">${spendLimit.toFixed(2)} / Session</span>
           </div>
           <input
+            id="spend-limit-budget"
             type="range"
             min="0"
             max="5.0"
@@ -1642,7 +1656,7 @@ export default function AgentsHub() {
                 {/* Auto build click button */}
                 <button
                   onClick={handleBuildArchitectSuggestion}
-                  className="w-full py-2 bg-purple-color hover:bg-purple-color/90 text-white font-bold rounded-lg transition-colors cursor-pointer text-center text-xs flex items-center justify-center gap-1.5 shadow"
+                  className="w-full py-2 bg-purple-color hover:bg-purple-color/90 text-[#0b0e14] font-bold rounded-lg transition-colors cursor-pointer text-center text-xs flex items-center justify-center gap-1.5 shadow"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Accept Concept & Build Agent</span>
@@ -1842,9 +1856,10 @@ export default function AgentsHub() {
 
             <form onSubmit={handleAddNewAction} className="space-y-3 font-mono text-xs">
               <div className="space-y-1">
-                <label className="block text-[10px] text-muted-foreground uppercase font-bold">Action Name / Task Description</label>
+                <label htmlFor="new-action-text-input" className="block text-[10px] text-muted-foreground uppercase font-bold">Action Name / Task Description</label>
                 <div className="relative">
                   <input
+                    id="new-action-text-input"
                     type="text"
                     required
                     placeholder="e.g., Flush Postgres cache"
@@ -1854,7 +1869,8 @@ export default function AgentsHub() {
                   />
                   <button
                     type="submit"
-                    className="absolute right-1 top-1 p-1 bg-purple-color text-white rounded hover:bg-purple-color/90 transition-colors"
+                    className="absolute right-1 top-1 p-1 bg-purple-color text-[#0b0e14] rounded hover:bg-purple-color/90 transition-colors"
+                    aria-label="Add new action script"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
@@ -1876,8 +1892,9 @@ export default function AgentsHub() {
 
             <form onSubmit={handleCreateAgent} className="space-y-3 font-mono text-xs">
               <div className="space-y-1">
-                <label className="block text-[10px] text-muted-foreground uppercase font-bold">Agent Name</label>
+                <label htmlFor="spawn-agent-name" className="block text-[10px] text-muted-foreground uppercase font-bold">Agent Name</label>
                 <input
+                  id="spawn-agent-name"
                   type="text"
                   required
                   placeholder="e.g. DocBot, CleanMonkey"
@@ -1889,8 +1906,9 @@ export default function AgentsHub() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block text-[10px] text-muted-foreground uppercase font-bold">Role & Type</label>
+                  <label htmlFor="spawn-agent-role" className="block text-[10px] text-muted-foreground uppercase font-bold">Role & Type</label>
                   <select
+                    id="spawn-agent-role"
                     value={newAgentRole}
                     onChange={(e: any) => setNewAgentRole(e.target.value)}
                     className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"
@@ -1903,8 +1921,9 @@ export default function AgentsHub() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-[10px] text-muted-foreground uppercase font-bold">Personality</label>
+                  <label htmlFor="spawn-agent-personality" className="block text-[10px] text-muted-foreground uppercase font-bold">Personality</label>
                   <select
+                    id="spawn-agent-personality"
                     value={newAgentPersonality}
                     onChange={(e: any) => setNewAgentPersonality(e.target.value)}
                     className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"
@@ -1918,8 +1937,9 @@ export default function AgentsHub() {
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[10px] text-muted-foreground uppercase font-bold">Select Avatar Sprite</label>
+                <label htmlFor="spawn-agent-sprite" className="block text-[10px] text-muted-foreground uppercase font-bold">Select Avatar Sprite</label>
                 <select
+                  id="spawn-agent-sprite"
                   value={newAgentSprite}
                   onChange={(e) => setNewAgentSprite(e.target.value)}
                   className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"

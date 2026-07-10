@@ -9,6 +9,7 @@ export default function Contact() {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [requestId, setRequestId] = useState('');
 
   // Check for access request parameter
   useEffect(() => {
@@ -39,7 +40,7 @@ export default function Contact() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 14 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -47,45 +48,34 @@ export default function Contact() {
     if (!email.trim() || !message.trim()) return;
 
     setStatus('submitting');
+    setErrorMessage('');
     
-    // Check if the user has sent too many messages recently (simple anti-spam)
     try {
-      const lastSent = localStorage.getItem('linacre_last_contact_sent');
-      if (lastSent) {
-        const timeDiff = Date.now() - Number(lastSent);
-        if (timeDiff < 60000) { // 1 minute rate limit
-          setStatus('error');
-          setErrorMessage('RATE LIMIT EXCEEDED: Please wait 60 seconds before sending another transmission.');
-          return;
-        }
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({ email, subject, message })
+      });
+      
+      const body = await response.json().catch(() => ({}));
+      
+      if (!response.ok) {
+        throw new Error(typeof body.error === "string" ? body.error : "Your enquiry could not be sent.");
       }
-    } catch (e) {
-      console.error(e);
+      
+      setRequestId(body.requestId);
+      setStatus('success');
+      // Clear inputs only on successful server-side receipt
+      setEmail('');
+      setSubject('');
+      setMessage('');
+    } catch (err: any) {
+      setStatus('error');
+      setErrorMessage(err.message || 'Connection failed. Please try again or email david@linacre.site directly.');
     }
-
-    // Simulate server request
-    setTimeout(() => {
-      try {
-        // Save contact locally to simulate backend store or dispatch event
-        const contacts = JSON.parse(localStorage.getItem('linacre_local_contacts') || '[]');
-        contacts.push({
-          email,
-          subject,
-          message,
-          timestamp: new Date().toISOString()
-        });
-        localStorage.setItem('linacre_local_contacts', JSON.stringify(contacts));
-        localStorage.setItem('linacre_last_contact_sent', String(Date.now()));
-        
-        setStatus('success');
-        setEmail('');
-        setSubject('');
-        setMessage('');
-      } catch (err) {
-        setStatus('error');
-        setErrorMessage('DATABASE WRITE ERROR: System failed to log contact data locally.');
-      }
-    }, 1500);
   };
 
   return (
@@ -114,16 +104,12 @@ export default function Contact() {
           <div className="bg-muted/10 border border-border-color rounded-xl p-6 space-y-4 font-mono text-xs text-muted-foreground">
             <h3 className="text-foreground font-bold text-sm">TRANSMISSION INFO</h3>
             <p className="leading-relaxed">
-              Standard responses are processed within 24-48 business hours. All submissions are client-validated and rate-limited.
+              We use your email and message to respond to this enquiry. Read the Privacy Policy for retention and contact details.
             </p>
             <div className="border-t border-border-color/30 pt-4 space-y-2">
               <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-color" />
-                <span>Secure API Handshake: ACTIVE</span>
-              </div>
-              <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan" />
-                <span>SSL Encrypted Pipeline</span>
+                <span>HTTPS TLS Encryption Active</span>
               </div>
             </div>
           </div>
@@ -142,9 +128,9 @@ export default function Contact() {
                   className="py-12 text-center space-y-4"
                 >
                   <CheckCircle className="w-12 h-12 text-emerald-color mx-auto animate-bounce" />
-                  <h3 className="font-display text-lg font-bold text-foreground">TRANSMISSION RECEIVED</h3>
+                  <h3 className="font-display text-lg font-bold text-foreground">ENQUIRY RECEIVED</h3>
                   <p className="text-xs text-muted-foreground max-w-sm mx-auto font-mono">
-                    Your request has been successfully dispatched to the server logs. Database handshake completed.
+                    Thanks — your enquiry has been accepted with reference <span className="text-amber-color font-bold">{requestId}</span>. Keep this reference if you need to follow up.
                   </p>
                   <button
                     onClick={() => setStatus('idle')}
@@ -203,17 +189,28 @@ export default function Contact() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="bg-rose-950/20 border border-rose-500/30 text-rose-300 font-mono text-[11px] p-3 rounded-lg flex items-center gap-2"
+                        className="bg-rose-950/20 border border-rose-500/30 text-rose-300 font-mono text-[11px] p-3 rounded-lg flex flex-col gap-2"
                       >
-                        <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
-                        <span>{errorMessage}</span>
+                        <div className="flex items-center gap-2">
+                          <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
+                          <span>{errorMessage}</span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground/80 pl-6">
+                          Fallback: You can send your message directly via email to:{' '}
+                          <a
+                            href={`mailto:david@linacre.site?subject=${encodeURIComponent(subject || 'Enquiry')}&body=${encodeURIComponent(message)}`}
+                            className="text-amber-color hover:underline font-bold"
+                          >
+                            david@linacre.site
+                          </a>
+                        </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-3 border-t border-border-color/30">
                     <p className="text-[10px] font-mono text-muted-foreground/60">
-                      By submitting this, you authorize secure local logging of your IP & email.
+                      By submitting, you agree to our privacy policy. Your input is validated on the server.
                     </p>
                     <button
                       type="submit"

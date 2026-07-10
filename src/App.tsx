@@ -2,6 +2,8 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WifiOff } from 'lucide-react';
 import Header from './components/Header';
+import { RouteHead } from './components/RouteHead';
+import routeMeta from '../route-meta.json';
 import TerminalIntro from './components/TerminalIntro';
 import Toolkit from './components/Toolkit';
 import Footer from './components/Footer';
@@ -28,24 +30,38 @@ const StatusPage = lazy(() => import('./components/StatusPage'));
 
 export default function App() {
   const getTabFromPath = () => {
-    const path = window.location.pathname.replace(/^\//, '');
-    const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'];
-    return validTabs.includes(path) ? path : 'projects';
-  };
-
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    const initialTab = getTabFromPath();
-    const hash = window.location.hash.replace('#', '');
-    const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'];
-    if (hash && validTabs.includes(hash)) {
+    const pathname = window.location.pathname.replace(/^\/+|\/+$/g, '');
+    const hash = window.location.hash.replace(/^#/, '');
+    const validTabs = [
+      'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground',
+      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'
+    ];
+    
+    // 1. Authoritative: check window.location.pathname first
+    if (validTabs.includes(pathname)) {
+      return pathname;
+    }
+    if (pathname.startsWith('blog/')) {
+      return 'blog';
+    }
+    // 2. Fallback: check hash
+    if (validTabs.includes(hash)) {
       return hash;
     }
-    try {
-      return localStorage.getItem('linacre_active_tab') || initialTab;
-    } catch (e) {
-      return initialTab;
+    // 3. Fallback: check saved state in localStorage only if on the root path '/'
+    if (window.location.pathname === '/' || window.location.pathname === '') {
+      try {
+        const saved = localStorage.getItem('linacre_active_tab');
+        if (saved && validTabs.includes(saved)) {
+          return saved;
+        }
+      } catch (e) {}
     }
-  });
+    // 4. Default fallback
+    return 'projects';
+  };
+
+  const [activeTab, setActiveTab] = useState<string>(() => getTabFromPath());
   const [activeCategory, setActiveCategory] = useState<ToolCategory | 'all'>('all');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -67,30 +83,22 @@ export default function App() {
 
   // Synchronize activeTab with URL path for back/forward navigation support
   useEffect(() => {
-    const handlePopState = () => {
+    const handleNavigation = () => {
       setActiveTab(getTabFromPath());
     };
 
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      const validTabs = ['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact'];
-      if (hash && validTabs.includes(hash)) {
-        setActiveTab(hash);
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleNavigation);
+    window.addEventListener('hashchange', handleNavigation);
     return () => {
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleNavigation);
+      window.removeEventListener('hashchange', handleNavigation);
     };
   }, []);
 
   // Update URL path and localStorage when activeTab changes
   useEffect(() => {
     const currentPath = window.location.pathname.replace(/^\//, '');
-    if (currentPath !== activeTab) {
+    if (currentPath !== activeTab && !(activeTab === 'blog' && currentPath.startsWith('blog/'))) {
       window.history.pushState(null, '', `/${activeTab}`);
     }
     try {
@@ -104,6 +112,19 @@ export default function App() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' as any });
   }, [activeTab]);
+
+  // Look up metadata for the current route
+  const getRouteMeta = () => {
+    const pathname = window.location.pathname;
+    if (activeTab === 'blog' && pathname.startsWith('/blog/') && pathname.length > 6) {
+      const match = routeMeta.routes[pathname as keyof typeof routeMeta.routes];
+      if (match) return match;
+    }
+    const key = activeTab === 'projects' && (pathname === '/' || pathname === '') ? '/' : `/${activeTab}`;
+    return routeMeta.routes[key as keyof typeof routeMeta.routes] || routeMeta.routes['/'];
+  };
+
+  const currentMeta = getRouteMeta();
 
   // Identity and Brand custom values synchronized from localStorage
   const [identity, setIdentity] = useState({
@@ -357,6 +378,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-amber-color/30" style={{ background: 'var(--linacre-gradient-hero)' }}>
+      <RouteHead meta={currentMeta} />
       <style dangerouslySetInnerHTML={{ __html: `
         ${activeFont.import}
         :root, .dark, .light {
