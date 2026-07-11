@@ -57,13 +57,14 @@ export default function About() {
         <motion.div variants={itemVariants} className="md:col-span-4 flex justify-center">
           <div className="linacre-surface p-4 w-full max-w-[280px] relative group overflow-hidden">
             <div className="absolute -inset-10 opacity-20 group-hover:opacity-35 blur-2xl rounded-full bg-amber-color pointer-events-none transition-opacity duration-300" />
-            <img 
-              src="/profile_avatar.webp" 
-              alt="David Linacre Profile Avatar" 
+            <img
+              src="/profile_avatar.webp"
+              alt="David Linacre — full-stack &amp; AI engineer"
               className="rounded-xl border border-border-color bg-muted/20 aspect-square w-full object-cover"
               width="248"
               height="248"
               loading="lazy"
+              decoding="async"
             />
             <div className="mt-4 text-center">
               <h2 className="font-mono text-xs font-bold text-foreground">David Christopher Linacre</h2>

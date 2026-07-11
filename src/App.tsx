@@ -28,6 +28,10 @@ const AccessibilityStatement = lazy(() => import('./components/AccessibilityStat
 const Blog = lazy(() => import('./components/Blog'));
 const StatusPage = lazy(() => import('./components/StatusPage'));
 const WorkWithMe = lazy(() => import('./components/WorkWithMe'));
+const ContactThanks = lazy(() => import('./components/ContactThanks'));
+const CookiePolicy = lazy(() => import('./components/CookiePolicy'));
+const Terms = lazy(() => import('./components/Terms'));
+const ConsentBanner = lazy(() => import('./components/ConsentBanner'));
 
 export default function App() {
   const getTabFromPath = () => {
@@ -35,9 +39,15 @@ export default function App() {
     const hash = window.location.hash.replace(/^#/, '');
     const validTabs = [
       'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground',
-      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work'
+      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work',
+      'contact/thanks', 'cookie-policy', 'terms'
     ];
-    
+
+    // Route path -> internal tab id (colons/paths kept as-is where safe).
+    if (pathname === 'contact/thanks') return 'contact-thanks';
+    if (pathname === 'cookie-policy') return 'cookie-policy';
+    if (pathname === 'terms') return 'terms';
+
     // 1. Authoritative: check window.location.pathname first
     if (validTabs.includes(pathname)) {
       return pathname;
@@ -93,12 +103,25 @@ export default function App() {
     };
   }, []);
 
+  // Map internal tab id back to a real URL path.
+  const tabToPath = (tab: string): string => {
+    if (tab === 'toolkit') return '/';
+    if (tab === 'contact-thanks') return '/contact/thanks';
+    return `/${tab}`;
+  };
+
   // Update URL path and localStorage when activeTab changes
   useEffect(() => {
     const currentPath = window.location.pathname;
-    const targetPath = activeTab === 'toolkit' ? '/' : `/${activeTab}`;
-    if (currentPath !== targetPath && !(activeTab === 'blog' && currentPath.startsWith('/blog/'))) {
-      window.history.pushState(null, '', targetPath);
+    const targetPath = tabToPath(activeTab);
+    // Preserve existing search params for /contact/thanks?ref=…
+    if (
+      currentPath !== targetPath
+      && !(activeTab === 'blog' && currentPath.startsWith('/blog/'))
+      && !(activeTab === 'contact-thanks' && currentPath === '/contact/thanks')
+    ) {
+      const search = activeTab === 'contact-thanks' ? window.location.search : '';
+      window.history.pushState(null, '', `${targetPath}${search}`);
     }
     try {
       localStorage.setItem('linacre_active_tab', activeTab);
@@ -119,7 +142,11 @@ export default function App() {
       const match = routeMeta.routes[pathname as keyof typeof routeMeta.routes];
       if (match) return match;
     }
-    const key = activeTab === 'toolkit' ? '/' : `/${activeTab}`;
+    // Map new synthetic tabs -> canonical route keys.
+    let key: string;
+    if (activeTab === 'toolkit') key = '/';
+    else if (activeTab === 'contact-thanks') key = '/contact/thanks';
+    else key = `/${activeTab}`;
     return routeMeta.routes[key as keyof typeof routeMeta.routes] || routeMeta.routes['/'];
   };
 
@@ -133,8 +160,8 @@ export default function App() {
     motionId: 'pulse',
     pulseSpeed: 'slow',
     name: 'DAVID LINACRE',
-    title: 'Full Stack & AI Engineer',
-    bio: 'I\'m a software engineer and designer. This is my curated repository of best-in-class free tools, step-by-step roadmap for self-taught engineers, live AI sandbox, and private dashboard. Rebuilt into a premium full-stack React workspace.',
+    title: 'Full-stack & AI systems engineer — available for freelance',
+    bio: 'I build reliable React, Go, and AI systems for startups who need to ship in weeks, not quarters. Systems audits, custom builds, and fractional retainers — UK-based, NDA-friendly, replies within 12 hours.',
     glow: 3
   });
 
@@ -166,8 +193,8 @@ export default function App() {
     const motionId = localStorage.getItem('linacre_brand_motion') || 'pulse';
     const pulseSpeed = localStorage.getItem('linacre_brand_pulse_speed') || 'slow';
     const name = localStorage.getItem('linacre_brand_name') || 'DAVID LINACRE';
-    const title = localStorage.getItem('linacre_brand_title') || 'Full Stack & AI Engineer';
-    const bio = localStorage.getItem('linacre_brand_bio') || 'I\'m a software engineer and designer. This is my curated repository of best-in-class free tools, step-by-step roadmap for self-taught engineers, live AI sandbox, and private dashboard. Rebuilt into a premium full-stack React workspace.';
+    const title = localStorage.getItem('linacre_brand_title') || 'Full-stack & AI systems engineer — available for freelance';
+    const bio = localStorage.getItem('linacre_brand_bio') || 'I build reliable React, Go, and AI systems for startups who need to ship in weeks, not quarters. Systems audits, custom builds, and fractional retainers — UK-based, NDA-friendly, replies within 12 hours.';
     const glow = Number(localStorage.getItem('linacre_brand_glow') || '3');
 
     setIdentity({ colorId, fontId, frameId, motionId, pulseSpeed, name, title, bio, glow });
@@ -451,33 +478,53 @@ export default function App() {
 
                 <div className="md:col-span-8 space-y-5 text-center md:text-left relative z-10">
                   <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/20 px-2.5 py-1 rounded-full">
-                    Full-Stack Portfolio & Directory
+                    Available for freelance · UK · Remote worldwide
                   </span>
                   <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-[-0.04em] text-foreground leading-tight">
-                    Hi, I'm <span className="text-amber-color animate-amber-breathe">{identity.name}</span>
+                    Full-stack &amp; AI systems engineer — <span className="text-amber-color animate-amber-breathe">available for freelance</span>
                   </h1>
                   <h3 className="font-mono text-sm sm:text-base text-amber-color/90 font-medium tracking-wide">
-                    {identity.title}
+                    I build reliable React / Go / AI systems for startups who ship fast.
                   </h3>
                   <p className="text-sm sm:text-base md:text-md text-muted-foreground leading-[1.65] max-w-2xl">
-                    {identity.bio}
+                    Systems audits from £1,800. Custom builds from £6,500. Fractional retainer £2,400/mo. NDA-friendly, UK GDPR compliant, replies within 12&nbsp;hours.
                   </p>
-                  {/* CTA buttons */}
+                  {/* Primary + secondary + tertiary CTA (audit CRO-01 / UX-01) */}
                   <div className="flex flex-wrap items-center gap-3 pt-2">
                     <button
-                      onClick={() => { setActiveTab('toolkit'); }}
-                      className="px-5 py-2.5 bg-amber-color text-[#0b0e14] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(245,158,11,0.25)] hover:shadow-[0_0_30px_rgba(245,158,11,0.4)] hover:-translate-y-0.5"
-                      id="cta-explore-toolkit"
+                      onClick={() => { setActiveTab('contact'); }}
+                      data-analytics="hero_start_project"
+                      className="px-5 py-2.5 bg-amber-color text-[#0b0e14] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(245,158,11,0.35)] hover:shadow-[0_0_30px_rgba(245,158,11,0.55)] hover:-translate-y-0.5"
+                      id="cta-start-project"
                     >
-                      Explore Toolkit
+                      Start a project →
                     </button>
                     <button
                       onClick={() => { setActiveTab('projects'); }}
+                      data-analytics="hero_case_studies"
                       className="px-5 py-2.5 bg-transparent border border-amber-color/40 text-amber-color font-mono text-sm font-bold rounded-lg hover:bg-amber-color/10 hover:border-amber-color transition-all duration-200 hover:-translate-y-0.5"
                       id="cta-view-projects"
                     >
-                      View Projects
+                      See case studies
                     </button>
+                    <button
+                      onClick={() => { setActiveTab('toolkit'); window.scrollTo({ top: 400, behavior: 'smooth' }); }}
+                      data-analytics="hero_toolkit"
+                      className="px-3 py-2.5 text-amber-color/80 hover:text-amber-color font-mono text-sm underline underline-offset-4 decoration-amber-color/30 hover:decoration-amber-color transition-colors"
+                      id="cta-explore-toolkit"
+                    >
+                      Browse free toolkit →
+                    </button>
+                  </div>
+                  {/* Trust strip */}
+                  <div className="pt-3 flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px] text-muted-foreground">
+                    <span>🔒 UK GDPR</span>
+                    <span>·</span>
+                    <span>Reply &lt; 12h</span>
+                    <span>·</span>
+                    <span>NDA-friendly</span>
+                    <span>·</span>
+                    <span>Shipped 17+ production systems</span>
                   </div>
                 </div>
 
@@ -745,7 +792,43 @@ export default function App() {
             </motion.div>
           )}
 
-          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work'].includes(activeTab) && (
+          {activeTab === 'contact-thanks' && (
+            <motion.div
+              key="contact-thanks"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <ContactThanks />
+            </motion.div>
+          )}
+
+          {activeTab === 'cookie-policy' && (
+            <motion.div
+              key="cookie-policy"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <CookiePolicy />
+            </motion.div>
+          )}
+
+          {activeTab === 'terms' && (
+            <motion.div
+              key="terms"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <Terms />
+            </motion.div>
+          )}
+
+          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms'].includes(activeTab) && (
             <motion.div
               key="404"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -758,12 +841,20 @@ export default function App() {
               <p className="text-xs text-muted-foreground font-mono leading-relaxed">
                 The requested URL path could not be located in David's developer directory files.
               </p>
-              <button
-                onClick={() => setActiveTab('projects')}
-                className="px-4 py-2 bg-amber-color text-black font-mono text-xs font-bold rounded-lg hover:bg-amber-color/90 transition-all cursor-pointer"
-              >
-                Return to Projects
-              </button>
+              <div className="flex flex-wrap justify-center gap-3">
+                <button
+                  onClick={() => setActiveTab('toolkit')}
+                  className="px-4 py-2 bg-amber-color text-black font-mono text-xs font-bold rounded-lg hover:bg-amber-glow transition-all cursor-pointer"
+                >
+                  Return home
+                </button>
+                <button
+                  onClick={() => setActiveTab('contact')}
+                  className="px-4 py-2 bg-transparent border border-amber-color/40 text-amber-color font-mono text-xs font-bold rounded-lg hover:bg-amber-color/10 transition-all cursor-pointer"
+                >
+                  Start a project
+                </button>
+              </div>
             </motion.div>
           )}
           </AnimatePresence>
@@ -790,6 +881,11 @@ export default function App() {
           <AIChatbot />
         </Suspense>
       )}
+
+      {/* UK GDPR / PECR storage consent (audit #007) */}
+      <Suspense fallback={null}>
+        <ConsentBanner />
+      </Suspense>
 
       <Footer />
     </div>

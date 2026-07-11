@@ -1034,7 +1034,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, linkText, url) => {
       const trimmedUrl = url.trim();
       if (/^https?:\/\//i.test(trimmedUrl)) {
-        return `<a href="${trimmedUrl}" target="_blank" rel="noopener" class="text-cyan underline hover:text-amber-color transition-colors font-medium">${linkText}</a>`;
+        return `<a href="${trimmedUrl}" target="_blank" rel="noopener noreferrer" class="text-cyan underline hover:text-amber-color transition-colors font-medium">${linkText}</a>`;
       }
       return linkText;
     });

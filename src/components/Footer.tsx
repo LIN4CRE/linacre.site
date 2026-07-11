@@ -81,18 +81,38 @@ export default function Footer() {
                 <span>·</span>
                 <button
                   onClick={() => {
+                    window.history.pushState({}, '', '/cookie-policy');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Cookie Policy
+                </button>
+                <span>·</span>
+                <button
+                  onClick={() => {
+                    window.history.pushState({}, '', '/terms');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Terms
+                </button>
+                <span>·</span>
+                <button
+                  onClick={() => {
                     window.history.pushState({}, '', '/accessibility');
                     window.dispatchEvent(new PopStateEvent('popstate'));
                   }}
                   className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
                 >
-                  Accessibility Statement
+                  Accessibility
                 </button>
                 <span>·</span>
                 <a
                   href="https://calendly.com/david-linacre/15min"
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
                 >
                   Book a Call
@@ -105,18 +125,18 @@ export default function Footer() {
               <a
                 href="https://github.com/LIN4CRE"
                 target="_blank"
-                rel="noopener"
-                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-color"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
                 title="GitHub Profile"
                 aria-label="GitHub profile"
               >
                 <Github className="w-4 h-4" />
               </a>
               <a
-                href="https://linkedin.com/in/davidlinacre"
+                href="https://linkedin.com/in/david-linacre"
                 target="_blank"
-                rel="noopener"
-                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-color"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
                 title="LinkedIn Profile"
                 aria-label="LinkedIn profile"
               >

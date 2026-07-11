@@ -115,7 +115,7 @@ export default function WorkWithMe() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 110, damping: 14 } }
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
   };
 
   return (
@@ -179,7 +179,7 @@ export default function WorkWithMe() {
                 <a
                   href={offering.ctaHref}
                   target="_blank"
-                  rel="noopener"
+                  rel="noopener noreferrer"
                   className={`w-full block text-center py-2.5 rounded-lg font-semibold text-xs transition-all cursor-pointer ${
                     offering.popular
                       ? 'bg-amber-color hover:bg-amber-color/90 text-black shadow-md'

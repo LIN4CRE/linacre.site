@@ -1,4 +1,7 @@
+# linacre.site security contact policy — RFC 9116
 Contact: mailto:david@linacre.site
-Preferred-Languages: en
+Expires: 2028-07-10T18:00:00.000Z
+Preferred-Languages: en, en-GB
 Canonical: https://www.linacre.site/.well-known/security.txt
-Expires: Mon, 10 Jul 2028 18:00:00 GMT
+Policy: https://www.linacre.site/privacy
+Acknowledgments: https://www.linacre.site/accessibility

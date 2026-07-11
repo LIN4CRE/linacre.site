@@ -74,7 +74,7 @@
   --background: #fafafa;
   --foreground: #171717;
   --muted: #f4f4f5;
-  --muted-foreground: #71717a;
+  --muted-foreground: #52525b; /* AA 7.1:1 on #fafafa — was #71717a (~4.6:1) */
   --border-color: #e4e4e7;
   --border-hi: #a1a1aa;
 
@@ -104,7 +104,7 @@
   --background: #0b0e14;
   --foreground: #f4f4f5;
   --muted: #111622;
-  --muted-foreground: #a1a1aa;
+  --muted-foreground: #b8bec9; /* AA 7.9:1 on #11151f — was #a1a1aa (~4.5:1 borderline) */
   --border-color: rgba(245, 158, 11, 0.16);
   --border-hi: rgba(245, 158, 11, 0.36);
 
@@ -274,11 +274,69 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: var(--color-amber-color);
 }
 
-/* ── Accessible Focus Ring ── */
-:focus-visible {
-  outline: 2px solid var(--color-cyan);
+/* ── Accessible Focus Ring (WCAG 2.2 AA — audit 11 Jul 2026) ── */
+*:focus { outline: none; }
+:where(a, button, input, textarea, select, [tabindex]:not([tabindex="-1"])):focus-visible,
+*:focus-visible {
+  outline: 3px solid var(--color-amber-color);
   outline-offset: 2px;
   border-radius: 4px;
+  box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.18);
+}
+
+/* High-contrast / forced-colors mode */
+@media (forced-colors: active) {
+  :where(*):focus-visible {
+    outline: 3px solid CanvasText;
+  }
+}
+
+/* ── Skip-to-content link (visible on Tab) ── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.6rem 1rem;
+  background: #0b0e14;
+  color: var(--color-amber-color);
+  border: 2px solid var(--color-amber-color);
+  border-radius: 8px;
+  z-index: 9999;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ── Accessible tap targets (WCAG 2.5.5) ── */
+button, .btn, .cta, [role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Form error styling */
+.input-error {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.18);
+}
+.form-error-text {
+  color: var(--color-error);
+  font-size: 0.85rem;
+}
+.form-status[aria-live] {
+  min-height: 1.5em;
+  color: var(--color-error);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
 }
 
 /* ── Selection ── */
@@ -287,12 +345,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
   color: inherit;
 }
 
-/* ── Reduced Motion ── */
+/* ── Reduced Motion — Global kill-switch (WCAG 2.3.3) ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
+  html { scroll-behavior: auto !important; }
 }

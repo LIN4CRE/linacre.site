@@ -192,7 +192,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                     transition={{ duration: 0.15 }}
                     href={tool.url}
                     target="_blank"
-                    rel="noopener"
+                    rel="noopener noreferrer"
                     className={`group relative flex flex-col justify-between bg-muted/20 dark:bg-[#0B1220]/80 border border-amber-color/12 rounded-2xl p-5 hover:bg-muted/35 dark:hover:bg-[#111827] hover:border-amber-color/30 hover:-translate-y-1 transition-all border-l-[3px] ${getLeftBorderColor(
                       tool.category
                     )}`}

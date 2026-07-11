@@ -83,24 +83,107 @@ fs.rmSync(dataBundle, { force: true });
 
 const SITE = 'https://www.linacre.site';
 const PERSON = {
-  '@type': 'Person', '@id': `${SITE}/#person`, name: 'David Linacre', url: `${SITE}/`,
-  sameAs: ['https://github.com/LIN4CRE', 'https://linkedin.com/in/davidlinacre'],
-  jobTitle: 'Full Stack Developer & AI Engineer',
-  description: 'Developer building open-source tools, AI applications, and developer utilities.',
-  knowsAbout: ['React', 'TypeScript', 'Node.js', 'Python', 'AI', 'Developer Tools'],
+  '@type': 'Person',
+  '@id': `${SITE}/#person`,
+  name: 'David Christopher Linacre',
+  alternateName: 'David Linacre',
+  url: `${SITE}/`,
+  image: `${SITE}/profile_avatar.webp`,
+  email: 'mailto:david@linacre.site',
+  jobTitle: 'Full-Stack Engineer & AI Systems Builder',
+  description: 'UK-based freelance full-stack & AI engineer. React, TypeScript, Go, Python. Systems audits, custom builds, fractional retainer.',
+  address: { '@type': 'PostalAddress', addressCountry: 'GB', addressRegion: 'England' },
+  sameAs: [
+    'https://github.com/LIN4CRE',
+    'https://linkedin.com/in/david-linacre',
+    `${SITE}/`
+  ],
+  knowsAbout: [
+    'React', 'TypeScript', 'Next.js', 'Node.js', 'Go', 'Python',
+    'PostgreSQL', 'AI engineering', 'DevOps', 'Developer Tools'
+  ],
+  worksFor: { '@id': `${SITE}/#org` }
+};
+const ORGANIZATION = {
+  '@type': 'ProfessionalService',
+  '@id': `${SITE}/#org`,
+  name: 'Linacre — David Linacre Freelance Engineering',
+  alternateName: 'linacre.site',
+  url: `${SITE}/`,
+  logo: `${SITE}/icon-512.png`,
+  image: `${SITE}/og.png`,
+  priceRange: '£££',
+  email: 'david@linacre.site',
+  founder: { '@id': `${SITE}/#person` },
+  areaServed: ['GB', 'EU', 'US', 'Worldwide'],
+  slogan: 'Reliable web applications, developer tools and automation systems.',
+  sameAs: [
+    'https://github.com/LIN4CRE',
+    'https://linkedin.com/in/david-linacre'
+  ]
 };
 const WEBSITE = {
-  '@type': 'WebSite', '@id': `${SITE}/#website`, url: `${SITE}/`, name: 'linacre.site',
+  '@type': 'WebSite',
+  '@id': `${SITE}/#website`,
+  url: `${SITE}/`,
+  name: 'linacre.site',
   description: 'Developer portfolio, toolkit directory, project hub, and AI playground by David Linacre.',
   publisher: { '@id': `${SITE}/#person` },
+  inLanguage: 'en-GB',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE}/toolkit?q={search_term_string}`,
+    'query-input': 'required name=search_term_string'
+  }
+};
+
+// Human-readable label used in BreadcrumbList
+const ROUTE_LABEL = {
+  '/': 'Home',
+  '/work': 'Work',
+  '/projects': 'Projects',
+  '/toolkit': 'Toolkit',
+  '/learn': 'Learn',
+  '/blog': 'Blog',
+  '/playground': 'Playground',
+  '/lab': 'AI Lab',
+  '/agents': 'Agents',
+  '/identity': 'Identity',
+  '/about': 'About',
+  '/contact': 'Contact',
+  '/contact/thanks': 'Thanks',
+  '/privacy': 'Privacy',
+  '/cookie-policy': 'Cookie Policy',
+  '/terms': 'Terms',
+  '/accessibility': 'Accessibility',
+  '/status': 'Status'
 };
 
 const featured = data.projects.filter(p => p.url).slice(0, 6);
 const publicProjects = data.projects.filter(p => p.url);
 const caseStudies = data.projects.filter(p => ['GhostMail', 'DomainDeals'].includes(p.name));
 
+function breadcrumbFor(route) {
+  if (route === '/') return null;
+  const parts = route.split('/').filter(Boolean);
+  const items = [{ '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` }];
+  let running = '';
+  parts.forEach((p, i) => {
+    running += `/${p}`;
+    items.push({
+      '@type': 'ListItem',
+      position: i + 2,
+      name: ROUTE_LABEL[running] || decodeURIComponent(p).replace(/-/g, ' '),
+      item: `${SITE}${running}`
+    });
+  });
+  return { '@type': 'BreadcrumbList', itemListElement: items };
+}
+
 function jsonLdFor(route, m) {
-  const graph = [PERSON, WEBSITE];
+  const graph = [PERSON, ORGANIZATION, WEBSITE];
+  const bc = breadcrumbFor(route);
+  if (bc) graph.push(bc);
   if (route === '/' || route === '/projects') {
     graph.push({
       '@type': 'ItemList', '@id': `${SITE}${route === '/' ? '/' : route}#projects`, name: 'Featured Projects',
@@ -188,6 +271,10 @@ function jsonLdFor(route, m) {
       'keywords': post ? post.tags.join(', ') : undefined, 
       'timeRequired': post ? post.readTime : undefined,
     });
+    // BreadcrumbList: prefer the article-specific one over the generic top-level breadcrumb.
+    for (let i = graph.length - 1; i >= 0; i--) {
+      if (graph[i]['@type'] === 'BreadcrumbList') { graph.splice(i, 1); }
+    }
     graph.push({
       '@type': 'BreadcrumbList',
       itemListElement: [
@@ -449,8 +536,8 @@ I build with React, TypeScript, Node.js, Python and Go, and I ship on Vercel, Do
 <p>This site is my working environment as much as a portfolio: a free tool directory, a learning roadmap,
 an AI lab and a set of browser utilities — all open to use.</p>
 <ul>
-  <li><a href="https://github.com/LIN4CRE" rel="noopener">GitHub — github.com/LIN4CRE</a></li>
-  <li><a href="https://linkedin.com/in/davidlinacre" rel="noopener">LinkedIn — davidlinacre</a></li>
+  <li><a href="https://github.com/LIN4CRE" rel="noopener noreferrer">GitHub — github.com/LIN4CRE</a></li>
+  <li><a href="https://linkedin.com/in/david-linacre" rel="noopener noreferrer">LinkedIn — david-linacre</a></li>
 </ul>
 ${CTA_BLOCK}`;
 
@@ -526,32 +613,87 @@ ${CTA_BLOCK}`;
     case route === '/contact':
       return `
 <h1>Contact David Linacre</h1>
-<p><strong>Available for freelance and contract work.</strong> Tell me about your project — software design, developer tools, AI integration or automation.</p>
-<form action="/api/contact" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0; max-width: 500px; font-family: monospace;">
+<p><strong>Available for freelance and contract work.</strong> Tell me what you&#39;re building — I reply from david@linacre.site within 12 hours.</p>
+<form action="/api/contact" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0; max-width: 520px;">
   <input type="hidden" name="startedAt" value="${Date.now()}" />
   <div style="display: flex; flex-direction: column; gap: 5px;">
-    <label for="name" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Name *</label>
-    <input type="text" id="name" name="name" required placeholder="Your Name" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
+    <label for="name" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Name *</label>
+    <input type="text" id="name" name="name" required placeholder="Jane Doe" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
-    <label for="email" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Email Address *</label>
-    <input type="email" id="email" name="email" required placeholder="you@example.com" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
+    <label for="email" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Work email *</label>
+    <input type="email" id="email" name="email" required placeholder="you@company.com" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
-    <label for="subject" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Subject / Project Area</label>
-    <input type="text" id="subject" name="subject" placeholder="e.g. Pipeline Design Consultation" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
+    <label for="companyOrg" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Company (optional)</label>
+    <input type="text" id="companyOrg" name="companyOrg" placeholder="Acme Corp" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
-    <label for="message" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Transmission Body *</label>
-    <textarea id="message" name="message" required rows="5" placeholder="Outline your requirements, tech specs, or inquiries..." style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace; resize: vertical;"></textarea>
+    <label for="budget" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Budget</label>
+    <select id="budget" name="budget" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;">
+      <option value="">Select…</option>
+      <option>Under £2k</option>
+      <option>£2-6k</option>
+      <option>£6-15k</option>
+      <option>£15k+</option>
+      <option>Retainer / Not sure</option>
+    </select>
   </div>
-  <button type="submit" style="background: #f59e0b; border: none; border-radius: 6px; padding: 10px; color: #000000; font-weight: bold; cursor: pointer; font-size: 12px; font-family: monospace;">Send Message</button>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <label for="timeline" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Timeline</label>
+    <select id="timeline" name="timeline" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;">
+      <option value="">Select…</option>
+      <option>ASAP</option>
+      <option>2-4 weeks</option>
+      <option>1-3 months</option>
+      <option>Exploring</option>
+    </select>
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <label for="message" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Project details *</label>
+    <textarea id="message" name="message" required rows="6" placeholder="What are you building? Goals, current stack, constraints, links…" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px; resize: vertical;"></textarea>
+  </div>
+  <label style="font-size: 12px; color: #a1a8b8;">
+    <input type="checkbox" name="consent" required /> I agree to the <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a>. *
+  </label>
+  <p class="meta">🔒 UK GDPR · Reply &lt; 12h · NDA-friendly</p>
+  <button type="submit" style="background: #ffb454; border: none; border-radius: 6px; padding: 12px; color: #0b0e14; font-weight: 700; cursor: pointer; font-size: 14px;">Send message →</button>
 </form>
 <ul>
   <li>Email: <a href="mailto:david@linacre.site">david@linacre.site</a></li>
-  <li>GitHub: <a href="https://github.com/LIN4CRE" rel="noopener">github.com/LIN4CRE</a></li>
-  <li>LinkedIn: <a href="https://linkedin.com/in/davidlinacre" rel="noopener">davidlinacre</a></li>
+  <li>GitHub: <a href="https://github.com/LIN4CRE" rel="noopener noreferrer">github.com/LIN4CRE</a></li>
+  <li>LinkedIn: <a href="https://linkedin.com/in/david-linacre" rel="noopener noreferrer">david-linacre</a></li>
 </ul>`;
+
+    case route === '/contact/thanks':
+      return `
+<h1>Thanks — message received</h1>
+<p>Your enquiry has been received. I&#39;ll reply from <a href="mailto:david@linacre.site">david@linacre.site</a> within 12 hours.</p>
+<p><a class="cta" href="https://calendly.com/david-linacre/15min" rel="noopener noreferrer">Book a 15-min call</a> <a class="cta alt" href="/">Back to home</a></p>`;
+
+    case route === '/cookie-policy':
+      return `
+<h1>Cookie &amp; storage policy</h1>
+<p class="meta">Version 1.1 · Last updated 11 July 2026</p>
+<p>linacre.site does not use tracking cookies, advertising cookies, or third-party analytics scripts. We do use browser LocalStorage on your device for essential preferences (theme, workspace state) and optional features (AI Lab chat history, optional API keys).</p>
+<h2>Storage keys we may set</h2>
+<ul>
+  <li><code>linacre_consent_v1</code> — records your storage-preference decision.</li>
+  <li><code>linacre_theme</code> — dark / light theme choice.</li>
+  <li><code>linacre_active_tab</code> — restores your last section on return.</li>
+  <li><code>linacre_brand_*</code> — Identity Hub customisations.</li>
+  <li><code>linacre_lab_sessions_v1</code> — AI Lab chat history (optional).</li>
+  <li><code>linacre_openai_key</code>, <code>linacre_claude_key</code> — optional API keys you paste in; never sent to our servers.</li>
+</ul>
+<p>Change your mind any time by clearing site data in your browser. Questions: <a href="mailto:david@linacre.site">david@linacre.site</a>.</p>`;
+
+    case route === '/terms':
+      return `
+<h1>Terms of service</h1>
+<p class="meta">Version 1.1 · Last updated 11 July 2026 · Governed by the laws of England &amp; Wales.</p>
+<p>These terms cover use of linacre.site and any engagement with David Linacre (sole trader). Individual engagements are governed by a written Statement of Work covering scope, milestones, price, timeline, and acceptance criteria. Invoices are issued in GBP, payable within 14 days.</p>
+<p>Ownership of deliverables transfers to the client on full payment. NDA-friendly by default. Aggregate liability is capped at fees paid in the six months prior to the incident. Governing law: England &amp; Wales.</p>
+<p>Questions: <a href="mailto:david@linacre.site">david@linacre.site</a>.</p>`;
 
     case route === '/privacy':
       return `
@@ -667,15 +809,29 @@ for (const [route, m] of Object.entries(meta.routes)) {
 }
 
 // --------------------------------------------------------------- sitemap.xml
-const today = new Date().toISOString().slice(0, 10);
+// Use full ISO 8601 (with time + timezone) for lastmod per audit SEO-01 / #011.
+const nowIso = new Date().toISOString(); // e.g. 2026-07-11T09:41:12.234Z
+const isoDate = (d) => (d && d.length === 10 ? `${d}T00:00:00+00:00` : d);
 const indexable = Object.entries(meta.routes).filter(([, m]) => m.index);
+const priorityFor = (route, m) => {
+  if (route === '/') return '1.0';
+  if (m.type === 'article') return '0.6';
+  if (route === '/work' || route === '/projects' || route === '/contact') return '0.9';
+  if (['/privacy', '/cookie-policy', '/terms', '/accessibility'].includes(route)) return '0.3';
+  return '0.7';
+};
+const changefreqFor = (route, m) => {
+  if (m.type === 'article') return 'yearly';
+  if (['/privacy', '/cookie-policy', '/terms', '/accessibility'].includes(route)) return 'yearly';
+  return 'weekly';
+};
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexable.map(([route, m]) => `  <url>
     <loc>${m.canonical}</loc>
-    <lastmod>${m.published || today}</lastmod>
-    <changefreq>${m.type === 'article' ? 'yearly' : 'weekly'}</changefreq>
-    <priority>${route === '/' ? '1.0' : m.type === 'article' ? '0.6' : '0.8'}</priority>
+    <lastmod>${isoDate(m.published) || nowIso}</lastmod>
+    <changefreq>${changefreqFor(route, m)}</changefreq>
+    <priority>${priorityFor(route, m)}</priority>
   </url>`).join('\n')}
 </urlset>
 `;

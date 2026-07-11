@@ -45,10 +45,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   return (
     <header className="sticky top-0 z-50 w-full border-b border-amber-color/10 bg-background/70 backdrop-blur-xl transition-colors" style={{ transitionDuration: 'var(--linacre-duration-base)' }} role="banner">
       {/* Skip-to-content link for keyboard/screen reader accessibility */}
-      <a
-        href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-amber-color focus:text-[#0b0e14] focus:rounded-md focus:font-mono focus:text-sm focus:font-bold focus:shadow-lg"
-      >
+      <a href="#main-content" className="skip-link">
         Skip to content
       </a>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -184,9 +181,9 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             <a
               href="https://github.com/LIN4CRE/linacre.site"
               target="_blank"
-              rel="noopener"
+              rel="noopener noreferrer"
               id="nav-github"
-              className="px-4 py-2 flex items-center gap-1.5 font-mono text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-cyan/50"
+              className="px-4 py-2 flex items-center gap-1.5 font-mono text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md focus:outline-none"
             >
               <Github className="w-4 h-4" />
               <span>GitHub</span>
@@ -195,12 +192,27 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
 
           {/* Action Tools */}
           <div className="flex items-center gap-2">
-            {/* Book Call CTA Button */}
+            {/* Primary "Work with me" CTA (audit CRO-01 / #009) */}
+            <a
+              href="/work"
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab('work');
+                setMobileMenuOpen(false);
+              }}
+              data-analytics="nav_hire_cta"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-color hover:bg-amber-glow text-[#0b0e14] font-mono text-xs font-bold transition-all shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_24px_rgba(245,158,11,0.55)] focus:outline-none"
+              id="btn-header-work"
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              <span>Work with me</span>
+            </a>
+            {/* Secondary — book a call */}
             <a
               href="https://calendly.com/david-linacre/15min"
               target="_blank"
-              rel="noopener"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-color/10 border border-amber-color/30 hover:bg-amber-color text-amber-color hover:text-black font-mono text-xs font-bold transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-color"
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-color/30 hover:bg-amber-color/10 text-amber-color font-mono text-xs font-bold transition-all shadow-sm focus:outline-none"
               id="btn-header-calendly"
             >
               <Calendar className="w-3.5 h-3.5" />
@@ -282,10 +294,25 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                 );
               })}
 
+              {/* Mobile primary CTA — top of menu */}
+              <a
+                href="/work"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setActiveTab('work');
+                  setMobileMenuOpen(false);
+                }}
+                data-analytics="nav_hire_cta_mobile"
+                className="w-full px-3 py-2.5 flex items-center justify-center gap-2 rounded-md bg-amber-color text-[#0b0e14] font-mono text-sm font-bold shadow-[0_0_16px_rgba(245,158,11,0.35)]"
+                id="mobile-nav-work-cta"
+              >
+                <Briefcase className="w-4 h-4" />
+                <span>Work with me</span>
+              </a>
               <a
                 href="https://github.com/LIN4CRE/linacre.site"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
                 id="mobile-nav-github"
                 className="w-full px-3 py-2.5 flex items-center gap-2.5 font-mono text-sm text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors rounded-md"
               >

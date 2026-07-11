@@ -1,21 +1,29 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--ROUTE_HEAD-->
-    <title>David Linacre | Full-stack engineer and AI systems builder</title>
-    <meta name="description" content="David Linacre builds reliable web applications, developer tools and automation systems. Explore selected work, useful tools and technical writing." />
-    <meta name="robots" content="index, follow" />
+    <title>David Linacre — Full-stack &amp; AI engineer | Available for freelance</title>
+    <meta name="description" content="UK-based full-stack &amp; AI systems engineer. React, TypeScript, Go, Python. Systems audits from £1,800, custom builds from £6,500. Available now." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <link rel="canonical" href="https://www.linacre.site/" />
     <!--/ROUTE_HEAD-->
-    <meta name="author" content="David Linacre" />
+    <meta name="author" content="David Christopher Linacre" />
     <meta name="theme-color" content="#0b0e14" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- Preconnect / DNS-prefetch (audit Performance) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://calendly.com" />
 
     <!-- Critical self-hosted fonts -->
     <link rel="preload" href="/fonts/inter-var-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/space-grotesk-var-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/jetbrains-mono-var-latin.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Preload hero avatar (LCP candidate on /about; harmless elsewhere) -->
+    <link rel="preload" as="image" href="/profile_avatar.webp" type="image/webp" fetchpriority="high" />
 
     <!-- Web App & PWA Support -->
     <link rel="manifest" href="/manifest.json" />
@@ -24,6 +32,13 @@
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icon-192.png" />
+
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="en-GB" href="https://www.linacre.site/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.linacre.site/" />
+
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="Linacre engineering notes" href="https://www.linacre.site/feed.xml" />
   </head>
   <body>
     <div id="root"><!--ROUTE_CONTENT--></div>

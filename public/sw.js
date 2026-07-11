@@ -1,5 +1,22 @@
-var CACHE = "linacre-v8"; // bump on every release so returning visitors get fresh assets
-var URLS = [".", "index.html", "manifest.json", "404.html", "about", "contact", "privacy", "accessibility", "blog", "status", "agents", "lab", "identity", "projects", "toolkit", "learn", "playground", "work"];
+// linacre.site service worker
+// v9 — audit #029: add offline.html fallback, precache 404/500 templates,
+// keep API + cross-origin requests untouched (Lab streaming still works).
+var CACHE = "linacre-v9";
+var OFFLINE_URL = "offline.html";
+var URLS = [
+  ".",
+  "index.html",
+  "manifest.json",
+  "404.html",
+  "500.html",
+  "offline.html",
+  "about", "contact", "contact/thanks",
+  "privacy", "cookie-policy", "terms",
+  "accessibility", "blog", "status",
+  "agents", "lab", "identity",
+  "projects", "toolkit", "learn",
+  "playground", "work"
+];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
@@ -13,7 +30,10 @@ self.addEventListener("install", function (e) {
 self.addEventListener("activate", function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
-      return Promise.all(keys.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
+      return Promise.all(
+        keys.filter(function (k) { return k !== CACHE; })
+            .map(function (k) { return caches.delete(k); })
+      );
     }).then(function () { return self.clients.claim(); })
   );
 });
@@ -23,6 +43,7 @@ self.addEventListener("fetch", function (e) {
 
   // Never touch API calls, POSTs, or third-party requests (Lab streaming!)
   if (e.request.method !== "GET" || url.origin !== self.location.origin) return;
+  if (url.pathname.indexOf("/api/") === 0) return;
 
   // Network-first for page navigations: fresh deploys win, cache is the offline fallback
   if (e.request.mode === "navigate") {
@@ -32,7 +53,11 @@ self.addEventListener("fetch", function (e) {
         caches.open(CACHE).then(function (cache) { cache.put(e.request, copy); });
         return r;
       }).catch(function () {
-        return caches.match(e.request).then(function (r) { return r || caches.match("index.html"); });
+        return caches.match(e.request).then(function (r) {
+          return r
+              || caches.match("index.html")
+              || caches.match(OFFLINE_URL);
+        });
       })
     );
     return;
@@ -50,6 +75,9 @@ self.addEventListener("fetch", function (e) {
           });
         }
         return networkResponse;
+      }).catch(function () {
+        // Last-resort offline fallback for lost same-origin GETs
+        return caches.match(OFFLINE_URL);
       });
     })
   );

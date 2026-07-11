@@ -65,9 +65,15 @@
 <body>
 <div class="wrap">
   <p class="code">404</p>
-  <p class="msg">// page not found — the terminal has no record of this route</p>
+  <p class="msg">// page not found &mdash; the terminal has no record of this route</p>
   <p class="countdown">Redirecting in <span id="timer">5</span>s...</p>
-  <a href="/" id="link-home">cd ~/linacre.site</a>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px;">
+    <a href="/" id="link-home">cd ~/linacre.site</a>
+    <a href="/contact" id="link-contact">Start a project</a>
+  </div>
+  <p style="color:var(--muted);font-size:0.7rem;margin-top:8px;">
+    Or email <a style="padding:0;border:0;color:var(--amber)" href="mailto:david@linacre.site">david@linacre.site</a>
+  </p>
 </div>
 <script>
   (function() {

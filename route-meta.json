@@ -7,8 +7,8 @@
   },
   "routes": {
     "/": {
-      "title": "David Linacre | Full-stack engineer and AI systems builder",
-      "description": "David Linacre builds reliable web applications, developer tools and automation systems. Explore selected work, useful tools and technical writing.",
+      "title": "David Linacre — Full-stack & AI engineer | Available for freelance",
+      "description": "UK-based full-stack & AI systems engineer. React, TypeScript, Go, Python. Systems audits from £1,800, custom builds from £6,500. Available now.",
       "canonical": "https://www.linacre.site/",
       "index": true
     },
@@ -124,6 +124,24 @@
       "title": "Work with David Linacre | Services & Availability",
       "description": "Systems engineering audits, custom full-stack development, and ongoing fractional engineering retainers with David Linacre.",
       "canonical": "https://www.linacre.site/work",
+      "index": true
+    },
+    "/contact/thanks": {
+      "title": "Thanks — message received | David Linacre",
+      "description": "Your enquiry has been received. David will reply from david@linacre.site within 12 hours.",
+      "canonical": "https://www.linacre.site/contact/thanks",
+      "index": false
+    },
+    "/cookie-policy": {
+      "title": "Cookie & storage policy | linacre.site",
+      "description": "How linacre.site uses browser storage and consent under UK GDPR / PECR. No tracking cookies — full disclosure of every key.",
+      "canonical": "https://www.linacre.site/cookie-policy",
+      "index": true
+    },
+    "/terms": {
+      "title": "Terms of service | linacre.site",
+      "description": "Terms of service for David Linacre freelance engineering — engagements, deliverables, liability cap, governing law (England & Wales).",
+      "canonical": "https://www.linacre.site/terms",
       "index": true
     }
   }
