@@ -25,5 +25,28 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Work with Me",
+      "short_name": "Work",
+      "description": "View services, audits, and book a call with David",
+      "url": "/work",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Projects Hub",
+      "short_name": "Projects",
+      "description": "View public projects and case studies",
+      "url": "/projects",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Developer Toolkit",
+      "short_name": "Toolkit",
+      "description": "Browse developer tools and utility filters",
+      "url": "/toolkit",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
   ]
 }

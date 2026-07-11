@@ -27,6 +27,40 @@ export default function Projects() {
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
+  // Deep-linking: automatically open project details modal based on URL hash
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#project-')) {
+        const projectName = decodeURIComponent(hash.slice(9)).replace(/_/g, ' ');
+        const found = projects.find(p => p.name.toLowerCase() === projectName.toLowerCase());
+        if (found) {
+          setSelectedProject(found);
+        }
+      } else if (!hash) {
+        setSelectedProject(null);
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [projects]);
+
+  // Synchronize URL hash when selectedProject state changes
+  useEffect(() => {
+    if (selectedProject) {
+      const projectHash = `#project-${encodeURIComponent(selectedProject.name.replace(/\s+/g, '_'))}`;
+      if (window.location.hash !== projectHash) {
+        window.history.pushState(null, '', projectHash);
+      }
+    } else {
+      if (window.location.hash.startsWith('#project-')) {
+        window.history.pushState(null, '', window.location.pathname + window.location.search);
+      }
+    }
+  }, [selectedProject]);
+
   const handleRequestAccess = (project: Project) => {
     try {
       sessionStorage.setItem('linacre_pending_request', JSON.stringify({
@@ -220,7 +254,7 @@ export default function Projects() {
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
           <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground uppercase font-bold">
             <SlidersHorizontal className="w-3.5 h-3.5" />
             <label htmlFor="projects-sort">Sort:</label>
@@ -322,6 +356,7 @@ export default function Projects() {
                   setEditingProject(null);
                 }}
                 className="text-muted-foreground hover:text-foreground p-0.5"
+                aria-label="Close project form"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -329,8 +364,9 @@ export default function Projects() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Project Name *</label>
+                <label htmlFor="form-project-name" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Project Name *</label>
                 <input
+                  id="form-project-name"
                   type="text"
                   required
                   placeholder="e.g. My Awesome App"
@@ -341,11 +377,12 @@ export default function Projects() {
               </div>
 
               <div className="space-y-1">
-                <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Category</label>
+                <label htmlFor="form-project-category" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Category</label>
                 <select
+                  id="form-project-category"
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value)}
-                  className="w-full bg-background border border-border-color rounded-lg px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
+                  className="w-full bg-background border border-border-color rounded-lg px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer"
                 >
                   <option value="start">start (ide / planning)</option>
                   <option value="build">build (frameworks / DB / backend)</option>
@@ -356,8 +393,9 @@ export default function Projects() {
               </div>
 
               <div className="space-y-1">
-                <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Project URL *</label>
+                <label htmlFor="form-project-url" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Project URL *</label>
                 <input
+                  id="form-project-url"
                   type="text"
                   required
                   placeholder="e.g. github.com/LIN4CRE/project"
@@ -367,10 +405,11 @@ export default function Projects() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Label (e.g. Host/Repo)</label>
+                  <label htmlFor="form-project-host" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Label (e.g. Host/Repo)</label>
                   <input
+                    id="form-project-host"
                     type="text"
                     placeholder="e.g. github.com (auto if blank)"
                     value={formHost}
@@ -379,8 +418,9 @@ export default function Projects() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Tag</label>
+                  <label htmlFor="form-project-tag" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Tag</label>
                   <input
+                    id="form-project-tag"
                     type="text"
                     placeholder="e.g. Live, Open Source"
                     value={formTag}
@@ -392,13 +432,14 @@ export default function Projects() {
             </div>
 
             <div className="space-y-1">
-              <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Description</label>
+              <label htmlFor="form-project-description" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Description</label>
               <textarea
+                id="form-project-description"
                 placeholder="Tell us about the project, tech stack, and what you learned..."
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
                 rows={2}
-                className="w-full bg-background/50 border border-border-color rounded-lg px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
+                className="w-full bg-background/50 border border-border-color rounded-lg px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color resize-none"
               />
             </div>
 
@@ -428,7 +469,7 @@ export default function Projects() {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4" id="projects-grid">
         {filteredProjects.map((project, idx) => {
-          const cardClassName = `group relative flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi hover:-translate-y-0.5 transition-all duration-200 border-l-[3px] ${
+          const cardClassName = `group relative flex flex-col justify-between bg-muted/20 dark:bg-[#161b26] border border-border-color rounded-xl p-5 hover:bg-muted/35 dark:hover:bg-[#1c2230] hover:border-border-hi hover:-translate-y-0.5 transition-all duration-200 border-l-[3px] min-w-0 ${
             project.category === 'deploy'
               ? 'border-l-emerald-color'
               : project.category === 'build'
@@ -544,7 +585,7 @@ export default function Projects() {
 
               {/* Modal Body */}
               <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
-                <div className="flex justify-between items-start gap-4">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                   <div>
                     <h2 id="modal-project-title" className="font-display text-lg font-bold text-foreground">
                       {selectedProject.name}

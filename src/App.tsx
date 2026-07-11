@@ -27,6 +27,7 @@ const Privacy = lazy(() => import('./components/Privacy'));
 const AccessibilityStatement = lazy(() => import('./components/AccessibilityStatement'));
 const Blog = lazy(() => import('./components/Blog'));
 const StatusPage = lazy(() => import('./components/StatusPage'));
+const WorkWithMe = lazy(() => import('./components/WorkWithMe'));
 
 export default function App() {
   const getTabFromPath = () => {
@@ -34,7 +35,7 @@ export default function App() {
     const hash = window.location.hash.replace(/^#/, '');
     const validTabs = [
       'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground',
-      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'
+      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work'
     ];
     
     // 1. Authoritative: check window.location.pathname first
@@ -48,14 +49,9 @@ export default function App() {
     if (validTabs.includes(hash)) {
       return hash;
     }
-    // 3. Fallback: check saved state in localStorage only if on the root path '/'
+    // 3. Root path mapping: if at root '/' or '', it maps to 'toolkit' (which is the homepage!)
     if (window.location.pathname === '/' || window.location.pathname === '') {
-      try {
-        const saved = localStorage.getItem('linacre_active_tab');
-        if (saved && validTabs.includes(saved)) {
-          return saved;
-        }
-      } catch (e) {}
+      return 'toolkit';
     }
     // 4. Default fallback
     return 'projects';
@@ -99,9 +95,10 @@ export default function App() {
 
   // Update URL path and localStorage when activeTab changes
   useEffect(() => {
-    const currentPath = window.location.pathname.replace(/^\//, '');
-    if (currentPath !== activeTab && !(activeTab === 'blog' && currentPath.startsWith('blog/'))) {
-      window.history.pushState(null, '', `/${activeTab}`);
+    const currentPath = window.location.pathname;
+    const targetPath = activeTab === 'toolkit' ? '/' : `/${activeTab}`;
+    if (currentPath !== targetPath && !(activeTab === 'blog' && currentPath.startsWith('/blog/'))) {
+      window.history.pushState(null, '', targetPath);
     }
     try {
       localStorage.setItem('linacre_active_tab', activeTab);
@@ -122,7 +119,7 @@ export default function App() {
       const match = routeMeta.routes[pathname as keyof typeof routeMeta.routes];
       if (match) return match;
     }
-    const key = activeTab === 'projects' && (pathname === '/' || pathname === '') ? '/' : `/${activeTab}`;
+    const key = activeTab === 'toolkit' ? '/' : `/${activeTab}`;
     return routeMeta.routes[key as keyof typeof routeMeta.routes] || routeMeta.routes['/'];
   };
 
@@ -652,6 +649,18 @@ export default function App() {
             </motion.div>
           )}
 
+          {activeTab === 'work' && (
+            <motion.div
+              key="work"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <WorkWithMe />
+            </motion.div>
+          )}
+
           {activeTab === 'agents' && (
             <motion.div
               key="agents"
@@ -736,7 +745,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status'].includes(activeTab) && (
+          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work'].includes(activeTab) && (
             <motion.div
               key="404"
               initial={{ opacity: 0, scale: 0.95 }}

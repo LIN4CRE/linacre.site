@@ -56,7 +56,7 @@ function mdToHtml(md) {
     }
     if (inCode) { codeBuf.push(line); continue; }
     const h = line.match(/^(#{1,4})\s+(.*)$/);
-    if (h) { flushPara(); flushList(); const lvl = Math.min(h[1].length + 1, 4); out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`); continue; }
+    if (h) { flushPara(); flushList(); const lvl = h[1].length === 1 ? 2 : h[1].length; out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`); continue; }
     const li = line.match(/^\s*[-*]\s+(.*)$/);
     if (li) { flushPara(); list.push(li[1]); continue; }
     if (!line.trim()) { flushPara(); flushList(); continue; }
@@ -81,7 +81,7 @@ await esbuild({
 const { data } = await import(pathToFileURL(dataBundle).href);
 fs.rmSync(dataBundle, { force: true });
 
-const SITE = 'https://linacre.site';
+const SITE = 'https://www.linacre.site';
 const PERSON = {
   '@type': 'Person', '@id': `${SITE}/#person`, name: 'David Linacre', url: `${SITE}/`,
   sameAs: ['https://github.com/LIN4CRE', 'https://linkedin.com/in/davidlinacre'],
@@ -104,10 +104,17 @@ function jsonLdFor(route, m) {
   if (route === '/' || route === '/projects') {
     graph.push({
       '@type': 'ItemList', '@id': `${SITE}${route === '/' ? '/' : route}#projects`, name: 'Featured Projects',
-      itemListElement: featured.map((p, i) => ({
+      itemListElement: publicProjects.map((p, i) => ({
         '@type': 'ListItem', position: i + 1,
-        item: { '@type': 'SoftwareApplication', name: p.name, url: p.url, description: p.description,
-          applicationCategory: 'DeveloperApplication', operatingSystem: 'Web' },
+        item: { 
+          '@type': 'SoftwareApplication', 
+          'name': p.name, 
+          'url': p.url || `${SITE}/projects`, 
+          'description': p.description,
+          'applicationCategory': p.category === 'deploy' ? 'DevOpsApplication' : 'DeveloperApplication', 
+          'operatingSystem': 'Web',
+          'author': { '@id': `${SITE}/#person` }
+        },
       })),
     });
     // Enhanced: SoftwareSourceCode nodes for verifiable open-source case studies
@@ -157,11 +164,29 @@ function jsonLdFor(route, m) {
   if (m.type === 'article') {
     const post = data.posts.find(p => `/blog/${p.slug}` === route);
     graph.push({
-      '@type': 'BlogPosting', '@id': `${m.canonical}#article`, headline: m.title.split(' | ')[0],
-      description: m.description, datePublished: m.published, dateModified: m.published,
-      author: { '@id': `${SITE}/#person` }, publisher: { '@id': `${SITE}/#person` },
-      image: m.image || meta.site.defaultImage, mainEntityOfPage: m.canonical,
-      keywords: post ? post.tags.join(', ') : undefined, timeRequired: post ? post.readTime : undefined,
+      '@type': 'BlogPosting', 
+      '@id': `${m.canonical}#article`, 
+      'headline': m.title.split(' | ')[0],
+      'description': m.description, 
+      'datePublished': m.published, 
+      'dateModified': m.published,
+      'inLanguage': 'en-GB',
+      'author': { '@id': `${SITE}/#person` }, 
+      'publisher': { 
+        '@type': 'Organization', 
+        'name': 'Linacre', 
+        'logo': { 
+          '@type': 'ImageObject', 
+          'url': `${SITE}/favicon.svg` 
+        } 
+      },
+      'image': m.image || meta.site.defaultImage, 
+      'mainEntityOfPage': { 
+        '@type': 'WebPage', 
+        '@id': m.canonical 
+      },
+      'keywords': post ? post.tags.join(', ') : undefined, 
+      'timeRequired': post ? post.readTime : undefined,
     });
     graph.push({
       '@type': 'BreadcrumbList',
@@ -172,7 +197,98 @@ function jsonLdFor(route, m) {
       ],
     });
   }
-  if (route === '/contact') graph.push({ '@type': 'ContactPage', '@id': `${SITE}/contact#page`, url: `${SITE}/contact`, name: m.title });
+  if (route === '/contact') {
+    graph.push({ '@type': 'ContactPage', '@id': `${SITE}/contact#page`, url: `${SITE}/contact`, name: m.title });
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${SITE}/contact#faq`,
+      'mainEntity': [
+        {
+          '@type': 'Question',
+          'name': 'Are you available for freelance or contract projects?',
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': 'Yes, I am open to select freelance consulting and systems engineering contracts. My primary areas of focus are CI/CD pipelining, cloud migrations (GCP/AWS), backend engineering in Go/Node.js, and containerizing legacy systems. Reach out via the form above with your requirements.'
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': 'What is your primary technology stack?',
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': 'I specialize in TypeScript/React on the frontend, Go and Node.js on the backend, Docker/Kubernetes for containerization, and Terraform for Infrastructure as Code. I am also highly comfortable with database administration across PostgreSQL, MySQL, and Redis.'
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': 'How do you handle project privacy and client security?',
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': 'Security is baked into my design process from day one. I never hardcode credentials, using centralized secret architectures instead. I sign NDAs before discussing proprietary details, and all client repositories are fully isolated with strict IAM roles.'
+          }
+        },
+        {
+          '@type': 'Question',
+          'name': 'How can I request access to one of your private projects?',
+          'acceptedAnswer': {
+            '@type': 'Answer',
+            'text': 'Click the \'Request Details / Access\' button on any project card in the Projects tab. It will automatically populate the contact form with a structured request. Once validated, I can arrange repository access or share architectural documents.'
+          }
+        }
+      ]
+    });
+  }
+  if (route === '/work') {
+    graph.push({
+      '@type': 'OfferCatalog',
+      '@id': `${SITE}/work#services`,
+      'name': 'David Linacre Consulting & Development Offerings',
+      'itemListElement': [
+        {
+          '@type': 'Offer',
+          'itemOffered': {
+            '@type': 'Service',
+            'name': 'Systems & Infrastructure Audit',
+            'description': 'Deep technical review of your architecture, security, performance, and developer experience.'
+          },
+          'priceSpecification': {
+            '@type': 'PriceSpecification',
+            'price': '1800',
+            'priceCurrency': 'GBP',
+            'valueAddedTaxIncluded': true
+          }
+        },
+        {
+          '@type': 'Offer',
+          'itemOffered': {
+            '@type': 'Service',
+            'name': 'Custom Development Project',
+            'description': 'End-to-end build of production-grade tools, automation platforms, or AI integrations.'
+          },
+          'priceSpecification': {
+            '@type': 'PriceSpecification',
+            'price': '6500',
+            'priceCurrency': 'GBP',
+            'valueAddedTaxIncluded': true
+          }
+        },
+        {
+          '@type': 'Offer',
+          'itemOffered': {
+            '@type': 'Service',
+            'name': 'Ongoing Engineering Retainer',
+            'description': 'Dedicated fractional engineering time for ongoing improvements and rapid iteration.'
+          },
+          'priceSpecification': {
+            '@type': 'PriceSpecification',
+            'price': '2400',
+            'priceCurrency': 'GBP',
+            'valueAddedTaxIncluded': true
+          }
+        }
+      ]
+    });
+  }
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 }
 
@@ -210,7 +326,7 @@ function headFor(route, m) {
 
 // ------------------------------------------------- static content snapshots
 const NAV = [
-  ['/', 'Home'], ['/projects', 'Projects'], ['/toolkit', 'Toolkit'], ['/learn', 'Learn'],
+  ['/work', 'Work'], ['/projects', 'Projects'], ['/toolkit', 'Toolkit'], ['/learn', 'Learn'],
   ['/blog', 'Blog'], ['/playground', 'Playground'], ['/about', 'About'], ['/contact', 'Contact'],
 ];
 
@@ -245,7 +361,7 @@ function pageBody(route, m) {
       return `
 <h1>David Linacre — full-stack engineer &amp; AI systems builder</h1>
 <p>I design and ship reliable web applications, developer tools and automation systems.
-I&#39;m based in the UK and <strong>currently available for freelance and contract work</strong> —
+I&#39;m based in the UK and <strong>currently available for freelance and contract work</strong>. See my <a href="/work">available services</a> —
 from product builds to AI integrations and developer-experience tooling.</p>
 ${CTA_BLOCK}
 <h2>What I do</h2>
@@ -358,6 +474,19 @@ ${posts.map(p => `  <li>
 </ul>
 <p class="meta">These tools require JavaScript. Enable JS to use the playground.</p>`;
 
+    case route === '/work':
+      return `
+<h1>Work with David Linacre</h1>
+<p>I help engineering groups ship faster, automate operations, and implement secure, high-throughput systems. Select contract services are outlined below.</p>
+<h2>Offerings</h2>
+<ul>
+  <li><strong>Systems &amp; Infrastructure Audit</strong> — Deep technical review of your architecture, security, performance, and developer experience. From £1,800.</li>
+  <li><strong>Custom Development Project</strong> — End-to-end build of production-grade tools, automation platforms, or AI integrations. From £6,500.</li>
+  <li><strong>Ongoing Engineering Retainer</strong> — Dedicated fractional engineering time for ongoing improvements and rapid iteration. £2,400 / month.</li>
+</ul>
+<p>The interactive Work page (with secure scheduling links and booking forms) requires JavaScript.</p>
+${CTA_BLOCK}`;
+
     case route === '/contact':
       return `
 <h1>Contact David Linacre</h1>
@@ -430,7 +559,7 @@ function snapshot(route, m) {
   <main id="main-content">${pageBody(route, m)}</main>
   <footer>
     <p>© ${new Date().getFullYear()} David Linacre · <a href="https://github.com/LIN4CRE" rel="noopener">GitHub</a> ·
-    <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/accessibility">Accessibility</a> ·
+    <a href="/work">Work</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/accessibility">Accessibility</a> ·
     <a href="/status">Status</a></p>
     <p class="meta">Full interactive experience (toolkit search, AI lab, playground) requires JavaScript.</p>
   </footer>

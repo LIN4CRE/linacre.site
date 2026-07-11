@@ -94,10 +94,26 @@ export default function IdentityHub() {
   const [userBio, setUserBio] = useState(() => localStorage.getItem('linacre_brand_bio') || 'Crafting pristine digital tools, robust server proxy networks, and intelligent sandbox applications.');
   
   // Social links for email signature and badges
-  const [userEmail, setUserEmail] = useState(() => localStorage.getItem('linacre_brand_email') || 'delinacre@gmail.com');
+  const [userEmail, setUserEmail] = useState(() => localStorage.getItem('linacre_brand_email') || 'david@linacre.site');
   const [userGithub, setUserGithub] = useState(() => localStorage.getItem('linacre_brand_github') || 'github.com/LIN4CRE');
   const [userLinkedin, setUserLinkedin] = useState(() => localStorage.getItem('linacre_brand_linkedin') || 'linkedin.com/in/david-linacre');
-  const [userWebsite, setUserWebsite] = useState(() => localStorage.getItem('linacre_brand_website') || 'https://linacre.site');
+  const [userWebsite, setUserWebsite] = useState(() => localStorage.getItem('linacre_brand_website') || 'https://www.linacre.site');
+
+  // Dynamically insert link tag for Google Fonts to satisfy strict CSP rules
+  useEffect(() => {
+    const linkId = 'dynamic-google-fonts';
+    let link = document.getElementById(linkId) as HTMLLinkElement;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = linkId;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    const match = activeFont.import.match(/url\(['"]([^'"]+)['"]\)/);
+    if (match && match[1]) {
+      link.href = match[1];
+    }
+  }, [activeFont]);
 
   useEffect(() => {
     localStorage.setItem('linacre_brand_color', activeColor.id);
@@ -1154,8 +1170,6 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
 
   return (
     <div className="space-y-10 pb-16" id="identity-brand-hub">
-      {/* Inject Dynamic Google Fonts on the fly */}
-      <style dangerouslySetInnerHTML={{ __html: activeFont.import }} />
 
       {/* Screen-reader live region for brand setting changes */}
       <div
@@ -1175,10 +1189,10 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
           </span>
           <span className="text-xs text-muted-foreground">· Dynamic Canvas Engine</span>
         </div>
-        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-amber-color animate-pulse" />
           <span>The New Linacre Signature Identity</span>
-        </h2>
+        </h1>
         <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
           Unify your digital footprint across socials, GitHub, and email clients. Customize your interactive vector monogram emblem, swap typography vibes, and download copy-pasteable assets built to represent David Linacre's pristine brand.
         </p>
@@ -1190,10 +1204,10 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
         {/* Left Column: Interactive Settings (lg:col-span-5) */}
         <div className="lg:col-span-5 space-y-6">
           <div className="border border-border-color bg-muted/10 dark:bg-[#10141d]/40 rounded-xl p-5 space-y-6 shadow-md">
-            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 pb-2 border-b border-border-color/40">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 pb-2 border-b border-border-color/40">
               <Palette className="w-4 h-4 text-amber-color" />
               <span>Identity Customizer</span>
-            </h3>
+            </h2>
 
             {/* Customizer Option 1: Palette choice */}
             <div className="space-y-3">
@@ -1353,10 +1367,11 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                 <span>Personalization Metadata</span>
               </label>
               <div className="space-y-2.5">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-muted-foreground font-mono">Display Name</span>
+                    <label htmlFor="meta-display-name" className="text-[10px] text-muted-foreground font-mono">Display Name</label>
                     <input
+                      id="meta-display-name"
                       type="text"
                       placeholder="Name / Brand"
                       value={userName}
@@ -1365,8 +1380,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] text-muted-foreground font-mono">Professional Title</span>
+                    <label htmlFor="meta-professional-title" className="text-[10px] text-muted-foreground font-mono">Professional Title</label>
                     <input
+                      id="meta-professional-title"
                       type="text"
                       placeholder="Title / Subtitle"
                       value={userTitle}
@@ -1377,8 +1393,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                 </div>
 
                 <div className="space-y-1">
-                  <span className="text-[10px] text-muted-foreground font-mono">Elevator Pitch</span>
+                  <label htmlFor="meta-elevator-pitch" className="text-[10px] text-muted-foreground font-mono">Elevator Pitch</label>
                   <textarea
+                    id="meta-elevator-pitch"
                     placeholder="Short bio for banners"
                     value={userBio}
                     onChange={(e) => setUserBio(e.target.value)}
@@ -1387,10 +1404,11 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <span className="text-[10px] text-muted-foreground font-mono">Email Address</span>
+                    <label htmlFor="meta-email-address" className="text-[10px] text-muted-foreground font-mono">Email Address</label>
                     <input
+                      id="meta-email-address"
                       type="email"
                       value={userEmail}
                       onChange={(e) => setUserEmail(e.target.value)}
@@ -1398,8 +1416,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     />
                   </div>
                   <div className="space-y-1">
-                    <span className="text-[10px] text-muted-foreground font-mono">Personal Website</span>
+                    <label htmlFor="meta-personal-website" className="text-[10px] text-muted-foreground font-mono">Personal Website</label>
                     <input
+                      id="meta-personal-website"
                       type="text"
                       value={userWebsite}
                       onChange={(e) => setUserWebsite(e.target.value)}
@@ -1463,9 +1482,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
               {/* Asset Information list with custom font family rendering live */}
               <div className="space-y-4 text-center sm:text-left flex-1">
                 <div className="space-y-1.5">
-                  <h4 className="text-lg font-bold text-slate-100 tracking-tight" style={{ fontFamily: activeFont.displayFamily }}>
+                  <h3 className="text-lg font-bold text-slate-100 tracking-tight" style={{ fontFamily: activeFont.displayFamily }}>
                     The Linacre Emblem
-                  </h4>
+                  </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     An abstract representation of the modern digital builder. Fuses DevOps pipeline elements, conic-gradient orb systems, and clean terminal brackets to represent code orchestration and AI automation.
                   </p>
@@ -1500,10 +1519,10 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
 
             {/* Bottom Section: Dynamic badge widgets */}
             <div className="p-5 bg-muted/5 space-y-4">
-              <h4 className="font-mono text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+              <h3 className="font-mono text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <FileCode className="w-4 h-4 text-cyan" />
                 <span>Integration Badges</span>
-              </h4>
+              </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Snippet 1: Markdown badge */}
@@ -1513,14 +1532,15 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     <input
                       type="text"
                       readOnly
-                      value={`[![David Linacre](https://img.shields.io/badge/linacre.site-developer-${activeColor.id === 'crimson' ? 'red' : activeColor.id === 'amber' ? 'amber' : activeColor.id === 'emerald' ? 'emerald' : activeColor.id === 'mono' ? 'lightgrey' : 'cyan'})](https://linacre.site)`}
+                      value={`[![David Linacre](https://img.shields.io/badge/linacre.site-developer-${activeColor.id === 'crimson' ? 'red' : activeColor.id === 'amber' ? 'amber' : activeColor.id === 'emerald' ? 'emerald' : activeColor.id === 'mono' ? 'lightgrey' : 'cyan'})](https://www.linacre.site)`}
                       className="w-full bg-transparent text-[10px] font-mono text-muted-foreground focus:outline-none select-all"
                     />
                     <button
-                      onClick={() => handleCopy(`[![David Linacre](https://img.shields.io/badge/linacre.site-developer-${activeColor.id === 'crimson' ? 'red' : activeColor.id === 'amber' ? 'amber' : activeColor.id === 'emerald' ? 'emerald' : activeColor.id === 'mono' ? 'lightgrey' : 'cyan'})](https://linacre.site)`, 'markdown')}
+                      onClick={() => handleCopy(`[![David Linacre](https://img.shields.io/badge/linacre.site-developer-${activeColor.id === 'crimson' ? 'red' : activeColor.id === 'amber' ? 'amber' : activeColor.id === 'emerald' ? 'emerald' : activeColor.id === 'mono' ? 'lightgrey' : 'cyan'})](https://www.linacre.site)`, 'markdown')}
+                      aria-label="Copy GitHub Profile Shield markdown code"
                       className="p-1.5 hover:text-foreground text-muted-foreground/60 focus:outline-none cursor-pointer"
                     >
-                      {copiedType === 'markdown' ? <Check className="w-3 h-3 text-emerald-color" /> : <Copy className="w-3 h-3" />}
+                      {copiedType === 'markdown' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>
@@ -1537,9 +1557,10 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     />
                     <button
                       onClick={() => handleCopy(`<a href="${userWebsite}" style="font-family: ${activeFont.monoFamily}; font-size: 11px; color: ${activeColor.primary}; text-decoration: none; border: 1px solid ${activeColor.primary}20; padding: 3px 8px; border-radius: 4px;">&gt; ${userName.toLowerCase().replace(/\s+/g, '')}</a>`, 'html')}
+                      aria-label="Copy App Footer anchor link HTML code"
                       className="p-1.5 hover:text-foreground text-muted-foreground/60 focus:outline-none cursor-pointer"
                     >
-                      {copiedType === 'html' ? <Check className="w-3 h-3 text-emerald-color" /> : <Copy className="w-3 h-3" />}
+                      {copiedType === 'html' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>
@@ -1556,9 +1577,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
         <div className="px-5 py-3 border-b border-border-color/60 bg-muted/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: activeColor.primary }} />
-            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Dynamic Brand Asset Generators
-            </h3>
+            </h2>
           </div>
           
           <div className="flex bg-background border border-border-color/60 p-1 rounded-lg gap-1 self-start sm:self-auto">
@@ -1648,9 +1669,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                       </div>
 
                       <div className="space-y-1">
-                        <h4 className="text-sm sm:text-base md:text-2xl font-bold tracking-tight text-slate-100 uppercase" style={{ fontFamily: activeFont.displayFamily }}>
+                        <h3 className="text-sm sm:text-base md:text-2xl font-bold tracking-tight text-slate-100 uppercase" style={{ fontFamily: activeFont.displayFamily }}>
                           {userName || 'DAVID LINACRE'}
-                        </h4>
+                        </h3>
                         <div className="flex items-center gap-2">
                           <span className={`w-1.5 h-1.5 rounded-full`} style={{ backgroundColor: activeColor.primary }} />
                           <span className="text-[10px] sm:text-xs text-muted-foreground font-semibold" style={{ fontFamily: activeFont.monoFamily }}>
@@ -1705,9 +1726,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                   </div>
 
                   <div className="space-y-1">
-                    <h4 className="text-base font-bold text-slate-100 uppercase" style={{ fontFamily: activeFont.displayFamily }}>
+                    <h3 className="text-base font-bold text-slate-100 uppercase" style={{ fontFamily: activeFont.displayFamily }}>
                       {userName}
-                    </h4>
+                    </h3>
                     <p className="text-xs text-amber-color font-mono" style={{ fontFamily: activeFont.monoFamily }}>
                       @{userName.toLowerCase().replace(/\s+/g, '')}
                     </p>
@@ -1748,9 +1769,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     </div>
 
                     <div className="space-y-1">
-                      <h4 className="text-sm font-bold tracking-tight text-white uppercase" style={{ fontFamily: activeFont.displayFamily }}>
+                      <h3 className="text-sm font-bold tracking-tight text-white uppercase" style={{ fontFamily: activeFont.displayFamily }}>
                         {userName}
-                      </h4>
+                      </h3>
                       <p className="text-[11px] font-mono text-muted-foreground font-semibold" style={{ color: activeColor.primary, fontFamily: activeFont.monoFamily }}>
                         {userTitle}
                       </p>
@@ -1777,9 +1798,9 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
         <div className="px-5 py-3 border-b border-border-color/60 bg-muted/20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-amber-color" />
-            <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
               Embeddable HTML Email Signature Builder
-            </h3>
+            </h2>
           </div>
           <span className="text-[9px] font-mono text-emerald-color font-semibold uppercase bg-emerald-color/10 px-2 py-0.5 rounded">
             Copy-Paste Ready
@@ -1805,7 +1826,7 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
             {/* Email Actions Panel */}
             <div className="md:col-span-5 flex flex-col justify-center space-y-4">
               <div className="bg-[#10141d]/30 p-4 border border-border-color/40 rounded-lg space-y-2.5">
-                <h5 className="font-mono text-xs font-bold text-foreground">Interactive Actions:</h5>
+                <h3 className="font-mono text-xs font-bold text-foreground">Interactive Actions:</h3>
                 <p className="text-[11px] text-muted-foreground">
                   The **Copy Rich Text Signature** parses CSS and tables on the fly. Simply click it and then press **Ctrl+V / Cmd+V** in your email signature settings panel!
                 </p>

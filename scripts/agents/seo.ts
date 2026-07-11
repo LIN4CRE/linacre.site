@@ -19,7 +19,7 @@ if (!fs.existsSync(publicDir)) {
 const robotsPath = path.join(publicDir, 'robots.txt');
 if (!fs.existsSync(robotsPath)) {
   log("Generating missing robots.txt...");
-  fs.writeFileSync(robotsPath, 'User-agent: *\nAllow: /\nSitemap: https://linacre.site/sitemap.xml', 'utf-8');
+  fs.writeFileSync(robotsPath, 'User-agent: *\nAllow: /\nSitemap: https://www.linacre.site/sitemap.xml', 'utf-8');
 } else {
   log("robots.txt is present.");
 }
@@ -31,7 +31,7 @@ if (!fs.existsSync(sitemapPath)) {
   const sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://linacre.site/</loc>
+    <loc>https://www.linacre.site/</loc>
     <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>

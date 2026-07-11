@@ -1,34 +1,28 @@
 # linacre.site
 
-> Developer portfolio and toolset by David Linacre — a UK-based full-stack
-> engineer and AI systems builder, available for freelance and contract work.
+> David Linacre builds reliable web applications, developer tools and automation systems. Full-stack engineer focused on speed, security, and developer experience.
 
-## What this site is
+## About
+- Full name: David Christopher Linacre
+- Location: United Kingdom
+- Contact: david@linacre.site
+- Expertise: React, TypeScript, Go, Docker, AI sandboxes, high-performance systems
 
-- Portfolio and case studies for open-source and client projects
-- A curated directory of free developer tools (Toolkit)
-- A practical learning roadmap for self-taught engineers (Learn)
-- Browser-based developer utilities (Playground)
-- An AI chat lab with rate-limited server proxies (Lab)
-- Engineering write-ups (Blog)
+## Key Pages
+- /projects — Open source and production projects
+- /about — Detailed bio and skills
+- /blog — Technical deep-dives
+- /learn — Free learning roadmap
+- /playground — Client-side utilities
+- /contact — Secure enquiry form
+- /work — Services and availability
 
-## Key pages
+## Notable Projects
+- GhostMail — Disposable email server written in Go. Bounded worker pools and SQLite persistence.
+- DomainDeals — Domain availability broker and fast wireframe portfolio index.
+- linacre.site — Curated toolkit directory and AI laboratory.
 
-- Home: https://www.linacre.site/
-- Projects & case studies: https://www.linacre.site/projects
-- Free developer toolkit: https://www.linacre.site/toolkit
-- Learning roadmap: https://www.linacre.site/learn
-- Engineering notes: https://www.linacre.site/blog
-- About: https://www.linacre.site/about
-- Contact (freelance/contract enquiries): https://www.linacre.site/contact
-
-## Source
-
-- GitHub: https://github.com/LIN4CRE
-- Security contact: https://www.linacre.site/.well-known/security.txt
-
-## Notes for agents
-
-- All marketing pages serve static, semantic HTML (no JS required to read).
-- The contact form and interactive tools require JavaScript.
-- API endpoints under /api/ are rate limited and not intended for crawling.
+## Technical Specifications
+- local client-side environment runs on Node.js & React SPA.
+- static endpoints are statically pre-rendered at build-time.
+- rate limits and secure credentials cached via serverless Vercel Edge proxies.

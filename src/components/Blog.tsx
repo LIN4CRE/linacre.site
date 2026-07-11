@@ -115,9 +115,9 @@ export default function Blog() {
                 </span>
               </div>
 
-              <h3 className="font-display text-sm font-bold text-foreground group-hover:text-cyan transition-colors line-clamp-2 leading-snug">
+              <h2 className="font-display text-sm font-bold text-foreground group-hover:text-cyan transition-colors line-clamp-2 leading-snug">
                 {post.title}
-              </h3>
+              </h2>
               
               <p className="text-xs text-muted-foreground leading-relaxed mt-2.5 line-clamp-3">
                 {post.excerpt}

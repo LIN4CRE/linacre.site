@@ -439,14 +439,14 @@ export const MANUAL_PROJECTS: Project[] = [
     name: 'linacre.site',
     category: 'deploy',
     description: 'This very site. Terminal-styled toolkit + AI Lab. Rebuilt in React, Tailwind CSS v4, TypeScript and Node server, deployed on Vercel.',
-    url: 'https://linacre.site',
+    url: 'https://www.linacre.site',
     host: 'linacre.site',
     tag: 'Live',
     role: 'Lead Architect & Designer',
     challenges: 'Upgrading from static HTML to dynamic compiled React while preserving the instant-load terminal theme and strict CSP headers.',
     solution: 'Engineered custom lazy-loaded modules, optimized SVG emblems, and integrated Express server routes with auto-fallback proxy limits.',
     tech: ['React', 'TypeScript', 'Tailwind CSS v4', 'Express', 'Motion'],
-    liveUrl: 'https://linacre.site',
+    liveUrl: 'https://www.linacre.site',
     repoUrl: 'https://github.com/LIN4CRE/linacre.site'
   },
   {
@@ -817,7 +817,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt: 'Deep dive into worker pools, rate limiters, and channel synchronization built for high-throughput SMTP processing in GhostMail.',
     content: `When building GhostMail, my open-source disposable email service, the primary technical challenge was managing thousands of incoming SMTP connections concurrently. In this write-up, we explore the exact concurrency patterns that made it possible.
 
-### 1. The Worker Pool Pattern
+## 1. The Worker Pool Pattern
 Instead of spawning an unbounded number of goroutines for every connection (which causes file descriptor leaks and memory bloat), we use a structured worker pool.
 
 \`\`\`go
@@ -831,7 +831,7 @@ type Worker struct {
 
 Workers register themselves in a global pool and pull jobs from a localized channel. This keeps CPU consumption completely flat.
 
-### 2. Rate Limiting with Token Bucket
+## 2. Rate Limiting with Token Bucket
 To prevent denial-of-service vectors, we employ a token bucket limiter using Go's \`golang.org/x/time/rate\` package. Connections are checked on accept:
 
 \`\`\`go
@@ -841,7 +841,7 @@ if !limiter.Allow() {
 }
 \`\`\`
 
-### Conclusion
+## Conclusion
 By pairing bounded worker pools with token-bucket limiters, GhostMail sustains over 5,000 SMTP transactions per second on a single-core VPS.`,
     date: '2026-06-15',
     readTime: '6 min read',
@@ -854,7 +854,7 @@ By pairing bounded worker pools with token-bucket limiters, GhostMail sustains o
     excerpt: 'How to build a theme customization panel using CSS custom properties, HSL color calculations, and local storage preservation.',
     content: `Styling terminal aesthetics requires absolute precision. In this guide, we break down how to implement the dynamic branding identity customizer found in this portfolio.
 
-### 1. Why HSL Variables?
+## 1. Why HSL Variables?
 HSL (Hue, Saturation, Lightness) is the optimal color space for programmatically computing themes. By storing the base Hue value, we can compute borders, shadows, backgrounds, and text accents dynamically:
 
 \`\`\`css
@@ -868,7 +868,7 @@ HSL (Hue, Saturation, Lightness) is the optimal color space for programmatically
 }
 \`\`\`
 
-### 2. Updating Properties in React
+## 2. Updating Properties in React
 When a user adjusts a dial in our Identity panel, we update the HTML element style directly:
 
 \`\`\`typescript
@@ -878,7 +878,7 @@ const applyTheme = (hue: number) => {
 };
 \`\`\`
 
-### Conclusion
+## Conclusion
 This approach avoids bundling massive CSS selectors, keeps the bundle lightweight, and leverages native browser CSS variables for instantaneous runtime adjustments.`,
     date: '2026-07-02',
     readTime: '4 min read',
@@ -891,7 +891,7 @@ This approach avoids bundling massive CSS selectors, keeps the bundle lightweigh
     excerpt: 'Enforcing cache invalidation rules, immutable assets, and s-maxage controls to build a blazing fast, globally cached SPA.',
     content: `Caching is the most cost-effective performance optimization available. By tuning cache-control parameters on your Vercel deployment, you can deliver sub-100ms load times globally.
 
-### 1. Immutable Assets
+## 1. Immutable Assets
 Because Vite hashes output files (e.g., \`index-CUFdy6z6.js\`), we know these files will never change. We can safely cache them forever at the browser and edge level:
 
 \`\`\`json
@@ -903,7 +903,7 @@ Because Vite hashes output files (e.g., \`index-CUFdy6z6.js\`), we know these fi
 }
 \`\`\`
 
-### 2. Handling HTML Fallbacks
+## 2. Handling HTML Fallbacks
 HTML routes must never use \`immutable\` cache settings, otherwise visitors will receive updates. However, we can cache them at the Edge using \`s-maxage\` and force revalidation:
 
 \`\`\`json
@@ -915,7 +915,7 @@ HTML routes must never use \`immutable\` cache settings, otherwise visitors will
 }
 \`\`\`
 
-### Conclusion
+## Conclusion
 With these headers configured, static files serve directly from Vercel's edge cache nodes close to the user, bypassing server routing latency entirely.`,
     date: '2026-07-08',
     readTime: '5 min read',

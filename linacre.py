@@ -415,16 +415,31 @@ def cmd_boot():
     # 4. Spawn Background Git Auto-Sync
     sync_script = Path("D:/LIN4CRE/linacre-toolkit/git-sync.ps1")
     if sync_script.exists():
-        _info("Spawning background Git Auto-Sync loop (every 30 mins)...")
-        ps_cmd = f"& {{ powershell -ExecutionPolicy Bypass -File '{sync_script}'; while($true) {{ Start-Sleep -Seconds 1800; powershell -ExecutionPolicy Bypass -File '{sync_script}' }} }}"
+        _info("Spawning background Git Auto-Sync loop (every 1 hour)...")
+        ps_cmd = f"& {{ & '{sync_script}'; while($true) {{ Start-Sleep -Seconds 3600; & '{sync_script}' }} }}"
         subprocess.Popen(
-            ["powershell", "-NoProfile", "-WindowStyle", "Hidden", "-Command", ps_cmd],
+            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-Command", ps_cmd],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
-            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
+            shell=sys.platform == "win32"
         )
     else:
         _warn("Git sync script not found, skipping.")
+
+    # 5. Spawn Background Vault Watcher
+    watcher_script = Path("D:/LIN4CRE/linacre-toolkit/vault-watcher.ps1")
+    if watcher_script.exists():
+        _info("Spawning background Vault Watcher...")
+        subprocess.Popen(
+            ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-WindowStyle", "Hidden", "-File", str(watcher_script)],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if sys.platform == "win32" else 0,
+            shell=sys.platform == "win32"
+        )
+    else:
+        _warn("Vault watcher script not found, skipping.")
         
     _ok("Boot sequence complete! System is fully autonomous.")
 

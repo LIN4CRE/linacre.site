@@ -20,7 +20,7 @@
       ]
     },
     {
-      "source": "/(sitemap.xml|robots.txt|llms.txt)",
+      "source": "/(sitemap.xml|robots.txt|llms.txt|feed.xml)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -79,6 +79,10 @@
     {
       "source": "/projects",
       "destination": "/projects/index.html"
+    },
+    {
+      "source": "/work",
+      "destination": "/work/index.html"
     },
     {
       "source": "/about",

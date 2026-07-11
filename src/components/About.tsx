@@ -63,9 +63,10 @@ export default function About() {
               className="rounded-xl border border-border-color bg-muted/20 aspect-square w-full object-cover"
               width="248"
               height="248"
+              loading="lazy"
             />
             <div className="mt-4 text-center">
-              <h3 className="font-mono text-xs font-bold text-foreground">David Christopher Linacre</h3>
+              <h2 className="font-mono text-xs font-bold text-foreground">David Christopher Linacre</h2>
               <p className="font-mono text-[10px] text-muted-foreground mt-1">Lead Systems Engineer & Coder</p>
             </div>
           </div>

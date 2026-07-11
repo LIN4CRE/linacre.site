@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "linacre.site",
-    "defaultImage": "https://linacre.site/og.png",
+    "defaultImage": "https://www.linacre.site/og.png",
     "locale": "en_GB",
     "twitterCard": "summary_large_image"
   },
@@ -9,43 +9,43 @@
     "/": {
       "title": "David Linacre | Full-stack engineer and AI systems builder",
       "description": "David Linacre builds reliable web applications, developer tools and automation systems. Explore selected work, useful tools and technical writing.",
-      "canonical": "https://linacre.site/",
+      "canonical": "https://www.linacre.site/",
       "index": true
     },
     "/projects": {
       "title": "Projects | David Linacre",
       "description": "Selected developer tools, open-source projects and application experiments by David Linacre.",
-      "canonical": "https://linacre.site/projects",
+      "canonical": "https://www.linacre.site/projects",
       "index": true
     },
     "/about": {
       "title": "About David Linacre | Full-stack and AI engineer",
-      "description": "Learn about David Linacreâ€™s full-stack engineering, developer tooling and automation focus.",
-      "canonical": "https://linacre.site/about",
+      "description": "Learn about David Linacre’s full-stack engineering, developer tooling and automation focus.",
+      "canonical": "https://www.linacre.site/about",
       "index": true
     },
     "/toolkit": {
       "title": "Free developer toolkit | David Linacre",
       "description": "A curated directory of developer tools for building, deploying, designing and learning.",
-      "canonical": "https://linacre.site/toolkit",
+      "canonical": "https://www.linacre.site/toolkit",
       "index": true
     },
     "/learn": {
       "title": "Learn web development from scratch | David Linacre",
       "description": "A practical six-step roadmap and free resources for learning web development and shipping full-stack applications.",
-      "canonical": "https://linacre.site/learn",
+      "canonical": "https://www.linacre.site/learn",
       "index": true
     },
     "/blog": {
       "title": "Engineering notes | David Linacre",
       "description": "Technical notes on Go concurrency, React theming, caching and developer tooling.",
-      "canonical": "https://linacre.site/blog",
+      "canonical": "https://www.linacre.site/blog",
       "index": true
     },
     "/blog/go-concurrency-patterns": {
       "title": "Go Concurrency Patterns | David Linacre",
       "description": "Deep dive into worker pools, rate limiters, and channel synchronization in Go.",
-      "canonical": "https://linacre.site/blog/go-concurrency-patterns",
+      "canonical": "https://www.linacre.site/blog/go-concurrency-patterns",
       "index": true,
       "type": "article",
       "published": "2026-06-15"
@@ -53,7 +53,7 @@
     "/blog/dynamic-hsl-theme-variables": {
       "title": "Dynamic HSL Theme Customization | David Linacre",
       "description": "How to build a theme customization panel using CSS custom properties and HSL in React.",
-      "canonical": "https://linacre.site/blog/dynamic-hsl-theme-variables",
+      "canonical": "https://www.linacre.site/blog/dynamic-hsl-theme-variables",
       "index": true,
       "type": "article",
       "published": "2026-07-02"
@@ -61,7 +61,7 @@
     "/blog/optimizing-edge-cdn-caching": {
       "title": "Optimizing Vercel Edge CDN Caching | David Linacre",
       "description": "Enforcing cache invalidation rules, immutable assets, and s-maxage controls on Vercel.",
-      "canonical": "https://linacre.site/blog/optimizing-edge-cdn-caching",
+      "canonical": "https://www.linacre.site/blog/optimizing-edge-cdn-caching",
       "index": true,
       "type": "article",
       "published": "2026-07-08"
@@ -69,55 +69,61 @@
     "/playground": {
       "title": "Developer utility playground | David Linacre",
       "description": "Browser-based developer utilities including token inspection, regular expressions and secure value generation.",
-      "canonical": "https://linacre.site/playground",
+      "canonical": "https://www.linacre.site/playground",
       "index": true
     },
     "/contact": {
       "title": "Contact David Linacre | Software and automation projects",
       "description": "Contact David Linacre about software design, developer tools and automation projects.",
-      "canonical": "https://linacre.site/contact",
+      "canonical": "https://www.linacre.site/contact",
       "index": true
     },
     "/privacy": {
       "title": "Privacy policy | linacre.site",
       "description": "How linacre.site handles information, browser storage and contact requests.",
-      "canonical": "https://linacre.site/privacy",
+      "canonical": "https://www.linacre.site/privacy",
       "index": true
     },
     "/accessibility": {
       "title": "Accessibility statement | linacre.site",
       "description": "Accessibility statement, known limitations and feedback route for linacre.site.",
-      "canonical": "https://linacre.site/accessibility",
+      "canonical": "https://www.linacre.site/accessibility",
       "index": true
     },
     "/dashboard": {
       "title": "Private workspace | linacre.site",
       "description": "",
-      "canonical": "https://linacre.site/dashboard",
+      "canonical": "https://www.linacre.site/dashboard",
       "index": false
     },
     "/agents": {
       "title": "Agents Hub | Autonomous agent playbooks | David Linacre",
       "description": "Agent workflows, automation playbooks and executor patterns used across the linacre.site toolchain.",
-      "canonical": "https://linacre.site/agents",
+      "canonical": "https://www.linacre.site/agents",
       "index": true
     },
     "/lab": {
       "title": "AI Lab | Model sandbox and experiments | David Linacre",
       "description": "An interactive AI lab: chat with models, inspect data structures and explore live experiments in the browser.",
-      "canonical": "https://linacre.site/lab",
+      "canonical": "https://www.linacre.site/lab",
       "index": true
     },
     "/identity": {
       "title": "Identity Hub | Live brand and monogram builder | David Linacre",
       "description": "Customise the linacre.site brand system live: colours, frames, motion and typography with exportable SVG monograms.",
-      "canonical": "https://linacre.site/identity",
+      "canonical": "https://www.linacre.site/identity",
       "index": true
     },
     "/status": {
       "title": "Site status | linacre.site",
       "description": "Operational status for linacre.site pages, APIs and deployment pipeline.",
-      "canonical": "https://linacre.site/status",
+      "canonical": "https://www.linacre.site/status",
+      "index": true
+    },
+    "/work": {
+      "title": "Work with David Linacre | Services & Availability",
+      "description": "Systems engineering audits, custom full-stack development, and ongoing fractional engineering retainers with David Linacre.",
+      "canonical": "https://www.linacre.site/work",
       "index": true
     }
   }

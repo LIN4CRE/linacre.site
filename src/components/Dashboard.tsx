@@ -218,7 +218,7 @@ export default function Dashboard() {
               <Lock className="w-5 h-5" />
             </div>
             <div className="space-y-1">
-              <h2 className="font-display text-lg font-bold text-foreground">Secure Workspace Gate</h2>
+              <h1 className="font-display text-lg font-bold text-foreground">Secure Workspace Gate</h1>
               <p className="text-xs text-muted-foreground">
                 Private console for David Linacre. MCP servers, prompt architectures, and local workspace env credentials.
               </p>
@@ -227,12 +227,14 @@ export default function Dashboard() {
 
           <form onSubmit={handleAuthSubmit} className="space-y-4 font-mono text-xs">
             <div className="space-y-1.5">
-              <label className="block text-muted-foreground font-semibold">Access Password</label>
+              <label htmlFor="access-password" className="block text-muted-foreground font-semibold">Access Password</label>
               <input
+                id="access-password"
                 type="password"
                 placeholder="Enter the workspace access password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
                 className="w-full bg-muted/40 dark:bg-[#161b26]/60 border border-border-color rounded-lg px-3.5 py-2.5 text-xs focus:outline-none focus:ring-1 focus:ring-cyan focus:border-cyan text-foreground placeholder:text-muted-foreground/40"
               />
             </div>
@@ -245,7 +247,7 @@ export default function Dashboard() {
 
             <button
               type="submit"
-              className="w-full py-2.5 px-4 bg-amber-color hover:bg-amber-color/90 text-background hover:text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full py-2.5 px-4 bg-amber-color hover:bg-amber-color/90 text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <span>Authenticate Access</span>
               <ArrowRight className="w-3.5 h-3.5" />

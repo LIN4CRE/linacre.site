@@ -64,7 +64,7 @@ const DEFAULT_WORKSPACE: WorkspaceItem[] = [
     name: 'schema.sql',
     path: 'db/schema.sql',
     type: 'file',
-    content: `-- PostgreSQL schema for David Linacre's Dashboard\n\nCREATE TABLE IF NOT EXISTS projects (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) UNIQUE NOT NULL,\n  category VARCHAR(50) NOT NULL,\n  description TEXT,\n  url VARCHAR(255),\n  host VARCHAR(100),\n  tag VARCHAR(50) DEFAULT 'Live',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Seed initial projects\nINSERT INTO projects (name, category, description, url, host, tag)\nVALUES \n  ('linacre.site', 'deploy', 'Terminal-styled toolkit + AI Lab', 'https://linacre.site', 'linacre.site', 'Live'),\n  ('GhostMail', 'build', 'Disposable email service written in Go', 'https://github.com/LIN4CRE/GhostMail', 'github.com', 'Open Source');`
+    content: `-- PostgreSQL schema for David Linacre's Dashboard\n\nCREATE TABLE IF NOT EXISTS projects (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) UNIQUE NOT NULL,\n  category VARCHAR(50) NOT NULL,\n  description TEXT,\n  url VARCHAR(255),\n  host VARCHAR(100),\n  tag VARCHAR(50) DEFAULT 'Live',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Seed initial projects\nINSERT INTO projects (name, category, description, url, host, tag)\nVALUES \n  ('linacre.site', 'deploy', 'Terminal-styled toolkit + AI Lab', 'https://www.linacre.site', 'linacre.site', 'Live'),\n  ('GhostMail', 'build', 'Disposable email service written in Go', 'https://github.com/LIN4CRE/GhostMail', 'github.com', 'Open Source');`
   }
 ];
 
@@ -224,7 +224,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
             currentProjects = JSON.parse(saved);
           } else {
             currentProjects = [
-              { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://linacre.site', host: 'linacre.site', tag: 'Live' },
+              { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://www.linacre.site', host: 'linacre.site', tag: 'Live' },
               { name: 'GhostMail', category: 'build', description: 'Disposable email service written in Go', url: 'https://github.com/LIN4CRE/GhostMail', host: 'github.com', tag: 'Open Source' }
             ];
           }
@@ -265,7 +265,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
             currentProjects = JSON.parse(saved);
           } else {
             currentProjects = [
-              { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://linacre.site', host: 'linacre.site', tag: 'Live' },
+              { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://www.linacre.site', host: 'linacre.site', tag: 'Live' },
               { name: 'GhostMail', category: 'build', description: 'Disposable email service written in Go', url: 'https://github.com/LIN4CRE/GhostMail', host: 'github.com', tag: 'Open Source' }
             ];
           }
@@ -316,7 +316,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
             rows = JSON.parse(saved);
           } else {
             rows = [
-              { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://linacre.site', host: 'linacre.site', tag: 'Live' },
+              { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://www.linacre.site', host: 'linacre.site', tag: 'Live' },
               { name: 'GhostMail', category: 'build', description: 'Disposable email service written in Go', url: 'https://github.com/LIN4CRE/GhostMail', host: 'github.com', tag: 'Open Source' }
             ];
           }

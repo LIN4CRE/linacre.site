@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -14,7 +14,8 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const coreItems = [
-    { id: 'projects', label: 'Work', icon: Briefcase },
+    { id: 'work', label: 'Work', icon: Briefcase },
+    { id: 'projects', label: 'Projects', icon: FolderCode },
     { id: 'toolkit', label: 'Toolkit', icon: Layers },
     { id: 'learn', label: 'Learn', icon: BookOpen },
     { id: 'about', label: 'About', icon: User },
@@ -57,8 +58,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              window.history.pushState({}, '', '/projects');
-              window.dispatchEvent(new PopStateEvent('popstate'));
+              setActiveTab('toolkit');
               setMobileMenuOpen(false);
             }}
             className="flex items-center gap-2.5 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded p-1 transition-all"
@@ -195,6 +195,18 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
 
           {/* Action Tools */}
           <div className="flex items-center gap-2">
+            {/* Book Call CTA Button */}
+            <a
+              href="https://calendly.com/david-linacre/15min"
+              target="_blank"
+              rel="noopener"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-color/10 border border-amber-color/30 hover:bg-amber-color text-amber-color hover:text-black font-mono text-xs font-bold transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-color"
+              id="btn-header-calendly"
+            >
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Book Call</span>
+            </a>
+
             {/* Command Palette Button */}
             <button
               onClick={openPalette}

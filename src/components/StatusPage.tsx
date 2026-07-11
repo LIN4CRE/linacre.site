@@ -128,12 +128,12 @@ export default function StatusPage() {
           <div className="w-3.5 h-3.5 rounded-full bg-emerald-color animate-ping" />
           <div className="w-3.5 h-3.5 rounded-full bg-emerald-color absolute" />
           <div>
-            <h3 className="font-mono text-sm font-bold text-foreground uppercase">All Systems Operational</h3>
-            <p className="font-mono text-[10px] text-muted-foreground/80 mt-0.5">Uptime: 99.98% · SSL verified · CDN cache active</p>
+            <h2 className="font-mono text-sm font-bold text-foreground uppercase">Simulated Engine State: Running</h2>
+            <p className="font-mono text-[10px] text-muted-foreground/80 mt-0.5">Mock Uptime: 99.98% · SSL verified · Simulated Latency Metrics</p>
           </div>
         </div>
         <span className="font-mono text-xs text-emerald-color font-bold tracking-wider hidden sm:inline-block">
-          STATUS CODE: 200_OK
+          MOCK_SANDBOX: ACTIVE
         </span>
       </motion.div>
 
@@ -213,9 +213,9 @@ export default function StatusPage() {
 
         {/* System load stats */}
         <motion.div variants={itemVariants} className="md:col-span-4 bg-muted/10 border border-border-color rounded-xl p-5 space-y-5">
-          <h3 className="font-mono text-xs font-bold text-foreground uppercase border-b border-border-color/25 pb-3">
+          <h2 className="font-mono text-xs font-bold text-foreground uppercase border-b border-border-color/25 pb-3">
             Resource Monitors
-          </h3>
+          </h2>
           
           <div className="space-y-4 text-muted-foreground font-mono text-[11px]">
             {/* CPU */}

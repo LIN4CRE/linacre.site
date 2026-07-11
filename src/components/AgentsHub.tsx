@@ -280,10 +280,10 @@ export default function AgentsHub() {
   });
 
   // Sound Engine mute/unmute state
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
   // Live Tracking state for Pixel Agents workspace integrations
-  const [isLiveTracking, setIsLiveTracking] = useState(true);
+  const [isLiveTracking, setIsLiveTracking] = useState(false);
   const lastStepIndexRef = useRef<number>(-1);
 
   // Spend/Rate limits budget slider control
@@ -1387,8 +1387,10 @@ export default function AgentsHub() {
                   <h4 className="text-[10px] text-foreground font-bold uppercase tracking-wider">Dispatch Tactical Unit</h4>
                   
                   <div className="space-y-1">
-                    <label className="block text-[8px] text-muted-foreground uppercase font-bold">Select Agent</label>
+                    <label htmlFor="select-tactical-agent" className="block text-[8px] text-muted-foreground uppercase font-bold">Select Agent</label>
                     <select
+                      id="select-tactical-agent"
+                      aria-label="Select tactical agent"
                       value={tacticalAgentId}
                       onChange={(e) => setTacticalAgentId(e.target.value)}
                       className="w-full bg-[#070a0f] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
@@ -1402,8 +1404,10 @@ export default function AgentsHub() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[8px] text-muted-foreground uppercase font-bold">Audit Command Script</label>
+                    <label htmlFor="select-tactical-action" className="block text-[8px] text-muted-foreground uppercase font-bold">Audit Command Script</label>
                     <select
+                      id="select-tactical-action"
+                      aria-label="Select tactical command script"
                       value={tacticalAction}
                       onChange={(e) => setTacticalAction(e.target.value)}
                       className="w-full bg-[#070a0f] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
@@ -1789,8 +1793,10 @@ export default function AgentsHub() {
 
             <form onSubmit={handleAssignAction} className="space-y-4">
               <div className="space-y-1">
-                <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Select Active Agent</label>
+                <label htmlFor="select-active-agent" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Select Active Agent</label>
                 <select
+                  id="select-active-agent"
+                  aria-label="Select active agent to configure"
                   value={selectedAgentId}
                   onChange={(e) => setSelectedAgentId(e.target.value)}
                   className="w-full bg-background border border-border-color rounded-lg px-3 py-2 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
@@ -1805,8 +1811,10 @@ export default function AgentsHub() {
 
               {/* add actions - Predefined database dropdown */}
               <div className="space-y-1">
-                <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Predefined Actions Database</label>
+                <label htmlFor="select-predefined-action" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Predefined Actions Database</label>
                 <select
+                  id="select-predefined-action"
+                  aria-label="Select predefined database action"
                   value={selectedAction}
                   onChange={(e) => {
                     setSelectedAction(e.target.value);
@@ -1823,9 +1831,10 @@ export default function AgentsHub() {
               </div>
 
               <div className="space-y-1">
-                <label className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Or Dispatch Custom Task</label>
+                <label htmlFor="input-custom-task" className="block font-mono text-[10px] text-muted-foreground uppercase font-bold">Or Dispatch Custom Task</label>
                 <div className="relative">
                   <input
+                    id="input-custom-task"
                     type="text"
                     placeholder="Write a custom script task..."
                     value={customActionText}
@@ -1834,6 +1843,7 @@ export default function AgentsHub() {
                   />
                   <button
                     type="submit"
+                    aria-label="Dispatch custom task"
                     className="absolute right-1 top-1 p-1 bg-amber-color text-black rounded-md hover:bg-amber-color/90 transition-colors"
                   >
                     <Send className="w-3.5 h-3.5" />
@@ -1909,6 +1919,7 @@ export default function AgentsHub() {
                   <label htmlFor="spawn-agent-role" className="block text-[10px] text-muted-foreground uppercase font-bold">Role & Type</label>
                   <select
                     id="spawn-agent-role"
+                    aria-label="Select role and type for spawned agent"
                     value={newAgentRole}
                     onChange={(e: any) => setNewAgentRole(e.target.value)}
                     className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"
@@ -1924,6 +1935,7 @@ export default function AgentsHub() {
                   <label htmlFor="spawn-agent-personality" className="block text-[10px] text-muted-foreground uppercase font-bold">Personality</label>
                   <select
                     id="spawn-agent-personality"
+                    aria-label="Select personality behavior"
                     value={newAgentPersonality}
                     onChange={(e: any) => setNewAgentPersonality(e.target.value)}
                     className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"
@@ -1940,6 +1952,7 @@ export default function AgentsHub() {
                 <label htmlFor="spawn-agent-sprite" className="block text-[10px] text-muted-foreground uppercase font-bold">Select Avatar Sprite</label>
                 <select
                   id="spawn-agent-sprite"
+                  aria-label="Select pokemon sprite style"
                   value={newAgentSprite}
                   onChange={(e) => setNewAgentSprite(e.target.value)}
                   className="w-full bg-background border border-border-color rounded-lg px-2 py-1.5 text-xs text-foreground"

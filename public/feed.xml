@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>David Linacre — Engineering Notes</title>
+  <link>https://www.linacre.site/blog</link>
+  <description>Technical deep-dives into systems architecture, Go concurrency, frontend customisation, and cloud caching.</description>
+  <language>en-GB</language>
+  <lastBuildDate>Sat, 11 Jul 2026 18:00:00 GMT</lastBuildDate>
+  <atom:link href="https://www.linacre.site/feed.xml" rel="self" type="application/rss+xml" />
+  <item>
+    <title>High-Throughput Go Concurrency Patterns</title>
+    <link>https://www.linacre.site/blog/go-concurrency-patterns</link>
+    <guid isPermaLink="true">https://www.linacre.site/blog/go-concurrency-patterns</guid>
+    <pubDate>Mon, 15 Jun 2026 00:00:00 GMT</pubDate>
+    <description>Deep dive into worker pools, rate limiters, and channel synchronization built for high-throughput SMTP processing in GhostMail.</description>
+  </item>
+  <item>
+    <title>Dynamic HSL Theme Customization in React</title>
+    <link>https://www.linacre.site/blog/dynamic-hsl-theme-variables</link>
+    <guid isPermaLink="true">https://www.linacre.site/blog/dynamic-hsl-theme-variables</guid>
+    <pubDate>Thu, 02 Jul 2026 00:00:00 GMT</pubDate>
+    <description>How to build a theme customization panel using CSS custom properties, HSL color calculations, and local storage preservation.</description>
+  </item>
+  <item>
+    <title>Optimizing Vercel Edge CDN Caching Headers</title>
+    <link>https://www.linacre.site/blog/optimizing-edge-cdn-caching</link>
+    <guid isPermaLink="true">https://www.linacre.site/blog/optimizing-edge-cdn-caching</guid>
+    <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
+    <description>Enforcing cache invalidation rules, immutable assets, and s-maxage controls to build a blazing fast, globally cached SPA.</description>
+  </item>
+</channel>
+</rss>

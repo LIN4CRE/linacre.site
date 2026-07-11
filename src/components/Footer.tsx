@@ -61,6 +61,16 @@ export default function Footer() {
               <div className="flex items-center gap-3 mt-1.5 text-muted-foreground/50">
                 <button
                   onClick={() => {
+                    window.history.pushState({}, '', '/work');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Work with David
+                </button>
+                <span>·</span>
+                <button
+                  onClick={() => {
                     window.history.pushState({}, '', '/privacy');
                     window.dispatchEvent(new PopStateEvent('popstate'));
                   }}
@@ -78,6 +88,15 @@ export default function Footer() {
                 >
                   Accessibility Statement
                 </button>
+                <span>·</span>
+                <a
+                  href="https://calendly.com/david-linacre/15min"
+                  target="_blank"
+                  rel="noopener"
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Book a Call
+                </a>
               </div>
             </div>
 
