@@ -21,6 +21,7 @@ const PORT = Number(process.env.PORT) || 3000;
 
 // Body parser middleware (restricted to 10kb to prevent denial-of-service)
 app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // CORS allowlist. Reflects only trusted origins instead of "*" so third-party
 // sites cannot spend this server's AI quota from a visitor's browser.
@@ -201,28 +202,63 @@ async function aiRateLimiter(req: Request, res: Response, next: NextFunction) {
 const contactRateLimitLog = new Map<string, number[]>();
 
 app.post("/api/contact", (req, res) => {
-  if (req.headers["content-type"] !== "application/json") {
-    return res.status(400).json({ error: "Invalid Content-Type. Must be application/json" });
+  const contentType = req.headers["content-type"] ?? "";
+  const isJson = contentType.includes("application/json");
+  const isUrlEncoded = contentType.includes("application/x-www-form-urlencoded");
+
+  if (!isJson && !isUrlEncoded) {
+    return res.status(400).json({ error: "Invalid Content-Type. Must be application/json or application/x-www-form-urlencoded" });
   }
 
   const { email, subject, message } = req.body ?? {};
 
+  const sendError = (status: number, msg: string) => {
+    if (isUrlEncoded) {
+      res.status(status).send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Submission Error | linacre.site</title>
+  <style>
+    body { background-color: #0b0e14; color: #e5e5e5; font-family: monospace; text-align: center; padding: 50px 20px; }
+    .container { max-width: 500px; margin: 0 auto; border: 1px solid #fb7185; padding: 30px; border-radius: 12px; background: rgba(251, 113, 133, 0.05); }
+    h1 { color: #fb7185; font-size: 1.25rem; font-weight: bold; }
+    p { font-size: 0.75rem; color: #8b93a5; line-height: 1.5; }
+    a { display: inline-block; margin-top: 20px; color: #f59e0b; text-decoration: none; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; }
+    a:hover { background-color: rgba(245, 158, 11, 0.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>SUBMISSION ERROR</h1>
+    <p>${msg}</p>
+    <a href="/contact">Go Back</a>
+  </div>
+</body>
+</html>
+      `);
+    } else {
+      res.status(status).json({ error: msg });
+    }
+  };
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (typeof email !== "string" || !emailRegex.test(email)) {
-    return res.status(400).json({ error: "A valid email address is required." });
+    return sendError(400, "A valid email address is required.");
   }
 
   if (subject !== undefined && typeof subject !== "string") {
-    return res.status(400).json({ error: "Subject must be a string." });
+    return sendError(400, "Subject must be a string.");
   }
   if (typeof message !== "string" || message.trim().length < 10) {
-    return res.status(400).json({ error: "Message is required and must be at least 10 characters." });
+    return sendError(400, "Message is required and must be at least 10 characters.");
   }
   if (message.length > 5000) {
-    return res.status(400).json({ error: "Message exceeds maximum length of 5000 characters." });
+    return sendError(400, "Message exceeds maximum length of 5000 characters.");
   }
   if (subject && subject.length > 200) {
-    return res.status(400).json({ error: "Subject exceeds maximum length of 200 characters." });
+    return sendError(400, "Subject exceeds maximum length of 200 characters.");
   }
 
   // Bot protection (free, no third-party service):
@@ -232,13 +268,48 @@ app.post("/api/contact", (req, res) => {
   const { company, startedAt } = req.body ?? {};
   if (typeof company === "string" && company.trim() !== "") {
     logEvent("contact.honeypot", { ua: req.headers["user-agent"] ?? "" });
-    return res.status(200).json({ requestId: `req_${crypto.randomBytes(8).toString("hex")}` });
+    const fakeRequestId = `req_${crypto.randomBytes(8).toString("hex")}`;
+    if (isUrlEncoded) {
+      return res.status(200).send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transmission Received | linacre.site</title>
+  <style>
+    body { background-color: #0b0e14; color: #e5e5e5; font-family: monospace; text-align: center; padding: 50px 20px; }
+    .container { max-width: 500px; margin: 0 auto; border: 1px solid #2e3545; padding: 30px; border-radius: 12px; background: rgba(22, 27, 38, 0.5); }
+    h1 { color: #f59e0b; font-size: 1.25rem; font-weight: bold; }
+    p { font-size: 0.75rem; color: #8b93a5; line-height: 1.5; }
+    .ref { font-weight: bold; color: #22d3ee; }
+    a { display: inline-block; margin-top: 20px; color: #f59e0b; text-decoration: none; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; }
+    a:hover { background-color: rgba(245, 158, 11, 0.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TRANSMISSION RECEIVED</h1>
+    <p>Thank you. Your message has been accepted with reference:</p>
+    <p class="ref">${fakeRequestId}</p>
+    <p>You can close this tab or return to the site.</p>
+    <a href="/contact">Go Back</a>
+  </div>
+</body>
+</html>
+      `);
+    } else {
+      return res.status(200).json({ requestId: fakeRequestId });
+    }
   }
-  if (typeof startedAt === "number" && Number.isFinite(startedAt)) {
-    const elapsed = Date.now() - startedAt;
-    if (elapsed >= 0 && elapsed < 2500) {
-      logEvent("contact.too_fast", { elapsedMs: elapsed });
-      return res.status(400).json({ error: "Form submitted too quickly. Please review your message and try again." });
+
+  if (startedAt !== undefined) {
+    const numStartedAt = Number(startedAt);
+    if (Number.isFinite(numStartedAt)) {
+      const elapsed = Date.now() - numStartedAt;
+      if (elapsed >= 0 && elapsed < 2500) {
+        logEvent("contact.too_fast", { elapsedMs: elapsed });
+        return sendError(400, "Form submitted too quickly. Please review your message and try again.");
+      }
     }
   }
 
@@ -256,9 +327,7 @@ app.post("/api/contact", (req, res) => {
   if (hits.length >= maxRequests) {
     contactRateLimitLog.set(ip, hits);
     res.setHeader("Retry-After", "300");
-    return res.status(429).json({
-      error: "Too many contact submissions. Please wait 5 minutes before trying again."
-    });
+    return sendError(429, "Too many contact submissions. Please wait 5 minutes before trying again.");
   }
 
   hits.push(now);
@@ -286,7 +355,37 @@ app.post("/api/contact", (req, res) => {
     // Fail silently in cloud environments
   }
 
-  return res.status(200).json({ requestId });
+  if (isUrlEncoded) {
+    res.status(200).send(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Transmission Received | linacre.site</title>
+  <style>
+    body { background-color: #0b0e14; color: #e5e5e5; font-family: monospace; text-align: center; padding: 50px 20px; }
+    .container { max-width: 500px; margin: 0 auto; border: 1px solid #2e3545; padding: 30px; border-radius: 12px; background: rgba(22, 27, 38, 0.5); }
+    h1 { color: #f59e0b; font-size: 1.25rem; font-weight: bold; }
+    p { font-size: 0.75rem; color: #8b93a5; line-height: 1.5; }
+    .ref { font-weight: bold; color: #22d3ee; }
+    a { display: inline-block; margin-top: 20px; color: #f59e0b; text-decoration: none; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; }
+    a:hover { background-color: rgba(245, 158, 11, 0.1); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TRANSMISSION RECEIVED</h1>
+    <p>Thank you. Your message has been accepted with reference:</p>
+    <p class="ref">${requestId}</p>
+    <p>You can close this tab or return to the site.</p>
+    <a href="/contact">Go Back</a>
+  </div>
+</body>
+</html>
+    `);
+  } else {
+    res.status(200).json({ requestId });
+  }
 });
 
   // API route for Gemini Chat proxying securely

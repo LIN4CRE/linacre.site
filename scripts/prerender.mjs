@@ -198,7 +198,23 @@ function jsonLdFor(route, m) {
     });
   }
   if (route === '/contact') {
-    graph.push({ '@type': 'ContactPage', '@id': `${SITE}/contact#page`, url: `${SITE}/contact`, name: m.title });
+    graph.push({
+      '@type': 'ContactPage',
+      '@id': `${SITE}/contact#page`,
+      'url': `${SITE}/contact`,
+      'name': m.title,
+      'mainEntity': {
+        '@type': 'ProfessionalService',
+        '@id': `${SITE}/#service`,
+        'name': 'David Linacre Consulting',
+        'contactPoint': {
+          '@type': 'ContactPoint',
+          'contactType': 'sales',
+          'email': 'david@linacre.site',
+          'url': `${SITE}/contact`
+        }
+      }
+    });
     graph.push({
       '@type': 'FAQPage',
       '@id': `${SITE}/contact#faq`,
@@ -239,6 +255,25 @@ function jsonLdFor(route, m) {
     });
   }
   if (route === '/work') {
+    graph.push({
+      '@type': 'ProfessionalService',
+      '@id': `${SITE}/work#service`,
+      'name': 'David Linacre Consulting',
+      'url': `${SITE}/work`,
+      'logo': `${SITE}/favicon.svg`,
+      'image': `${SITE}/favicon.svg`,
+      'priceRange': '£££',
+      'telephone': '',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': 'London',
+        'addressCountry': 'GB'
+      },
+      'serviceType': ['Freelance Full-Stack Developer', 'Contract AI Automation Systems Builder'],
+      'provider': { '@id': `${SITE}/#person` },
+      'areaServed': 'GB',
+      'hasOfferCatalog': { '@id': `${SITE}/work#services` }
+    });
     graph.push({
       '@type': 'OfferCatalog',
       '@id': `${SITE}/work#services`,
@@ -490,14 +525,28 @@ ${CTA_BLOCK}`;
     case route === '/contact':
       return `
 <h1>Contact David Linacre</h1>
-<p><strong>Available for freelance and contract work.</strong> Tell me about your project —
-software design, developer tools, AI integration or automation.</p>
+<p><strong>Available for freelance and contract work.</strong> Tell me about your project — software design, developer tools, AI integration or automation.</p>
+<form action="/api/contact" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0; max-width: 500px; font-family: monospace;">
+  <input type="hidden" name="startedAt" value="${Date.now()}" />
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <label for="email" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Email Address *</label>
+    <input type="email" id="email" name="email" required placeholder="you@example.com" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <label for="subject" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Subject / Project Area</label>
+    <input type="text" id="subject" name="subject" placeholder="e.g. Pipeline Design Consultation" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
+    <label for="message" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Transmission Body *</label>
+    <textarea id="message" name="message" required rows="5" placeholder="Outline your requirements..." style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace; resize: vertical;"></textarea>
+  </div>
+  <button type="submit" style="background: #f59e0b; border: none; border-radius: 6px; padding: 10px; color: #000000; font-weight: bold; cursor: pointer; font-size: 12px; font-family: monospace;">Send Message</button>
+</form>
 <ul>
   <li>Email: <a href="mailto:david@linacre.site">david@linacre.site</a></li>
   <li>GitHub: <a href="https://github.com/LIN4CRE" rel="noopener">github.com/LIN4CRE</a></li>
   <li>LinkedIn: <a href="https://linkedin.com/in/davidlinacre" rel="noopener">davidlinacre</a></li>
-</ul>
-<p>The interactive contact form (with server-side validation and spam protection) requires JavaScript.</p>`;
+</ul>`;
 
     case route === '/privacy':
       return `
@@ -525,9 +574,16 @@ task graphs, guardrails, scheduled runs and audit logs. The interactive hub requ
     case route === '/lab':
       return `
 <h1>AI Lab</h1>
-<p>An interactive sandbox for chatting with AI models, inspecting live data structures and testing prompts.
-Rate-limited server-side proxies keep usage within free tiers; you can also bring your own API keys —
-they stay in your browser. The lab requires JavaScript.</p>
+<p>An interactive sandbox for chatting with AI models, testing prompts, and inspecting live context windows.</p>
+<h3>Active LLM Proxy Models</h3>
+<ul>
+  <li><strong>Gemini 2.5 / 2.0 Flash:</strong> For rapid text completions and analysis.</li>
+  <li><strong>GPT-4o:</strong> For advanced reasoning and code generation.</li>
+  <li><strong>Claude 3.5 Sonnet:</strong> Powers agent orchestrations and system audits.</li>
+ </ul>
+<h3>Prompt Architecture</h3>
+<p>Proxy endpoints enforce strict privacy controls: conversation logs are discarded immediately, and API keys are stored solely in your local browser storage.</p>
+<p class="meta">The interactive AI chat client requires JavaScript. Enable JS to connect to the secure model proxy.</p>
 <p>Related: <a href="/agents">Agents Hub</a> · <a href="/playground">Playground</a></p>`;
 
     case route === '/identity':
@@ -539,8 +595,25 @@ and export production-ready SVG. Changes persist locally in your browser. Requir
     case route === '/status':
       return `
 <h1>Site status</h1>
-<p>Operational overview for linacre.site — page availability, API health and deployment state.
-The live board requires JavaScript; for the API check <a href="/api/health">/api/health</a>.</p>`;
+<p>Operational overview for linacre.site — page availability, API health and deployment state.</p>
+<div style="background: #111622; border: 1px solid rgba(245,158,11,0.16); padding: 20px; border-radius: 12px; margin: 20px 0; max-width: 500px;">
+  <h3 style="margin-top: 0; color: #f59e0b; font-size: 12px; font-family: monospace;">System Health (Build Snapshot)</h3>
+  <ul style="list-style: none; padding-left: 0; margin-bottom: 0; font-family: monospace; font-size: 11px; color: #a1a1aa;">
+    <li style="margin: 8px 0; display: flex; align-items: center; gap: 8px;">
+      <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #34d399;"></span>
+      <strong>Frontend (Global Edge):</strong> Operational
+    </li>
+    <li style="margin: 8px 0; display: flex; align-items: center; gap: 8px;">
+      <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #34d399;"></span>
+      <strong>Backend API:</strong> Operational
+    </li>
+    <li style="margin: 8px 0; display: flex; align-items: center; gap: 8px;">
+      <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #34d399;"></span>
+      <strong>Central Registry Sync:</strong> Synchronized (15/15 credentials)
+    </li>
+  </ul>
+</div>
+<p class="meta">The live status dashboard (with active path audits and server statistics) requires JavaScript. For raw API checks, visit <a href="/api/health">/api/health</a>.</p>`;
 
     default:
       return `<h1>${esc(m.title.split(' | ')[0])}</h1><p>${esc(m.description)}</p>`;

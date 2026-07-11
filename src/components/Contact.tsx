@@ -115,6 +115,21 @@ export default function Contact() {
               </div>
             </div>
           </div>
+
+          <div className="bg-amber-color/5 border border-border-color rounded-xl p-6 space-y-4 font-mono text-xs text-muted-foreground">
+            <h3 className="text-amber-color font-bold text-sm">DIRECT SCHEDULING</h3>
+            <p className="leading-relaxed">
+              Prefer an instant video call? Pick a time directly on my calendar.
+            </p>
+            <a
+              href="https://calendly.com/david-linacre/15min"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full block text-center py-2.5 rounded-lg bg-amber-color hover:bg-amber-glow text-black font-mono text-xs font-bold transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-color"
+            >
+              Book a 15-Min Discovery Call
+            </a>
+          </div>
         </motion.div>
 
         {/* Form Box */}

@@ -1,4 +1,4 @@
 Contact: mailto:david@linacre.site
 Preferred-Languages: en
 Canonical: https://www.linacre.site/.well-known/security.txt
-Expires: Sat, 10 Jul 2027 18:00:00 GMT
+Expires: Mon, 10 Jul 2028 18:00:00 GMT
