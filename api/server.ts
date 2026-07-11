@@ -210,7 +210,7 @@ app.post("/api/contact", (req, res) => {
     return res.status(400).json({ error: "Invalid Content-Type. Must be application/json or application/x-www-form-urlencoded" });
   }
 
-  const { email, subject, message } = req.body ?? {};
+  const { email, subject, message, name } = req.body ?? {};
 
   const sendError = (status: number, msg: string) => {
     if (isUrlEncoded) {
@@ -349,7 +349,8 @@ app.post("/api/contact", (req, res) => {
     const fs = require("fs");
     const contactsFile = path.join(process.cwd(), "contacts.json");
     const contactsList = fs.existsSync(contactsFile) ? JSON.parse(fs.readFileSync(contactsFile, "utf8")) : [];
-    contactsList.push({ requestId, email, subject, message, timestamp: new Date().toISOString() });
+    const entryMessage = name ? `Name: ${name}\n\n${message}` : message;
+    contactsList.push({ requestId, email, subject, message: entryMessage, timestamp: new Date().toISOString() });
     fs.writeFileSync(contactsFile, JSON.stringify(contactsList, null, 2), "utf8");
   } catch (err) {
     // Fail silently in cloud environments

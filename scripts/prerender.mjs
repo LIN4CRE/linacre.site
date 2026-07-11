@@ -266,7 +266,8 @@ function jsonLdFor(route, m) {
       'telephone': '',
       'address': {
         '@type': 'PostalAddress',
-        'addressLocality': 'London',
+        'addressLocality': 'Bradford',
+        'addressRegion': 'West Yorkshire',
         'addressCountry': 'GB'
       },
       'serviceType': ['Freelance Full-Stack Developer', 'Contract AI Automation Systems Builder'],
@@ -529,6 +530,10 @@ ${CTA_BLOCK}`;
 <form action="/api/contact" method="POST" style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0; max-width: 500px; font-family: monospace;">
   <input type="hidden" name="startedAt" value="${Date.now()}" />
   <div style="display: flex; flex-direction: column; gap: 5px;">
+    <label for="name" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Name *</label>
+    <input type="text" id="name" name="name" required placeholder="Your Name" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
+  </div>
+  <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="email" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Email Address *</label>
     <input type="email" id="email" name="email" required placeholder="you@example.com" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace;" />
   </div>
@@ -538,7 +543,7 @@ ${CTA_BLOCK}`;
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="message" style="font-size: 10px; color: #a1a1aa; text-transform: uppercase; font-weight: bold;">Transmission Body *</label>
-    <textarea id="message" name="message" required rows="5" placeholder="Outline your requirements..." style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace; resize: vertical;"></textarea>
+    <textarea id="message" name="message" required rows="5" placeholder="Outline your requirements, tech specs, or inquiries..." style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 12px; font-family: monospace; resize: vertical;"></textarea>
   </div>
   <button type="submit" style="background: #f59e0b; border: none; border-radius: 6px; padding: 10px; color: #000000; font-weight: bold; cursor: pointer; font-size: 12px; font-family: monospace;">Send Message</button>
 </form>
