@@ -2,6 +2,9 @@
 
 > David Linacre builds reliable web applications, developer tools and automation systems. Full-stack engineer focused on speed, security, and developer experience.
 
+## Full Content
+- /llms-full.txt — complete site content (services & pricing, FAQs, projects & case studies, full engineering articles, toolkit, learning roadmap), generated at build for AI retrieval.
+
 ## About
 - Full name: David Christopher Linacre
 - Location: United Kingdom

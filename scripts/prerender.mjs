@@ -216,6 +216,27 @@ function jsonLdFor(route, m) {
       offers: { '@type': 'Offer', price: '0', priceCurrency: 'GBP' },
     });
   }
+  if (route === '/') {
+    // Speakable (audit v5, SEO & AI Discoverability): point voice/AI assistants
+    // at the hero heading + lead copy. #main-content exists in both the
+    // prerendered snapshot and the hydrated React app (src/App.tsx), so the
+    // selectors always resolve. Attached to a WebPage node (schema-correct
+    // domain for `speakable`), not to Person.
+    graph.push({
+      '@type': 'WebPage',
+      '@id': `${SITE}/#webpage`,
+      url: `${SITE}/`,
+      name: m.title,
+      isPartOf: { '@id': `${SITE}/#website` },
+      about: { '@id': `${SITE}/#person` },
+      primaryImageOfPage: `${SITE}/og.png`,
+      inLanguage: 'en-GB',
+      speakable: {
+        '@type': 'SpeakableSpecification',
+        cssSelector: ['#main-content h1', '#main-content p'],
+      },
+    });
+  }
   if (m.type === 'article') {
     const post = data.posts.find(p => `/blog/${p.slug}` === route);
     graph.push({
@@ -891,4 +912,98 @@ for (const [route] of indexable) {
   if (!fs.existsSync(f)) { console.error(`[prerender] SITEMAP VALIDATION FAILED: ${route} has no output file`); failed = true; }
 }
 if (failed) process.exit(1);
+
+// --------------------------------------------------------------- llms-full.txt
+// AI discoverability (audit v5 — AI & Future-Proofing): emit a full-content
+// Markdown export so LLMs / answer engines can retrieve substantive site
+// content, not just the route list in public/llms.txt. Sourced from the same
+// typed data module that drives the prerendered pages, so it never drifts.
+function buildLlmsFull() {
+  const L = [];
+  const push = (...lines) => L.push(...lines);
+
+  push('# linacre.site — full content export for LLMs');
+  push('');
+  push('> David Christopher Linacre — UK-based freelance full-stack & AI systems engineer (React, TypeScript, Go, Python). Systems audits, custom builds, and fractional engineering retainers.');
+  push('> This file mirrors the substantive content of https://www.linacre.site/ for AI retrieval. Contact: david@linacre.site');
+  push('');
+
+  push('## About David Linacre');
+  push('- Full name: David Christopher Linacre');
+  push('- Location: United Kingdom (England)');
+  push('- Role: Full-Stack Engineer & AI Systems Builder');
+  push('- Contact: david@linacre.site');
+  push('- GitHub: https://github.com/LIN4CRE');
+  push('- LinkedIn: https://linkedin.com/in/david-linacre');
+  push('- Expertise: React, TypeScript, Next.js, Node.js, Go, Python, PostgreSQL, Docker, AI engineering, DevOps, developer tooling');
+  push(`- Availability: ${data.workNextAvailable ? `next available ${data.workNextAvailable}` : 'available for freelance and contract work'}`);
+  push('');
+
+  push('## Services & pricing');
+  push('- Systems & Infrastructure Audit — deep technical review of architecture, security, performance, and developer experience. From £1,800.');
+  push('- Custom Development Project — end-to-end build of production-grade tools, automation platforms, or AI integrations. From £6,500.');
+  push('- Ongoing Engineering Retainer — dedicated fractional engineering time for ongoing improvements and rapid iteration. £2,400 / month.');
+  push('- Reply within 12 hours from david@linacre.site. NDA-friendly. UK GDPR compliant.');
+  push('');
+
+  if (Array.isArray(data.workFaqs) && data.workFaqs.length) {
+    push('## Frequently asked questions');
+    for (const f of data.workFaqs) { push(`### ${f.question}`, f.answer, ''); }
+  }
+
+  const pubProjects = (data.projects || []).filter(p => p.url);
+  if (pubProjects.length) {
+    push('## Projects');
+    for (const p of pubProjects) {
+      push(`### ${p.name}${p.category ? ` [${p.category}]` : ''}`);
+      if (p.description) push(p.description);
+      if (p.role) push(`Role: ${p.role}`);
+      if (p.challenges) push(`Problem: ${p.challenges}`);
+      if (p.solution) push(`Approach: ${p.solution}`);
+      if (p.tech && p.tech.length) push(`Stack: ${p.tech.join(', ')}`);
+      if (p.url) push(`Link: ${p.url}`);
+      push('');
+    }
+  }
+
+  if (Array.isArray(data.posts) && data.posts.length) {
+    push('## Engineering notes (full articles)');
+    for (const post of data.posts) {
+      push(`### ${post.title}`);
+      const metaBits = [post.date, post.readTime, (post.tags || []).join(', ')].filter(Boolean).join(' · ');
+      if (metaBits) push(`_${metaBits}_`);
+      push(`URL: ${SITE}/blog/${post.slug}`, '');
+      if (post.content) push(String(post.content).trim(), '');
+    }
+  }
+
+  if (Array.isArray(data.tools) && data.tools.length) {
+    push('## Free developer toolkit');
+    const byCat = {};
+    for (const t of data.tools) (byCat[t.category] ||= []).push(t);
+    for (const [cat, tools] of Object.entries(byCat)) {
+      push(`### ${cat}`);
+      for (const t of tools) push(`- ${t.name}${t.url ? ` (${t.url})` : ''} — ${t.description}`);
+      push('');
+    }
+  }
+
+  if (Array.isArray(data.roadmap) && data.roadmap.length) {
+    push('## Learning roadmap');
+    data.roadmap.forEach((s, i) => push(`### Step ${i + 1}: ${s.title}`, s.description, ''));
+  }
+
+  push('## Contact & engagement process');
+  push('1. Send an enquiry at https://www.linacre.site/contact (name, work email, optional company, budget, timeline, project details).');
+  push('2. Reply within 12 hours from david@linacre.site.');
+  push('3. Short discovery call to scope the work.');
+  push('4. Written Statement of Work — scope, milestones, price, timeline, acceptance criteria.');
+  push('');
+  push(`_Generated at build: ${new Date().toISOString()}_`);
+
+  return L.join('\n') + '\n';
+}
+fs.writeFileSync(path.join(distDir, 'llms-full.txt'), buildLlmsFull(), 'utf8');
+console.log('[prerender] llms-full.txt written');
+
 console.log(`[prerender] done — ${written.length} routes, sitemap has ${indexable.length} URLs.`);

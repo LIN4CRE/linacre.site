@@ -9,6 +9,7 @@ public/emblem-static.svg
 public/favicon.svg
 public/agent-report.json
 status.txt
+.serena/
 
 .vercel
 .env*
