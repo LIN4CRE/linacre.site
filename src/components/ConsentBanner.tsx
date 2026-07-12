@@ -11,6 +11,9 @@ import { useEffect, useState } from 'react';
  */
 const KEY = 'linacre_consent_v1';
 const ESSENTIAL_KEYS = new Set(['linacre_theme', 'linacre_consent_v1']);
+// Non-essential storage keys the site may write when consent is "all".
+// Provider secrets (linacre_openai_key, linacre_claude_key, linacre_litellm_key)
+// were removed in v4.6 — they are held in tab-scoped memory only, never in storage.
 const OPTIONAL_KEYS = [
   'linacre_active_tab',
   'linacre_brand_color',
@@ -20,9 +23,7 @@ const OPTIONAL_KEYS = [
   'linacre_brand_pulse_speed',
   'linacre_brand_glow',
   'linacre_brand_name',
-  'linacre_lab_sessions_v1',
-  'linacre_openai_key',
-  'linacre_claude_key'
+  'linacre_lab_sessions_v1'
 ];
 
 export type ConsentValue = 'all' | 'essential' | 'rejected';

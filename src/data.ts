@@ -923,3 +923,50 @@ With these headers configured, static files serve directly from Vercel's edge ca
     category: 'caching'
   }
 ];
+
+// ---------------------------------------------------------------------------
+// /work page: availability + FAQ (audit 12 Jul 2026 — Roadmap #15 + TASK-006).
+// Rendered in WorkWithMe.tsx AND consumed by scripts/prerender.mjs (via
+// prerender-data.entry.ts) for the /work static snapshot and FAQPage JSON-LD,
+// so the visible text and the schema always match exactly.
+
+/** Update when booking status changes — shown on /work and in its schema. */
+export const WORK_NEXT_AVAILABLE = 'August 2026';
+
+export interface WorkFaq {
+  question: string;
+  answer: string;
+}
+
+export const WORK_FAQS: WorkFaq[] = [
+  {
+    question: 'How quickly can we start?',
+    answer:
+      'Systems audits can usually start within 1–2 weeks. Custom development projects are booked in order of enquiry against the next available slot shown on this page. Retainer clients receive priority scheduling.',
+  },
+  {
+    question: 'What does the Systems & Infrastructure Audit include?',
+    answer:
+      'A deep technical review of your architecture, security, performance, and developer experience: a full architecture review with a written report, security and performance recommendations, a 30/60/90-day implementation roadmap, and two 45-minute follow-up consulting calls. Pricing starts at £1,800.',
+  },
+  {
+    question: 'How do custom development projects work?',
+    answer:
+      'We agree scope, milestones and a starting price (from £6,500) before any code is written. You get a production-grade build — typically React and TypeScript with Go or Python services — deployed to Vercel or your cloud, full documentation with a system handoff, and 30 days of direct post-launch support.',
+  },
+  {
+    question: 'What does the monthly retainer cover?',
+    answer:
+      '£2,400 per month reserves 20 hours of priority engineering time: architecture guidance, code reviews, rapid prototyping, API support, and a monthly systems strategy call.',
+  },
+  {
+    question: 'Do you sign NDAs and comply with UK GDPR?',
+    answer:
+      'Yes. I am NDA-friendly and work under UK GDPR: client repositories are fully isolated, credentials are never hardcoded, and your contact details are used only to reply. Enquiries receive a response within 12 hours.',
+  },
+  {
+    question: 'Where are you based and who do you work with?',
+    answer:
+      'I am based in West Yorkshire, UK, and work remotely with teams across the UK, EU and US. Most engagements run fully remote with async updates and scheduled calls.',
+  },
+];

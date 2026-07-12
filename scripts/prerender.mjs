@@ -32,39 +32,9 @@ const esc = (s = '') => String(s)
   .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
   .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 
-/** Minimal, dependency-free markdown → HTML for blog bodies. */
-function mdToHtml(md) {
-  const lines = md.replace(/\r\n/g, '\n').split('\n');
-  const out = [];
-  let inCode = false, codeLang = '', codeBuf = [], para = [], list = [];
-  const flushPara = () => {
-    if (para.length) { out.push(`<p>${inline(para.join(' '))}</p>`); para = []; }
-  };
-  const flushList = () => {
-    if (list.length) { out.push(`<ul>${list.map(li => `<li>${inline(li)}</li>`).join('')}</ul>`); list = []; }
-  };
-  const inline = (s) => esc(s)
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" rel="noopener">$1</a>');
-  for (const raw of lines) {
-    const line = raw;
-    if (line.trim().startsWith('```')) {
-      if (!inCode) { flushPara(); flushList(); inCode = true; codeLang = line.trim().slice(3).trim(); codeBuf = []; }
-      else { out.push(`<pre><code${codeLang ? ` class="language-${esc(codeLang)}"` : ''}>${esc(codeBuf.join('\n'))}</code></pre>`); inCode = false; }
-      continue;
-    }
-    if (inCode) { codeBuf.push(line); continue; }
-    const h = line.match(/^(#{1,4})\s+(.*)$/);
-    if (h) { flushPara(); flushList(); const lvl = h[1].length === 1 ? 2 : h[1].length; out.push(`<h${lvl}>${inline(h[2])}</h${lvl}>`); continue; }
-    const li = line.match(/^\s*[-*]\s+(.*)$/);
-    if (li) { flushPara(); list.push(li[1]); continue; }
-    if (!line.trim()) { flushPara(); flushList(); continue; }
-    para.push(line.trim());
-  }
-  flushPara(); flushList();
-  return out.join('\n');
-}
+/* mdToHtml now lives in src/lib/markdown.ts — shared with the React blog
+   modal so JS and no-JS visitors render identically (TASK-001, 12 Jul 2026).
+   It is imported from the bundled data module below. */
 
 // ------------------------------------------------------------- site content
 // Strip a possible UTF-8 BOM before parsing -- some Windows editors/tools
@@ -78,7 +48,7 @@ await esbuild({
   entryPoints: [path.join(root, 'scripts', 'prerender-data.entry.ts')],
   bundle: true, format: 'esm', platform: 'node', outfile: dataBundle, logLevel: 'silent',
 });
-const { data } = await import(pathToFileURL(dataBundle).href);
+const { data, mdToHtml } = await import(pathToFileURL(dataBundle).href);
 fs.rmSync(dataBundle, { force: true });
 
 const SITE = 'https://www.linacre.site';
@@ -203,14 +173,16 @@ function jsonLdFor(route, m) {
     // Enhanced: SoftwareSourceCode nodes for verifiable open-source case studies
     const ghostMail = caseStudies.find(p => p.name === 'GhostMail');
     if (ghostMail) {
+      // SEO-02 (audit 11 Jul 2026): GhostMail is written in Go — the public
+      // repo confirms it. Previous TypeScript/React value was inaccurate.
       graph.push({
         '@type': 'SoftwareSourceCode',
         '@id': `${SITE}/#ghostmail`,
         name: 'GhostMail',
-        description: ghostMail.description || 'Disposable email generation tool built with React and Vite.',
+        description: ghostMail.description || 'High-throughput disposable-email backend built in Go with worker pools and channel synchronisation.',
         codeRepository: 'https://github.com/LIN4CRE/GhostMail',
         url: ghostMail.url || 'https://github.com/LIN4CRE/GhostMail',
-        programmingLanguage: ['TypeScript', 'React'],
+        programmingLanguage: 'Go',
         creator: { '@id': `${SITE}/#person` },
         license: 'https://opensource.org/licenses/MIT',
         applicationCategory: 'DeveloperApplication',
@@ -411,6 +383,18 @@ function jsonLdFor(route, m) {
         }
       ]
     });
+    // FAQPage (audit TASK-006 residual, 12 Jul 2026). Questions/answers come
+    // from WORK_FAQS in src/data.ts — the same array rendered visibly on the
+    // page (React + static snapshot), as Google requires for FAQ rich results.
+    graph.push({
+      '@type': 'FAQPage',
+      '@id': `${SITE}/work#faq`,
+      'mainEntity': data.workFaqs.map(f => ({
+        '@type': 'Question',
+        'name': f.question,
+        'acceptedAnswer': { '@type': 'Answer', 'text': f.answer },
+      })),
+    });
   }
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 }
@@ -433,6 +417,10 @@ function headFor(route, m) {
     `<meta property="og:locale" content="${esc(meta.site.locale)}" />`,
     `<meta property="og:url" content="${m.canonical}" />`,
     `<meta property="og:image" content="${image}" />`,
+    // og.png is 1200×630 (verified 12 Jul 2026); all routes share it — see
+    // route-meta.json (no per-route image overrides).
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
     `<meta property="og:image:alt" content="${title}" />`,
     `<meta name="twitter:card" content="${esc(meta.site.twitterCard)}" />`,
     `<meta name="twitter:title" content="${title}" />`,
@@ -442,6 +430,13 @@ function headFor(route, m) {
   if (m.type === 'article' && m.published) {
     lines.push(`<meta property="article:published_time" content="${m.published}" />`);
     lines.push(`<meta property="article:author" content="David Linacre" />`);
+  }
+  // PERF-02 (audit 11 Jul 2026): preload the avatar only where it renders as
+  // an above-the-fold LCP candidate — /about alone. The homepage does not
+  // render the avatar (checked src/components: only About.tsx uses it), so the
+  // former global preload in index.html was wasted bandwidth everywhere else.
+  if (route === '/about') {
+    lines.push(`<link rel="preload" as="image" href="/profile_avatar.webp" type="image/webp" fetchpriority="high" />`);
   }
   lines.push(`<script type="application/ld+json">${jsonLdFor(route, m)}</script>`);
   return lines.join('\n    ');
@@ -601,13 +596,16 @@ ${posts.map(p => `  <li>
       return `
 <h1>Work with David Linacre</h1>
 <p>I help engineering groups ship faster, automate operations, and implement secure, high-throughput systems. Select contract services are outlined below.</p>
+<p><strong>Next available:</strong> ${esc(data.workNextAvailable)} — <a href="/contact">start an enquiry</a> to reserve the slot.</p>
 <h2>Offerings</h2>
 <ul>
   <li><strong>Systems &amp; Infrastructure Audit</strong> — Deep technical review of your architecture, security, performance, and developer experience. From £1,800.</li>
   <li><strong>Custom Development Project</strong> — End-to-end build of production-grade tools, automation platforms, or AI integrations. From £6,500.</li>
   <li><strong>Ongoing Engineering Retainer</strong> — Dedicated fractional engineering time for ongoing improvements and rapid iteration. £2,400 / month.</li>
 </ul>
-<p>The interactive Work page (with secure scheduling links and booking forms) requires JavaScript.</p>
+<h2>Frequently asked questions</h2>
+${data.workFaqs.map(f => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).join('\n')}
+<p>The interactive Work page (with enquiry forms and the free Go concurrency starter kit) requires JavaScript.</p>
 ${CTA_BLOCK}`;
 
     case route === '/contact':
@@ -669,7 +667,7 @@ ${CTA_BLOCK}`;
       return `
 <h1>Thanks — message received</h1>
 <p>Your enquiry has been received. I&#39;ll reply from <a href="mailto:david@linacre.site">david@linacre.site</a> within 12 hours.</p>
-<p><a class="cta" href="https://calendly.com/david-linacre/15min" rel="noopener noreferrer">Book a 15-min call</a> <a class="cta alt" href="/">Back to home</a></p>`;
+<p><a class="cta" href="mailto:david@linacre.site?subject=Book%20a%2015-min%20intro%20call">Email to book a 15-min call</a> <a class="cta alt" href="/">Back to home</a></p>`;
 
     case route === '/cookie-policy':
       return `
@@ -683,8 +681,9 @@ ${CTA_BLOCK}`;
   <li><code>linacre_active_tab</code> — restores your last section on return.</li>
   <li><code>linacre_brand_*</code> — Identity Hub customisations.</li>
   <li><code>linacre_lab_sessions_v1</code> — AI Lab chat history (optional).</li>
-  <li><code>linacre_openai_key</code>, <code>linacre_claude_key</code> — optional API keys you paste in; never sent to our servers.</li>
 </ul>
+<h2>What we deliberately do not store</h2>
+<p><strong>Provider API keys</strong> (OpenAI, Anthropic, LiteLLM). Pasted keys live in memory for the current tab only — never written to LocalStorage, SessionStorage, cookies or IndexedDB, and never sent to linacre.site servers.</p>
 <p>Change your mind any time by clearing site data in your browser. Questions: <a href="mailto:david@linacre.site">david@linacre.site</a>.</p>`;
 
     case route === '/terms':
@@ -729,7 +728,7 @@ task graphs, guardrails, scheduled runs and audit logs. The interactive hub requ
   <li><strong>Claude 3.5 Sonnet:</strong> Powers agent orchestrations and system audits.</li>
  </ul>
 <h3>Prompt Architecture</h3>
-<p>Proxy endpoints enforce strict privacy controls: conversation logs are discarded immediately, and API keys are stored solely in your local browser storage.</p>
+<p>Proxy endpoints enforce strict privacy controls: conversation logs are discarded immediately, and any optional provider API key you paste stays in memory for the current tab only &mdash; never written to browser storage and never sent to linacre.site servers.</p>
 <p class="meta">The interactive AI chat client requires JavaScript. Enable JS to connect to the secure model proxy.</p>
 <p>Related: <a href="/agents">Agents Hub</a> · <a href="/playground">Playground</a></p>`;
 
@@ -741,8 +740,9 @@ and export production-ready SVG. Changes persist locally in your browser. Requir
 
     case route === '/status':
       return `
-<h1>Site status</h1>
-<p>Operational overview for linacre.site — page availability, API health and deployment state.</p>
+<h1>Status console (demo &mdash; simulated data)</h1>
+<p><strong>This is a UI demo, not a real status page.</strong> Values are generated client-side to showcase interface patterns and do not reflect real infrastructure.
+For genuine linacre.site availability, email <a href="mailto:david@linacre.site">david@linacre.site</a>.</p>
 <div style="background: #111622; border: 1px solid rgba(245,158,11,0.16); padding: 20px; border-radius: 12px; margin: 20px 0; max-width: 500px;">
   <h3 style="margin-top: 0; color: #f59e0b; font-size: 12px; font-family: monospace;">System Health (Build Snapshot)</h3>
   <ul style="list-style: none; padding-left: 0; margin-bottom: 0; font-family: monospace; font-size: 11px; color: #a1a1aa;">
@@ -809,29 +809,76 @@ for (const [route, m] of Object.entries(meta.routes)) {
 }
 
 // --------------------------------------------------------------- sitemap.xml
-// Use full ISO 8601 (with time + timezone) for lastmod per audit SEO-01 / #011.
-const nowIso = new Date().toISOString(); // e.g. 2026-07-11T09:41:12.234Z
+// SEO-01 (audit 11 Jul 2026): derive lastmod from the actual mtime of the file
+// that drives each page's content, not the build timestamp. Drop changefreq /
+// priority — they carry little practical value and previously misled auditors.
 const isoDate = (d) => (d && d.length === 10 ? `${d}T00:00:00+00:00` : d);
 const indexable = Object.entries(meta.routes).filter(([, m]) => m.index);
-const priorityFor = (route, m) => {
-  if (route === '/') return '1.0';
-  if (m.type === 'article') return '0.6';
-  if (route === '/work' || route === '/projects' || route === '/contact') return '0.9';
-  if (['/privacy', '/cookie-policy', '/terms', '/accessibility'].includes(route)) return '0.3';
-  return '0.7';
+
+// Reference files whose mtime drives each route's lastmod. Falls back to
+// route-meta.json (a config-only edit still counts as "content changed" for
+// robots that revisit).
+const ROUTE_LASTMOD_SOURCES = {
+  '/': ['route-meta.json', 'src/App.tsx', 'src/data/core.ts'],
+  '/projects': ['src/components/Projects.tsx', 'src/data/core.ts'],
+  '/about': ['src/components/About.tsx'],
+  '/toolkit': ['src/components/Toolkit.tsx', 'src/data.ts'],
+  '/learn': ['src/components/Learn.tsx'],
+  '/blog': ['src/components/Blog.tsx'],
+  '/playground': ['src/components/DevPlayground.tsx'],
+  '/contact': ['src/components/Contact.tsx'],
+  '/privacy': ['src/components/Privacy.tsx'],
+  '/cookie-policy': ['src/components/CookiePolicy.tsx'],
+  '/terms': ['src/components/Terms.tsx'],
+  '/accessibility': ['src/components/AccessibilityStatement.tsx'],
+  '/agents': ['src/components/AgentsHub.tsx'],
+  '/lab': ['src/components/Lab.tsx'],
+  '/identity': ['src/components/IdentityHub.tsx'],
+  '/work': ['src/components/WorkWithMe.tsx']
 };
-const changefreqFor = (route, m) => {
-  if (m.type === 'article') return 'yearly';
-  if (['/privacy', '/cookie-policy', '/terms', '/accessibility'].includes(route)) return 'yearly';
-  return 'weekly';
-};
+
+function sourceMtimeMs(files = []) {
+  let latest = 0;
+  for (const rel of files) {
+    try {
+      const stat = fs.statSync(path.join(root, rel));
+      if (stat.mtimeMs > latest) latest = stat.mtimeMs;
+    } catch { /* file missing — skip */ }
+  }
+  return latest;
+}
+
+// Final fallback: route-meta.json mtime (a config-only change still counts).
+let routeMetaMtimeMs;
+try { routeMetaMtimeMs = fs.statSync(path.join(root, 'route-meta.json')).mtimeMs; }
+catch { routeMetaMtimeMs = Date.now(); }
+
+// Pass 1 — every route except '/': blog articles use their frontmatter date;
+// static pages use the mtime of the source file(s) that drive their content.
+const lastmodMsByRoute = new Map();
+for (const [route, m] of indexable) {
+  if (route === '/') continue;
+  const ts = m.published
+    ? Date.parse(isoDate(m.published))
+    : sourceMtimeMs(ROUTE_LASTMOD_SOURCES[route]);
+  lastmodMsByRoute.set(route, ts || routeMetaMtimeMs);
+}
+
+// Pass 2 — homepage: the freshest lastmod among all prerendered routes (it
+// surfaces latest posts, featured projects and toolkit counts, so it is only
+// as fresh as the newest content anywhere), floored by its own sources.
+lastmodMsByRoute.set('/', Math.max(
+  sourceMtimeMs(ROUTE_LASTMOD_SOURCES['/']),
+  ...lastmodMsByRoute.values(),
+) || routeMetaMtimeMs);
+
+const lastmodFor = (route) => new Date(lastmodMsByRoute.get(route)).toISOString();
+
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${indexable.map(([route, m]) => `  <url>
     <loc>${m.canonical}</loc>
-    <lastmod>${isoDate(m.published) || nowIso}</lastmod>
-    <changefreq>${changefreqFor(route, m)}</changefreq>
-    <priority>${priorityFor(route, m)}</priority>
+    <lastmod>${lastmodFor(route)}</lastmod>
   </url>`).join('\n')}
 </urlset>
 `;

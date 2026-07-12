@@ -767,25 +767,36 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   // Status updates
   useEffect(() => {
     try {
-      const storedOpenai = localStorage.getItem('linacre_openai_key') || '';
+      // SEC-01: Purge any legacy provider secrets left in Web Storage from
+      // the pre-v4.6 build. Never re-read them into memory.
+      const legacyKeyNames = ['linacre_openai_key', 'linacre_claude_key', 'linacre_litellm_key'];
+      let purgedAny = false;
+      for (const k of legacyKeyNames) {
+        if (localStorage.getItem(k) !== null) { purgedAny = true; localStorage.removeItem(k); }
+        if (sessionStorage.getItem(k) !== null) { purgedAny = true; sessionStorage.removeItem(k); }
+      }
+      if (purgedAny) {
+        // Non-blocking notice — the UI will show inputs cleared, which is intentional.
+        console.info('[linacre.site] Purged legacy provider API keys from browser storage. Please paste them again per tab (they are no longer persisted).');
+      }
+
       const storedOllamaEnd = localStorage.getItem('linacre_ollama_endpoint') || 'http://localhost:11434';
       const storedOllamaMod = localStorage.getItem('linacre_ollama_model') || 'llama3.2';
       const storedLiteLLMEnd = localStorage.getItem('linacre_litellm_endpoint') || '';
       const storedLiteLLMMod = localStorage.getItem('linacre_litellm_model') || '';
-      const storedLiteLLMKey = localStorage.getItem('linacre_litellm_key') || '';
       const storedClaudeEnd = localStorage.getItem('linacre_claude_endpoint') || '';
       const storedClaudeMod = localStorage.getItem('linacre_claude_model') || '';
-      const storedClaudeKey = localStorage.getItem('linacre_claude_key') || '';
 
-      setOpenaiKey(storedOpenai);
+      // Secrets: keep in React state only, never re-hydrate from storage.
+      setOpenaiKey('');
       setOllamaEndpoint(storedOllamaEnd);
       setOllamaModel(storedOllamaMod);
       setLiteLLMEndpoint(storedLiteLLMEnd);
       setLiteLLMModel(storedLiteLLMMod);
-      setLiteLLMKey(storedLiteLLMKey);
+      setLiteLLMKey('');
       setClaudeEndpoint(storedClaudeEnd);
       setClaudeModel(storedClaudeMod);
-      setClaudeKey(storedClaudeKey);
+      setClaudeKey('');
 
       // Load sessions
       const storedSessions = localStorage.getItem('linacre_lab_sessions_v1');
@@ -973,8 +984,19 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   }, [messages, isGenerating]);
 
   // Save configuration handlers
+  // SEC-01 (audit 11 Jul 2026): Never persist provider secrets. Any key
+  // whose name looks like a credential is held in React state only. All
+  // other config (endpoints, model names) can safely persist.
+  const SENSITIVE_KEY_NAMES = new Set([
+    'linacre_openai_key',
+    'linacre_claude_key',
+    'linacre_litellm_key',
+  ]);
   const saveConfig = (key: string, value: string) => {
-    localStorage.setItem(key, value);
+    if (SENSITIVE_KEY_NAMES.has(key)) return; // in-memory only
+    try {
+      localStorage.setItem(key, value);
+    } catch (_) { /* private-mode / quota */ }
   };
 
   // Safe inline and block markdown formatter with code highlight block container (Fix S1: Whitelist https?:// only to avoid javascript: links)
@@ -1629,7 +1651,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                       <Info className="w-3 h-3 text-cyan" />
                       {serverKeys.openai 
                         ? "Since an OPENAI_API_KEY was found in your server environment, you can leave this field blank and it will work seamlessly!"
-                        : "Keys entered here are stored locally in your browser's localStorage and never sent anywhere else."
+                        : "Keys stay in memory for this tab only — never written to browser storage, never sent to linacre.site servers. Paste again if you refresh."
                       }
                     </span>
                   </div>

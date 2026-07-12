@@ -90,16 +90,24 @@ export default function StatusPage() {
       animate="show"
       className="space-y-12 animate-fade-in"
     >
-      {/* Title Hero */}
+      {/* Title Hero — clearly labelled as demo (audit UX-02, 11 Jul 2026) */}
       <motion.section variants={itemVariants} className="text-center md:text-left space-y-4 max-w-3xl" id="status-hero">
-        <span className="font-mono text-xs text-emerald-color tracking-widest uppercase font-semibold bg-emerald-color/10 border border-emerald-color/20 px-2.5 py-1 rounded-full">
-          Systems Console
-        </span>
+        <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
+          <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/40 px-2.5 py-1 rounded-full">
+            Demo &middot; Simulated data
+          </span>
+          <span className="font-mono text-[10px] text-muted-foreground/80 uppercase tracking-widest">
+            Not a real status page
+          </span>
+        </div>
         <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground mt-3">
-          Systems <span className="text-emerald-color">Status</span>
+          Systems <span className="text-emerald-color">Status</span> <span className="text-amber-color">(Demo)</span>
         </h1>
         <p className="text-base text-muted-foreground leading-relaxed">
-          Real-time checkouts of CDN endpoints, API latency distributions, and localized database instances.
+          This is a client-side UI demo of a status console. Latency, uptime, logs and load
+          values below are generated in your browser to showcase interface patterns &mdash;
+          they do not reflect real infrastructure. For genuine linacre.site availability,{' '}
+          <a href="mailto:david@linacre.site" className="text-amber-color hover:underline">email david@linacre.site</a>.
         </p>
       </motion.section>
 

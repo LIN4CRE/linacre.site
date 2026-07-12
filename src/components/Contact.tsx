@@ -161,17 +161,16 @@ export default function Contact() {
           <div className="bg-amber-color/5 border border-border-color rounded-xl p-6 space-y-3">
             <h3 className="text-amber-color font-bold text-sm font-display">Prefer to talk?</h3>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Pick a slot for a free 15-minute discovery call.
+              Email a couple of time slots that suit you and I&#39;ll send a
+              calendar invite for a free 15-minute discovery call.
             </p>
             <a
-              href="https://calendly.com/david-linacre/15min"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:david@linacre.site?subject=Book%20a%2015-min%20intro%20call"
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-amber-color hover:bg-amber-glow text-black font-mono text-xs font-bold transition-all shadow-sm focus:outline-none"
-              data-analytics="contact_calendly"
+              data-analytics="contact_book_email"
             >
               <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Book a 15-min call</span>
+              <span>Email to book a 15-min call</span>
             </a>
           </div>
         </motion.div>
@@ -196,12 +195,10 @@ export default function Contact() {
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 pt-2">
                     <a
-                      href="https://calendly.com/david-linacre/15min"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href="mailto:david@linacre.site?subject=Book%20a%2015-min%20intro%20call"
                       className="px-4 py-2 bg-amber-color text-black font-mono text-xs font-bold rounded-lg hover:bg-amber-glow transition-all"
                     >
-                      Book a 15-min call
+                      Email to book a 15-min call
                     </a>
                     <button
                       onClick={() => setStatus('idle')}

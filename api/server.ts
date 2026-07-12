@@ -1190,9 +1190,15 @@ app.post("/api/contact", (req, res) => {
     }
   });
 
-  // Server health check
-  app.get("/api/health", (req, res) => {
-    res.json({ status: "ok" });
+  // Server health check (BUG-01, audit 11 Jul 2026).
+  // Minimal, no-dependency-detail 200. HEAD is supported for uptime pings.
+  app.head("/api/health", (_req, res) => {
+    res.set("Cache-Control", "no-store");
+    res.status(200).end();
+  });
+  app.get("/api/health", (_req, res) => {
+    res.set("Cache-Control", "no-store");
+    res.status(200).json({ status: "ok" });
   });
 
 

@@ -109,14 +109,17 @@ export default function Footer() {
                   Accessibility
                 </button>
                 <span>·</span>
-                <a
-                  href="https://calendly.com/david-linacre/15min"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => {
+                    // Calendly events 404'd (audit Issue 1, 12 Jul 2026) —
+                    // route to the contact form until a scheduler is restored.
+                    window.history.pushState({}, '', '/contact');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
                   className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
                 >
                   Book a Call
-                </a>
+                </button>
               </div>
             </div>
 

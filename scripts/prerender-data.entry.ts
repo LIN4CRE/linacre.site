@@ -3,7 +3,11 @@
  * Bundled with esbuild so the prerenderer consumes the same typed site data
  * as the app (blog bodies, projects, roadmap, tools) — no duplicated content.
  */
-import { BLOG_POSTS, MANUAL_PROJECTS, ROADMAP_STEPS, TOOLS } from '../src/data';
+import { BLOG_POSTS, MANUAL_PROJECTS, ROADMAP_STEPS, TOOLS, WORK_FAQS, WORK_NEXT_AVAILABLE } from '../src/data';
+
+// Shared markdown renderer — same implementation the React blog modal uses,
+// so JS and no-JS visitors get identical HTML (audit TASK-001, 12 Jul 2026).
+export { mdToHtml } from '../src/lib/markdown';
 
 export const data = {
   posts: BLOG_POSTS.map(p => ({
@@ -24,4 +28,6 @@ export const data = {
     name: t.name, category: (t as any).category ?? '', description: (t as any).description ?? '',
     url: (t as any).url ?? null,
   })),
+  workFaqs: WORK_FAQS.map(f => ({ question: f.question, answer: f.answer })),
+  workNextAvailable: WORK_NEXT_AVAILABLE,
 };

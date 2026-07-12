@@ -207,13 +207,18 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               <Briefcase className="w-3.5 h-3.5" />
               <span>Work with me</span>
             </a>
-            {/* Secondary — book a call */}
+            {/* Secondary — book a call. Calendly event URLs return 404
+                (verified 12 Jul 2026 — audit Issue 1), so this routes to the
+                working contact form until a scheduler is restored. */}
             <a
-              href="https://calendly.com/david-linacre/15min"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab('contact');
+                setMobileMenuOpen(false);
+              }}
               className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-color/30 hover:bg-amber-color/10 text-amber-color font-mono text-xs font-bold transition-all shadow-sm focus:outline-none"
-              id="btn-header-calendly"
+              id="btn-header-book-call"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>Book Call</span>

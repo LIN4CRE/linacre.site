@@ -115,10 +115,10 @@
       "index": true
     },
     "/status": {
-      "title": "Site status | linacre.site",
-      "description": "Operational status for linacre.site pages, APIs and deployment pipeline.",
+      "title": "Status console demo (simulated) | linacre.site",
+      "description": "A UI demo of a status/console page. Values are generated in your browser and do not reflect real infrastructure.",
       "canonical": "https://www.linacre.site/status",
-      "index": true
+      "index": false
     },
     "/work": {
       "title": "Work with David Linacre | Services & Availability",

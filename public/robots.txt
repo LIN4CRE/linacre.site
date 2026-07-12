@@ -1,26 +1,13 @@
-# linacre.site robots.txt — updated per audit SEO-01 / #011 (11 July 2026)
-
 User-agent: *
 Allow: /
-Allow: /.well-known/security.txt
-
-# Keep crawlers out of API endpoints, the private dashboard, and conversion pages
 Disallow: /api/
 Disallow: /dashboard
-Disallow: /dashboard/
 Disallow: /contact/thanks
-Disallow: /*?*sort=
-Disallow: /*?*filter=
 
-# AI crawlers — allow those aligned with our licence
 User-agent: GPTBot
 Allow: /
 
 User-agent: CCBot
 Disallow: /
 
-# Sitemaps
 Sitemap: https://www.linacre.site/sitemap.xml
-
-# Host canonicalisation
-Host: https://www.linacre.site

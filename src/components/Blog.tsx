@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Clock, ArrowRight, X, BookOpen, Hash } from 'lucide-react';
 import { BLOG_POSTS } from '../data';
 import { BlogPost } from '../types';
+import { mdToHtml } from '../lib/markdown';
 
 export default function Blog() {
   const getPostFromUrl = () => {
@@ -198,10 +199,15 @@ export default function Blog() {
                   </h2>
                 </div>
 
-                {/* Article Content */}
-                <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed space-y-4 whitespace-pre-wrap">
-                  {selectedPost.content}
-                </div>
+                {/* Article Content — rendered through the same markdown
+                    pipeline as the prerendered /blog/:slug pages (TASK-001,
+                    12 Jul 2026). mdToHtml escapes all text before applying
+                    inline formatting, and post content is first-party data
+                    from src/data.ts, so this is safe to inject. */}
+                <div
+                  className="md-body max-w-none text-muted-foreground leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: mdToHtml(selectedPost.content) }}
+                />
 
                 {/* Tags */}
                 <div className="flex flex-wrap gap-2 pt-4 border-t border-border-color/30">

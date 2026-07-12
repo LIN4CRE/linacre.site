@@ -13,9 +13,7 @@ const KEYS: Array<{ key: string; purpose: string; category: 'Essential' | 'Funct
   { key: 'linacre_theme', purpose: 'Persists dark / light theme choice across visits.', category: 'Functional', retention: '12 months' },
   { key: 'linacre_active_tab', purpose: 'Restores the last section you were viewing.', category: 'Functional', retention: '12 months' },
   { key: 'linacre_brand_*', purpose: 'Stores Identity Hub customisations (colour, frame, motion, monogram) for the live brand builder.', category: 'Functional', retention: '12 months' },
-  { key: 'linacre_lab_sessions_v1', purpose: 'Keeps your AI Lab chat history in-browser only, so you can resume conversations.', category: 'Optional', retention: 'Until you clear it' },
-  { key: 'linacre_openai_key', purpose: 'Optional. Stores an OpenAI API key you paste in, so the AI Lab can call OpenAI directly. Never sent to linacre.site servers.', category: 'Optional', retention: 'Until you remove it' },
-  { key: 'linacre_claude_key', purpose: 'Optional. Stores an Anthropic API key you paste in, so the AI Lab can call Anthropic directly. Never sent to linacre.site servers.', category: 'Optional', retention: 'Until you remove it' }
+  { key: 'linacre_lab_sessions_v1', purpose: 'Keeps your AI Lab chat history in-browser only, so you can resume conversations.', category: 'Optional', retention: 'Until you clear it' }
 ];
 
 export default function CookiePolicy() {
@@ -78,13 +76,25 @@ export default function CookiePolicy() {
       </section>
 
       <section className="space-y-3 text-sm text-muted-foreground leading-relaxed">
-        <h2 className="font-display text-xl font-bold text-foreground">Third parties</h2>
+        <h2 className="font-display text-xl font-bold text-foreground">What we deliberately do not store</h2>
         <ul className="list-disc pl-6 space-y-1.5">
           <li>
-            <strong>Calendly</strong> &mdash; when you open the &quot;Book a call&quot; link,
-            you leave linacre.site for calendly.com. Calendly&#39;s own cookies and privacy
-            policy apply on their site.
+            <strong>Provider API keys</strong> (OpenAI, Anthropic, LiteLLM). When you
+            paste an optional key into the AI Lab, it lives in memory for that tab only.
+            It is never written to LocalStorage, SessionStorage, cookies, or IndexedDB,
+            and is never sent to linacre.site servers. Refresh the tab and you&#39;ll
+            need to paste again &mdash; that&#39;s intentional.
           </li>
+          <li>
+            <strong>Contact form contents.</strong> The form posts once to our own
+            API and the message is used only to reply. Nothing is written to your browser.
+          </li>
+        </ul>
+      </section>
+
+      <section className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+        <h2 className="font-display text-xl font-bold text-foreground">Third parties</h2>
+        <ul className="list-disc pl-6 space-y-1.5">
           <li>
             <strong>Vercel</strong> hosts the site. Vercel sets a short-lived
             security/rate-limit cookie only for edge protection, never for tracking.

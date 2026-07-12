@@ -106,12 +106,17 @@ export default function Privacy() {
             This site does not use cookies. We use browser Local Storage solely to persist functional workspace settings:
           </p>
           <ul className="list-disc pl-4 space-y-1.5 text-[11px]">
+            <li><strong>linacre_consent_v1</strong> — Records your storage-preference decision so we don&#39;t ask again.</li>
             <li><strong>linacre_active_tab</strong> — Remembers your active dashboard panel state.</li>
-            <li><strong>theme_hue</strong> — Preserves your customized monogram brand color Hue value.</li>
-            <li><strong>theme_vibe</strong> — Stores your light/dark display mode preference.</li>
+            <li><strong>linacre_theme</strong> — Stores your light/dark display mode preference.</li>
+            <li><strong>linacre_brand_*</strong> — Persists Identity Hub customisations (colour, frame, motion, monogram).</li>
             <li><strong>linacre_lab_sessions_v1</strong> — Saves your AI Lab local conversation blueprints.</li>
-            <li><strong>linacre_openai_key / linacre_claude_key</strong> — Caches your optional API keys securely in the browser.</li>
           </ul>
+          <p className="text-[11px] text-amber-color/90 mt-2">
+            Provider API keys (OpenAI, Anthropic, LiteLLM) are <em>not</em> written to browser
+            storage. If you paste one into the AI Lab it stays in memory for that tab only and
+            is never sent to linacre.site servers. Full detail: see <a href="/cookie-policy" className="underline hover:text-amber-color">Cookie Policy</a>.
+          </p>
         </motion.div>
       </div>
 
