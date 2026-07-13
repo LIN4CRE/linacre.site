@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/LIN4CRE/linacre.site/main/.github/banner.png" alt="linacre.site banner" width="100%"></p>
+
 # linacre.site
 
 David Linacre's personal developer portfolio and toolkit directory, deployed at [linacresite.vercel.app](https://linacresite.vercel.app) (canonical domain: linacre.site).
