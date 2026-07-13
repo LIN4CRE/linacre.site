@@ -1,0 +1,17 @@
+/* TEAM */
+  Engineer & Designer: David Christopher Linacre
+  Contact: david [at] linacre.site
+  GitHub: github.com/LIN4CRE
+  LinkedIn: linkedin.com/in/david-linacre
+  From: United Kingdom
+
+/* THANKS */
+  The open-source community — React, Vite, Tailwind, Motion, and many more.
+
+/* SITE */
+  Standards: HTML5, WCAG 2.2 AA
+  Stack: React, TypeScript, Vite, Tailwind CSS, self-hosted variable fonts
+  Hosting: Vercel (edge), prerendered SSR
+  Security: strict CSP, HSTS preload, COOP/CORP, Permissions-Policy
+  AI: llms.txt + llms-full.txt for machine retrieval
+  Last updated: 2026
