@@ -1,5 +1,13 @@
 <p align="center"><img src="https://raw.githubusercontent.com/LIN4CRE/linacre.site/main/.github/banner.png" alt="linacre.site banner" width="100%"></p>
 
+
+<p align="center">
+<a href="https://www.linacre.site/"><img src="https://img.shields.io/badge/live-linacre.site-f5a524?style=flat-square&logo=vercel&logoColor=white"></a>
+<img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB">
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white">
+<img src="https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white">
+<img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square">
+</p>
 # linacre.site
 
 David Linacre's personal developer portfolio and toolkit directory, deployed at [linacresite.vercel.app](https://linacresite.vercel.app) (canonical domain: linacre.site).
