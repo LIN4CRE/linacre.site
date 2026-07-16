@@ -25,10 +25,26 @@ export default function About() {
   ];
 
   const milestones = [
-    { year: '2026', title: 'Premium Brand overhaul v4.5', desc: 'Crafted premium design system with custom brand identities, live widget, and full-stack React integration.' },
-    { year: '2025', title: 'Shipped GhostMail Disposable Email Engine', desc: 'Created an open-source high-throughput secure disposable inbox manager built in Go, distributed with Docker.' },
-    { year: '2025', title: 'Launched DomainDeals Marketplace', desc: 'Developed web platform to list, search, and broker domain purchases directly, using modern SPA patterns.' },
-    { year: '2024', title: 'Began Autonomous Agent Engineering', desc: 'Integrated Model Context Protocol (MCP) clients, local Ollama LLMs, and web dev playgrounds.' }
+    { 
+      year: '2026', 
+      title: 'Premium Brand Overhaul & Live Customizer v4.5', 
+      desc: 'Completely overhauled the site’s design system, adding visual grid overlays, real-time relative-luminance contrast validation tools, and a dynamic vector monogram customization panel with drag-and-drop file ingestion support.' 
+    },
+    { 
+      year: '2025', 
+      title: 'Shipped GhostMail Secure Disposable Email Engine', 
+      desc: 'Created an open-source, high-throughput secure disposable inbox manager built in Go. Integrated with worker pools, rate limiters, and channel synchronization to handle massive SMTP transaction streams. Packaged and deployed via Docker.' 
+    },
+    { 
+      year: '2025', 
+      title: 'Launched DomainDeals Escrow & Brokerage Portal', 
+      desc: 'Designed and developed a secure marketplace platform to list, search, and broker domain purchases directly. Engineered with a React single-page architecture, Vercel Edge caching headers, and automated transaction email triggers.' 
+    },
+    { 
+      year: '2024', 
+      title: 'Established Autonomous Agent Research Hub', 
+      desc: 'Built custom Model Context Protocol (MCP) servers and orchestrator clients. Developed local Ollama LLM playground interfaces and autonomous dev agent playbooks to enable collaborative code generation and security audits.' 
+    }
   ];
 
   return (
@@ -89,10 +105,16 @@ export default function About() {
                 <span className="text-amber-color">&gt;</span> cat about_me.md
               </p>
               <p className="leading-relaxed">
-                I spend my time engineering custom digital platforms from the ground up, following a strict "no duplicated data, no clutter, one source of truth" philosophy. My development stack is built on speed, security, and developer experience.
+                I fell into software engineering during my early days of trying to customize local configurations, automate boring data scraping pipelines, and rebuild legacy workflows. Over the last several years, I have worked as a systems consultant, principal platform developer, and fractional DevOps architect. I've designed and shipped everything from low-latency concurrency pipelines in Go to fully secure edge caching systems for enterprise applications.
               </p>
               <p className="leading-relaxed">
-                Whether deploying high-performance React frontends on Vercel, orchestrating secure microservices in Go/Docker, or training context-aware AI models in the cloud, I design systems built to reduce complexity and scale gracefully over the next decade.
+                My career is built on a simple foundation: treat technical debt as a systems bug, optimize for the next decade rather than next week, and enforce strict, automated quality guardrails. I believe that developer platforms should manage themselves automatically. That's why I focus heavily on operational infrastructure, continuous deployment, and context-aware developer tooling.
+              </p>
+              <p className="leading-relaxed">
+                When we work together on a project, you're not just getting a coder. You're getting a systematic approach. I scope tasks with absolute transparency, write robust unit tests for every critical endpoint, configure clear CI/CD pipelines, and provide complete documentation from day one. I coordinate communication through asynchronous updates, standardizing on clear milestones and regular logs to keep everyone aligned without wasteful meetings.
+              </p>
+              <p className="leading-relaxed">
+                When I am not sitting in front of a keyboard tweaking Linux configuration variables or orchestrating AI model pipelines, you can find me exploring retro arcade hardware, hiking across the English countryside, or learning new culinary techniques.
               </p>
               <p className="text-foreground flex items-center gap-2 font-bold">
                 <span className="text-amber-color">&gt;</span> echo $LOCATION

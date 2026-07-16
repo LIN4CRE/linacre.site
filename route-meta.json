@@ -20,7 +20,7 @@
     },
     "/about": {
       "title": "About David Linacre | Full-stack and AI engineer",
-      "description": "Learn about David Linacre’s full-stack engineering, developer tooling and automation focus.",
+      "description": "Learn about David Linacre's background in software engineering, technical philosophy, and operational process. Shipped projects, career milestones, and skills matrix.",
       "canonical": "https://www.linacre.site/about",
       "index": true
     },
@@ -124,6 +124,12 @@
       "title": "Work with David Linacre | Services & Availability",
       "description": "Systems engineering audits, custom full-stack development, and ongoing fractional engineering retainers with David Linacre.",
       "canonical": "https://www.linacre.site/work",
+      "index": true
+    },
+    "/now": {
+      "title": "What David Linacre is doing now",
+      "description": "Derek Sivers style /now page outlining David Linacre's current projects, learning goals, and recent reading list.",
+      "canonical": "https://www.linacre.site/now",
       "index": true
     },
     "/contact/thanks": {

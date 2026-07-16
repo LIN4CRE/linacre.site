@@ -33,11 +33,13 @@ const ContactThanks = lazy(() => import('./components/ContactThanks'));
 const CookiePolicy = lazy(() => import('./components/CookiePolicy'));
 const Terms = lazy(() => import('./components/Terms'));
 const ConsentBanner = lazy(() => import('./components/ConsentBanner'));
+const Now = lazy(() => import('./components/Now'));
 
 import { BLOG_POSTS } from './data';
 import Breadcrumbs from './components/Breadcrumbs';
 
 const ROUTE_LABEL: Record<string, string> = {
+  '/now': 'Now',
   '/work': 'Work',
   '/projects': 'Projects',
   '/toolkit': 'Toolkit',
@@ -64,7 +66,7 @@ export default function App() {
     const validTabs = [
       'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground',
       'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work',
-      'contact/thanks', 'cookie-policy', 'terms'
+      'contact/thanks', 'cookie-policy', 'terms', 'now'
     ];
 
     // Route path -> internal tab id (colons/paths kept as-is where safe).
@@ -834,7 +836,19 @@ export default function App() {
             </motion.div>
           )}
 
-          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms'].includes(activeTab) && (
+          {activeTab === 'now' && (
+            <motion.div
+              key="now"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <Now />
+            </motion.div>
+          )}
+
+          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
             <motion.div
               key="404"
               initial={{ opacity: 0, scale: 0.95 }}
