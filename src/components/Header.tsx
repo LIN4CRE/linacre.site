@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar } from 'lucide-react';
+import InteractiveGlobe from './InteractiveGlobe';
 
 interface HeaderProps {
   activeTab: string;
@@ -8,9 +9,10 @@ interface HeaderProps {
   theme: 'dark' | 'light';
   setTheme: (theme: 'dark' | 'light') => void;
   openPalette: () => void;
+  activeColor: { primary: string; secondary: string };
 }
 
-export default function Header({ activeTab, setActiveTab, theme, setTheme, openPalette }: HeaderProps) {
+export default function Header({ activeTab, setActiveTab, theme, setTheme, openPalette, activeColor }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const coreItems = [
@@ -205,7 +207,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               id="btn-header-work"
             >
               <Briefcase className="w-3.5 h-3.5" />
-              <span>Work with me</span>
+              <span>Work with</span>
             </a>
             {/* Secondary — book a call. Calendly event URLs return 404
                 (verified 12 Jul 2026 — audit Issue 1), so this routes to the
@@ -223,6 +225,9 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               <Calendar className="w-3.5 h-3.5" />
               <span>Book Call</span>
             </a>
+
+            {/* Interactive Globe Widget */}
+            <InteractiveGlobe primaryColor={activeColor.primary} />
 
             {/* Command Palette Button */}
             <button
@@ -312,7 +317,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                 id="mobile-nav-work-cta"
               >
                 <Briefcase className="w-4 h-4" />
-                <span>Work with me</span>
+                <span>Work with</span>
               </a>
               <a
                 href="https://github.com/LIN4CRE/linacre.site"

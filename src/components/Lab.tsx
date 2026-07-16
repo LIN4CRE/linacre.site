@@ -97,6 +97,96 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // Lab Collaborative Agent Team states
+  const [teamMode, setTeamMode] = useState<boolean>(true);
+
+  // prefers-reduced-motion hook (TASK-002)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', listener);
+    return () => mediaQuery.removeEventListener('change', listener);
+  }, []);
+
+  const getAgentInfo = (agentKey: string) => {
+    const spriteExt = prefersReducedMotion ? 'png' : 'gif';
+    const folder = prefersReducedMotion ? 'gen5' : 'ani';
+    switch (agentKey.toLowerCase()) {
+      case 'architect':
+        return {
+          name: 'Lead Architect Mewtwo',
+          role: 'Strategic Plan',
+          gifUrl: `https://play.pokemonshowdown.com/sprites/${folder}/mewtwo.${spriteExt}`,
+          bgColor: 'bg-[#c084fc]/5',
+          borderColor: 'border-[#c084fc]/20',
+          tagColor: 'bg-[#c084fc]/10 border-[#c084fc]/25 text-[#c084fc]'
+        };
+      case 'coder':
+        return {
+          name: 'Developer Porygon2',
+          role: 'Implementation',
+          gifUrl: `https://play.pokemonshowdown.com/sprites/${folder}/porygon2.${spriteExt}`,
+          bgColor: 'bg-cyan/5',
+          borderColor: 'border-cyan/20',
+          tagColor: 'bg-cyan/10 border-cyan/25 text-cyan'
+        };
+      case 'security':
+        return {
+          name: 'Security Auditor Magnezone',
+          role: 'Safety Audit',
+          gifUrl: `https://play.pokemonshowdown.com/sprites/${folder}/magnezone.${spriteExt}`,
+          bgColor: 'bg-[#fbbf24]/5',
+          borderColor: 'border-[#fbbf24]/20',
+          tagColor: 'bg-[#fbbf24]/10 border-[#fbbf24]/25 text-amber-color'
+        };
+      case 'devops':
+        return {
+          name: 'DevOps Rotom-Wash',
+          role: 'Deployment & Wasm',
+          gifUrl: `https://play.pokemonshowdown.com/sprites/${folder}/rotom-wash.${spriteExt}`,
+          bgColor: 'bg-[#f87171]/5',
+          borderColor: 'border-[#f87171]/20',
+          tagColor: 'bg-[#f87171]/10 border-[#f87171]/25 text-rose-400'
+        };
+      default:
+        return {
+          name: 'Lead Orchestrator Mewtwo',
+          role: 'Orchestration',
+          gifUrl: `https://play.pokemonshowdown.com/sprites/${folder}/mewtwo.${spriteExt}`,
+          bgColor: 'bg-[#0b0f19]/30 dark:bg-[#161b26]/30',
+          borderColor: 'border-border-color/85',
+          tagColor: 'bg-[#0f172a] border-border-color text-muted-foreground'
+        };
+    }
+  };
+
+  const parseAgentDialogue = (content: string) => {
+    const regex = /\[(ARCHITECT|CODER|SECURITY|DEVOPS)\]/g;
+    const parts = content.split(regex);
+    if (parts.length <= 1) {
+      return [{ agent: 'assistant', text: content }];
+    }
+
+    const dialogue: { agent: string; text: string }[] = [];
+    let currentAgent = 'orchestrator';
+    let currentText = parts[0];
+
+    if (currentText.trim()) {
+      dialogue.push({ agent: currentAgent, text: currentText });
+    }
+
+    for (let i = 1; i < parts.length; i += 2) {
+      const agentName = parts[i].toLowerCase();
+      const agentText = parts[i + 1] || '';
+      dialogue.push({ agent: agentName, text: agentText });
+    }
+
+    return dialogue;
+  };
+
   // Tab control for Sidebar: 'chats' or 'files'
   const [sidebarTab, setSidebarTab] = useState<'chats' | 'files'>('chats');
 
@@ -1131,6 +1221,26 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
+    const finalPromptText = teamMode
+      ? `You are a collaborative team of specialized AI agents. You must answer the following request by coordinating with each other:
+"${promptText}"
+
+Please present the answer as a structured dialogue between these agents, using the exact delimiters below:
+[ARCHITECT] for the Lead Architect Mewtwo (plans and outlines the response)
+[CODER] for the Developer Porygon2 (writes the code, markup, or detailed implementation)
+[SECURITY] for the Security Auditor Magnezone (audits variables, script tags, dependencies, and performance)
+[DEVOPS] for the DevOps Specialist Rotom-Wash (finalizes environment, compilation, and deploy steps)
+
+You do not need to use all agents if the task is simple, but at least two should collaborate. Output their dialogue sequentially using the bracketed delimiters.`
+      : promptText;
+
+    const payloadMessages = updatedMessages.map((m, idx) => {
+      if (idx === updatedMessages.length - 1) {
+        return { role: m.role, content: finalPromptText };
+      }
+      return { role: m.role, content: m.content };
+    });
+
     // Placeholder assistant message
     const assistantMsgId = `msg-${Date.now()}-assistant`;
     const initialAssistantMsg: ChatMessage = {
@@ -1149,7 +1259,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
         const response = await fetch('/api/chat/stream', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: promptText, history: updatedMessages.slice(0, -1) }),
+          body: JSON.stringify({ prompt: finalPromptText, history: updatedMessages.slice(0, -1) }),
           signal: controller.signal
         });
 
@@ -1212,7 +1322,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            prompt: promptText,
+            prompt: finalPromptText,
             history: updatedMessages.slice(0, -1),
             apiKey: openaiKey
           }),
@@ -1278,7 +1388,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            prompt: promptText,
+            prompt: finalPromptText,
             history: updatedMessages.slice(0, -1),
             apiKey: claudeKey
           }),
@@ -1364,12 +1474,12 @@ export default function Lab({ theme = 'dark' }: LabProps) {
         const requestBody = isOllama
           ? {
               model,
-              messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+              messages: payloadMessages,
               stream: true
             }
           : {
               model,
-              messages: updatedMessages.map(m => ({ role: m.role, content: m.content })),
+              messages: payloadMessages,
               stream: true
             };
 
@@ -2239,6 +2349,17 @@ export default function Lab({ theme = 'dark' }: LabProps) {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setTeamMode(!teamMode)}
+                      className={`px-2 py-0.5 rounded text-[10px] cursor-pointer transition-all border font-mono ${
+                        teamMode
+                          ? 'bg-amber-color/10 border-amber-color/30 text-amber-color font-bold shadow-[0_0_8px_rgba(245,158,11,0.25)] animate-pulse-subtle'
+                          : 'border-border-color/60 text-muted-foreground/60 hover:text-foreground'
+                      }`}
+                      title="Toggle Multi-Agent Developer Team Orchestration"
+                    >
+                      {teamMode ? '👥 Team Orchestration' : '👤 Single Model'}
+                    </button>
                     <span className="hidden sm:inline">
                       {activeProvider === 'gemini'
                         ? 'Active Server Route'
@@ -2288,16 +2409,47 @@ export default function Lab({ theme = 'dark' }: LabProps) {
 
                         {/* Message Bubble */}
                         <div
-                          className={`rounded-xl p-4 text-sm leading-relaxed border transition-colors ${
+                          className={`rounded-xl transition-colors ${
                             isUser
-                              ? 'bg-amber-color/10 border-amber-color/30 text-foreground'
-                              : 'bg-muted/30 dark:bg-[#161b26] border-border-color text-foreground'
+                              ? 'bg-amber-color/10 border border-amber-color/30 text-foreground p-4 text-sm leading-relaxed'
+                              : 'w-full space-y-3.5'
                           }`}
                         >
-                          <div
-                            className="prose prose-invert max-w-none text-xs sm:text-sm prose-p:my-1 prose-pre:bg-black/40"
-                            dangerouslySetInnerHTML={{ __html: formatMessageContent(msg.content) }}
-                          />
+                          {isUser ? (
+                            <div
+                              className="prose prose-invert max-w-none text-xs sm:text-sm prose-p:my-1 prose-pre:bg-black/40"
+                              dangerouslySetInnerHTML={{ __html: formatMessageContent(msg.content) }}
+                            />
+                          ) : (
+                            parseAgentDialogue(msg.content).map((part, pIdx) => {
+                              const agentInfo = getAgentInfo(part.agent);
+                              return (
+                                <div 
+                                  key={pIdx} 
+                                  className={`rounded-xl border p-4 space-y-2.5 transition-all text-sm leading-relaxed ${agentInfo.bgColor} ${agentInfo.borderColor}`}
+                                >
+                                  <div className="flex items-center justify-between border-b border-border-color/20 pb-2">
+                                    <div className="flex items-center gap-2 select-none">
+                                      <img 
+                                        src={agentInfo.gifUrl} 
+                                        alt={agentInfo.name} 
+                                        className="w-5 h-5 object-contain"
+                                        onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
+                                      />
+                                      <span className="font-display font-bold text-xs uppercase tracking-wide text-foreground">{agentInfo.name}</span>
+                                    </div>
+                                    <span className={`text-[8px] font-mono font-bold px-1.5 py-0.5 rounded border uppercase ${agentInfo.tagColor}`}>
+                                      {agentInfo.role}
+                                    </span>
+                                  </div>
+                                  <div
+                                    className="prose prose-invert max-w-none text-xs sm:text-sm prose-p:my-1 prose-pre:bg-black/40 text-muted-foreground/90 font-mono"
+                                    dangerouslySetInnerHTML={{ __html: formatMessageContent(part.text) }}
+                                  />
+                                </div>
+                              );
+                            })
+                          )}
                         </div>
                       </div>
                     );

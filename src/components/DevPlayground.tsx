@@ -21,7 +21,8 @@ import {
   SkipBack,
   Cpu,
   Layers,
-  Terminal
+  Terminal,
+  Bot
 } from 'lucide-react';
 
 interface CProgram {
@@ -379,8 +380,218 @@ interface DevPlaygroundProps {
 }
 
 export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
-  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm'>('jwt');
+  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm' | 'svg_creator'>('jwt');
   const [copiedType, setCopiedType] = useState<string | null>(null);
+
+  // SVG Creator presets
+  const SVG_PRESETS = {
+    reactor: {
+      name: 'Reactor Core',
+      code: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="1" />
+      <stop offset="50%" stop-color="#d97706" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="50%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#070a0f" />
+  <g transform="translate(100, 100)">
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
+    <circle cx="0" cy="0" r="60" fill="none" stroke="#1e293b" stroke-width="1" />
+    <circle cx="0" cy="0" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="2" stroke-dasharray="40 20">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="10s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#06b6d4" stroke-width="1.5" stroke-dasharray="10 15">
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="6s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="35" fill="url(#coreGlow)" />
+    <polygon points="0,-20 17.32,-10 17.32,10 0,20 -17.32,10 -17.32,-10" fill="#070a0f" stroke="#fbbf24" stroke-width="3">
+      <animate attributeName="stroke" values="#fbbf24;#06b6d4;#fbbf24" dur="4s" repeatCount="indefinite" />
+    </polygon>
+    <circle cx="0" cy="0" r="6" fill="#fbbf24">
+      <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
+    </circle>
+  </g>
+</svg>`
+    },
+    pulse: {
+      name: 'Pulse Wave',
+      code: `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#070a0f" />
+  <path d="M 10 50 Q 50 20 90 50 T 170 50" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round">
+    <animate attributeName="stroke-dasharray" values="0 1000;1000 0" dur="3s" repeatCount="indefinite" />
+  </path>
+  <path d="M 10 50 Q 50 80 90 50 T 170 50" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 5">
+    <animateTransform attributeName="transform" type="translate" values="0,0; -20,0" dur="4s" repeatCount="indefinite" />
+  </path>
+  <circle cx="10" cy="50" r="4" fill="#fbbf24" />
+  <circle cx="170" cy="50" r="4" fill="#06b6d4" />
+</svg>`
+    },
+    monogram: {
+      name: 'Cyber Monogram DL',
+      code: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cyberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#070a0f" />
+  <g transform="translate(100, 100)">
+    <path d="M -60 -40 L -80 -40 L -80 40 L -60 40" fill="none" stroke="url(#cyberGrad)" stroke-width="2.5" />
+    <path d="M 60 -40 L 80 -40 L 80 40 L 60 40" fill="none" stroke="url(#cyberGrad)" stroke-width="2.5" />
+    <text x="-32" y="18" font-family="monospace" font-size="52" font-weight="900" fill="#ffffff" letter-spacing="4">DL</text>
+    <text x="-30" y="16" font-family="monospace" font-size="52" font-weight="900" fill="url(#cyberGrad)" letter-spacing="4" opacity="0.8">DL</text>
+    <line x1="-70" y1="0" x2="70" y2="0" stroke="#06b6d4" stroke-width="1" opacity="0.3">
+      <animate attributeName="y1" values="-30;30;-30" dur="3s" repeatCount="indefinite" />
+      <animate attributeName="y2" values="-30;30;-30" dur="3s" repeatCount="indefinite" />
+    </line>
+  </g>
+</svg>`
+    },
+    nodes: {
+      name: 'Infinite Grid Spiral',
+      code: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#070a0f" />
+  <g transform="translate(100, 100)">
+    <circle cx="0" cy="0" r="70" fill="none" stroke="#1e293b" stroke-width="1.5" />
+    <line x1="-80" y1="-80" x2="80" y2="80" stroke="#1e293b" stroke-width="0.5" />
+    <line x1="-80" y1="80" x2="80" y2="-80" stroke="#1e293b" stroke-width="0.5" />
+    <g>
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite" />
+      <circle cx="50" cy="0" r="5" fill="#10b981" />
+      <circle cx="-50" cy="0" r="5" fill="#06b6d4" />
+      <circle cx="0" cy="50" r="5" fill="#f59e0b" />
+      <circle cx="0" cy="-50" r="5" fill="#a855f7" />
+      <path d="M 50 0 L 0 50 L -50 0 L 0 -50 Z" fill="none" stroke="#334155" stroke-width="1" />
+    </g>
+  </g>
+</svg>`
+    }
+  };
+
+  // SVG Creator states
+  const [svgCode, setSvgCode] = useState<string>(SVG_PRESETS.reactor.code);
+  const [svgZoom, setSvgZoom] = useState<number>(100);
+  const [showSvgGrid, setShowSvgGrid] = useState<boolean>(true);
+  const [svgAiPrompt, setSvgAiPrompt] = useState<string>('');
+  const [isSvgGenerating, setIsSvgGenerating] = useState<boolean>(false);
+  const [svgOrchestrationStep, setSvgOrchestrationStep] = useState<number>(-1);
+  const [svgAiLogs, setSvgAiLogs] = useState<{ role: string; content: string }[]>([
+    { role: 'assistant', content: "I am Mewtwo, Lead Architect of the AI Developer Team. Describe the vector asset, monogram, or animation you want to construct, and we'll draft, style, audit, and compile the SVG code." }
+  ]);
+
+  const prettifySvg = () => {
+    let formatted = '';
+    let reg = /(>)(<)(\/*)/g;
+    let html = svgCode.replace(reg, '$1\r\n$2$3');
+    let pad = 0;
+    html.split('\r\n').forEach((line) => {
+      let indent = 0;
+      if (line.match(/.+<\/\w[^>]*>$/)) {
+        indent = 0;
+      } else if (line.match(/^<\/\w/)) {
+        if (pad !== 0) {
+          pad -= 1;
+        }
+      } else if (line.match(/^<\w[^>]*[^\/]>$/)) {
+        indent = 1;
+      } else {
+        indent = 0;
+      }
+
+      formatted += '  '.repeat(pad) + line + '\r\n';
+      pad += indent;
+    });
+    setSvgCode(formatted.trim());
+  };
+
+  const handleSvgAiSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!svgAiPrompt.trim() || isSvgGenerating) return;
+
+    const userPrompt = svgAiPrompt.trim();
+    setSvgAiPrompt('');
+    setIsSvgGenerating(true);
+    setSvgOrchestrationStep(0);
+
+    const updatedLogs = [...svgAiLogs, { role: 'user', content: userPrompt }];
+    setSvgAiLogs(updatedLogs);
+
+    const steps = [
+      { agent: 'Lead Architect Mewtwo', msg: 'Lead Architect Mewtwo is drafting coordinate layout & viewBox grids...' },
+      { agent: 'Coder Porygon2', msg: 'Coder Porygon2 is coding vector paths, shapes, and gradients...' },
+      { agent: 'Security Magnezone', msg: 'Security Magnezone is auditing raw elements for safety compliance...' },
+      { agent: 'DevOps Rotom-Wash', msg: 'DevOps Rotom-Wash is optimizing compilation and wrapping dynamic animation states...' }
+    ];
+
+    for (let i = 0; i < 4; i++) {
+      setSvgOrchestrationStep(i);
+      setSvgAiLogs(prev => [
+        ...prev.filter(l => !l.content.startsWith('[Orchestration]')),
+        { role: 'system', content: `[Orchestration] ${steps[i].msg}` }
+      ]);
+      await new Promise(resolve => setTimeout(resolve, 800));
+    }
+
+    try {
+      const systemInstructions = `You are a specialized SVG Vector Creator AI Agent.
+Return ONLY valid raw SVG code wrapped in a markdown codeblock.
+Do NOT output any markdown descriptions or text before or after the codeblock.
+The SVG should be modern, clean, premium dark-themed, and responsive.
+Task: ${userPrompt}
+Existing code context (if modifying):
+${svgCode}`;
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: systemInstructions,
+          history: []
+        })
+      });
+
+      if (!response.ok) throw new Error('API request failed');
+      const data = await response.json();
+      const rawText = data.reply || '';
+
+      const svgMatch = rawText.match(/```xml([\s\S]*?)```/) || rawText.match(/```html([\s\S]*?)```/) || rawText.match(/```([\s\S]*?)```/) || [null, rawText];
+      let cleanSvg = (svgMatch[1] || rawText).trim();
+
+      if (!cleanSvg.startsWith('<svg') && cleanSvg.includes('<svg')) {
+        const startIdx = cleanSvg.indexOf('<svg');
+        const endIdx = cleanSvg.lastIndexOf('</svg>') + 6;
+        cleanSvg = cleanSvg.substring(startIdx, endIdx);
+      }
+
+      if (cleanSvg.startsWith('<svg')) {
+        setSvgCode(cleanSvg);
+        setSvgAiLogs(prev => [
+          ...prev.filter(l => !l.content.startsWith('[Orchestration]')),
+          { role: 'assistant', content: 'SVG successfully created, verified, and loaded into your editor by the AI Developer Team.' }
+        ]);
+      } else {
+        throw new Error('Failed to parse a valid SVG block from AI response');
+      }
+    } catch (err: any) {
+      setSvgAiLogs(prev => [
+        ...prev.filter(l => !l.content.startsWith('[Orchestration]')),
+        { role: 'assistant', content: `Orchestration warning: The AI Dev team encountered an issue generating the SVG. Fallback error details: ${err.message || err}` }
+      ]);
+    } finally {
+      setIsSvgGenerating(false);
+      setSvgOrchestrationStep(-1);
+    }
+  };
 
   // C-to-Wasm compiler simulation states
   const [selectedProgram, setSelectedProgram] = useState<CProgram>(C_PROGRAMS[0]);
@@ -913,6 +1124,21 @@ border-radius: 12px;`;
             <div className="flex-1">
               <div>C-to-Wasm Compiler</div>
               <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Wasm memory & pointer visualizer</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTool('svg_creator')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
+              activeTool === 'svg_creator'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
+                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-cyan" />
+            <div className="flex-1">
+              <div>SVG Vector Creator</div>
+              <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Dynamic XML canvas & AI design</div>
             </div>
           </button>
         </div>
@@ -1754,6 +1980,210 @@ border-radius: 12px;`;
                           </div>
                         </div>
                       )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* SVG CREATOR VIEW */}
+              {activeTool === 'svg_creator' && (
+                <div className="space-y-6" id="svg-creator-canvas">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-color/50 pb-4">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-amber-color animate-spin-slow" />
+                      <div>
+                        <h2 className="font-display text-base font-bold text-foreground">SVG Vector Creator & AI Designer</h2>
+                        <p className="text-[10px] text-muted-foreground mt-0.5">Draft, style, and animate scalable vector graphics with help from a specialized AI Developer Team.</p>
+                      </div>
+                    </div>
+                    
+                    {/* Presets dropdown */}
+                    <div className="flex items-center gap-2 font-mono text-xs">
+                      <label htmlFor="svg-preset-select" className="text-muted-foreground">Preset:</label>
+                      <select
+                        id="svg-preset-select"
+                        value={Object.keys(SVG_PRESETS).find(key => SVG_PRESETS[key as keyof typeof SVG_PRESETS].code.trim() === svgCode.trim()) || ''}
+                        onChange={(e) => {
+                          const preset = SVG_PRESETS[e.target.value as keyof typeof SVG_PRESETS];
+                          if (preset) setSvgCode(preset.code);
+                        }}
+                        className="bg-[#070a0f] border border-border-color/60 text-foreground text-[10px] rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer font-bold"
+                      >
+                        <option value="" disabled>-- Custom SVG --</option>
+                        {Object.entries(SVG_PRESETS).map(([key, p]) => (
+                          <option key={key} value={key}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                    {/* Left Column: Code Workspace (5 columns) */}
+                    <div className="xl:col-span-5 space-y-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono">
+                          <span className="text-muted-foreground">XML/SVG Source Code</span>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={prettifySvg}
+                              className="text-[10px] text-cyan hover:text-amber-color font-bold transition-all cursor-pointer"
+                              title="Prettify XML indentations"
+                            >
+                              Prettify
+                            </button>
+                            <span className="text-muted-foreground/30">|</span>
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(svgCode);
+                                triggerCopyFeedback('svg-source');
+                              }}
+                              className="text-[10px] text-cyan hover:text-amber-color font-bold transition-all cursor-pointer"
+                            >
+                              {copiedType === 'svg-source' ? 'Copied' : 'Copy'}
+                            </button>
+                          </div>
+                        </div>
+
+                        <textarea
+                          value={svgCode}
+                          onChange={(e) => setSvgCode(e.target.value)}
+                          placeholder="Write raw SVG XML here..."
+                          className="w-full h-[320px] p-3.5 bg-[#070a0f] text-xs font-mono rounded-lg border border-border-color/60 focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-cyan leading-relaxed select-text"
+                          id="svg-code-editor"
+                        />
+                      </div>
+
+                      {/* Export Actions */}
+                      <button
+                        onClick={() => {
+                          const blob = new Blob([svgCode], { type: 'image/svg+xml' });
+                          const url = URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = 'vector-asset.svg';
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                        }}
+                        className="w-full py-2 bg-amber-color hover:bg-amber-color/90 text-black font-bold font-mono text-xs rounded-lg transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
+                      >
+                        <span>Download SVG File</span>
+                      </button>
+                    </div>
+
+                    {/* Right Column: Visual Canvas & AI Chat panel (7 columns) */}
+                    <div className="xl:col-span-7 space-y-4">
+                      {/* Visual canvas box */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-xs font-mono">
+                          <span className="text-muted-foreground">Interactive Render Canvas</span>
+                          <div className="flex items-center gap-3">
+                            {/* Grid toggle */}
+                            <label className="flex items-center gap-1 cursor-pointer select-none">
+                              <input
+                                type="checkbox"
+                                checked={showSvgGrid}
+                                onChange={(e) => setShowSvgGrid(e.target.checked)}
+                                className="accent-amber-color rounded cursor-pointer"
+                              />
+                              <span className="text-[10px] text-muted-foreground">Grid Pattern</span>
+                            </label>
+                            <span className="text-muted-foreground/30">|</span>
+                            {/* Zoom controls */}
+                            <div className="flex items-center gap-1 text-[10px]">
+                              <button onClick={() => setSvgZoom(prev => Math.max(50, prev - 10))} className="px-1.5 py-0.5 border border-border-color rounded hover:text-amber-color cursor-pointer">-</button>
+                              <span className="text-cyan font-bold">{svgZoom}%</span>
+                              <button onClick={() => setSvgZoom(prev => Math.min(200, prev + 10))} className="px-1.5 py-0.5 border border-border-color rounded hover:text-amber-color cursor-pointer">+</button>
+                              <button onClick={() => setSvgZoom(100)} className="px-1 py-0.5 border border-border-color rounded hover:text-amber-color cursor-pointer font-bold">R</button>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Rendering Frame */}
+                        <div 
+                          className={`relative border border-border-color/60 rounded-lg h-[260px] overflow-hidden flex items-center justify-center ${
+                            showSvgGrid 
+                              ? 'bg-[radial-gradient(#1e293b_1.2px,transparent_1.2px)] [background-size:16px_16px] bg-[#090c12]' 
+                              : 'bg-[#090c12]'
+                          }`}
+                        >
+                          <div
+                            style={{ transform: `scale(${svgZoom / 100})`, transformOrigin: 'center center' }}
+                            className="max-w-full max-h-full transition-transform duration-200 p-4"
+                            dangerouslySetInnerHTML={{ __html: svgCode }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* AI Dev Assistant Coordination Panel */}
+                      <div className="p-4 bg-muted/20 dark:bg-[#121622]/60 rounded-xl border border-border-color/60 space-y-4">
+                        <div className="flex items-center justify-between border-b border-border-color/30 pb-2">
+                          <div className="flex items-center gap-1.5">
+                            <Bot className="w-4 h-4 text-amber-color" />
+                            <span className="text-[10px] font-bold font-mono uppercase tracking-wider text-foreground">AI Dev Team Orchestrator</span>
+                          </div>
+                          
+                          {/* Active agent status block */}
+                          <div className="flex gap-1.5">
+                            {(['architect', 'coder', 'security', 'devops'] as const).map((role, idx) => {
+                              const isActive = svgOrchestrationStep === idx;
+                              const isFinished = svgOrchestrationStep > idx;
+                              return (
+                                <span 
+                                  key={role} 
+                                  className={`text-[8px] font-mono px-1.5 py-0.5 rounded border uppercase transition-all ${
+                                    isActive 
+                                      ? 'bg-amber-color/10 border-amber-color text-amber-color font-bold animate-pulse'
+                                      : isFinished
+                                      ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-color'
+                                      : 'bg-muted border-border-color/40 text-muted-foreground/45'
+                                  }`}
+                                >
+                                  {role}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Logs Dialogue */}
+                        <div className="h-28 overflow-y-auto scrollbar-thin space-y-2 text-[10px] font-mono leading-relaxed bg-[#070a0f] p-3 rounded-lg border border-border-color/30">
+                          {svgAiLogs.map((log, idx) => {
+                            const isUser = log.role === 'user';
+                            const isOrch = log.content.startsWith('[Orchestration]');
+                            return (
+                              <div key={idx} className={`${isUser ? 'text-cyan' : isOrch ? 'text-amber-color/90 font-semibold' : 'text-muted-foreground'}`}>
+                                <span className="font-bold">{isUser ? '> David: ' : isOrch ? '> System: ' : '> Team: '}</span>
+                                <span>{isOrch ? log.content.replace('[Orchestration]', '') : log.content}</span>
+                              </div>
+                            );
+                          })}
+                          {isSvgGenerating && svgOrchestrationStep !== -1 && (
+                            <div className="text-amber-glow animate-pulse">
+                              <span>Coordination log buffer parsing...</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Input form */}
+                        <form onSubmit={handleSvgAiSubmit} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={svgAiPrompt}
+                            onChange={(e) => setSvgAiPrompt(e.target.value)}
+                            disabled={isSvgGenerating}
+                            placeholder="ask the ai dev team to design or modify the vector..."
+                            className="flex-1 px-3 py-1.5 bg-[#070a0f] text-xs font-mono rounded-lg border border-border-color/80 focus:border-amber-color focus:outline-none disabled:opacity-50 text-foreground"
+                          />
+                          <button
+                            type="submit"
+                            disabled={isSvgGenerating || !svgAiPrompt.trim()}
+                            className="px-4 py-1.5 bg-cyan hover:bg-cyan/90 disabled:opacity-50 text-black font-bold font-mono text-xs rounded-lg transition-all cursor-pointer"
+                          >
+                            Send
+                          </button>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </div>

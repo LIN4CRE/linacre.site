@@ -299,6 +299,17 @@ export default function AgentsHub() {
   // Showdown GIF load failures tracking
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
+  // prefers-reduced-motion hook (TASK-002)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', listener);
+    return () => mediaQuery.removeEventListener('change', listener);
+  }, []);
+
   // Grid visual state
   const [gridProjection, setGridProjection] = useState<'isometric' | 'flat'>('isometric');
   const [selectedNode, setSelectedNode] = useState<typeof WORKSTATIONS[0] | null>(null);
@@ -1338,9 +1349,14 @@ export default function AgentsHub() {
                                   </div>
                                 ) : (
                                   <img
-                                    src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
+                                    src={prefersReducedMotion
+                                      ? `https://play.pokemonshowdown.com/sprites/gen5/${agent.spriteName}.png`
+                                      : `${SPRITE_BASE_URL}${agent.spriteName}.gif`
+                                    }
                                     alt={agent.name}
-                                    className="w-8 h-8 object-contain drop-shadow-[0_-2px_6px_rgba(255,255,255,0.4)] animate-bounce relative z-10"
+                                    className={`w-8 h-8 object-contain drop-shadow-[0_-2px_6px_rgba(255,255,255,0.4)] relative z-10 ${
+                                      prefersReducedMotion ? '' : 'animate-bounce'
+                                    }`}
                                     onError={() => setImageErrors(prev => ({ ...prev, [agent.id]: true }))}
                                     referrerPolicy="no-referrer"
                                   />
@@ -1518,7 +1534,10 @@ export default function AgentsHub() {
                               renderAgentSVG(agent.role, agent.color)
                             ) : (
                               <img
-                                src={`${SPRITE_BASE_URL}${agent.spriteName}.gif`}
+                                src={prefersReducedMotion
+                                  ? `https://play.pokemonshowdown.com/sprites/gen5/${agent.spriteName}.png`
+                                  : `${SPRITE_BASE_URL}${agent.spriteName}.gif`
+                                }
                                 alt={agent.name}
                                 className="w-full h-full object-contain drop-shadow-[0_0_3px_rgba(255,255,255,0.15)]"
                                 onError={() => setImageErrors(prev => ({ ...prev, [agent.id]: true }))}

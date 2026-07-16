@@ -2,6 +2,7 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { WifiOff } from 'lucide-react';
 import Header from './components/Header';
+import { getEmblemSVG, CustomEmblem } from './lib/emblemRenderer';
 import { RouteHead } from './components/RouteHead';
 import routeMeta from '../route-meta.json';
 import TerminalIntro from './components/TerminalIntro';
@@ -32,6 +33,29 @@ const ContactThanks = lazy(() => import('./components/ContactThanks'));
 const CookiePolicy = lazy(() => import('./components/CookiePolicy'));
 const Terms = lazy(() => import('./components/Terms'));
 const ConsentBanner = lazy(() => import('./components/ConsentBanner'));
+
+import { BLOG_POSTS } from './data';
+import Breadcrumbs from './components/Breadcrumbs';
+
+const ROUTE_LABEL: Record<string, string> = {
+  '/work': 'Work',
+  '/projects': 'Projects',
+  '/toolkit': 'Toolkit',
+  '/learn': 'Learn',
+  '/blog': 'Blog',
+  '/playground': 'Playground',
+  '/lab': 'AI Lab',
+  '/agents': 'Agents',
+  '/identity': 'Identity',
+  '/about': 'About',
+  '/contact': 'Contact',
+  '/contact/thanks': 'Thanks',
+  '/privacy': 'Privacy',
+  '/cookie-policy': 'Cookie Policy',
+  '/terms': 'Terms',
+  '/accessibility': 'Accessibility',
+  '/status': 'Status'
+};
 
 export default function App() {
   const getTabFromPath = () => {
@@ -75,6 +99,56 @@ export default function App() {
   const [chatbotReady, setChatbotReady] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isOffline, setIsOffline] = useState(() => !navigator.onLine);
+
+  const getBreadcrumbPaths = () => {
+    const pathname = window.location.pathname;
+    const parts = pathname.split('/').filter(Boolean);
+    
+    const paths = [
+      { 
+        label: 'home', 
+        onClick: () => { 
+          setActiveTab('toolkit'); 
+          window.history.pushState(null, '', '/'); 
+          window.dispatchEvent(new PopStateEvent('popstate')); 
+        } 
+      }
+    ];
+    
+    if (parts.length === 0) {
+      if (activeTab !== 'toolkit') {
+        const pathKey = `/${activeTab}`;
+        paths.push({ label: ROUTE_LABEL[pathKey] || activeTab, active: true });
+      }
+      return paths;
+    }
+    
+    let runningPath = '';
+    parts.forEach((part, idx) => {
+      runningPath += `/${part}`;
+      const isLast = idx === parts.length - 1;
+      
+      let label = ROUTE_LABEL[runningPath] || decodeURIComponent(part).replace(/-/g, ' ');
+      
+      if (parts[0] === 'blog' && idx === 1) {
+        const post = BLOG_POSTS.find(p => p.slug === part);
+        if (post) label = post.title;
+      }
+      
+      paths.push({
+        label,
+        active: isLast,
+        onClick: isLast ? undefined : () => {
+          const tab = part === 'thanks' ? 'contact-thanks' : part;
+          setActiveTab(tab);
+          window.history.pushState(null, '', runningPath);
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
+      });
+    });
+    
+    return paths;
+  };
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -153,6 +227,7 @@ export default function App() {
   const currentMeta = getRouteMeta();
 
   // Identity and Brand custom values synchronized from localStorage
+  const [customEmblems, setCustomEmblems] = useState<CustomEmblem[]>([]);
   const [identity, setIdentity] = useState({
     colorId: 'amber',
     fontId: 'cyber',
@@ -196,6 +271,13 @@ export default function App() {
     const title = localStorage.getItem('linacre_brand_title') || 'Full-stack & AI systems engineer — available for freelance';
     const bio = localStorage.getItem('linacre_brand_bio') || 'I build reliable React, Go, and AI systems for startups who need to ship in weeks, not quarters. Systems audits, custom builds, and fractional retainers — UK-based, NDA-friendly, replies within 12 hours.';
     const glow = Number(localStorage.getItem('linacre_brand_glow') || '3');
+
+    try {
+      const savedEmblems = localStorage.getItem('linacre_custom_emblems');
+      setCustomEmblems(savedEmblems ? JSON.parse(savedEmblems) : []);
+    } catch (e) {
+      console.error('Failed to parse custom emblems in App.tsx', e);
+    }
 
     setIdentity({ colorId, fontId, frameId, motionId, pulseSpeed, name, title, bio, glow });
   };
@@ -312,104 +394,24 @@ export default function App() {
     const s = activeColor.secondary;
     const frame = identity.frameId;
     const glowIntensity = identity.glow;
-    const shadowSize = glowIntensity * 4;
+    const motion = identity.motionId;
+    const speed = identity.pulseSpeed;
+
+    const svgString = getEmblemSVG(
+      frame,
+      p,
+      s,
+      motion,
+      speed,
+      glowIntensity,
+      customEmblems
+    );
 
     return (
-      <svg className="w-24 h-24 sm:w-28 sm:h-28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="heroGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation={shadowSize / 4} result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-          <linearGradient id="heroBrandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={p} />
-            <stop offset="100%" stopColor={s} />
-          </linearGradient>
-        </defs>
-
-        {frame === 'hexagon' && (
-          <g filter="url(#heroGlow)">
-            {/* Pipeline Nexus Hexagon */}
-            <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke={p} strokeWidth="3" strokeLinejoin="round" />
-            <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke={s} strokeWidth="1" strokeDasharray="6 4" opacity="0.3" />
-            
-            {/* 5x5 pipeline block grid */}
-            <g transform="translate(20, 20)" fill="url(#heroBrandGrad)">
-              <rect x="5" y="5" width="8" height="8" rx="2" opacity="0.4" />
-              <rect x="18" y="5" width="8" height="8" rx="2" opacity="0.6" />
-              <rect x="31" y="5" width="8" height="8" rx="2" />
-              <rect x="44" y="5" width="8" height="8" rx="2" opacity="0.6" />
-              <rect x="5" y="18" width="8" height="8" rx="2" opacity="0.5" />
-              <rect x="18" y="18" width="8" height="8" rx="2" opacity="0.8" />
-              <rect x="31" y="18" width="8" height="8" rx="2" fill={s} />
-              <rect x="44" y="18" width="8" height="8" rx="2" opacity="0.5" />
-              <motion.rect 
-                x="18" y="31" width="22" height="8" rx="2" fill="#ff6b9d"
-                animate={{ opacity: [0.6, 1, 0.6] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <rect x="5" y="31" width="8" height="8" rx="2" opacity="0.6" />
-              <rect x="44" y="31" width="8" height="8" rx="2" opacity="0.6" />
-              <rect x="5" y="44" width="8" height="8" rx="2" opacity="0.4" />
-              <rect x="18" y="44" width="8" height="8" rx="2" opacity="0.6" />
-              <rect x="31" y="44" width="8" height="8" rx="2" />
-              <rect x="44" y="44" width="8" height="8" rx="2" opacity="0.4" />
-            </g>
-          </g>
-        )}
-
-        {frame === 'circle' && (
-          <g filter="url(#heroGlow)">
-            {/* Aether Orb Center */}
-            <circle cx="50" cy="50" r="44" fill="none" stroke={p} strokeWidth="2.5" />
-            <circle cx="50" cy="50" r="39" fill="none" stroke={s} strokeWidth="1" strokeDasharray="5 3" opacity="0.4" />
-            
-            <circle cx="50" cy="50" r="16" fill="url(#heroBrandGrad)" />
-            
-            <motion.circle 
-              cx="50" cy="50" r="22" fill="none" stroke={s} strokeWidth="1.5"
-              animate={{ r: [16, 26, 16], opacity: [0.6, 0.1, 0.6] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <path d="M 50,43 L 52,48 L 57,50 L 52,52 L 50,57 L 48,52 L 43,50 L 48,48 Z" fill="#ffffff" />
-          </g>
-        )}
-
-        {frame === 'brackets' && (
-          <g filter="url(#heroGlow)">
-            {/* Code Brackets Frame */}
-            <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke={p} strokeWidth="4.5" strokeLinecap="round" />
-            <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke={p} strokeWidth="4.5" strokeLinecap="round" />
-            
-            <g transform="translate(34, 40)" fill="url(#heroBrandGrad)">
-              <path d="M 0,4 L 12,10 L 0,16" fill="none" stroke={p} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              <motion.rect 
-                x="18" y="15" width="14" height="3" rx="1.5" fill={s}
-                animate={{ opacity: [1, 0, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-              />
-            </g>
-          </g>
-        )}
-
-        {frame === 'minimal' && (
-          <g filter="url(#heroGlow)">
-            {/* Minimalist Spark Frame */}
-            <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke={p} strokeWidth="2.5" opacity="0.3" />
-            
-            <motion.path 
-              d="M 50,22 Q 50,50 22,50 Q 50,50 50,78 Q 50,50 78,50 Q 50,50 50,22 Z" 
-              fill="url(#heroBrandGrad)"
-              animate={{ scale: [0.95, 1.05, 0.95] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              style={{ transformOrigin: '50px 50px' }}
-            />
-          </g>
-        )}
-      </svg>
+      <div 
+        className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center select-none"
+        dangerouslySetInnerHTML={{ __html: svgString }}
+      />
     );
   };
 
@@ -445,10 +447,14 @@ export default function App() {
         theme={theme}
         setTheme={setTheme}
         openPalette={() => (setPaletteLoaded(true), setPaletteOpen(true))}
+        activeColor={activeColor}
       />
 
       <main id="main-content" role="main" className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
         <ErrorBoundary>
+          {activeTab !== 'toolkit' && (
+            <Breadcrumbs paths={getBreadcrumbPaths()} />
+          )}
           <Suspense fallback={
             <div className="py-20 text-center font-mono text-xs text-muted-foreground flex flex-col items-center justify-center gap-3">
               <div className="w-6 h-6 border-2 border-amber-color border-t-transparent rounded-full animate-spin"></div>
@@ -505,7 +511,7 @@ export default function App() {
                       className="px-5 py-2.5 bg-transparent border border-amber-color/40 text-amber-color font-mono text-sm font-bold rounded-lg hover:bg-amber-color/10 hover:border-amber-color transition-all duration-200 hover:-translate-y-0.5"
                       id="cta-view-projects"
                     >
-                      See case studies
+                      View projects
                     </button>
                     <button
                       onClick={() => { setActiveTab('toolkit'); window.scrollTo({ top: 400, behavior: 'smooth' }); }}

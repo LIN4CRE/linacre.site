@@ -447,10 +447,13 @@ function headFor(route, m) {
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:description" content="${desc}" />`,
     `<meta name="twitter:image" content="${image}" />`,
+    `<link rel="alternate" type="application/rss+xml" title="Linacre Blog" href="/feed.xml" />`,
   ];
   if (m.type === 'article' && m.published) {
-    lines.push(`<meta property="article:published_time" content="${m.published}" />`);
-    lines.push(`<meta property="article:author" content="David Linacre" />`);
+    const isoDate = new Date(m.published).toISOString();
+    lines.push(`<meta property="article:published_time" content="${isoDate}" />`);
+    lines.push(`<meta property="article:modified_time" content="${isoDate}" />`);
+    lines.push(`<meta property="article:author" content="https://www.linacre.site/about" />`);
   }
   // PERF-02 (audit 11 Jul 2026): preload the avatar only where it renders as
   // an above-the-fold LCP candidate — /about alone. The homepage does not
@@ -1005,5 +1008,52 @@ function buildLlmsFull() {
 }
 fs.writeFileSync(path.join(distDir, 'llms-full.txt'), buildLlmsFull(), 'utf8');
 console.log('[prerender] llms-full.txt written');
+
+function buildRssFeed() {
+  const posts = data.posts || [];
+  const rfc822 = (dStr) => new Date(dStr).toUTCString();
+  const buildDate = new Date().toUTCString();
+  
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>David Linacre Blog</title>
+    <link>${SITE}/blog</link>
+    <description>Deep-dives into systems architecture, Go concurrency, frontend HSL customization, and cloud caching protocols.</description>
+    <language>en-gb</language>
+    <lastBuildDate>${buildDate}</lastBuildDate>
+    <atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />
+`;
+
+  posts.forEach(post => {
+    xml += `    <item>
+      <title>${esc(post.title)}</title>
+      <link>${SITE}/blog/${post.slug}</link>
+      <guid isPermaLink="true">${SITE}/blog/${post.slug}</guid>
+      <description>${esc(post.excerpt)}</description>
+      <pubDate>${rfc822(post.date)}</pubDate>
+      <author>david@linacre.site (David Linacre)</author>
+      <category>${esc(post.category)}</category>
+    </item>
+`;
+  });
+
+  xml += `  </channel>
+</rss>
+`;
+
+  return xml;
+}
+
+const rssContent = buildRssFeed();
+fs.writeFileSync(path.join(distDir, 'feed.xml'), rssContent, 'utf8');
+console.log('[prerender] feed.xml written');
+
+const blogRssDir = path.join(distDir, 'blog');
+if (!fs.existsSync(blogRssDir)) {
+  fs.mkdirSync(blogRssDir, { recursive: true });
+}
+fs.writeFileSync(path.join(blogRssDir, 'rss.xml'), rssContent, 'utf8');
+console.log('[prerender] blog/rss.xml written');
 
 console.log(`[prerender] done — ${written.length} routes, sitemap has ${indexable.length} URLs.`);

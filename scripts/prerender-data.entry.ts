@@ -12,7 +12,7 @@ export { mdToHtml } from '../src/lib/markdown';
 export const data = {
   posts: BLOG_POSTS.map(p => ({
     slug: p.slug, title: p.title, excerpt: p.excerpt, content: p.content,
-    date: p.date, readTime: p.readTime, tags: p.tags,
+    date: p.date, readTime: p.readTime, tags: p.tags, category: p.category,
   })),
   projects: MANUAL_PROJECTS.map(p => ({
     name: p.name, category: p.category, description: p.description,
