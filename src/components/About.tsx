@@ -1,7 +1,34 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { User, Code, Calendar, Terminal } from 'lucide-react';
+import { User, Code, Calendar, Terminal, ExternalLink } from 'lucide-react';
+
+const getFilterForColor = (colorId: string) => {
+  switch (colorId) {
+    case 'amber':
+      return 'invert(1) sepia(0.2) saturate(2.5) hue-rotate(5deg) brightness(1.1) contrast(1.1)';
+    case 'cyan':
+      return 'invert(1) sepia(0.5) saturate(3) hue-rotate(160deg) brightness(1.1) contrast(1.1)';
+    case 'emerald':
+      return 'invert(1) sepia(0.6) saturate(2.5) hue-rotate(85deg) brightness(1.1) contrast(1.1)';
+    case 'crimson':
+      return 'invert(1) sepia(0.6) saturate(3) hue-rotate(310deg) brightness(1.1) contrast(1.1)';
+    case 'mono':
+      return 'invert(1) grayscale(1) brightness(1.2) contrast(1.1)';
+    default:
+      return 'invert(1) brightness(1.1) contrast(1.1)';
+  }
+};
 
 export default function About() {
+  const [activeColorId, setActiveColorId] = useState(() => localStorage.getItem('linacre_brand_color') || 'amber');
+  useEffect(() => {
+    const handleUpdate = () => {
+      setActiveColorId(localStorage.getItem('linacre_brand_color') || 'amber');
+    };
+    window.addEventListener('linacre-identity-updated', handleUpdate);
+    return () => window.removeEventListener('linacre-identity-updated', handleUpdate);
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -69,8 +96,9 @@ export default function About() {
 
       {/* Grid: Photo & Terminal Biography */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        {/* Avatar block */}
-        <motion.div variants={itemVariants} className="md:col-span-4 flex justify-center">
+        {/* Avatar and Support column */}
+        <motion.div variants={itemVariants} className="md:col-span-4 flex flex-col items-center gap-6">
+          {/* Avatar block */}
           <div className="linacre-surface p-4 w-full max-w-[280px] relative group overflow-hidden">
             <div className="absolute -inset-10 opacity-20 group-hover:opacity-35 blur-2xl rounded-full bg-amber-color pointer-events-none transition-opacity duration-300" />
             <img
@@ -82,9 +110,40 @@ export default function About() {
               loading="lazy"
               decoding="async"
             />
-            <div className="mt-4 text-center">
-              <h2 className="font-mono text-xs font-bold text-foreground">David Christopher Linacre</h2>
-              <p className="font-mono text-[10px] text-muted-foreground mt-1">Lead Systems Engineer & Coder</p>
+            <div className="mt-4 text-center font-mono">
+              <h2 className="text-xs font-bold text-foreground">David Christopher Linacre</h2>
+              <p className="text-[10px] text-muted-foreground mt-1">Lead Systems Engineer & Coder</p>
+            </div>
+          </div>
+
+          {/* Support/Donation Card */}
+          <div className="linacre-surface p-5 w-full max-w-[280px] relative group overflow-hidden space-y-4 select-none">
+            <div className="absolute -inset-10 opacity-15 group-hover:opacity-25 blur-2xl rounded-full bg-amber-color pointer-events-none transition-opacity duration-300" />
+            <div className="flex items-center gap-2 border-b border-border-color/30 pb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-color animate-pulse" />
+              <span className="font-mono text-[10px] font-bold text-foreground uppercase tracking-wider">SUPPORT MY CRAFT</span>
+            </div>
+            <div className="w-36 h-36 mx-auto bg-black rounded-lg border border-border-color p-1 flex items-center justify-center relative overflow-hidden">
+              <img
+                src="/paypal-qr.png"
+                alt="PayPal QR Code"
+                className="w-full h-full mix-blend-screen transition-transform duration-300 group-hover:scale-105"
+                style={{ filter: getFilterForColor(activeColorId) }}
+              />
+            </div>
+            <div className="text-center space-y-2.5 font-mono">
+              <p className="text-[10px] text-muted-foreground leading-normal font-medium">
+                Enjoying my open-source work or dev tools? Support new builds via PayPal.
+              </p>
+              <a
+                href="https://paypal.me/DLinacre16"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-1.5 w-full py-2 bg-amber-color hover:bg-amber-glow text-[#0b0e14] font-bold rounded-lg text-[10px] transition-all active:scale-95 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.15)]"
+              >
+                <span>paypal.me/DLinacre16</span>
+                <ExternalLink className="w-3 h-3" />
+              </a>
             </div>
           </div>
         </motion.div>

@@ -24,6 +24,7 @@ export interface Project {
   tech?: string[];
   repoUrl?: string;
   liveUrl?: string;
+  paypalUrl?: string;
 }
 
 export interface ChatMessage {

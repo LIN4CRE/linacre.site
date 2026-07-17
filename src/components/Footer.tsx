@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Terminal, Github, Heart, ArrowUp, Linkedin } from 'lucide-react';
+import { Terminal, Github, Heart, ArrowUp, Linkedin, DollarSign } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -144,6 +144,16 @@ export default function Footer() {
                 aria-label="LinkedIn profile"
               >
                 <Linkedin className="w-4 h-4" />
+              </a>
+              <a
+                href="https://paypal.me/DLinacre16"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-muted-foreground hover:text-amber-color hover:bg-amber-color/10 rounded-lg transition-colors focus:outline-none"
+                title="Support on PayPal"
+                aria-label="Support David Linacre on PayPal"
+              >
+                <DollarSign className="w-4 h-4" />
               </a>
               <span className="font-mono text-[9px] text-muted-foreground/40 border border-amber-color/15 px-1.5 py-0.5 rounded-md select-none">
                 v4.5.0

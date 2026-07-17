@@ -4,7 +4,33 @@ import { Search, Briefcase, Plus, X, Edit, Trash2, Save, ExternalLink, SlidersHo
 import { PROJECTS } from '../data';
 import { Project } from '../types';
 
+const getFilterForColor = (colorId: string) => {
+  switch (colorId) {
+    case 'amber':
+      return 'invert(1) sepia(0.2) saturate(2.5) hue-rotate(5deg) brightness(1.1) contrast(1.1)';
+    case 'cyan':
+      return 'invert(1) sepia(0.5) saturate(3) hue-rotate(160deg) brightness(1.1) contrast(1.1)';
+    case 'emerald':
+      return 'invert(1) sepia(0.6) saturate(2.5) hue-rotate(85deg) brightness(1.1) contrast(1.1)';
+    case 'crimson':
+      return 'invert(1) sepia(0.6) saturate(3) hue-rotate(310deg) brightness(1.1) contrast(1.1)';
+    case 'mono':
+      return 'invert(1) grayscale(1) brightness(1.2) contrast(1.1)';
+    default:
+      return 'invert(1) brightness(1.1) contrast(1.1)';
+  }
+};
+
 export default function Projects() {
+  const [activeColorId, setActiveColorId] = useState(() => localStorage.getItem('linacre_brand_color') || 'amber');
+  useEffect(() => {
+    const handleUpdate = () => {
+      setActiveColorId(localStorage.getItem('linacre_brand_color') || 'amber');
+    };
+    window.addEventListener('linacre-identity-updated', handleUpdate);
+    return () => window.removeEventListener('linacre-identity-updated', handleUpdate);
+  }, []);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [visibilityFilter, setVisibilityFilter] = useState<'all' | 'public' | 'private'>('all');
@@ -639,6 +665,34 @@ export default function Projects() {
                     </div>
                   )}
                 </div>
+
+                {selectedProject.paypalUrl && (
+                  <div className="p-4 bg-muted/5 dark:bg-[#10141d]/30 border border-border-color/60 rounded-xl flex flex-col sm:flex-row items-center gap-4 mt-4 select-none">
+                    <div className="w-20 h-20 shrink-0 bg-black rounded-lg border border-border-color p-1 flex items-center justify-center relative overflow-hidden group">
+                      <img
+                        src="/paypal-qr.png"
+                        alt="PayPal QR Code"
+                        className="w-full h-full mix-blend-screen transition-transform duration-300 group-hover:scale-105"
+                        style={{ filter: getFilterForColor(activeColorId) }}
+                      />
+                    </div>
+                    <div className="space-y-1 text-center sm:text-left flex-1 font-mono">
+                      <h5 className="text-xs font-bold text-foreground">Support Project</h5>
+                      <p className="text-[10px] text-muted-foreground leading-normal">
+                        If you find this project or the open-source code useful, consider supporting development via PayPal.
+                      </p>
+                      <a
+                        href={selectedProject.paypalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[10px] text-amber-color font-bold hover:underline"
+                      >
+                        <span>paypal.me/DLinacre16</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex flex-wrap justify-end gap-3 pt-4 border-t border-border-color/30">
                   <button

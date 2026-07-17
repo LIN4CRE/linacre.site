@@ -447,7 +447,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Engineered custom lazy-loaded modules, optimized SVG emblems, and integrated Express server routes with auto-fallback proxy limits.',
     tech: ['React', 'TypeScript', 'Tailwind CSS v4', 'Express', 'Motion'],
     liveUrl: 'https://www.linacre.site',
-    repoUrl: 'https://github.com/LIN4CRE/linacre.site'
+    repoUrl: 'https://github.com/LIN4CRE/linacre.site',
+    paypalUrl: 'https://paypal.me/DLinacre16'
   },
   {
     name: 'GhostMail',
@@ -461,7 +462,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Designed a pool of workers using Go channels, leveraging SQLite for local storage persistence and Docker multi-stage builds.',
     tech: ['Go', 'Docker', 'SQLite', 'SMTP', 'Linux'],
     repoUrl: 'https://github.com/LIN4CRE/GhostMail',
-    liveUrl: 'https://github.com/LIN4CRE/GhostMail'
+    liveUrl: 'https://github.com/LIN4CRE/GhostMail',
+    paypalUrl: 'https://paypal.me/DLinacre16'
   },
   {
     name: 'DomainDeals',
@@ -475,7 +477,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Implemented client-side memoized filters and pre-loaded JSON indexes, styled with brutalist wireframe accents.',
     tech: ['TypeScript', 'React', 'Tailwind CSS', 'Vite', 'JSON Search'],
     repoUrl: 'https://github.com/LIN4CRE/DomainDeals',
-    liveUrl: 'https://github.com/LIN4CRE/DomainDeals'
+    liveUrl: 'https://github.com/LIN4CRE/DomainDeals',
+    paypalUrl: 'https://paypal.me/DLinacre16'
   }
 ];
 
