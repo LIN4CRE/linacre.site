@@ -181,9 +181,43 @@ export default function Dashboard() {
   };
 
   const handleCopyText = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 1800);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          setCopiedId(id);
+          setTimeout(() => setCopiedId(null), 1800);
+        })
+        .catch((err) => {
+          console.warn('Navigator clipboard copy failed, falling back: ', err);
+          fallbackCopyText(text, id);
+        });
+    } else {
+      fallbackCopyText(text, id);
+    }
+  };
+
+  const fallbackCopyText = (text: string, id: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 1800);
+      } else {
+        console.error('Fallback copy command was unsuccessful');
+      }
+    } catch (err) {
+      console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
   };
 
   const toggleMcpStatus = (id: string) => {

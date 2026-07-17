@@ -693,6 +693,42 @@ ${svgCode}`;
     setTimeout(() => setCopiedType(null), 2000);
   };
 
+  const handleCopy = (text: string, type: string) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => triggerCopyFeedback(type))
+        .catch((err) => {
+          console.warn('Navigator clipboard copy failed, falling back: ', err);
+          fallbackCopyText(text, type);
+        });
+    } else {
+      fallbackCopyText(text, type);
+    }
+  };
+
+  const fallbackCopyText = (text: string, type: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        triggerCopyFeedback(type);
+      } else {
+        console.error('Fallback copy command was unsuccessful');
+      }
+    } catch (err) {
+      console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
+  };
+
   // ==========================================
   // UTILITY 1: JWT DECODER & INSPECTOR STATE
   // ==========================================
@@ -1219,7 +1255,7 @@ border-radius: 12px;`;
                           <label className="block text-xs font-mono font-semibold text-muted-foreground text-cyan">Decoded Header (algorithm & type)</label>
                           {jwtHeader && (
                             <button
-                              onClick={() => { navigator.clipboard.writeText(jwtHeader); triggerCopyFeedback('header'); }}
+                              onClick={() => handleCopy(jwtHeader, 'header')}
                               className="text-[10px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer"
                             >
                               {copiedType === 'header' ? <Check className="w-3 h-3 text-emerald-color" /> : <Copy className="w-3 h-3" />}
@@ -1398,7 +1434,7 @@ border-radius: 12px;`;
                           <span className="text-muted-foreground">Output Settings</span>
                           <div className="flex gap-2">
                             <button
-                              onClick={() => { navigator.clipboard.writeText(getGlassCssString()); triggerCopyFeedback('css'); }}
+                              onClick={() => handleCopy(getGlassCssString(), 'css')}
                               className="text-cyan hover:text-amber-color flex items-center gap-1 cursor-pointer"
                             >
                               {copiedType === 'css' ? <Check className="w-3 h-3 text-emerald-color" /> : <Copy className="w-3 h-3" />}
@@ -1406,7 +1442,7 @@ border-radius: 12px;`;
                             </button>
                             <span className="text-muted-foreground/30">|</span>
                             <button
-                              onClick={() => { navigator.clipboard.writeText(getGlassTailwindString()); triggerCopyFeedback('tw'); }}
+                              onClick={() => handleCopy(getGlassTailwindString(), 'tw')}
                               className="text-cyan hover:text-amber-color flex items-center gap-1 cursor-pointer"
                             >
                               {copiedType === 'tw' ? <Check className="w-3 h-3 text-emerald-color" /> : <Copy className="w-3 h-3" />}
@@ -1577,7 +1613,7 @@ border-radius: 12px;`;
                           </code>
                           <div className="flex gap-2 flex-shrink-0">
                             <button
-                              onClick={() => { navigator.clipboard.writeText(uuidResult); triggerCopyFeedback('uuid'); }}
+                              onClick={() => handleCopy(uuidResult, 'uuid')}
                               className="p-1.5 rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-all cursor-pointer"
                               title="Copy UUID"
                             >
@@ -1614,7 +1650,7 @@ border-radius: 12px;`;
                           </code>
                           <div className="flex gap-2 flex-shrink-0">
                             <button
-                              onClick={() => { navigator.clipboard.writeText(passwordResult); triggerCopyFeedback('password'); }}
+                              onClick={() => handleCopy(passwordResult, 'password')}
                               className="p-1.5 rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-all cursor-pointer"
                               title="Copy Password"
                             >
@@ -2033,10 +2069,7 @@ border-radius: 12px;`;
                             </button>
                             <span className="text-muted-foreground/30">|</span>
                             <button
-                              onClick={() => {
-                                navigator.clipboard.writeText(svgCode);
-                                triggerCopyFeedback('svg-source');
-                              }}
+                              onClick={() => handleCopy(svgCode, 'svg-source')}
                               className="text-[10px] text-cyan hover:text-amber-color font-bold transition-all cursor-pointer"
                             >
                               {copiedType === 'svg-source' ? 'Copied' : 'Copy'}

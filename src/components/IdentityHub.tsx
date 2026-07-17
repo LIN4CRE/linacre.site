@@ -999,8 +999,39 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
 
   // Helper to copy code to clipboard
   const handleCopy = (text: string, type: string) => {
-    navigator.clipboard.writeText(text);
-    triggerCopyFeedback(type);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => triggerCopyFeedback(type))
+        .catch((err) => {
+          console.warn('Navigator clipboard copy failed, falling back: ', err);
+          fallbackCopyText(text, type);
+        });
+    } else {
+      fallbackCopyText(text, type);
+    }
+  };
+
+  const fallbackCopyText = (text: string, type: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+    textArea.style.opacity = "0";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      if (successful) {
+        triggerCopyFeedback(type);
+      } else {
+        console.error('Fallback copy command was unsuccessful');
+      }
+    } catch (err) {
+      console.error('Fallback copy failed', err);
+    }
+    document.body.removeChild(textArea);
   };
 
   // Copy Email Signature to clipboard as RICH TEXT (so they can paste straight into Outlook / Gmail!)
