@@ -51,3 +51,15 @@ The AI chat feature in Lab requires a `GEMINI_API_KEY` (and optionally `OPENAI_A
 ## Deployment
 
 Deployed to Vercel. `vercel.json` configures the build command (`npm run build`), rewrites `/api/*` to the bundled Express server, and sets CSP/security headers.
+
+## Support the Developer
+
+If you find this project or my other developer tools useful, consider supporting my craft:
+
+<p align="left">
+  <a href="https://paypal.me/DLinacre16">
+    <img src="https://www.linacre.site/paypal-qr-styled.png" alt="Sponsor David on PayPal" width="200">
+  </a>
+</p>
+
+Or send support directly via [paypal.me/DLinacre16](https://paypal.me/DLinacre16).

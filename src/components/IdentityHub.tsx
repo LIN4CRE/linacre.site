@@ -1610,6 +1610,26 @@ export function LinacreEmblem({ className = 'w-16 h-16' }) {
                     </button>
                   </div>
                 </div>
+
+                {/* Snippet 3: PayPal styled QR/Link markdown */}
+                <div className="space-y-1.5 col-span-full border-t border-border-color/20 pt-4 mt-2">
+                  <span className="text-[10px] font-mono text-muted-foreground">GitHub Profile Sponsor QR (with Styled Dark Mode QR):</span>
+                  <div className="flex items-center bg-background border border-border-color/80 rounded-lg overflow-hidden px-2.5 py-1">
+                    <input
+                      type="text"
+                      readOnly
+                      value={`[![Support David Linacre](https://www.linacre.site/paypal-qr-styled.png)](https://paypal.me/DLinacre16)`}
+                      className="w-full bg-transparent text-[10px] font-mono text-muted-foreground focus:outline-none select-all"
+                    />
+                    <button
+                      onClick={() => handleCopy(`[![Support David Linacre](https://www.linacre.site/paypal-qr-styled.png)](https://paypal.me/DLinacre16)`, 'paypal-md')}
+                      aria-label="Copy PayPal QR link markdown code"
+                      className="p-1.5 hover:text-foreground text-muted-foreground/60 focus:outline-none cursor-pointer"
+                    >
+                      {copiedType === 'paypal-md' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
