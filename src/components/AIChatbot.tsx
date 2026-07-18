@@ -14,7 +14,7 @@ export default function AIChatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like GhostMail and DomainDeals), his skills, or his professional background.",
+      content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like Mob Deals, GhostMail and DomainDeals), his skills, or his professional background.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -89,7 +89,7 @@ export default function AIChatbot() {
     setMessages([
       {
         role: 'assistant',
-        content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like GhostMail and DomainDeals), his skills, or his professional background.",
+        content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like Mob Deals, GhostMail and DomainDeals), his skills, or his professional background.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);

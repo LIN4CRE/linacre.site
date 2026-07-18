@@ -38,6 +38,8 @@ const Now = lazy(() => import('./components/Now'));
 import { BLOG_POSTS } from './data';
 import Breadcrumbs from './components/Breadcrumbs';
 
+type BreadcrumbPath = { label: string; onClick?: () => void; active?: boolean };
+
 const ROUTE_LABEL: Record<string, string> = {
   '/now': 'Now',
   '/work': 'Work',
@@ -106,7 +108,7 @@ export default function App() {
     const pathname = window.location.pathname;
     const parts = pathname.split('/').filter(Boolean);
     
-    const paths = [
+    const paths: BreadcrumbPath[] = [
       { 
         label: 'home', 
         onClick: () => { 

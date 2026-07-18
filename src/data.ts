@@ -451,6 +451,21 @@ export const MANUAL_PROJECTS: Project[] = [
     paypalUrl: 'https://paypal.me/DLinacre16'
   },
   {
+    name: 'Mob Deals',
+    category: 'build',
+    description: 'UK mobile decision tool with a 64-source provider directory, live public source checks, SIM-only comparison data and plain-English PAC/STAC switching help for people who want to keep their number.',
+    url: 'https://lin4cre.github.io/mob-deals/',
+    host: 'lin4cre.github.io/mob-deals',
+    tag: 'Featured Live',
+    role: 'Product Designer, Full-stack Developer & Automation Architect',
+    challenges: 'Turning a risky prototype with unsupported scraping claims into a trustworthy public decision tool that can scale across UK mobile providers without publishing fake live prices.',
+    solution: 'Built a static, accessible GitHub Pages app with provider data JSON, scheduled public source checks, transparent methodology, number-switching help, quality workflows and a mirrored LIN4CRE repository.',
+    tech: ['HTML', 'CSS', 'JavaScript', 'GitHub Actions', 'GitHub Pages', 'SEO', 'Accessibility'],
+    liveUrl: 'https://lin4cre.github.io/mob-deals/',
+    repoUrl: 'https://github.com/LIN4CRE/mob-deals',
+    paypalUrl: 'https://paypal.me/DLinacre16'
+  },
+  {
     name: 'GhostMail',
     category: 'build',
     description: 'Disposable email service. Built in Go to explore secure messaging and learn high-performance concurrent processing.',
