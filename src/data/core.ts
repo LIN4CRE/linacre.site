@@ -7,6 +7,11 @@ import { ChangelogItem } from '../types';
 
 export const CHANGELOG: ChangelogItem[] = [
   {
+    version: 'v6.1',
+    title: 'Everyday Utility Pack',
+    description: 'Added four private, client-side tools to the start page: a UK VAT calculator, text cleaner and counter, SHA-256 generator, and URL parser with common tracking-parameter removal. No sign-up, adverts, analytics, or server processing.'
+  },
+  {
     version: 'v6.0',
     title: 'CyberBlue-Green System',
     description: 'Rebuilt the visual identity around deep navy surfaces, electric cyan and signal green; replaced the Identity page with a focused export studio; regenerated the GitHub banner, social preview and app icons; and reduced the portfolio to verified projects with live products, downloadable releases or inspectable source.'

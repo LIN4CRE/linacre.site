@@ -22,6 +22,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import EverydayTools from './EverydayTools';
 
 type UtilityId = 'json' | 'base64' | 'time' | 'generate';
 type CopyTarget = 'json' | 'base64' | 'timestamp' | 'generator' | null;
@@ -535,6 +536,8 @@ export default function StartPage({ navigate }: StartPageProps) {
           </div>
         </div>
       </section>
+
+      <EverydayTools />
 
       <section aria-labelledby="products-heading">
         <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">

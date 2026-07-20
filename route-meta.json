@@ -8,7 +8,7 @@
   "routes": {
     "/": {
       "title": "Linacre Start — Free browser tools that get things done",
-      "description": "A useful start page with private JSON, Base64, timestamp and secure-value tools, plus free UK mobile, Pokémon card, Android and point-of-sale apps.",
+      "description": "A useful start page with private JSON, Base64, VAT, text, URL, SHA-256, timestamp and secure-value tools, plus verified practical apps.",
       "canonical": "https://www.linacre.site/",
       "index": true
     },

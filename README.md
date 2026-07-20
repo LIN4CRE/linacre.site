@@ -14,7 +14,7 @@ A CyberBlue-Green utility-first start page, private browser-tool collection, and
 
 It's a single-page React app with a tabbed interface covering several self-contained mini-apps:
 
-- **Start** — smart web/URL search plus private client-side JSON formatting, Base64 conversion, timestamp conversion, and secure UUID/password generation, with direct links to useful Linacre products.
+- **Start** — smart web/URL search plus private client-side JSON, Base64, timestamp, UUID/password, UK VAT, text-cleaning, SHA-256 and URL tools, with direct links to useful Linacre products.
 - **Toolkit** — a searchable, filterable directory of free developer tools, with a command palette (`Cmd+K` / `/`) and localStorage-backed bookmarking, plus a releases/changelog timeline.
 - **Learn** — a curated, step-by-step learning roadmap and list of free learning resources for self-taught engineers.
 - **Lab** — a live AI chat playground with a mock file-tree workspace viewer, backed by an Express API route that proxies chat requests to Gemini (via `@google/genai`) with an OpenAI fallback.

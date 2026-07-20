@@ -478,6 +478,10 @@ no upload, and nothing you paste is sent to a server.</p>
   <li><strong>Base64 converter</strong> — encode and decode UTF-8 text.</li>
   <li><strong>Timestamp converter</strong> — switch between Unix, ISO, local and UTC time.</li>
   <li><strong>Secure generator</strong> — create UUIDs and strong passwords with browser cryptography.</li>
+  <li><strong>UK VAT calculator</strong> — add or extract standard, reduced, and zero-rate VAT.</li>
+  <li><strong>Text cleaner</strong> — count, re-case, deduplicate, sort, and trim text.</li>
+  <li><strong>SHA-256 generator</strong> — create a local text fingerprint with Web Crypto.</li>
+  <li><strong>URL cleaner</strong> — inspect links and remove common tracking parameters.</li>
 </ul>
 <p class="meta">Enable JavaScript to use the interactive utilities on this page.</p>
 <h2>Free tools for real jobs</h2>
