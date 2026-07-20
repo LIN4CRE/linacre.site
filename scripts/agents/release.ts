@@ -28,7 +28,7 @@ try {
 
   // Check if there are commits since last tag
   const latestTag = runCmd('git describe --tags --abbrev=0').trim();
-  
+
   // Just a safe dummy run for this implementation: We check version
   if (fs.existsSync('package.json')) {
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));

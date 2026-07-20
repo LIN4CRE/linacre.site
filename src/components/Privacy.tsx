@@ -18,7 +18,7 @@ export default function Privacy() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="show"

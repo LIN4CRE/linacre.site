@@ -85,7 +85,7 @@ export default function Blog() {
           The <span className="text-amber-color">Linacre</span> Blog
         </h1>
         <p className="text-base text-muted-foreground leading-relaxed">
-          Deep-dives into systems architecture, Go concurrency, frontend HSL customization, and cloud caching protocols.
+          Practical engineering notes on interface systems, frontend theming, delivery quality, and cloud caching.
         </p>
       </motion.section>
 
@@ -119,7 +119,7 @@ export default function Blog() {
               <h2 className="font-display text-sm font-bold text-foreground group-hover:text-cyan transition-colors line-clamp-2 leading-snug">
                 {post.title}
               </h2>
-              
+
               <p className="text-xs text-muted-foreground leading-relaxed mt-2.5 line-clamp-3">
                 {post.excerpt}
               </p>
@@ -152,14 +152,14 @@ export default function Blog() {
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="w-full max-w-2xl bg-[#0b0e14] border border-border-color rounded-xl overflow-hidden shadow-2xl font-mono text-xs flex flex-col"
+              className="w-full max-w-2xl bg-[#030c14] border border-border-color rounded-xl overflow-hidden shadow-2xl font-mono text-xs flex flex-col"
               onClick={(e) => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-labelledby="modal-blog-title"
             >
               {/* Top Bar */}
-              <div className="bg-[#111622] px-4 py-3 flex items-center justify-between border-b border-border-color/30">
+              <div className="bg-[#061520] px-4 py-3 flex items-center justify-between border-b border-border-color/30">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" />
                   <span className="w-2.5 h-2.5 rounded-full bg-[#eab308]" />

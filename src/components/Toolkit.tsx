@@ -42,7 +42,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
   const toggleBookmark = (id: string, e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     let updated: string[];
     if (bookmarkedTools.includes(id)) {
       updated = bookmarkedTools.filter((item) => item !== id);
@@ -159,7 +159,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                     ? cat.id === 'stack'
                       ? 'bg-amber-color/10 border-amber-color text-amber-color font-medium shadow-[0_0_12px_rgba(255,180,84,0.15)]'
                       : 'bg-cyan/10 border-cyan text-cyan font-medium'
-                    : 'bg-muted/40 dark:bg-[#10141d]/20 border-border-color text-muted-foreground hover:text-foreground hover:border-muted-foreground/40'
+                    : 'bg-muted/40 dark:bg-[#081c28]/20 border-border-color text-muted-foreground hover:text-foreground hover:border-muted-foreground/40'
                 }`}
                 title={cat.title}
                 aria-pressed={isSelected}
@@ -207,7 +207,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                         <h3 className="font-mono text-sm font-semibold text-foreground group-hover:text-amber-color transition-colors">
                           {tool.name}
                         </h3>
-                        
+
                         <div className="flex items-center gap-1.5">
                           {/* Bookmark button */}
                           <button
@@ -219,12 +219,12 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
                             <Star
                               className={`w-3.5 h-3.5 transition-transform ${
                                 isBookmarked
-                                  ? 'fill-amber-color text-amber-color scale-110 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]'
+                                  ? 'fill-amber-color text-amber-color scale-110 drop-shadow-[0_0_6px_rgba(34,211,238,0.5)]'
                                   : 'text-muted-foreground'
                               }`}
                             />
                           </button>
-                          
+
                           <span
                             className={`font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded ${
                               tool.tag === 'Free'

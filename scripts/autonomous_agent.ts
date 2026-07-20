@@ -54,7 +54,7 @@ function writeReport(report: AgentReport) {
 
 async function main() {
   log('Waking up...');
-  
+
   const report: AgentReport = {
     lastRun: new Date().toISOString(),
     status: 'clean',
@@ -73,18 +73,18 @@ async function main() {
   // 2. Check TypeScript Compiler
   log('Running compiler checks...');
   const tscRes = runCmd('npx tsc --noEmit');
-  
+
   if (!tscRes.ok) {
     log('Compiler errors detected. Attempting AI repair...');
     report.compilerStatus = 'failed';
     report.status = 'fixing';
-    
+
     // AI Auto-fix attempt
     const aiPrompt = `I got the following TypeScript errors running 'tsc --noEmit':\n\n${tscRes.out}\n\nWhat file is the error in and how should I fix it? Provide only a very brief summary of what went wrong.`;
     const aiFix = await askAI(aiPrompt);
-    
+
     report.actionsTaken.push(`AI Analysis: ${aiFix.slice(0, 100)}...`);
-    
+
     // 3. Quality Gate (Revert)
     // If the system is broken, we enforce the "clean and professional" rule
     log('Compiler failed. Reverting dirty state to enforce strict quality gate.');

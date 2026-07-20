@@ -23,7 +23,7 @@ export default function Footer() {
       {showTopBtn && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-24 right-6 z-40 p-3 bg-amber-color text-[#0b0e14] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
+          className="fixed bottom-24 right-6 z-40 p-3 bg-amber-color text-[#030c14] rounded-full hover:scale-110 transition-transform animate-slide-up focus:outline-none focus:ring-2 focus:ring-amber-color"
           style={{ boxShadow: 'var(--linacre-glow-strong)' }}
           aria-label="Scroll to top"
           id="btn-scroll-top"
@@ -48,7 +48,7 @@ export default function Footer() {
                 &copy; {currentYear} Built with React, TypeScript and Tailwind CSS v4.
               </p>
               <p className="text-[10px] text-muted-foreground/50 mt-0.5">
-                Calm systems, useful tools, amber-coded craft.
+                Useful software, clear systems, CyberBlue craft.
               </p>
             </div>
 
@@ -156,7 +156,7 @@ export default function Footer() {
                 <DollarSign className="w-4 h-4" />
               </a>
               <span className="font-mono text-[9px] text-muted-foreground/40 border border-amber-color/15 px-1.5 py-0.5 rounded-md select-none">
-                v5.0.0
+                v6.0.0
               </span>
             </div>
           </div>

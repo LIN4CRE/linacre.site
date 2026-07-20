@@ -59,7 +59,7 @@ export default function StatusPage() {
         const randomService = services[Math.floor(Math.random() * services.length)];
         const randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
         const timestamp = new Date().toTimeString().split(' ')[0];
-        
+
         setLogs(prev => {
           const newLogs = [...prev, `[${timestamp}] ${randomService}: ${randomMsg}`];
           return newLogs.slice(-6); // keep last 6 logs
@@ -112,9 +112,9 @@ export default function StatusPage() {
       </motion.section>
 
       {/* Simulation Disclosure Banner */}
-      <motion.div 
-        variants={itemVariants} 
-        className="flex items-center gap-3 p-4 rounded-xl border border-amber-color/30 bg-[#161310] text-amber-color font-mono text-xs shadow-md"
+      <motion.div
+        variants={itemVariants}
+        className="flex items-center gap-3 p-4 rounded-xl border border-amber-color/30 bg-[#061923] text-amber-color font-mono text-xs shadow-md"
         id="simulated-data-disclosure"
       >
         <AlertTriangle className="w-5 h-5 flex-shrink-0 animate-pulse text-amber-color" />
@@ -127,8 +127,8 @@ export default function StatusPage() {
       </motion.div>
 
       {/* Global Status Banner */}
-      <motion.div 
-        variants={itemVariants} 
+      <motion.div
+        variants={itemVariants}
         className="bg-emerald-950/15 border border-emerald-500/35 rounded-xl p-5 flex items-center justify-between gap-4 shadow-[0_0_15px_rgba(16,185,129,0.08)]"
         id="global-status-banner"
       >
@@ -199,7 +199,7 @@ export default function StatusPage() {
       {/* Grid: Console Logs & Load Meters */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
         {/* Terminal logs */}
-        <motion.div variants={itemVariants} className="md:col-span-8 bg-[#0b0e14] border border-border-color rounded-xl p-5 space-y-4 shadow-2xl">
+        <motion.div variants={itemVariants} className="md:col-span-8 bg-[#030c14] border border-border-color rounded-xl p-5 space-y-4 shadow-2xl">
           <div className="flex items-center justify-between border-b border-border-color/30 pb-3">
             <div className="flex items-center gap-2">
               <Terminal className="w-4 h-4 text-emerald-color" />
@@ -224,7 +224,7 @@ export default function StatusPage() {
           <h2 className="font-mono text-xs font-bold text-foreground uppercase border-b border-border-color/25 pb-3">
             Resource Monitors
           </h2>
-          
+
           <div className="space-y-4 text-muted-foreground font-mono text-[11px]">
             {/* CPU */}
             <div className="space-y-1.5">

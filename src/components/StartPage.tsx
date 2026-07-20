@@ -3,7 +3,6 @@ import {
   ArrowRight,
   ArrowUpRight,
   Binary,
-  Bot,
   Braces,
   Check,
   Clock,
@@ -63,12 +62,12 @@ const products = [
     accent: 'purple',
   },
   {
-    name: 'LLM Hub',
-    eyebrow: 'Choose the right model',
-    description: 'Compare current AI models and check what can run on your PC, Mac, or Android device.',
-    url: 'https://lin4cre.github.io/Linacre-LLM-Benchmarks/',
-    action: 'Explore AI models',
-    icon: Bot,
+    name: 'DKMA Monster',
+    eyebrow: 'Keep Android apps alive',
+    description: 'Find the exact battery and autostart settings for 15 Android phone families, with optional ADB automation.',
+    url: 'https://lin4cre.github.io/dkma-monster/',
+    action: 'Fix background apps',
+    icon: ShieldCheck,
     accent: 'emerald',
   },
   {
@@ -288,7 +287,7 @@ export default function StartPage({ navigate }: StartPageProps) {
 
           <form onSubmit={handleSmartAction} className="mx-auto mt-8 max-w-3xl" role="search">
             <label htmlFor="start-search" className="sr-only">Search the web, open a URL, or run a utility command</label>
-            <div className="group relative rounded-2xl border border-amber-color/25 bg-[var(--linacre-panel)] p-2 shadow-[0_20px_70px_rgba(0,0,0,0.25)] transition-all focus-within:border-amber-color/60 focus-within:shadow-[0_0_40px_rgba(245,158,11,0.12)]">
+            <div className="group relative rounded-2xl border border-amber-color/25 bg-[var(--linacre-panel)] p-2 shadow-[0_20px_70px_rgba(0,0,0,0.25)] transition-all focus-within:border-amber-color/60 focus-within:shadow-[0_0_40px_rgba(34,211,238,0.12)]">
               <Search className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground group-focus-within:text-amber-color" aria-hidden="true" />
               <input
                 id="start-search"
@@ -299,7 +298,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                 autoComplete="off"
                 spellCheck={false}
               />
-              <button type="submit" className="absolute right-2 top-2 flex h-12 items-center gap-2 rounded-xl bg-amber-color px-4 font-mono text-xs font-bold text-[#0b0e14] transition-all hover:bg-amber-glow">
+              <button type="submit" className="absolute right-2 top-2 flex h-12 items-center gap-2 rounded-xl bg-amber-color px-4 font-mono text-xs font-bold text-[#030c14] transition-all hover:bg-amber-glow">
                 Go <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
@@ -373,7 +372,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                     <p className="mt-1 text-xs text-muted-foreground">Paste JSON, then make it readable or compact.</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <button onClick={() => formatJson(false)} className="rounded-lg bg-amber-color px-3 py-2 font-mono text-xs font-bold text-[#0b0e14] hover:bg-amber-glow">Format</button>
+                    <button onClick={() => formatJson(false)} className="rounded-lg bg-amber-color px-3 py-2 font-mono text-xs font-bold text-[#030c14] hover:bg-amber-glow">Format</button>
                     <button onClick={() => formatJson(true)} className="rounded-lg border border-border-color px-3 py-2 font-mono text-xs text-foreground hover:border-amber-color/40">Minify</button>
                     <button onClick={() => copyText(jsonValue, 'json')} className="rounded-lg border border-border-color p-2 text-muted-foreground hover:text-foreground" aria-label="Copy JSON">
                       {copied === 'json' ? <Check className="h-4 w-4 text-emerald-color" /> : <Copy className="h-4 w-4" />}
@@ -386,7 +385,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                 <textarea
                   value={jsonValue}
                   onChange={(event) => { setJsonValue(event.target.value); setJsonError(''); }}
-                  className={`min-h-64 w-full resize-y rounded-xl border bg-[#090c12] p-4 font-mono text-xs leading-6 text-[#d7dce5] focus:outline-none ${jsonError ? 'border-error' : 'border-border-color focus:border-amber-color/60'}`}
+                  className={`min-h-64 w-full resize-y rounded-xl border bg-[#031018] p-4 font-mono text-xs leading-6 text-[#d7dce5] focus:outline-none ${jsonError ? 'border-error' : 'border-border-color focus:border-amber-color/60'}`}
                   placeholder={'{\n  "paste": "your JSON here"\n}'}
                   spellCheck={false}
                   aria-describedby={jsonError ? 'json-error' : undefined}
@@ -406,7 +405,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                     <p className="mt-1 text-xs text-muted-foreground">UTF-8 safe conversion for text and small data snippets.</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <button onClick={() => transformBase64('encode')} className="rounded-lg bg-amber-color px-3 py-2 font-mono text-xs font-bold text-[#0b0e14] hover:bg-amber-glow">Encode</button>
+                    <button onClick={() => transformBase64('encode')} className="rounded-lg bg-amber-color px-3 py-2 font-mono text-xs font-bold text-[#030c14] hover:bg-amber-glow">Encode</button>
                     <button onClick={() => transformBase64('decode')} className="rounded-lg border border-border-color px-3 py-2 font-mono text-xs text-foreground hover:border-amber-color/40">Decode</button>
                     <button onClick={() => copyText(base64Value, 'base64')} className="rounded-lg border border-border-color p-2 text-muted-foreground hover:text-foreground" aria-label="Copy Base64 value">
                       {copied === 'base64' ? <Check className="h-4 w-4 text-emerald-color" /> : <Copy className="h-4 w-4" />}
@@ -419,7 +418,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                 <textarea
                   value={base64Value}
                   onChange={(event) => { setBase64Value(event.target.value); setBase64Error(''); }}
-                  className={`min-h-64 w-full resize-y rounded-xl border bg-[#090c12] p-4 font-mono text-xs leading-6 text-[#d7dce5] focus:outline-none ${base64Error ? 'border-error' : 'border-border-color focus:border-amber-color/60'}`}
+                  className={`min-h-64 w-full resize-y rounded-xl border bg-[#031018] p-4 font-mono text-xs leading-6 text-[#d7dce5] focus:outline-none ${base64Error ? 'border-error' : 'border-border-color focus:border-amber-color/60'}`}
                   placeholder="Type plain text to encode, or paste Base64 to decode…"
                   spellCheck={false}
                   aria-describedby={base64Error ? 'base64-error' : undefined}
@@ -445,7 +444,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                 <input
                   value={timestampValue}
                   onChange={(event) => setTimestampValue(event.target.value)}
-                  className="h-12 w-full rounded-xl border border-border-color bg-[#090c12] px-4 font-mono text-sm text-[#d7dce5] focus:border-amber-color/60 focus:outline-none"
+                  className="h-12 w-full rounded-xl border border-border-color bg-[#031018] px-4 font-mono text-sm text-[#d7dce5] focus:border-amber-color/60 focus:outline-none"
                   placeholder="1721491200 or 2026-07-20T12:00:00Z"
                   spellCheck={false}
                 />
@@ -471,7 +470,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                 <button
                   onClick={() => parsedTimestamp && copyText(parsedTimestamp.toISOString(), 'timestamp')}
                   disabled={!parsedTimestamp}
-                  className="flex items-center gap-2 rounded-lg bg-amber-color px-3 py-2 font-mono text-xs font-bold text-[#0b0e14] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex items-center gap-2 rounded-lg bg-amber-color px-3 py-2 font-mono text-xs font-bold text-[#030c14] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   {copied === 'timestamp' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                   {copied === 'timestamp' ? 'Copied ISO time' : 'Copy ISO time'}
@@ -486,12 +485,12 @@ export default function StartPage({ navigate }: StartPageProps) {
                     <h3 className="font-display text-base font-bold text-foreground">Secure value generator</h3>
                     <p className="mt-1 text-xs text-muted-foreground">Generated with your browser&apos;s cryptographic random number generator.</p>
                   </div>
-                  <div className="flex rounded-lg border border-border-color bg-[#090c12] p-1">
+                  <div className="flex rounded-lg border border-border-color bg-[#031018] p-1">
                     {(['uuid', 'password'] as const).map((type) => (
                       <button
                         key={type}
                         onClick={() => generateValue(type)}
-                        className={`rounded-md px-3 py-1.5 font-mono text-[11px] font-bold uppercase transition-colors ${generatedType === type ? 'bg-amber-color text-[#0b0e14]' : 'text-muted-foreground hover:text-foreground'}`}
+                        className={`rounded-md px-3 py-1.5 font-mono text-[11px] font-bold uppercase transition-colors ${generatedType === type ? 'bg-amber-color text-[#030c14]' : 'text-muted-foreground hover:text-foreground'}`}
                       >
                         {type}
                       </button>
@@ -499,7 +498,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                   </div>
                 </div>
 
-                <div className="flex min-h-24 items-center gap-3 rounded-xl border border-amber-color/25 bg-[#090c12] p-4 sm:p-5">
+                <div className="flex min-h-24 items-center gap-3 rounded-xl border border-amber-color/25 bg-[#031018] p-4 sm:p-5">
                   <code className="min-w-0 flex-1 break-all font-mono text-sm leading-6 text-cyan sm:text-base">{generatedValue}</code>
                   <button onClick={() => copyText(generatedValue, 'generator')} className="shrink-0 rounded-lg border border-border-color p-2 text-muted-foreground hover:text-foreground" aria-label="Copy generated value">
                     {copied === 'generator' ? <Check className="h-4 w-4 text-emerald-color" /> : <Copy className="h-4 w-4" />}
@@ -528,7 +527,7 @@ export default function StartPage({ navigate }: StartPageProps) {
                   </div>
                 )}
 
-                <button onClick={() => generateValue()} className="flex items-center gap-2 rounded-lg bg-amber-color px-4 py-2 font-mono text-xs font-bold text-[#0b0e14] hover:bg-amber-glow">
+                <button onClick={() => generateValue()} className="flex items-center gap-2 rounded-lg bg-amber-color px-4 py-2 font-mono text-xs font-bold text-[#030c14] hover:bg-amber-glow">
                   <RefreshCw className="h-4 w-4" /> Generate another
                 </button>
               </div>
@@ -631,7 +630,7 @@ export default function StartPage({ navigate }: StartPageProps) {
             <h2 id="work-cta-heading" className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">I build useful software, not shelfware.</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">From focused web tools to full product systems — clear scope, production-ready delivery, and straightforward handover.</p>
           </div>
-          <button onClick={() => navigate('work')} className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-color px-5 py-3 font-mono text-sm font-bold text-[#0b0e14] shadow-[0_0_24px_rgba(245,158,11,0.25)] hover:bg-amber-glow">
+          <button onClick={() => navigate('work')} className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-color px-5 py-3 font-mono text-sm font-bold text-[#030c14] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-amber-glow">
             Work with David <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>

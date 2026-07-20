@@ -31,8 +31,14 @@
     {
       "source": "/manifest.json",
       "headers": [
-        { "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" },
-        { "key": "Cache-Control", "value": "public, max-age=86400" }
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
       ]
     },
     {
@@ -140,10 +146,6 @@
     {
       "source": "/blog",
       "destination": "/blog/index.html"
-    },
-    {
-      "source": "/blog/go-concurrency-patterns",
-      "destination": "/blog/go-concurrency-patterns/index.html"
     },
     {
       "source": "/blog/dynamic-hsl-theme-variables",

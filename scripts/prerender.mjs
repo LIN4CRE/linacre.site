@@ -131,7 +131,7 @@ const ROUTE_LABEL = {
 
 const featured = data.projects.filter(p => p.url).slice(0, 6);
 const publicProjects = data.projects.filter(p => p.url);
-const caseStudies = data.projects.filter(p => ['GhostMail', 'DomainDeals'].includes(p.name));
+const caseStudies = data.projects.filter(p => ['Mob Deals', 'PokeGuru', 'DKMA Monster'].includes(p.name));
 
 function breadcrumbFor(route) {
   if (route === '/') return null;
@@ -159,50 +159,17 @@ function jsonLdFor(route, m) {
       '@type': 'ItemList', '@id': `${SITE}${route === '/' ? '/' : route}#projects`, name: 'Featured Projects',
       itemListElement: publicProjects.map((p, i) => ({
         '@type': 'ListItem', position: i + 1,
-        item: { 
-          '@type': 'SoftwareApplication', 
-          'name': p.name, 
-          'url': p.url || `${SITE}/projects`, 
+        item: {
+          '@type': 'SoftwareApplication',
+          'name': p.name,
+          'url': p.url || `${SITE}/projects`,
           'description': p.description,
-          'applicationCategory': p.category === 'deploy' ? 'DevOpsApplication' : 'DeveloperApplication', 
+          'applicationCategory': p.category === 'deploy' ? 'DevOpsApplication' : 'DeveloperApplication',
           'operatingSystem': 'Web',
           'author': { '@id': `${SITE}/#person` }
         },
       })),
     });
-    // Enhanced: SoftwareSourceCode nodes for verifiable open-source case studies
-    const ghostMail = caseStudies.find(p => p.name === 'GhostMail');
-    if (ghostMail) {
-      // SEO-02 (audit 11 Jul 2026): GhostMail is written in Go — the public
-      // repo confirms it. Previous TypeScript/React value was inaccurate.
-      graph.push({
-        '@type': 'SoftwareSourceCode',
-        '@id': `${SITE}/#ghostmail`,
-        name: 'GhostMail',
-        description: ghostMail.description || 'High-throughput disposable-email backend built in Go with worker pools and channel synchronisation.',
-        codeRepository: 'https://github.com/LIN4CRE/GhostMail',
-        url: ghostMail.url || 'https://github.com/LIN4CRE/GhostMail',
-        programmingLanguage: 'Go',
-        creator: { '@id': `${SITE}/#person` },
-        license: 'https://opensource.org/licenses/MIT',
-        applicationCategory: 'DeveloperApplication',
-      });
-    }
-    const domainDeals = caseStudies.find(p => p.name === 'DomainDeals');
-    if (domainDeals) {
-      graph.push({
-        '@type': 'SoftwareSourceCode',
-        '@id': `${SITE}/#domaindeals`,
-        name: 'DomainDeals',
-        description: domainDeals.description || 'Domain availability search and deal-finding tool.',
-        codeRepository: 'https://github.com/LIN4CRE/domaindeals',
-        url: domainDeals.url || 'https://github.com/LIN4CRE/domaindeals',
-        programmingLanguage: ['TypeScript', 'Node.js'],
-        creator: { '@id': `${SITE}/#person` },
-        license: 'https://opensource.org/licenses/MIT',
-        applicationCategory: 'DeveloperApplication',
-      });
-    }
     // linacre.site itself as a SoftwareApplication
     graph.push({
       '@type': 'SoftwareApplication',
@@ -240,28 +207,28 @@ function jsonLdFor(route, m) {
   if (m.type === 'article') {
     const post = data.posts.find(p => `/blog/${p.slug}` === route);
     graph.push({
-      '@type': 'BlogPosting', 
-      '@id': `${m.canonical}#article`, 
+      '@type': 'BlogPosting',
+      '@id': `${m.canonical}#article`,
       'headline': m.title.split(' | ')[0],
-      'description': m.description, 
-      'datePublished': m.published, 
+      'description': m.description,
+      'datePublished': m.published,
       'dateModified': m.published,
       'inLanguage': 'en-GB',
-      'author': { '@id': `${SITE}/#person` }, 
-      'publisher': { 
-        '@type': 'Organization', 
-        'name': 'Linacre', 
-        'logo': { 
-          '@type': 'ImageObject', 
-          'url': `${SITE}/favicon.svg` 
-        } 
+      'author': { '@id': `${SITE}/#person` },
+      'publisher': {
+        '@type': 'Organization',
+        'name': 'Linacre',
+        'logo': {
+          '@type': 'ImageObject',
+          'url': `${SITE}/favicon.svg`
+        }
       },
-      'image': m.image || meta.site.defaultImage, 
-      'mainEntityOfPage': { 
-        '@type': 'WebPage', 
-        '@id': m.canonical 
+      'image': m.image || meta.site.defaultImage,
+      'mainEntityOfPage': {
+        '@type': 'WebPage',
+        '@id': m.canonical
       },
-      'keywords': post ? post.tags.join(', ') : undefined, 
+      'keywords': post ? post.tags.join(', ') : undefined,
       'timeRequired': post ? post.readTime : undefined,
     });
     // BreadcrumbList: prefer the article-specific one over the generic top-level breadcrumb.
@@ -473,20 +440,20 @@ const NAV = [
 ];
 
 const SHELL_CSS = `
-#prerender-shell{max-width:60rem;margin:0 auto;padding:2rem 1.25rem;background:#0b0e14;color:#e5e5e5;
+#prerender-shell{max-width:60rem;margin:0 auto;padding:2rem 1.25rem;background:#030c14;color:#e5e5e5;
 font-family:Inter,ui-sans-serif,system-ui,sans-serif;line-height:1.65;min-height:100vh}
-#prerender-shell a{color:#ffb454;text-decoration:none}#prerender-shell a:hover{text-decoration:underline}
+#prerender-shell a{color:#22d3ee;text-decoration:none}#prerender-shell a:hover{text-decoration:underline}
 #prerender-shell nav{display:flex;flex-wrap:wrap;gap:.9rem;margin:1rem 0 2rem;font-family:'JetBrains Mono',monospace;font-size:.85rem}
 #prerender-shell h1,#prerender-shell h2,#prerender-shell h3{font-family:'Space Grotesk',Inter,sans-serif;line-height:1.25}
-#prerender-shell h1{font-size:1.9rem;margin:.25rem 0 .75rem}#prerender-shell h2{font-size:1.3rem;margin:2rem 0 .5rem;color:#ffb454}
+#prerender-shell h1{font-size:1.9rem;margin:.25rem 0 .75rem}#prerender-shell h2{font-size:1.3rem;margin:2rem 0 .5rem;color:#22d3ee}
 #prerender-shell h3{font-size:1.05rem;margin:1.25rem 0 .4rem}
-#prerender-shell pre{background:#11151f;border:1px solid #232838;border-radius:8px;padding:1rem;overflow:auto;font-size:.85rem}
+#prerender-shell pre{background:#061923;border:1px solid #232838;border-radius:8px;padding:1rem;overflow:auto;font-size:.85rem}
 #prerender-shell code{font-family:'JetBrains Mono',monospace;color:#9fe8ff}
 #prerender-shell ul{padding-left:1.25rem}#prerender-shell li{margin:.3rem 0}
-#prerender-shell .brand{font-family:'JetBrains Mono',monospace;font-weight:700;color:#ffb454;font-size:1rem}
+#prerender-shell .brand{font-family:'JetBrains Mono',monospace;font-weight:700;color:#22d3ee;font-size:1rem}
 #prerender-shell .meta{color:#8b93a7;font-size:.85rem;font-family:'JetBrains Mono',monospace}
-#prerender-shell .cta{display:inline-block;background:#ffb454;color:#0b0e14;font-weight:700;padding:.6rem 1.1rem;border-radius:8px;margin:.5rem .75rem .5rem 0}
-#prerender-shell .cta.alt{background:transparent;color:#ffb454;border:1px solid #ffb454}
+#prerender-shell .cta{display:inline-block;background:#22d3ee;color:#030c14;font-weight:700;padding:.6rem 1.1rem;border-radius:8px;margin:.5rem .75rem .5rem 0}
+#prerender-shell .cta.alt{background:transparent;color:#22d3ee;border:1px solid #22d3ee}
 #prerender-shell footer{margin-top:3rem;border-top:1px solid #232838;padding-top:1.25rem;font-size:.85rem;color:#8b93a7}
 `.trim();
 
@@ -517,7 +484,7 @@ no upload, and nothing you paste is sent to a server.</p>
 <ul>
   <li><a href="https://lin4cre.github.io/mob-deals/" rel="noopener">Mob Deals</a> — compare UK SIM-only deals and follow a plain-English keep-your-number guide.</li>
   <li><a href="https://lin4cre.github.io/PokeGuru/" rel="noopener">PokeGuru</a> — search Pokémon cards, browse UK sets and track a collection in GBP.</li>
-  <li><a href="https://lin4cre.github.io/Linacre-LLM-Benchmarks/" rel="noopener">LLM Hub</a> — compare AI models and check what can run on your device.</li>
+  <li><a href="https://lin4cre.github.io/dkma-monster/" rel="noopener">DKMA Monster</a> — find exact Android battery and autostart steps for 15 phone families.</li>
   <li><a href="https://dlinacre.github.io/Apex-POS/" rel="noopener">Apex POS</a> — an offline-first point of sale with stock, receipts and reports.</li>
 </ul>
 <h2>More useful areas</h2>
@@ -632,7 +599,7 @@ ${posts.map(p => `  <li>
 </ul>
 <h2>Frequently asked questions</h2>
 ${data.workFaqs.map(f => `<h3>${esc(f.question)}</h3>\n<p>${esc(f.answer)}</p>`).join('\n')}
-<p>The interactive Work page (with enquiry forms and the free Go concurrency starter kit) requires JavaScript.</p>
+<p>The interactive Work page includes service details, current availability, FAQs, and a direct project-brief route.</p>
 ${CTA_BLOCK}`;
 
     case route === '/contact':
@@ -643,19 +610,19 @@ ${CTA_BLOCK}`;
   <input type="hidden" name="startedAt" value="${Date.now()}" />
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="name" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Name *</label>
-    <input type="text" id="name" name="name" required placeholder="Jane Doe" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
+    <input type="text" id="name" name="name" required placeholder="Jane Doe" style="background: #030c14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="email" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Work email *</label>
-    <input type="email" id="email" name="email" required placeholder="you@company.com" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
+    <input type="email" id="email" name="email" required placeholder="you@company.com" style="background: #030c14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="companyOrg" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Company (optional)</label>
-    <input type="text" id="companyOrg" name="companyOrg" placeholder="Acme Corp" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
+    <input type="text" id="companyOrg" name="companyOrg" placeholder="Acme Corp" style="background: #030c14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;" />
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="budget" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Budget</label>
-    <select id="budget" name="budget" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;">
+    <select id="budget" name="budget" style="background: #030c14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;">
       <option value="">Select…</option>
       <option>Under £2k</option>
       <option>£2-6k</option>
@@ -666,7 +633,7 @@ ${CTA_BLOCK}`;
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="timeline" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Timeline</label>
-    <select id="timeline" name="timeline" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;">
+    <select id="timeline" name="timeline" style="background: #030c14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px;">
       <option value="">Select…</option>
       <option>ASAP</option>
       <option>2-4 weeks</option>
@@ -676,13 +643,13 @@ ${CTA_BLOCK}`;
   </div>
   <div style="display: flex; flex-direction: column; gap: 5px;">
     <label for="message" style="font-size: 11px; color: #a1a8b8; text-transform: uppercase; font-weight: bold;">Project details *</label>
-    <textarea id="message" name="message" required rows="6" placeholder="What are you building? Goals, current stack, constraints, links…" style="background: #0b0e14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px; resize: vertical;"></textarea>
+    <textarea id="message" name="message" required rows="6" placeholder="What are you building? Goals, current stack, constraints, links…" style="background: #030c14; border: 1px solid #2e3545; border-radius: 6px; padding: 10px; color: #e5e5e5; font-size: 14px; resize: vertical;"></textarea>
   </div>
   <label style="font-size: 12px; color: #a1a8b8;">
     <input type="checkbox" name="consent" required /> I agree to the <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms</a>. *
   </label>
   <p class="meta">🔒 UK GDPR · Reply &lt; 12h · NDA-friendly</p>
-  <button type="submit" style="background: #ffb454; border: none; border-radius: 6px; padding: 12px; color: #0b0e14; font-weight: 700; cursor: pointer; font-size: 14px;">Send message →</button>
+  <button type="submit" style="background: #22d3ee; border: none; border-radius: 6px; padding: 12px; color: #030c14; font-weight: 700; cursor: pointer; font-size: 14px;">Send message →</button>
 </form>
 <ul>
   <li>Email: <a href="mailto:david@linacre.site">david@linacre.site</a></li>
@@ -770,8 +737,8 @@ and export production-ready SVG. Changes persist locally in your browser. Requir
 <h1>Status console (demo &mdash; simulated data)</h1>
 <p><strong>This is a UI demo, not a real status page.</strong> Values are generated client-side to showcase interface patterns and do not reflect real infrastructure.
 For genuine linacre.site availability, email <a href="mailto:david@linacre.site">david@linacre.site</a>.</p>
-<div style="background: #111622; border: 1px solid rgba(245,158,11,0.16); padding: 20px; border-radius: 12px; margin: 20px 0; max-width: 500px;">
-  <h3 style="margin-top: 0; color: #f59e0b; font-size: 12px; font-family: monospace;">System Health (Build Snapshot)</h3>
+<div style="background: #061520; border: 1px solid rgba(34,211,238,0.16); padding: 20px; border-radius: 12px; margin: 20px 0; max-width: 500px;">
+  <h3 style="margin-top: 0; color: #22d3ee; font-size: 12px; font-family: monospace;">System Health (Build Snapshot)</h3>
   <ul style="list-style: none; padding-left: 0; margin-bottom: 0; font-family: monospace; font-size: 11px; color: #a1a1aa;">
     <li style="margin: 8px 0; display: flex; align-items: center; gap: 8px;">
       <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #34d399;"></span>
@@ -1016,13 +983,13 @@ function buildRssFeed() {
   const posts = data.posts || [];
   const rfc822 = (dStr) => new Date(dStr).toUTCString();
   const buildDate = new Date().toUTCString();
-  
+
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>David Linacre Blog</title>
     <link>${SITE}/blog</link>
-    <description>Deep-dives into systems architecture, Go concurrency, frontend HSL customization, and cloud caching protocols.</description>
+    <description>Practical engineering notes on interface systems, frontend theming, delivery quality, and cloud caching.</description>
     <language>en-gb</language>
     <lastBuildDate>${buildDate}</lastBuildDate>
     <atom:link href="${SITE}/feed.xml" rel="self" type="application/rss+xml" />

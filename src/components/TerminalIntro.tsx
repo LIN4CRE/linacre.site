@@ -36,7 +36,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
     setIsSkipped(true);
     setIsTyping(false);
     setCurrentLineText('');
-    
+
     // Render all lines instantly
     const allLines: any[] = [];
     TERMINAL_LINES.forEach((line) => {
@@ -54,13 +54,13 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
 
   const runTypewriter = async () => {
     let lineIdx = 0;
-    
+
     const typeLine = async (line: any) => {
       return new Promise<void>((resolve) => {
         setIsTyping(true);
         let charIdx = 0;
         let typedText = '';
-        
+
         const typeInterval = setInterval(() => {
           if (charIdx < line.text.length) {
             typedText += line.text[charIdx];
@@ -81,7 +81,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
     while (lineIdx < TERMINAL_LINES.length) {
       const line = TERMINAL_LINES[lineIdx];
       setCurrentLineIdx(lineIdx);
-      
+
       if (line.type === 'gap') {
         setRenderedLines((prev) => [...prev, { type: 'gap' }]);
         await new Promise((resolve) => setTimeout(resolve, 80));
@@ -97,10 +97,10 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
         await new Promise((resolve) => setTimeout(resolve, 100));
         setRenderedLines((prev) => [...prev, line]);
       }
-      
+
       lineIdx++;
     }
-    
+
     if (onComplete) onComplete();
   };
 
@@ -132,7 +132,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
         </div>
 
         {/* Terminal Body */}
-        <div ref={terminalBodyRef} className="p-5 min-h-[280px] max-h-[400px] overflow-y-auto text-sm leading-relaxed space-y-2 select-text" style={{ scrollbarColor: 'rgba(245,158,11,0.15) transparent' }}>
+        <div ref={terminalBodyRef} className="p-5 min-h-[280px] max-h-[400px] overflow-y-auto text-sm leading-relaxed space-y-2 select-text" style={{ scrollbarColor: 'rgba(34,211,238,0.15) transparent' }}>
           {renderedLines.map((line, idx) => {
             if (line.type === 'gap') {
               return <div key={idx} className="h-2" />;
@@ -177,7 +177,7 @@ export default function TerminalIntro({ onComplete }: TerminalIntroProps) {
 
         </div>
       </div>
-      
+
       {/* Subtext info */}
       <p className="text-[11px] text-center text-muted-foreground mt-3 flex items-center justify-center gap-1.5 select-none">
         <Sparkles className="w-3 h-3 text-amber-color animate-spin-slow" />

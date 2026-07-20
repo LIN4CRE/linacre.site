@@ -64,7 +64,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             className="flex items-center gap-2.5 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded p-1 transition-all"
             id="nav-logo"
           >
-            <div className="relative w-7 h-7 flex items-center justify-center bg-[#11151f] border border-amber-color/30 rounded-lg group-hover:border-amber-color transition-colors overflow-hidden">
+            <div className="relative w-7 h-7 flex items-center justify-center bg-[#061923] border border-amber-color/30 rounded-lg group-hover:border-amber-color transition-colors overflow-hidden">
               <div className="absolute -inset-2 opacity-0 group-hover:opacity-15 blur-md bg-amber-color transition-opacity pointer-events-none" />
               <svg
                 width="14"
@@ -114,7 +114,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                     <motion.div
                       layoutId="activeTabUnderline"
                       className="absolute bottom-0 left-2 right-2 h-[2px] bg-amber-color rounded-full"
-                      style={{ boxShadow: '0 0 12px rgba(245,158,11,0.4)' }}
+                      style={{ boxShadow: '0 0 12px rgba(34,211,238,0.4)' }}
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -144,7 +144,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
-              
+
               <AnimatePresence>
                 {moreOpen && (
                   <motion.div
@@ -204,7 +204,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                 setMobileMenuOpen(false);
               }}
               data-analytics="nav_hire_cta"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-color hover:bg-amber-glow text-[#0b0e14] font-mono text-xs font-bold transition-all shadow-[0_0_16px_rgba(245,158,11,0.35)] hover:shadow-[0_0_24px_rgba(245,158,11,0.55)] focus:outline-none"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-color hover:bg-amber-glow text-[#030c14] font-mono text-xs font-bold transition-all shadow-[0_0_16px_rgba(34,211,238,0.35)] hover:shadow-[0_0_24px_rgba(34,211,238,0.55)] focus:outline-none"
               id="btn-header-work"
             >
               <Briefcase className="w-3.5 h-3.5" />
@@ -314,7 +314,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                   setMobileMenuOpen(false);
                 }}
                 data-analytics="nav_hire_cta_mobile"
-                className="w-full px-3 py-2.5 flex items-center justify-center gap-2 rounded-md bg-amber-color text-[#0b0e14] font-mono text-sm font-bold shadow-[0_0_16px_rgba(245,158,11,0.35)]"
+                className="w-full px-3 py-2.5 flex items-center justify-center gap-2 rounded-md bg-amber-color text-[#030c14] font-mono text-sm font-bold shadow-[0_0_16px_rgba(34,211,238,0.35)]"
                 id="mobile-nav-work-cta"
               >
                 <Briefcase className="w-4 h-4" />

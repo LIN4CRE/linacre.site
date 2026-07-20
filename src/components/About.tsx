@@ -1,245 +1,160 @@
-import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { User, Code, Calendar, Terminal, ExternalLink } from 'lucide-react';
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Code2,
+  Github,
+  Heart,
+  MapPin,
+  ShieldCheck,
+  Sparkles,
+  TerminalSquare,
+} from 'lucide-react';
 
-const getFilterForColor = (colorId: string) => {
-  switch (colorId) {
-    case 'amber':
-      return 'invert(1) sepia(0.2) saturate(2.5) hue-rotate(5deg) brightness(1.1) contrast(1.1)';
-    case 'cyan':
-      return 'invert(1) sepia(0.5) saturate(3) hue-rotate(160deg) brightness(1.1) contrast(1.1)';
-    case 'emerald':
-      return 'invert(1) sepia(0.6) saturate(2.5) hue-rotate(85deg) brightness(1.1) contrast(1.1)';
-    case 'crimson':
-      return 'invert(1) sepia(0.6) saturate(3) hue-rotate(310deg) brightness(1.1) contrast(1.1)';
-    case 'mono':
-      return 'invert(1) grayscale(1) brightness(1.2) contrast(1.1)';
-    default:
-      return 'invert(1) brightness(1.1) contrast(1.1)';
-  }
-};
+const skillGroups = [
+  { title: 'Product engineering', items: ['React', 'TypeScript', 'Vue', 'Vite', 'Progressive Web Apps'] },
+  { title: 'Systems', items: ['Python', 'FastAPI', 'Node.js', 'Docker', 'GitHub Actions'] },
+  { title: 'Mobile & local-first', items: ['Kotlin', 'Android', 'Capacitor', 'IndexedDB', 'Offline-first design'] },
+  { title: 'Delivery quality', items: ['Accessibility', 'Security headers', 'Static prerendering', 'Documentation', 'Release workflows'] },
+];
+
+const principles = [
+  ['Useful before impressive', 'A project should solve a recognisable problem before it adds another framework, dashboard, or AI layer.'],
+  ['Claims must be inspectable', 'Live links, source code, clear data provenance, and honest limitations matter more than inflated metrics.'],
+  ['Local-first where it fits', 'Browser storage and offline behaviour can remove accounts, servers, cost, and unnecessary data collection.'],
+];
+
+const milestones = [
+  {
+    title: 'linacre.site becomes a useful start page',
+    detail: 'Reframed the homepage around private browser utilities and a smaller, verified product portfolio, then introduced the CyberBlue-Green identity system.',
+    href: 'https://www.linacre.site/',
+    label: 'Live site',
+  },
+  {
+    title: 'PokeGuru v1.6 ships',
+    detail: 'Released a typed Pokémon TCG search and set-browsing product with GBP-first prices and a local collection vault.',
+    href: 'https://lin4cre.github.io/PokeGuru/',
+    label: 'Open PokeGuru',
+  },
+  {
+    title: 'Android utility work becomes downloadable',
+    detail: 'Published DKMA Monster for OEM battery guidance and Linacre Uninstaller v1.3.1 with safety tiers and clearer launcher discovery.',
+    href: 'https://github.com/LIN4CRE/LinacreUninstaller/releases/latest',
+    label: 'Latest Android release',
+  },
+  {
+    title: 'Mob Deals prioritises transparency',
+    detail: 'Separated manually reviewed deal entries from automated source reachability and added plain-English PAC/STAC switching guidance.',
+    href: 'https://lin4cre.github.io/mob-deals/',
+    label: 'Open Mob Deals',
+  },
+];
 
 export default function About() {
-  const [activeColorId, setActiveColorId] = useState(() => localStorage.getItem('linacre_brand_color') || 'amber');
-  useEffect(() => {
-    const handleUpdate = () => {
-      setActiveColorId(localStorage.getItem('linacre_brand_color') || 'amber');
-    };
-    window.addEventListener('linacre-identity-updated', handleUpdate);
-    return () => window.removeEventListener('linacre-identity-updated', handleUpdate);
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      }
-    }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 110, damping: 14 } }
-  };
-
-  const skills = [
-    { category: 'Languages', items: ['TypeScript', 'JavaScript', 'Go', 'Python', 'SQL', 'HTML / CSS'] },
-    { category: 'Frontend', items: ['React', 'Next.js', 'Svelte', 'Tailwind CSS', 'Framer Motion'] },
-    { category: 'Backend & DB', items: ['Node.js', 'Express', 'PostgreSQL', 'SQLite', 'Supabase', 'Redis'] },
-    { category: 'DevOps & Tools', items: ['Docker', 'Git / GitHub', 'Vercel', 'Netlify', 'Linux', 'Vite'] }
-  ];
-
-  const milestones = [
-    { 
-      year: '2026', 
-      title: 'Premium Brand Overhaul & Live Customizer v4.5', 
-      desc: 'Completely overhauled the site’s design system, adding visual grid overlays, real-time relative-luminance contrast validation tools, and a dynamic vector monogram customization panel with drag-and-drop file ingestion support.' 
-    },
-    { 
-      year: '2025', 
-      title: 'Shipped GhostMail Secure Disposable Email Engine', 
-      desc: 'Created an open-source, high-throughput secure disposable inbox manager built in Go. Integrated with worker pools, rate limiters, and channel synchronization to handle massive SMTP transaction streams. Packaged and deployed via Docker.' 
-    },
-    { 
-      year: '2025', 
-      title: 'Launched DomainDeals Escrow & Brokerage Portal', 
-      desc: 'Designed and developed a secure marketplace platform to list, search, and broker domain purchases directly. Engineered with a React single-page architecture, Vercel Edge caching headers, and automated transaction email triggers.' 
-    },
-    { 
-      year: '2024', 
-      title: 'Established Autonomous Agent Research Hub', 
-      desc: 'Built custom Model Context Protocol (MCP) servers and orchestrator clients. Developed local Ollama LLM playground interfaces and autonomous dev agent playbooks to enable collaborative code generation and security audits.' 
-    }
-  ];
-
   return (
-    <motion.div 
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="space-y-12 animate-fade-in"
-    >
-      {/* Title Hero */}
-      <motion.section variants={itemVariants} className="text-center md:text-left space-y-4 max-w-3xl" id="about-hero">
-        <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/20 px-2.5 py-1 rounded-full">
-          Identity Module & Bio
-        </span>
-        <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-foreground mt-3">
-          About <span className="text-amber-color">David Linacre</span>
-        </h1>
-        <p className="text-base text-muted-foreground leading-relaxed">
-          I'm a full-stack engineer and digital operations architect focused on constructing robust, secure, and beautiful developer utilities, automation systems, and AI sandboxes.
-        </p>
-      </motion.section>
-
-      {/* Grid: Photo & Terminal Biography */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-        {/* Avatar and Support column */}
-        <motion.div variants={itemVariants} className="md:col-span-4 flex flex-col items-center gap-6">
-          {/* Avatar block */}
-          <div className="linacre-surface p-4 w-full max-w-[280px] relative group overflow-hidden">
-            <div className="absolute -inset-10 opacity-20 group-hover:opacity-35 blur-2xl rounded-full bg-amber-color pointer-events-none transition-opacity duration-300" />
-            <img
-              src="/profile_avatar.webp"
-              alt="David Linacre — full-stack &amp; AI engineer"
-              className="rounded-xl border border-border-color bg-muted/20 aspect-square w-full object-cover"
-              width="248"
-              height="248"
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="mt-4 text-center font-mono">
-              <h2 className="text-xs font-bold text-foreground">David Christopher Linacre</h2>
-              <p className="text-[10px] text-muted-foreground mt-1">Lead Systems Engineer & Coder</p>
-            </div>
-          </div>
-
-          {/* Support/Donation Card */}
-          <div className="linacre-surface p-5 w-full max-w-[280px] relative group overflow-hidden space-y-4 select-none">
-            <div className="absolute -inset-10 opacity-15 group-hover:opacity-25 blur-2xl rounded-full bg-amber-color pointer-events-none transition-opacity duration-300" />
-            <div className="flex items-center gap-2 border-b border-border-color/30 pb-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-color animate-pulse" />
-              <span className="font-mono text-[10px] font-bold text-foreground uppercase tracking-wider">SUPPORT MY CRAFT</span>
-            </div>
-            <div className="w-36 h-36 mx-auto bg-black rounded-lg border border-border-color p-1 flex items-center justify-center relative overflow-hidden">
-              <img
-                src="/paypal-qr.png"
-                alt="PayPal QR Code"
-                className="w-full h-full mix-blend-screen transition-transform duration-300 group-hover:scale-105"
-                style={{ filter: getFilterForColor(activeColorId) }}
-              />
-            </div>
-            <div className="text-center space-y-2.5 font-mono">
-              <p className="text-[10px] text-muted-foreground leading-normal font-medium">
-                Enjoying my open-source work or dev tools? Support new builds via PayPal.
-              </p>
-              <a
-                href="https://paypal.me/DLinacre16"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 w-full py-2 bg-amber-color hover:bg-amber-glow text-[#0b0e14] font-bold rounded-lg text-[10px] transition-all active:scale-95 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.15)]"
-              >
-                <span>paypal.me/DLinacre16</span>
-                <ExternalLink className="w-3 h-3" />
-              </a>
+    <div className="space-y-12">
+      <section className="grid gap-8 overflow-hidden rounded-3xl border border-border-color bg-[var(--linacre-panel)] p-6 shadow-[var(--linacre-card-shadow)] sm:p-8 lg:grid-cols-[.72fr_1.28fr] lg:items-center lg:p-10">
+        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="relative mx-auto w-full max-w-sm">
+          <div className="absolute -inset-10 rounded-full bg-cyan/10 blur-3xl" />
+          <div className="relative overflow-hidden rounded-3xl border border-border-color bg-background/30 p-3">
+            <img src="/profile_avatar.webp" alt="David Linacre" width="520" height="520" className="aspect-square w-full rounded-2xl object-cover" />
+            <div className="mt-3 flex items-center justify-between rounded-xl border border-border-color bg-background/40 px-3 py-2 font-mono text-[10px]">
+              <span className="flex items-center gap-1.5 text-emerald-color"><span className="h-2 w-2 rounded-full bg-emerald-color" /> Available for useful work</span>
+              <span className="text-muted-foreground">UK / remote</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Bio Terminal */}
-        <motion.div variants={itemVariants} className="md:col-span-8 space-y-6">
-          <div className="bg-[#0b0e14] border border-border-color rounded-xl overflow-hidden shadow-2xl font-mono text-xs">
-            {/* Terminal Top bar */}
-            <div className="bg-[#111622] px-4 py-2 flex items-center gap-2 border-b border-border-color/30">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#eab308]" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" />
-              <span className="text-muted-foreground/60 text-[10px] ml-2">bio_query.sh</span>
-            </div>
-            {/* Terminal Body */}
-            <div className="p-5 space-y-4 text-muted-foreground">
-              <p className="text-foreground flex items-center gap-2 font-bold">
-                <span className="text-amber-color">&gt;</span> cat about_me.md
-              </p>
-              <p className="leading-relaxed">
-                I fell into software engineering during my early days of trying to customize local configurations, automate boring data scraping pipelines, and rebuild legacy workflows. Over the last several years, I have worked as a systems consultant, principal platform developer, and fractional DevOps architect. I've designed and shipped everything from low-latency concurrency pipelines in Go to fully secure edge caching systems for enterprise applications.
-              </p>
-              <p className="leading-relaxed">
-                My career is built on a simple foundation: treat technical debt as a systems bug, optimize for the next decade rather than next week, and enforce strict, automated quality guardrails. I believe that developer platforms should manage themselves automatically. That's why I focus heavily on operational infrastructure, continuous deployment, and context-aware developer tooling.
-              </p>
-              <p className="leading-relaxed">
-                When we work together on a project, you're not just getting a coder. You're getting a systematic approach. I scope tasks with absolute transparency, write robust unit tests for every critical endpoint, configure clear CI/CD pipelines, and provide complete documentation from day one. I coordinate communication through asynchronous updates, standardizing on clear milestones and regular logs to keep everyone aligned without wasteful meetings.
-              </p>
-              <p className="leading-relaxed">
-                When I am not sitting in front of a keyboard tweaking Linux configuration variables or orchestrating AI model pipelines, you can find me exploring retro arcade hardware, hiking across the English countryside, or learning new culinary techniques.
-              </p>
-              <p className="text-foreground flex items-center gap-2 font-bold">
-                <span className="text-amber-color">&gt;</span> echo $LOCATION
-              </p>
-              <p className="text-cyan font-bold">United Kingdom (UK)</p>
-            </div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+          <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-color"><ShieldCheck className="h-4 w-4" /> About David Linacre</span>
+          <h1 className="mt-4 font-display text-4xl font-bold tracking-[-0.05em] text-foreground sm:text-5xl">I build software people can actually use.</h1>
+          <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
+            I am a UK-based software engineer focused on practical web products, Android utilities, automation, and local-first experiences. My strongest work turns a specific frustration into a clear interface with honest limitations and a maintainable delivery path.
+          </p>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">
+            This site is both a working toolbox and an edited record of what I have shipped. Projects only appear in the portfolio when there is something real to try, download, or inspect.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-amber-color px-4 py-3 font-mono text-xs font-bold text-[#031018] hover:bg-amber-glow"><Github className="h-4 w-4" /> GitHub profile</a>
+            <a href="/contact" className="inline-flex items-center gap-2 rounded-xl border border-border-color bg-muted/20 px-4 py-3 font-mono text-xs font-bold text-foreground hover:border-amber-color/50">Start a conversation <ArrowUpRight className="h-4 w-4" /></a>
           </div>
         </motion.div>
-      </div>
+      </section>
 
-      <div className="linacre-pulse-line w-full" />
-
-      {/* Skills Matrix */}
-      <motion.section variants={itemVariants} className="space-y-6" id="about-skills">
-        <div className="flex items-center gap-2">
-          <Code className="w-4 h-4 text-amber-color" />
-          <h2 className="font-display text-lg font-bold text-foreground">Skills Matrix</h2>
+      <section className="space-y-5" aria-labelledby="principles-title">
+        <div>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-color">Working principles</span>
+          <h2 id="principles-title" className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">How I decide what is worth building</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {skills.map((skillGroup, idx) => (
-            <div key={idx} className="bg-muted/15 border border-border-color/60 rounded-xl p-5 hover:bg-muted/25 hover:border-border-hi transition-all duration-200">
-              <h3 className="font-mono text-xs font-bold text-amber-color uppercase tracking-wider mb-4 border-b border-border-color/30 pb-2">
-                {skillGroup.category}
-              </h3>
-              <ul className="space-y-2 font-mono text-xs text-muted-foreground">
-                {skillGroup.items.map((item, itemIdx) => (
-                  <li key={itemIdx} className="flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          {principles.map(([title, detail], index) => (
+            <motion.article key={title} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.05 }} className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+              <span className="grid h-10 w-10 place-items-center rounded-xl border border-amber-color/20 bg-amber-color/10 font-mono text-xs font-bold text-amber-color">0{index + 1}</span>
+              <h3 className="mt-4 font-display text-lg font-bold text-foreground">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{detail}</p>
+            </motion.article>
           ))}
         </div>
-      </motion.section>
+      </section>
 
-      <div className="linacre-pulse-line w-full" />
-
-      {/* Timeline Section */}
-      <motion.section variants={itemVariants} className="space-y-6" id="about-timeline">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-4 h-4 text-amber-color" />
-          <h2 className="font-display text-lg font-bold text-foreground">Project Milestones</h2>
+      <section className="grid gap-6 lg:grid-cols-[.75fr_1.25fr]">
+        <div className="rounded-2xl border border-border-color bg-[#020a11] p-5 font-mono shadow-[var(--linacre-card-shadow)]">
+          <div className="flex items-center gap-2 border-b border-white/10 pb-3 text-[10px] text-muted-foreground"><span className="h-2.5 w-2.5 rounded-full bg-[#fb7185]" /><span className="h-2.5 w-2.5 rounded-full bg-[#38bdf8]" /><span className="h-2.5 w-2.5 rounded-full bg-[#34d399]" /><span className="ml-2">profile.json</span></div>
+          <pre className="mt-4 whitespace-pre-wrap text-[11px] leading-6 text-[#9ab7c3]">{`{
+  "name": "David Linacre",
+  "location": "West Yorkshire, UK",
+  "focus": [
+    "useful web products",
+    "Android utilities",
+    "automation systems",
+    "accessible interfaces"
+  ],
+  "default": "build, verify, improve"
+}`}</pre>
+          <div className="mt-5 flex items-center gap-2 rounded-xl border border-emerald-color/20 bg-emerald-color/5 p-3 text-[10px] text-emerald-color"><MapPin className="h-4 w-4" /> Bradford / remote worldwide</div>
         </div>
-        <div className="relative pl-6 border-l border-border-color space-y-8">
-          {milestones.map((m, idx) => (
-            <div key={idx} className="relative group">
-              <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#0b0e14] border-2 border-amber-color group-hover:scale-125 transition-transform" />
-              <div className="space-y-1">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                  <span className="font-mono text-xs font-bold text-amber-color">{m.year}</span>
-                  <span className="hidden sm:inline text-xs text-muted-foreground/60 font-semibold">·</span>
-                  <h3 className="font-display text-sm font-bold text-foreground group-hover:text-cyan transition-colors">
-                    {m.title}
-                  </h3>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed pl-1 max-w-3xl">
-                  {m.desc}
-                </p>
-              </div>
-            </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-2"><Code2 className="h-5 w-5 text-amber-color" /><h2 className="font-display text-2xl font-bold text-foreground">Capabilities</h2></div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {skillGroups.map((group) => (
+              <article key={group.title} className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+                <h3 className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-color">{group.title}</h3>
+                <ul className="mt-4 space-y-2.5">
+                  {group.items.map((item) => <li key={item} className="flex items-center gap-2 text-xs text-muted-foreground"><CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-amber-color" /> {item}</li>)}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-5" aria-labelledby="milestones-title">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-color">Recent proof of work</span>
+            <h2 id="milestones-title" className="mt-1 font-display text-2xl font-bold text-foreground sm:text-3xl">What shipped in 2026</h2>
+          </div>
+          <TerminalSquare className="hidden h-8 w-8 text-amber-color sm:block" />
+        </div>
+        <div className="grid gap-3">
+          {milestones.map((milestone, index) => (
+            <article key={milestone.title} className="group grid gap-4 rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+              <span className="grid h-11 w-11 place-items-center rounded-xl border border-amber-color/20 bg-amber-color/10 font-mono text-xs font-bold text-amber-color">{String(index + 1).padStart(2, '0')}</span>
+              <div><h3 className="font-display text-base font-bold text-foreground">{milestone.title}</h3><p className="mt-1 text-xs leading-5 text-muted-foreground">{milestone.detail}</p></div>
+              <a href={milestone.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 self-start font-mono text-[10px] font-bold text-amber-color hover:text-amber-glow sm:self-center">{milestone.label} <ArrowUpRight className="h-3.5 w-3.5" /></a>
+            </article>
           ))}
         </div>
-      </motion.section>
+      </section>
 
-    </motion.div>
+      <section className="rounded-2xl border border-border-color bg-muted/10 p-6 sm:p-8">
+        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+          <div className="max-w-2xl"><span className="inline-flex items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-color"><Sparkles className="h-4 w-4" /> Open source keeps the work honest</span><h2 className="mt-2 font-display text-2xl font-bold text-foreground">Use the tools. Read the source. Challenge the claims.</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">If one of the public tools helps you, feedback and GitHub issues are more valuable than another decorative portfolio statistic.</p></div>
+          <a href="https://paypal.me/DLinacre16" target="_blank" rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-border-color px-4 py-3 font-mono text-xs font-bold text-foreground hover:border-amber-color/50"><Heart className="h-4 w-4 text-emerald-color" /> Support the work</a>
+        </div>
+      </section>
+    </div>
   );
 }

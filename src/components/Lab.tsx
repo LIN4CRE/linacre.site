@@ -64,7 +64,7 @@ const DEFAULT_WORKSPACE: WorkspaceItem[] = [
     name: 'schema.sql',
     path: 'db/schema.sql',
     type: 'file',
-    content: `-- PostgreSQL schema for David Linacre's Dashboard\n\nCREATE TABLE IF NOT EXISTS projects (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) UNIQUE NOT NULL,\n  category VARCHAR(50) NOT NULL,\n  description TEXT,\n  url VARCHAR(255),\n  host VARCHAR(100),\n  tag VARCHAR(50) DEFAULT 'Live',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Seed initial projects\nINSERT INTO projects (name, category, description, url, host, tag)\nVALUES \n  ('linacre.site', 'deploy', 'Terminal-styled toolkit + AI Lab', 'https://www.linacre.site', 'linacre.site', 'Live'),\n  ('GhostMail', 'build', 'Disposable email service written in Go', 'https://github.com/LIN4CRE/GhostMail', 'github.com', 'Open Source');`
+    content: `-- PostgreSQL schema for David Linacre's Dashboard\n\nCREATE TABLE IF NOT EXISTS projects (\n  id SERIAL PRIMARY KEY,\n  name VARCHAR(100) UNIQUE NOT NULL,\n  category VARCHAR(50) NOT NULL,\n  description TEXT,\n  url VARCHAR(255),\n  host VARCHAR(100),\n  tag VARCHAR(50) DEFAULT 'Live',\n  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP\n);\n\n-- Seed initial projects\nINSERT INTO projects (name, category, description, url, host, tag)\nVALUES \n  ('linacre.site', 'build', 'Useful start page and browser tools', 'https://www.linacre.site', 'linacre.site', 'Live'),\n  ('DKMA Monster', 'build', 'Android background-app survival toolkit', 'https://lin4cre.github.io/dkma-monster/', 'GitHub Pages', 'Open Source');`
   }
 ];
 
@@ -138,9 +138,9 @@ export default function Lab({ theme = 'dark' }: LabProps) {
           name: 'Security Auditor Magnezone',
           role: 'Safety Audit',
           gifUrl: `https://play.pokemonshowdown.com/sprites/${folder}/magnezone.${spriteExt}`,
-          bgColor: 'bg-[#fbbf24]/5',
-          borderColor: 'border-[#fbbf24]/20',
-          tagColor: 'bg-[#fbbf24]/10 border-[#fbbf24]/25 text-amber-color'
+          bgColor: 'bg-[#34D399]/5',
+          borderColor: 'border-[#34D399]/20',
+          tagColor: 'bg-[#34D399]/10 border-[#34D399]/25 text-amber-color'
         };
       case 'devops':
         return {
@@ -217,7 +217,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   const [activeFileId, setActiveFileId] = useState<string | null>(null);
   const [editorContent, setEditorContent] = useState('');
   const [collapsedFolders, setCollapsedFolders] = useState<string[]>([]);
-  
+
   // Creation States
   const [isCreateOpen, setIsCreateOpen] = useState<'file' | 'folder' | null>(null);
   const [createPathInput, setCreatePathInput] = useState('');
@@ -251,7 +251,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
 
   const handleSaveFileContent = () => {
     if (!activeFileId) return;
-    const updated = workspace.map(item => 
+    const updated = workspace.map(item =>
       item.id === activeFileId ? { ...item, content: editorContent } : item
     );
     saveWorkspace(updated);
@@ -315,7 +315,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
           } else {
             currentProjects = [
               { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://www.linacre.site', host: 'linacre.site', tag: 'Live' },
-              { name: 'GhostMail', category: 'build', description: 'Disposable email service written in Go', url: 'https://github.com/LIN4CRE/GhostMail', host: 'github.com', tag: 'Open Source' }
+              { name: 'DKMA Monster', category: 'build', description: 'Android background-app survival toolkit', url: 'https://lin4cre.github.io/dkma-monster/', host: 'GitHub Pages', tag: 'Open Source' }
             ];
           }
         } catch {
@@ -356,7 +356,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
           } else {
             currentProjects = [
               { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://www.linacre.site', host: 'linacre.site', tag: 'Live' },
-              { name: 'GhostMail', category: 'build', description: 'Disposable email service written in Go', url: 'https://github.com/LIN4CRE/GhostMail', host: 'github.com', tag: 'Open Source' }
+              { name: 'DKMA Monster', category: 'build', description: 'Android background-app survival toolkit', url: 'https://lin4cre.github.io/dkma-monster/', host: 'GitHub Pages', tag: 'Open Source' }
             ];
           }
         } catch {
@@ -407,7 +407,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
           } else {
             rows = [
               { name: 'linacre.site', category: 'deploy', description: 'Terminal-styled toolkit + AI Lab', url: 'https://www.linacre.site', host: 'linacre.site', tag: 'Live' },
-              { name: 'GhostMail', category: 'build', description: 'Disposable email service written in Go', url: 'https://github.com/LIN4CRE/GhostMail', host: 'github.com', tag: 'Open Source' }
+              { name: 'DKMA Monster', category: 'build', description: 'Android background-app survival toolkit', url: 'https://lin4cre.github.io/dkma-monster/', host: 'GitHub Pages', tag: 'Open Source' }
             ];
           }
         } catch {
@@ -520,7 +520,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     if (!sqlResult || sqlResult.length === 0) return;
     try {
       const headers = sqlColumns.join(',');
-      const rows = sqlResult.map(row => 
+      const rows = sqlResult.map(row =>
         sqlColumns.map(col => {
           const val = row[col];
           const str = val === null || val === undefined ? '' : String(val);
@@ -547,10 +547,10 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   const handleDeleteItem = (item: WorkspaceItem, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const confirmMsg = item.type === 'folder' 
+    const confirmMsg = item.type === 'folder'
       ? `Are you sure you want to delete folder "${item.name}" and all its contents?`
       : `Are you sure you want to delete file "${item.name}"?`;
-    
+
     if (confirm(confirmMsg)) {
       let updated: WorkspaceItem[];
       if (item.type === 'folder') {
@@ -613,7 +613,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
         path: relativePath,
         type: 'folder'
       };
-      
+
       const pathParts = relativePath.split('/');
       const newFolders: WorkspaceItem[] = [];
       let currentPath = '';
@@ -713,7 +713,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         const text = event.target?.result as string;
         let filePath = file.name;
@@ -809,12 +809,12 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     try {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 1200);
-      
+
       const res = await fetch(`${currentOllamaEndpoint || 'http://localhost:11434'}/api/tags`, {
         signal: controller.signal
       });
       clearTimeout(id);
-      
+
       if (res.ok) {
         const data = await res.json();
         setOllamaStatus('online');
@@ -838,12 +838,12 @@ export default function Lab({ theme = 'dark' }: LabProps) {
     try {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 1200);
-      
+
       const res = await fetch(currentLiteLLMEndpoint || 'http://localhost:4000/api/health', {
         signal: controller.signal
       });
       clearTimeout(id);
-      
+
       if (res.ok) {
         setLiteLLMStatus('online');
       } else {
@@ -924,7 +924,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
 
       setSessions(parsedSessions);
       setActiveSessionId(activeId);
-      
+
       const activeSess = parsedSessions.find(s => s.id === activeId);
       if (activeSess) {
         setMessages(activeSess.messages);
@@ -986,7 +986,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
         }
       ]
     };
-    
+
     setSessions(prev => {
       const updated = [...prev, newSession];
       localStorage.setItem('linacre_lab_sessions_v1', JSON.stringify(updated));
@@ -1029,7 +1029,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
         updated = [defaultSession];
       }
       localStorage.setItem('linacre_lab_sessions_v1', JSON.stringify(updated));
-      
+
       if (activeSessionId === id) {
         const nextActive = updated[0].id;
         setActiveSessionId(nextActive);
@@ -1037,7 +1037,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
         setActiveProvider(updated[0].provider);
         localStorage.setItem('linacre_lab_active_session_v1', nextActive);
       }
-      
+
       return updated;
     });
   };
@@ -1092,21 +1092,21 @@ export default function Lab({ theme = 'dark' }: LabProps) {
   // Safe inline and block markdown formatter with code highlight block container (Fix S1: Whitelist https?:// only to avoid javascript: links)
   const formatMessageContent = (text: string) => {
     if (!text) return '';
-    
+
     // Extract triple-backtick code blocks first to protect code contents from markup processors
     const codeBlocks: string[] = [];
     let processed = text;
-    
+
     processed = processed.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
       const idx = codeBlocks.length;
       const displayLang = lang || 'code';
-      
+
       // Escape HTML inside code blocks
       const escapedCode = code
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
-        
+
       const isDark = theme === 'dark';
       const containerBg = isDark ? 'bg-black/35' : 'bg-[#f4f4f5] dark:bg-black/35';
       const headerBg = isDark ? 'bg-muted/40 dark:bg-[#161b26]' : 'bg-[#e4e4e7] dark:bg-[#161b26]';
@@ -1124,7 +1124,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
       codeBlocks.push(codeHtml);
       return `___CODE_BLOCK_${idx}___`;
     });
-    
+
     // Escape standard HTML for non-code block elements to secure against injection vectors
     processed = processed
       .replace(/&/g, '&amp;')
@@ -1132,16 +1132,16 @@ export default function Lab({ theme = 'dark' }: LabProps) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
-      
+
     // Bold tags
     processed = processed.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    
+
     // Italic tags
     processed = processed.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    
+
     // Inline Code snippets
     processed = processed.replace(/`([^`]+)`/g, '<code class="font-mono bg-muted/70 text-cyan px-1.5 py-0.5 rounded text-[11px] font-medium">$1</code>');
-    
+
     // Anchor tags with Strict Whitelist for http/https (Fix S1)
     processed = processed.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, linkText, url) => {
       const trimmedUrl = url.trim();
@@ -1150,12 +1150,12 @@ export default function Lab({ theme = 'dark' }: LabProps) {
       }
       return linkText;
     });
-    
+
     // Reinsert code blocks
     codeBlocks.forEach((blockHtml, idx) => {
       processed = processed.replace(`___CODE_BLOCK_${idx}___`, blockHtml);
     });
-    
+
     // Bullet points conversion
     processed = processed.split('\n').map(line => {
       if (line.trim().startsWith('- ')) {
@@ -1163,7 +1163,7 @@ export default function Lab({ theme = 'dark' }: LabProps) {
       }
       return line;
     }).join('\n');
-    
+
     // Join lines by breaking them
     return processed.split('\n').join('<br />');
   };
@@ -1178,16 +1178,16 @@ export default function Lab({ theme = 'dark' }: LabProps) {
 
   const handleExportChat = () => {
     if (messages.length === 0) return;
-    
+
     let mdContent = `# David Linacre AI Lab - Chat Export\n`;
     mdContent += `*Exported on: ${new Date().toLocaleString()}*\n`;
     mdContent += `*Provider: ${activeProvider}*\n\n---\n\n`;
-    
+
     messages.forEach((msg) => {
       const roleName = msg.role === 'user' ? 'User (David)' : 'AI Dev Assistant';
       mdContent += `### **${roleName}** *[${msg.timestamp}]*\n\n${msg.content}\n\n---\n\n`;
     });
-    
+
     try {
       const blob = new Blob([mdContent], { type: 'text/markdown;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
@@ -1249,7 +1249,7 @@ You do not need to use all agents if the task is simple, but at least two should
       content: '',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-    
+
     setMessages([...updatedMessages, initialAssistantMsg]);
 
     let assistantContent = '';
@@ -1303,7 +1303,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 }
                 if (parsed.text) {
                   assistantContent += parsed.text;
-                  setMessages(prev => 
+                  setMessages(prev =>
                     prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
                   );
                 }
@@ -1355,7 +1355,7 @@ You do not need to use all agents if the task is simple, but at least two should
               if (line.startsWith('data: ')) {
                 const dataStr = line.slice(6).trim();
                 if (dataStr === '[DONE]') break;
-                
+
                 let parsed;
                 try {
                   parsed = JSON.parse(dataStr);
@@ -1369,7 +1369,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 const text = parsed.choices?.[0]?.delta?.content;
                 if (text) {
                   assistantContent += text;
-                  setMessages(prev => 
+                  setMessages(prev =>
                     prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
                   );
                 }
@@ -1421,7 +1421,7 @@ You do not need to use all agents if the task is simple, but at least two should
               if (line.startsWith('data: ')) {
                 const dataStr = line.slice(6).trim();
                 if (dataStr === '[DONE]') break;
-                
+
                 let parsed;
                 try {
                   parsed = JSON.parse(dataStr);
@@ -1435,7 +1435,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 const text = parsed.choices?.[0]?.delta?.content;
                 if (text) {
                   assistantContent += text;
-                  setMessages(prev => 
+                  setMessages(prev =>
                     prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
                   );
                 }
@@ -1530,7 +1530,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 const text = parsed.message?.content || parsed.response;
                 if (text) {
                   assistantContent += text;
-                  setMessages(prev => 
+                  setMessages(prev =>
                     prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
                   );
                 }
@@ -1549,7 +1549,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 if (line.startsWith('data: ')) {
                   const dataStr = line.slice(6).trim();
                   if (dataStr === '[DONE]') break;
-                  
+
                   let parsed;
                   try {
                     parsed = JSON.parse(dataStr);
@@ -1563,7 +1563,7 @@ You do not need to use all agents if the task is simple, but at least two should
                   const text = parsed.choices?.[0]?.delta?.content;
                   if (text) {
                     assistantContent += text;
-                    setMessages(prev => 
+                    setMessages(prev =>
                       prev.map(m => m.id === assistantMsgId ? { ...m, content: assistantContent } : m)
                     );
                   }
@@ -1629,7 +1629,7 @@ You do not need to use all agents if the task is simple, but at least two should
       </section>
 
       {/* Config Toggle Pane */}
-      <div className="border border-border-color rounded-xl overflow-hidden bg-muted/15 dark:bg-[#10141d]/40 transition-all duration-300">
+      <div className="border border-border-color rounded-xl overflow-hidden bg-muted/15 dark:bg-[#081c28]/40 transition-all duration-300">
         <div className="w-full flex items-center justify-between px-5 py-3 text-sm font-mono border-b border-border-color/40 bg-muted/10">
           <button
             onClick={() => setConfigOpen(!configOpen)}
@@ -1639,7 +1639,7 @@ You do not need to use all agents if the task is simple, but at least two should
             <span>AI Provider Configurations</span>
             {configOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
-          
+
           <div className="flex items-center gap-4">
             <button
               onClick={() => {
@@ -1759,7 +1759,7 @@ You do not need to use all agents if the task is simple, but at least two should
                     </div>
                     <span className="text-[10px] text-muted-foreground/60 flex items-center gap-1">
                       <Info className="w-3 h-3 text-cyan" />
-                      {serverKeys.openai 
+                      {serverKeys.openai
                         ? "Since an OPENAI_API_KEY was found in your server environment, you can leave this field blank and it will work seamlessly!"
                         : "Keys stay in memory for this tab only — never written to browser storage, never sent to linacre.site servers. Paste again if you refresh."
                       }
@@ -1981,7 +1981,7 @@ You do not need to use all agents if the task is simple, but at least two should
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch" id="lab-terminal-split">
         {/* Left column: Sessions list sidebar */}
         <div className="lg:col-span-3 flex flex-col gap-3">
-          <div className="border border-border-color bg-muted/5 dark:bg-[#10141d]/40 rounded-xl p-4 flex flex-col h-full">
+          <div className="border border-border-color bg-muted/5 dark:bg-[#081c28]/40 rounded-xl p-4 flex flex-col h-full">
             {/* Tab switchers */}
             <div className="flex border-b border-border-color/40 pb-2.5 mb-3 shrink-0">
               <button
@@ -2042,7 +2042,7 @@ You do not need to use all agents if the task is simple, but at least two should
                           <span className="font-bold truncate pr-1">{sess.title}</span>
                           <span className="text-[9px] opacity-60 mt-0.5">{sess.provider.toUpperCase()} · {sess.timestamp}</span>
                         </div>
-                        
+
                         <button
                           onClick={(e) => handleDeleteSession(sess.id, e)}
                           className="p-1 hover:text-rose-400 rounded text-muted-foreground/30 hover:bg-rose-500/10 cursor-pointer select-none transition-colors ml-1"
@@ -2083,7 +2083,7 @@ You do not need to use all agents if the task is simple, but at least two should
                     >
                       <FolderPlus className="w-3.5 h-3.5" />
                     </button>
-                    
+
                     <div className="w-px h-4 bg-border-color/60 mx-1" />
 
                     {/* Import / Upload drop buttons */}
@@ -2156,7 +2156,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 )}
 
                 {/* Render Workspace Tree view */}
-                <div 
+                <div
                   className="flex-1 flex flex-col gap-0.5 max-h-[380px] overflow-y-auto scrollbar-thin pr-1 border border-border-color/20 rounded p-2 bg-[#0c0f17]/40 min-h-[160px]"
                   onDragOver={(e) => {
                     e.preventDefault();
@@ -2297,7 +2297,7 @@ You do not need to use all agents if the task is simple, but at least two should
         {/* Right column: Active Chat Thread Console */}
         <div className="lg:col-span-9 flex flex-col">
           {/* Lab Control Tabs */}
-          <div className="flex border border-border-color border-b-0 bg-muted/10 dark:bg-[#10141d]/50 rounded-t-xl overflow-hidden shrink-0">
+          <div className="flex border border-border-color border-b-0 bg-muted/10 dark:bg-[#081c28]/50 rounded-t-xl overflow-hidden shrink-0">
             <button
               onClick={() => setMainTab('chat')}
               className={`flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-3 text-xs font-mono font-bold transition-all border-r border-border-color/60 cursor-pointer ${
@@ -2327,7 +2327,7 @@ You do not need to use all agents if the task is simple, but at least two should
             </button>
           </div>
 
-          <div className="border border-border-color bg-muted/5 dark:bg-[#10141d]/60 rounded-b-xl overflow-hidden flex flex-col h-full min-h-[460px] shadow-lg select-text" id="lab-terminal-shell">
+          <div className="border border-border-color bg-muted/5 dark:bg-[#081c28]/60 rounded-b-xl overflow-hidden flex flex-col h-full min-h-[460px] shadow-lg select-text" id="lab-terminal-shell">
             {mainTab === 'chat' ? (
               <>
                 {/* Status bar */}
@@ -2353,7 +2353,7 @@ You do not need to use all agents if the task is simple, but at least two should
                       onClick={() => setTeamMode(!teamMode)}
                       className={`px-2 py-0.5 rounded text-[10px] cursor-pointer transition-all border font-mono ${
                         teamMode
-                          ? 'bg-amber-color/10 border-amber-color/30 text-amber-color font-bold shadow-[0_0_8px_rgba(245,158,11,0.25)] animate-pulse-subtle'
+                          ? 'bg-amber-color/10 border-amber-color/30 text-amber-color font-bold shadow-[0_0_8px_rgba(34,211,238,0.25)] animate-pulse-subtle'
                           : 'border-border-color/60 text-muted-foreground/60 hover:text-foreground'
                       }`}
                       title="Toggle Multi-Agent Developer Team Orchestration"
@@ -2424,15 +2424,15 @@ You do not need to use all agents if the task is simple, but at least two should
                             parseAgentDialogue(msg.content).map((part, pIdx) => {
                               const agentInfo = getAgentInfo(part.agent);
                               return (
-                                <div 
-                                  key={pIdx} 
+                                <div
+                                  key={pIdx}
                                   className={`rounded-xl border p-4 space-y-2.5 transition-all text-sm leading-relaxed ${agentInfo.bgColor} ${agentInfo.borderColor}`}
                                 >
                                   <div className="flex items-center justify-between border-b border-border-color/20 pb-2">
                                     <div className="flex items-center gap-2 select-none">
-                                      <img 
-                                        src={agentInfo.gifUrl} 
-                                        alt={agentInfo.name} 
+                                      <img
+                                        src={agentInfo.gifUrl}
+                                        alt={agentInfo.name}
                                         className="w-5 h-5 object-contain"
                                         onError={(e) => { (e.target as HTMLElement).style.display = 'none'; }}
                                       />
@@ -2600,7 +2600,7 @@ You do not need to use all agents if the task is simple, but at least two should
                     <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wide border-b border-border-color/40 pb-1.5">
                       Schema Explorer
                     </div>
-                    
+
                     <div className="space-y-3 overflow-y-auto max-h-[120px] scrollbar-thin text-[10px] leading-relaxed pr-1">
                       {/* Table projects */}
                       <div className="space-y-1">
@@ -2788,7 +2788,7 @@ You do not need to use all agents if the task is simple, but at least two should
                 initial={{ scale: 0.95, y: 10 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.95, y: 10 }}
-                className="bg-[#10141d] border border-border-color rounded-xl w-full max-w-3xl h-[80vh] flex flex-col overflow-hidden shadow-2xl"
+                className="bg-[#081c28] border border-border-color rounded-xl w-full max-w-3xl h-[80vh] flex flex-col overflow-hidden shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Header */}

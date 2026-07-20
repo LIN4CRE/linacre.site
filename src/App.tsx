@@ -108,18 +108,18 @@ export default function App() {
   const getBreadcrumbPaths = () => {
     const pathname = window.location.pathname;
     const parts = pathname.split('/').filter(Boolean);
-    
+
     const paths: BreadcrumbPath[] = [
-      { 
-        label: 'home', 
+      {
+        label: 'home',
         onClick: () => {
           setActiveTab('home');
-          window.history.pushState(null, '', '/'); 
-          window.dispatchEvent(new PopStateEvent('popstate')); 
-        } 
+          window.history.pushState(null, '', '/');
+          window.dispatchEvent(new PopStateEvent('popstate'));
+        }
       }
     ];
-    
+
     if (parts.length === 0) {
       if (activeTab !== 'home') {
         const pathKey = `/${activeTab}`;
@@ -127,19 +127,19 @@ export default function App() {
       }
       return paths;
     }
-    
+
     let runningPath = '';
     parts.forEach((part, idx) => {
       runningPath += `/${part}`;
       const isLast = idx === parts.length - 1;
-      
+
       let label = ROUTE_LABEL[runningPath] || decodeURIComponent(part).replace(/-/g, ' ');
-      
+
       if (parts[0] === 'blog' && idx === 1) {
         const post = BLOG_POSTS.find(p => p.slug === part);
         if (post) label = post.title;
       }
-      
+
       paths.push({
         label,
         active: isLast,
@@ -151,7 +151,7 @@ export default function App() {
         }
       });
     });
-    
+
     return paths;
   };
 
@@ -234,15 +234,15 @@ export default function App() {
   // Identity and Brand custom values synchronized from localStorage
   const [customEmblems, setCustomEmblems] = useState<CustomEmblem[]>([]);
   const [identity, setIdentity] = useState({
-    colorId: 'amber',
+    colorId: 'cyber',
     fontId: 'cyber',
-    frameId: 'hexagon',
+    frameId: 'dl-geo',
     motionId: 'pulse',
     pulseSpeed: 'slow',
     name: 'DAVID LINACRE',
-    title: 'Full-stack & AI systems engineer — available for freelance',
-    bio: 'I build reliable React, Go, and AI systems for startups who need to ship in weeks, not quarters. Systems audits, custom builds, and fractional retainers — UK-based, NDA-friendly, replies within 12 hours.',
-    glow: 3
+    title: 'Software engineer · useful tools · AI systems',
+    bio: 'Building practical software, open-source tools, and reliable automation systems.',
+    glow: 2
   });
 
   const syncIdentity = () => {
@@ -267,15 +267,17 @@ export default function App() {
       console.error('Failed to parse search params', e);
     }
 
-    const colorId = localStorage.getItem('linacre_brand_color') || 'amber';
+    const storedColor = localStorage.getItem('linacre_brand_color');
+    const colorId = !storedColor || storedColor === 'amber' ? 'cyber' : storedColor;
+    if (storedColor === 'amber') localStorage.setItem('linacre_brand_color', 'cyber');
     const fontId = localStorage.getItem('linacre_brand_font') || 'cyber';
-    const frameId = localStorage.getItem('linacre_brand_frame') || 'hexagon';
+    const frameId = localStorage.getItem('linacre_brand_frame') || 'dl-geo';
     const motionId = localStorage.getItem('linacre_brand_motion') || 'pulse';
     const pulseSpeed = localStorage.getItem('linacre_brand_pulse_speed') || 'slow';
     const name = localStorage.getItem('linacre_brand_name') || 'DAVID LINACRE';
-    const title = localStorage.getItem('linacre_brand_title') || 'Full-stack & AI systems engineer — available for freelance';
-    const bio = localStorage.getItem('linacre_brand_bio') || 'I build reliable React, Go, and AI systems for startups who need to ship in weeks, not quarters. Systems audits, custom builds, and fractional retainers — UK-based, NDA-friendly, replies within 12 hours.';
-    const glow = Number(localStorage.getItem('linacre_brand_glow') || '3');
+    const title = localStorage.getItem('linacre_brand_title') || 'Software engineer · useful tools · AI systems';
+    const bio = localStorage.getItem('linacre_brand_bio') || 'Building practical software, open-source tools, and reliable automation systems.';
+    const glow = Number(localStorage.getItem('linacre_brand_glow') || '2');
 
     try {
       const savedEmblems = localStorage.getItem('linacre_custom_emblems');
@@ -336,11 +338,16 @@ export default function App() {
 
   // Define brand configuration maps to inject into styles and SVGs
   const colorsMap: Record<string, { primary: string; secondary: string }> = {
-    amber: { primary: '#F59E0B', secondary: '#FFB000' },
-    cyan: { primary: '#22D3EE', secondary: '#67e8f9' },
-    emerald: { primary: '#34D399', secondary: '#6ee7b7' },
-    crimson: { primary: '#f87171', secondary: '#ef4444' },
-    mono: { primary: '#e2e8f0', secondary: '#94a3b8' }
+    cyber: { primary: '#22D3EE', secondary: '#34D399' },
+    ocean: { primary: '#38BDF8', secondary: '#2DD4BF' },
+    matrix: { primary: '#2DD4BF', secondary: '#A3E635' },
+    violet: { primary: '#818CF8', secondary: '#22D3EE' },
+    mono: { primary: '#E2F7FA', secondary: '#7DD3FC' },
+    // Compatibility aliases for previously shared theme links.
+    amber: { primary: '#22D3EE', secondary: '#34D399' },
+    cyan: { primary: '#38BDF8', secondary: '#2DD4BF' },
+    emerald: { primary: '#2DD4BF', secondary: '#A3E635' },
+    crimson: { primary: '#818CF8', secondary: '#22D3EE' }
   };
 
   const fontsMap: Record<string, { display: string; mono: string; import: string }> = {
@@ -366,7 +373,7 @@ export default function App() {
     }
   };
 
-  const activeColor = colorsMap[identity.colorId] || colorsMap.amber;
+  const activeColor = colorsMap[identity.colorId] || colorsMap.cyber;
   const activeFont = fontsMap[identity.fontId] || fontsMap.cyber;
 
   // Stagger & entering animation variants
@@ -383,8 +390,8 @@ export default function App() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 15 },
-    show: { 
-      opacity: 1, 
+    show: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring" as const,
@@ -413,7 +420,7 @@ export default function App() {
     );
 
     return (
-      <div 
+      <div
         className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center select-none"
         dangerouslySetInnerHTML={{ __html: svgString }}
       />
@@ -438,7 +445,7 @@ export default function App() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-amber-color text-[#0b0e14] font-mono text-[11px] font-bold text-center flex items-center justify-center gap-2 py-2 px-4 shadow-[0_4px_12px_rgba(245,158,11,0.25)] relative z-50 select-none overflow-hidden"
+            className="bg-amber-color text-[#030c14] font-mono text-[11px] font-bold text-center flex items-center justify-center gap-2 py-2 px-4 shadow-[0_4px_12px_rgba(34,211,238,0.25)] relative z-50 select-none overflow-hidden"
             id="offline-banner"
           >
             <WifiOff className="w-3.5 h-3.5 animate-pulse" />
@@ -489,15 +496,15 @@ export default function App() {
               className="space-y-12"
             >
               {/* Hero Banner Section with Dynamic Identity Integration */}
-              <motion.section 
+              <motion.section
                 variants={itemVariants}
-                className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-12 overflow-hidden" 
+                className="relative grid grid-cols-1 md:grid-cols-12 gap-8 items-center pb-12 overflow-hidden"
                 id="toolkit-hero"
               >
                 {/* Hex-grid subtle background pattern */}
                 <div className="absolute inset-0 linacre-grid-bg opacity-40 pointer-events-none" />
                 {/* Ambient amber orb */}
-                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)` }} />
+                <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full pointer-events-none" style={{ background: `radial-gradient(circle, rgba(34,211,238,0.12) 0%, transparent 70%)` }} />
 
                 <div className="md:col-span-8 space-y-5 text-center md:text-left relative z-10">
                   <span className="font-mono text-xs text-amber-color tracking-widest uppercase font-semibold bg-amber-color/10 border border-amber-color/20 px-2.5 py-1 rounded-full">
@@ -517,7 +524,7 @@ export default function App() {
                     <button
                       onClick={() => { setActiveTab('contact'); }}
                       data-analytics="hero_start_project"
-                      className="px-5 py-2.5 bg-amber-color text-[#0b0e14] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(245,158,11,0.35)] hover:shadow-[0_0_30px_rgba(245,158,11,0.55)] hover:-translate-y-0.5"
+                      className="px-5 py-2.5 bg-amber-color text-[#030c14] font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all duration-200 shadow-[0_0_20px_rgba(34,211,238,0.35)] hover:shadow-[0_0_30px_rgba(34,211,238,0.55)] hover:-translate-y-0.5"
                       id="cta-start-project"
                     >
                       Start a project →
@@ -553,22 +560,22 @@ export default function App() {
 
                 {/* Live Responsive Brand Signature Widget */}
                 <div className="md:col-span-4 flex justify-center items-center relative z-10">
-                  <motion.div 
+                  <motion.div
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 200, damping: 15 }}
                     className="linacre-surface p-6 rounded-2xl flex flex-col items-center justify-center space-y-4 relative group overflow-hidden w-full max-w-[240px]"
                   >
                     {/* Pulsing ambient radial aura gradient */}
-                    <div 
+                    <div
                       className="absolute -inset-10 opacity-20 group-hover:opacity-35 blur-2xl rounded-full transition-opacity pointer-events-none"
-                      style={{ background: `radial-gradient(circle, ${activeColor.primary} 0%, transparent 70%)` }} 
+                      style={{ background: `radial-gradient(circle, ${activeColor.primary} 0%, transparent 70%)` }}
                     />
-                    
+
                     {/* Rendered Live SVG Monogram Emblem */}
                     <div className={`relative z-10 select-none ${identity.motionId === 'spin' ? 'animate-spin-slow' : ''}`}>
                       {renderEmblem()}
                     </div>
-                    
+
                     <div className="relative z-10 text-center space-y-1">
                       <div className="font-display text-[11px] font-bold tracking-wider text-foreground uppercase">
                         Signature Identity
@@ -583,12 +590,12 @@ export default function App() {
 
               {/* Brand amber pulse-line divider */}
               <motion.div variants={itemVariants} className="linacre-pulse-line w-full" />
- 
+
               {/* Typewriter Terminal */}
               <motion.div variants={itemVariants}>
                 <TerminalIntro />
               </motion.div>
- 
+
               {/* Filterable Toolkit directory */}
               <motion.div variants={itemVariants}>
                 <Toolkit
@@ -599,11 +606,11 @@ export default function App() {
                   setActiveCategory={setActiveCategory}
                 />
               </motion.div>
- 
+
               {/* Beautiful Releases Changelog timeline */}
-              <motion.section 
+              <motion.section
                 variants={itemVariants}
-                className="space-y-8 pt-12 border-t border-border-color/50" 
+                className="space-y-8 pt-12 border-t border-border-color/50"
                 id="changelog-section"
               >
                 <div className="flex items-center gap-2">
@@ -612,7 +619,7 @@ export default function App() {
                   </span>
                   <h2 className="font-display text-lg font-bold tracking-tight text-foreground">Changelog</h2>
                 </div>
- 
+
                 {/* Vertical line timeline */}
                 <div className="relative pl-6 border-l border-border-color space-y-8" id="changelog-timeline">
                   {CHANGELOG.map((item, index) => (
@@ -626,8 +633,8 @@ export default function App() {
                       id={`changelog-item-${item.version}`}
                     >
                       {/* node dot */}
-                      <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#0b0e14] border-2 border-cyan group-hover:scale-125 transition-transform" />
-                      
+                      <span className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full bg-background dark:bg-[#030c14] border-2 border-cyan group-hover:scale-125 transition-transform" />
+
                       <div className="space-y-1">
                         <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
                           <span className="font-mono text-xs font-bold text-cyan">{item.version}</span>
@@ -646,7 +653,7 @@ export default function App() {
               </motion.section>
             </motion.div>
           )}
- 
+
           {activeTab === 'learn' && (
             <motion.div
               key="learn"
@@ -658,7 +665,7 @@ export default function App() {
               <Learn />
             </motion.div>
           )}
- 
+
           {activeTab === 'lab' && (
             <motion.div
               key="lab"
@@ -670,7 +677,7 @@ export default function App() {
               <Lab theme={theme} />
             </motion.div>
           )}
- 
+
           {activeTab === 'dashboard' && (
             <motion.div
               key="dashboard"
@@ -682,7 +689,7 @@ export default function App() {
               <Dashboard />
             </motion.div>
           )}
- 
+
           {activeTab === 'identity' && (
             <motion.div
               key="identity"

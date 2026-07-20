@@ -112,7 +112,7 @@ export function getEmblemSVG(
   <!-- Pipeline Nexus Hexagon -->
   <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke="${p}" stroke-width="3" stroke-linejoin="round" filter="url(#glow)" />
   <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke="${s}" stroke-width="1" stroke-dasharray="6 4" opacity="0.3" />
-  
+
   <g transform="translate(20, 20)" fill="url(#brandGrad)" filter="url(#glow)">
     <rect x="5" y="5" width="8" height="8" rx="2" opacity="0.4" />
     <rect x="18" y="5" width="8" height="8" rx="2" opacity="0.6" />
@@ -122,7 +122,7 @@ export function getEmblemSVG(
     <rect x="18" y="18" width="8" height="8" rx="2" opacity="0.8" />
     <rect x="31" y="18" width="8" height="8" rx="2" fill="${s}" />
     <rect x="44" y="18" width="8" height="8" rx="2" opacity="0.5" />
-    <rect x="18" y="31" width="22" height="8" rx="2" fill="#ff6b9d" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
+    <rect x="18" y="31" width="22" height="8" rx="2" fill="${s}" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
     <rect x="5" y="31" width="8" height="8" rx="2" opacity="0.6" />
     <rect x="44" y="31" width="8" height="8" rx="2" opacity="0.6" />
     <rect x="5" y="44" width="8" height="8" rx="2" opacity="0.4" />
@@ -135,7 +135,7 @@ export function getEmblemSVG(
   <!-- Aether Orb Center -->
   <circle cx="50" cy="50" r="44" fill="none" stroke="${p}" stroke-width="2.5" filter="url(#glow)" />
   <circle cx="50" cy="50" r="39" fill="none" stroke="${s}" stroke-width="1" stroke-dasharray="5 3" opacity="0.4" />
-  
+
   <circle cx="50" cy="50" r="16" fill="url(#brandGrad)" filter="url(#glow)" />
   <circle cx="50" cy="50" r="22" fill="none" stroke="${s}" stroke-width="1.5" filter="url(#glow)" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
   <path d="M 50,43 L 52,48 L 57,50 L 52,52 L 50,57 L 48,52 L 43,50 L 48,48 Z" fill="#ffffff" filter="url(#glow)" />`;
@@ -144,7 +144,7 @@ export function getEmblemSVG(
   <!-- Code Brackets Frame -->
   <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke="${p}" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
   <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke="${p}" stroke-width="4.5" stroke-linecap="round" filter="url(#glow)" />
-  
+
   <g transform="translate(34, 40)" fill="url(#brandGrad)" filter="url(#glow)">
     <path d="M 0,4 L 12,10 L 0,16" fill="none" stroke="${p}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
     <rect x="18" y="15" width="14" height="3" rx="1.5" fill="${s}" ${activeMotion === 'pulse' ? 'class="d-pulse-path"' : ''} />
@@ -158,7 +158,7 @@ export function getEmblemSVG(
     emblemContents = `
   <!-- Background Component: Cybernetic Circular Ring Base -->
   <circle cx="50" cy="50" r="47" fill="url(#darkMetalGrad)" stroke="#1a1a26" stroke-width="1.5" />
-  
+
   <!-- Rotating Technical Rings -->
   <circle cx="50" cy="50" r="44" fill="none" stroke="url(#brandGrad)" stroke-width="0.8" stroke-dasharray="16 28 8 12" class="g-rotate-cw" opacity="0.9" filter="url(#glow)" />
   <circle cx="50" cy="50" r="41.8" fill="none" stroke="${s}" stroke-width="0.5" stroke-dasharray="6 30 18 6" class="g-rotate-ccw" opacity="0.6" />
@@ -181,7 +181,7 @@ export function getEmblemSVG(
   <g class="char-layer char-ape">
     <!-- Drop Shadow Base -->
     <ellipse cx="50" cy="76" rx="12" ry="1.8" fill="rgba(0,0,0,0.5)" />
-    
+
     <!-- Ribbed Beanie Hat (Graphite) -->
     <path d="M 33.5,41 C 33.5,24 66.5,24 66.5,41 Z" fill="url(#graphiteGrad)" stroke="#1a1a24" stroke-width="0.8" />
     <!-- Beanie Ribbed Texture Lines -->
@@ -246,7 +246,7 @@ export function getEmblemSVG(
   <g class="char-layer char-skull" opacity="0">
     <!-- Drop Shadow Base -->
     <ellipse cx="50" cy="76" rx="12" ry="1.8" fill="rgba(0,0,0,0.5)" />
-    
+
     <!-- Crossed Bones (Graphite with outline) -->
     <g stroke="url(#brandGrad)" stroke-width="3" stroke-linecap="round" opacity="0.95">
       <line x1="28" y1="28" x2="72" y2="72" />
@@ -266,7 +266,7 @@ export function getEmblemSVG(
 
     <!-- Skull Structure (Polished Graphite) -->
     <path d="M 36.5,45 C 36.5,33.5 63.5,33.5 63.5,45 C 63.5,55.5 60.5,56.5 57,58.5 L 56.5,65.5 C 56.5,67 43.5,67 43.5,65.5 L 43,58.5 C 39.5,56.5 36.5,55.5 36.5,45 Z" fill="url(#graphiteGrad)" stroke="#15151f" stroke-width="0.8" />
-    
+
     <!-- Specular Highlight on Skull Forehead -->
     <path d="M 37.5,44.5 C 37.5,34.5 62.5,34.5 62.5,44.5 C 62.5,41 37.5,41 37.5,44.5 Z" fill="url(#specularGrad)" opacity="0.6" />
 
@@ -279,25 +279,25 @@ export function getEmblemSVG(
     <path d="M 31.8,42 Q 50,38 68.2,42" fill="none" stroke="url(#brandGrad)" stroke-width="1.2" stroke-linecap="round" filter="url(#glow)" />
     <!-- Snapback strap -->
     <rect x="42.5" y="42.5" width="15" height="3" rx="0.5" fill="#121217" stroke="#333" stroke-width="0.3" />
-    <circle cx="44.5" cy="44" r="0.4" fill="#FFAA33" />
-    <circle cx="46.5" cy="44" r="0.4" fill="#FFAA33" />
-    <circle cx="48.5" cy="44" r="0.4" fill="#FFAA33" />
-    <circle cx="50.5" cy="44" r="0.4" fill="#FFAA33" />
-    <circle cx="52.5" cy="44" r="0.4" fill="#FFAA33" />
-    <circle cx="54.5" cy="44" r="0.4" fill="#FFAA33" />
-    <circle cx="56.5" cy="44" r="0.4" fill="#FFAA33" />
+    <circle cx="44.5" cy="44" r="0.4" fill="${p}" />
+    <circle cx="46.5" cy="44" r="0.4" fill="${p}" />
+    <circle cx="48.5" cy="44" r="0.4" fill="${p}" />
+    <circle cx="50.5" cy="44" r="0.4" fill="${p}" />
+    <circle cx="52.5" cy="44" r="0.4" fill="${p}" />
+    <circle cx="54.5" cy="44" r="0.4" fill="${p}" />
+    <circle cx="56.5" cy="44" r="0.4" fill="${p}" />
 
     <!-- Eye Sockets -->
     <!-- Left Socket -->
     <polygon points="38.5,46.5 41.5,43.5 46.5,45.5 46.5,49.5 43,51.5 39.5,49.8" fill="#111116" stroke="#252530" stroke-width="0.4" />
     <!-- Right Socket -->
     <polygon points="61.5,46.5 58.5,43.5 53.5,45.5 53.5,49.5 57,51.5 60.5,49.8" fill="#111116" stroke="#252530" stroke-width="0.4" />
-    
+
     <!-- Glowing Cyber HUD Eyes -->
-    <circle cx="42.8" cy="47.2" r="2.2" fill="none" stroke="#FFAA33" stroke-width="0.3" stroke-dasharray="1.5 1.5" class="glowing-eye" />
-    <circle cx="42.8" cy="47.2" r="0.8" fill="#FFAA33" />
-    <circle cx="57.2" cy="47.2" r="2.2" fill="none" stroke="#FFAA33" stroke-width="0.3" stroke-dasharray="1.5 1.5" class="glowing-eye" />
-    <circle cx="57.2" cy="47.2" r="0.8" fill="#FFAA33" />
+    <circle cx="42.8" cy="47.2" r="2.2" fill="none" stroke="${p}" stroke-width="0.3" stroke-dasharray="1.5 1.5" class="glowing-eye" />
+    <circle cx="42.8" cy="47.2" r="0.8" fill="${p}" />
+    <circle cx="57.2" cy="47.2" r="2.2" fill="none" stroke="${p}" stroke-width="0.3" stroke-dasharray="1.5 1.5" class="glowing-eye" />
+    <circle cx="57.2" cy="47.2" r="0.8" fill="${p}" />
 
     <!-- Nose Cavity -->
     <path d="M 50,50 L 48,53 Q 50,54 52,53 Z" fill="#111116" stroke="#252530" stroke-width="0.3" />
@@ -323,9 +323,9 @@ export function getEmblemSVG(
   <g class="char-layer char-cat" opacity="0">
     <!-- Drop Shadow Base -->
     <ellipse cx="50" cy="76" rx="12" ry="1.8" fill="rgba(0,0,0,0.5)" />
-    
+
     <!-- Neck Collar -->
-    <path d="M 37.5,61 Q 50,66.5 62.5,61 L 59.5,68.5 Q 50,71.5 40.5,68.5 Z" fill="url(#darkMetalGrad)" stroke="#ff6b9d" stroke-width="0.5" />
+    <path d="M 37.5,61 Q 50,66.5 62.5,61 L 59.5,68.5 Q 50,71.5 40.5,68.5 Z" fill="url(#darkMetalGrad)" stroke="${s}" stroke-width="0.5" />
 
     <!-- Stitched Ears -->
     <g>
@@ -346,7 +346,7 @@ export function getEmblemSVG(
     <path d="M 35.5,40.5 C 38,39 62,39 64.5,40.5 Z" fill="url(#specularGrad)" opacity="0.5" />
 
     <!-- Forehead Stitching -->
-    <g stroke="#ff6b9d" stroke-width="0.4" stroke-linecap="round" opacity="0.8">
+    <g stroke="${s}" stroke-width="0.4" stroke-linecap="round" opacity="0.8">
       <line x1="50" y1="38" x2="50" y2="44" />
       <line x1="48" y1="40" x2="52" y2="40" /><line x1="48.5" y1="42.5" x2="51.5" y2="42.5" />
     </g>
@@ -355,12 +355,12 @@ export function getEmblemSVG(
     <path d="M 31,34.5 C 31,18 69,18 69,34.5" fill="none" stroke="url(#graphiteGrad)" stroke-width="3" />
     <path d="M 32.5,34 C 32.5,19 67.5,19 67.5,34" fill="none" stroke="url(#specularGrad)" stroke-width="1" />
     <g>
-      <ellipse cx="29.5" cy="41" rx="4.5" ry="8" fill="url(#graphiteGrad)" stroke="#ff6b9d" stroke-width="0.6" />
+      <ellipse cx="29.5" cy="41" rx="4.5" ry="8" fill="url(#graphiteGrad)" stroke="${s}" stroke-width="0.6" />
       <ellipse cx="27.8" cy="41" rx="2.5" ry="5" fill="url(#carbonFiber)" />
       <rect x="29" y="32" width="1.5" height="3" fill="#ffffff" opacity="0.6" />
     </g>
     <g>
-      <ellipse cx="70.5" cy="41" rx="4.5" ry="8" fill="url(#graphiteGrad)" stroke="#ff6b9d" stroke-width="0.6" />
+      <ellipse cx="70.5" cy="41" rx="4.5" ry="8" fill="url(#graphiteGrad)" stroke="${s}" stroke-width="0.6" />
       <ellipse cx="72.2" cy="41" rx="2.5" ry="5" fill="url(#carbonFiber)" />
       <rect x="69.5" y="32" width="1.5" height="3" fill="#ffffff" opacity="0.6" />
     </g>
@@ -375,16 +375,16 @@ export function getEmblemSVG(
       <line x1="63.5" y1="46" x2="56.5" y2="53" stroke="url(#pinkGrad)" stroke-width="1.8" stroke-linecap="round" />
     </g>
 
-    <polygon points="49,54.5 51,54.5 50,56" fill="#ff6b9d" />
+    <polygon points="49,54.5 51,54.5 50,56" fill="${s}" />
 
     <!-- Cheek stitches -->
-    <g stroke="#ff6b9d" stroke-width="0.3" stroke-linecap="round" opacity="0.7">
+    <g stroke="${s}" stroke-width="0.3" stroke-linecap="round" opacity="0.7">
       <line x1="32" y1="53.5" x2="34.5" y2="55.5" /><line x1="34" y1="53" x2="32.5" y2="56" />
       <line x1="68" y1="53.5" x2="65.5" y2="55.5" /><line x1="66" y1="53" x2="67.5" y2="56" />
     </g>
 
     <!-- Mouth -->
-    <path d="M 40,58 Q 50,65.5 60,58 Q 50,61 40,58 Z" fill="#111116" stroke="#ff6b9d" stroke-width="0.6" stroke-linejoin="round" />
+    <path d="M 40,58 Q 50,65.5 60,58 Q 50,61 40,58 Z" fill="#111116" stroke="${s}" stroke-width="0.6" stroke-linejoin="round" />
     <polygon points="42.8,58.4 44.8,58.4 43.8,61.2" fill="#ffffff" />
     <polygon points="57.2,58.4 55.2,58.4 56.2,61.2" fill="#ffffff" />
   </g>
@@ -528,16 +528,16 @@ export function getEmblemSVG(
   </linearGradient>
 
   <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" stop-color="#ff6b9d" />
+    <stop offset="0%" stop-color="${s}" />
     <stop offset="100%" stop-color="#6c63ff" />
   </linearGradient>
 
   <linearGradient id="visorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
     <stop offset="0%" stop-color="#00F0FF" />
     <stop offset="50%" stop-color="#6c63ff" />
-    <stop offset="100%" stop-color="#ff6b9d" />
+    <stop offset="100%" stop-color="${s}" />
   </linearGradient>
-  
+
   <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
     <feGaussianBlur stdDeviation="2.5" result="blur" />
     <feMerge>
@@ -545,7 +545,7 @@ export function getEmblemSVG(
       <feMergeNode in="SourceGraphic" />
     </feMerge>
   </filter>
-  
+
   <clipPath id="charClip">
     <circle cx="50" cy="50" r="36" />
   </clipPath>`;

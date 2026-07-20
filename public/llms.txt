@@ -22,9 +22,11 @@
 - /work — Services and availability
 
 ## Notable Projects
-- GhostMail — Disposable email server written in Go. Bounded worker pools and SQLite persistence.
-- DomainDeals — Domain availability broker and fast wireframe portfolio index.
-- linacre.site — Curated toolkit directory and AI laboratory.
+- Mob Deals — Transparent UK SIM-only comparison, public source checks, and PAC/STAC switching help.
+- PokeGuru — Pokémon TCG search, UK pricing, set history, and local collection tracking.
+- DKMA Monster — Android OEM battery guidance with optional ADB, root, and Magisk automation.
+- Linacre Uninstaller — Safety-tiered Android app review and guided uninstall utility.
+- linacre.site — Private browser tools, an edited project portfolio, and a developer playground.
 
 ## Technical Specifications
 - local client-side environment runs on Node.js & React SPA.

@@ -7,6 +7,11 @@ import { ChangelogItem } from '../types';
 
 export const CHANGELOG: ChangelogItem[] = [
   {
+    version: 'v6.0',
+    title: 'CyberBlue-Green System',
+    description: 'Rebuilt the visual identity around deep navy surfaces, electric cyan and signal green; replaced the Identity page with a focused export studio; regenerated the GitHub banner, social preview and app icons; and reduced the portfolio to verified projects with live products, downloadable releases or inspectable source.'
+  },
+  {
     version: 'v5.0',
     title: 'The Useful Start Page',
     description: 'Replaced the sales-heavy homepage with a practical daily launchpad: smart web and URL search, private JSON and Base64 tools, timestamp conversion, cryptographically secure UUID/password generation, and direct access to useful Linacre products. The portfolio, toolkit, services, and labs remain available as dedicated routes.'
@@ -46,7 +51,7 @@ export const TERMINAL_LINES = [
   { type: 'out', text: 'building things · open source · learning · creating', cls: 'dim' },
   { type: 'gap' },
   { type: 'cmd', text: 'echo $STATUS' },
-  { type: 'out', text: '⚡ Shipping v4.5 — brand-kit aligned, amber-coded, premium.', cls: 'amb' },
+  { type: 'out', text: '● Shipping v6.0 — CyberBlue, useful-first, verified.', cls: 'amb' },
   { type: 'gap' },
   { type: 'cmd', text: 'ls ./this-site/' },
   { type: 'out', text: 'React · TypeScript · Tailwind CSS v4 · Motion · Express · Brand Kit', cls: 'dim' },

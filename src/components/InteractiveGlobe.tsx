@@ -199,7 +199,7 @@ export default function InteractiveGlobe({ primaryColor }: InteractiveGlobeProps
   }, [primaryColor]);
 
   return (
-    <div 
+    <div
       className="flex items-center justify-center select-none shrink-0"
       style={{ width: '36px', height: '36px' }}
       onMouseEnter={() => setIsHovered(true)}

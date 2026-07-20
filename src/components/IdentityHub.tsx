@@ -1,1953 +1,597 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Copy, 
-  Check, 
-  Download, 
-  Palette, 
-  Shield, 
-  Code, 
-  Sparkles, 
-  Terminal, 
-  FileCode, 
-  ChevronRight, 
-  Globe, 
-  Github, 
-  Type, 
-  Mail, 
-  Briefcase, 
-  Linkedin, 
-  Image as ImageIcon, 
-  IdCard, 
-  Sliders, 
-  ExternalLink,
-  X
+import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'motion/react';
+import {
+  Check,
+  ChevronRight,
+  CircleUserRound,
+  Code2,
+  Copy,
+  Download,
+  FileImage,
+  Github,
+  Image as ImageIcon,
+  LayoutTemplate,
+  Link2,
+  Mail,
+  Palette,
+  RefreshCw,
+  ShieldCheck,
+  Sparkles,
+  Type,
+  WandSparkles,
 } from 'lucide-react';
-import { getEmblemSVG, CustomEmblem } from '../lib/emblemRenderer';
+import { getEmblemSVG } from '../lib/emblemRenderer';
 
-interface CustomEmblemUploaderProps {
-  onUpload: (name: string, type: 'svg' | 'image', content: string) => void;
+type PreviewMode = 'banner' | 'avatar' | 'social';
+
+type PaletteOption = {
+  id: string;
+  name: string;
+  primary: string;
+  secondary: string;
+  description: string;
+};
+
+type FontOption = {
+  id: string;
+  name: string;
+  display: string;
+  mono: string;
+  sample: string;
+};
+
+const PALETTES: PaletteOption[] = [
+  {
+    id: 'cyber',
+    name: 'CyberBlue',
+    primary: '#22D3EE',
+    secondary: '#34D399',
+    description: 'The site default — electric cyan with clean green energy.',
+  },
+  {
+    id: 'ocean',
+    name: 'Ocean Signal',
+    primary: '#38BDF8',
+    secondary: '#2DD4BF',
+    description: 'Cool blue and teal for a calmer technical identity.',
+  },
+  {
+    id: 'matrix',
+    name: 'Green Matrix',
+    primary: '#2DD4BF',
+    secondary: '#A3E635',
+    description: 'High-energy mint and lime without the usual neon clutter.',
+  },
+  {
+    id: 'violet',
+    name: 'Ultraviolet',
+    primary: '#818CF8',
+    secondary: '#22D3EE',
+    description: 'Indigo and cyan for AI experiments and creative systems.',
+  },
+  {
+    id: 'mono',
+    name: 'Ice Mono',
+    primary: '#E2F7FA',
+    secondary: '#7DD3FC',
+    description: 'Restrained icy neutrals for formal and minimal assets.',
+  },
+];
+
+const FRAMES = [
+  { id: 'dl-geo', name: 'Geometric DL', description: 'Primary brand mark' },
+  { id: 'dl-terminal', name: 'Terminal DL', description: 'Developer identity' },
+  { id: 'dl-crest', name: 'Cyber Crest', description: 'Sharper social mark' },
+  { id: 'brackets', name: 'Code Prompt', description: 'Simple technical icon' },
+  { id: 'circle', name: 'Signal Orb', description: 'Soft compact avatar' },
+  { id: 'minimal', name: 'Minimal Spark', description: 'Quiet, abstract option' },
+];
+
+const FONTS: FontOption[] = [
+  {
+    id: 'cyber',
+    name: 'Space Grotesk',
+    display: '"Space Grotesk", "Inter", sans-serif',
+    mono: '"JetBrains Mono", monospace',
+    sample: 'Modern / clear / technical',
+  },
+  {
+    id: 'neotech',
+    name: 'Orbit System',
+    display: '"Orbitron", "Space Grotesk", sans-serif',
+    mono: '"Share Tech Mono", "JetBrains Mono", monospace',
+    sample: 'Futuristic / display-led',
+  },
+  {
+    id: 'brutalist',
+    name: 'Technical Sans',
+    display: '"Plus Jakarta Sans", "Inter", sans-serif',
+    mono: '"Fira Code", "JetBrains Mono", monospace',
+    sample: 'Practical / product-focused',
+  },
+];
+
+const safeStorage = {
+  get(key: string, fallback: string) {
+    try {
+      return localStorage.getItem(key) || fallback;
+    } catch {
+      return fallback;
+    }
+  },
+  set(key: string, value: string) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      // The studio remains usable when browser storage is disabled.
+    }
+  },
+};
+
+function xmlEscape(value: string) {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;');
 }
 
-function CustomEmblemUploader({ onUpload }: CustomEmblemUploaderProps) {
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const processFile = (file: File) => {
-    setErrorMsg(null);
-    if (file.size > 300 * 1024) {
-      setErrorMsg('File too large (max 300KB).');
-      return;
-    }
-
-    const isSvg = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
-    const isImage = file.type.startsWith('image/png') || file.type.startsWith('image/jpeg') || file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg');
-
-    if (!isSvg && !isImage) {
-      setErrorMsg('Use SVG, PNG, or JPG formats.');
-      return;
-    }
-
-    const reader = new FileReader();
-    if (isSvg) {
-      reader.onload = (e) => {
-        const text = e.target?.result as string;
-        if (text.includes('<svg') || text.includes('<path') || text.includes('<rect') || text.includes('<circle')) {
-          onUpload(file.name.replace(/\.[^/.]+$/, ""), 'svg', text);
-        } else {
-          setErrorMsg('Invalid SVG file structure.');
-        }
-      };
-      reader.readAsText(file);
-    } else {
-      reader.onload = (e) => {
-        const base64 = e.target?.result as string;
-        onUpload(file.name.replace(/\.[^/.]+$/, ""), 'image', base64);
-      };
-      reader.readAsDataURL(file);
-    }
+function contrastRatio(hex1: string, hex2: string) {
+  const luminance = (hex: string) => {
+    const clean = hex.replace('#', '');
+    const values = [0, 2, 4].map((index) => parseInt(clean.slice(index, index + 2), 16) / 255);
+    const [r, g, b] = values.map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      processFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      processFile(e.target.files[0]);
-    }
-  };
-
-  const triggerFileInput = () => {
-    const input = document.getElementById('hidden-file-input');
-    input?.click();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      triggerFileInput();
-    }
-  };
-
-  return (
-    <div className="space-y-2">
-      <div
-        className={`relative overflow-hidden rounded-xl border border-dashed p-4 text-center cursor-pointer transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-amber-color ${
-          isDragOver
-            ? 'border-amber-color bg-amber-color/10 shadow-[0_0_15px_rgba(245,158,11,0.15)] animate-pulse'
-            : 'border-border-color/60 hover:border-amber-color/60 hover:bg-muted/10 bg-background/20'
-        }`}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={triggerFileInput}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-        role="button"
-        aria-label="Upload custom emblem. Drag and drop file here, or click to select."
-      >
-        <input
-          id="hidden-file-input"
-          type="file"
-          accept=".svg,image/svg+xml,image/png,image/jpeg"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        <div className="flex flex-col items-center justify-center space-y-1.5 text-muted-foreground">
-          <ImageIcon className="w-5 h-5 text-muted-foreground/60" />
-          <div className="text-[11px] font-mono">
-            <span className="text-amber-color font-bold hover:underline">Click to browse</span> or drop file
-          </div>
-          <div className="text-[9px] font-mono opacity-50">SVG, PNG, or JPG up to 300KB</div>
-        </div>
-      </div>
-      {errorMsg && (
-        <div className="text-[10px] font-mono text-rose-500 leading-none">
-          ⚠️ {errorMsg}
-        </div>
-      )}
-    </div>
-  );
+  const a = luminance(hex1);
+  const b = luminance(hex2);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
-function getRelativeLuminance(hex: string): number {
-  let c = hex.substring(1);
-  if (c.length === 3) {
-    c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
-  }
-  const r = parseInt(c.substring(0, 2), 16) / 255;
-  const g = parseInt(c.substring(2, 4), 16) / 255;
-  const b = parseInt(c.substring(4, 6), 16) / 255;
+function downloadText(content: string, filename: string, type = 'image/svg+xml;charset=utf-8') {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
 
-  const a = [r, g, b].map(v => {
-    return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+async function svgToPng(svg: string, filename: string, width: number, height: number) {
+  const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const image = new Image();
+  await new Promise<void>((resolve, reject) => {
+    image.onload = () => resolve();
+    image.onerror = () => reject(new Error('Could not render this SVG.'));
+    image.src = url;
   });
-
-  return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
-}
-
-function getContrastRatio(hex1: string, hex2: string): number {
-  const l1 = getRelativeLuminance(hex1);
-  const l2 = getRelativeLuminance(hex2);
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  return (lighter + 0.05) / (darker + 0.05);
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('Canvas is not supported in this browser.');
+  context.drawImage(image, 0, 0, width, height);
+  URL.revokeObjectURL(url);
+  const pngUrl = canvas.toDataURL('image/png');
+  const anchor = document.createElement('a');
+  anchor.href = pngUrl;
+  anchor.download = filename;
+  anchor.click();
 }
 
 export default function IdentityHub() {
-  // Brand Color Options
-  const colors = [
-    { name: 'Amber Aura', id: 'amber', primary: '#f59e0b', secondary: '#fbbf24', glow: 'rgba(245, 158, 11, 0.25)', text: 'text-amber-color', border: 'border-amber-color/30', bg: 'bg-amber-color/10', signature: '#f59e0b' },
-    { name: 'Cyber Cyan', id: 'cyan', primary: '#06b6d4', secondary: '#22d3ee', glow: 'rgba(6, 182, 212, 0.25)', text: 'text-cyan', border: 'border-cyan/30', bg: 'bg-cyan/10', signature: '#06b6d4' },
-    { name: 'Emerald Flux', id: 'emerald', primary: '#10b981', secondary: '#34d399', glow: 'rgba(16, 185, 129, 0.25)', text: 'text-emerald-color', border: 'border-emerald-color/30', bg: 'bg-emerald-color/10', signature: '#10b981' },
-    { name: 'Crimson Pulse', id: 'crimson', primary: '#ef4444', secondary: '#f87171', glow: 'rgba(239, 68, 68, 0.25)', text: 'text-rose-500', border: 'border-rose-500/30', bg: 'bg-rose-500/10', signature: '#ef4444' },
-    { name: 'Obsidian Mono', id: 'mono', primary: '#e2e8f0', secondary: '#94a3b8', glow: 'rgba(226, 232, 240, 0.15)', text: 'text-slate-200', border: 'border-slate-700', bg: 'bg-slate-800/40', signature: '#e2e8f0' }
-  ];
+  const savedPalette = safeStorage.get('linacre_brand_color', 'cyber');
+  const initialPalette = savedPalette === 'amber' ? 'cyber' : savedPalette;
 
-  // Shield Frames
-  const frames = [
-    { id: 'hexagon', name: 'Pipeline Nexus' },
-    { id: 'circle', name: 'Aether Orb' },
-    { id: 'brackets', name: 'Cyber Brackets' },
-    { id: 'minimal', name: 'Minimalist Spark' },
-    { id: 'streetwear', name: 'Streetwear Morph' }
-  ];
+  const [paletteId, setPaletteId] = useState(initialPalette);
+  const [frame, setFrame] = useState(safeStorage.get('linacre_brand_frame', 'dl-geo'));
+  const [fontId, setFontId] = useState(safeStorage.get('linacre_brand_font', 'cyber'));
+  const [motionMode, setMotionMode] = useState(safeStorage.get('linacre_brand_motion', 'pulse'));
+  const [glow, setGlow] = useState(Number(safeStorage.get('linacre_brand_glow', '2')));
+  const [name, setName] = useState(safeStorage.get('linacre_brand_name', 'DAVID LINACRE'));
+  const [title, setTitle] = useState(safeStorage.get('linacre_brand_title', 'Software engineer · useful tools · AI systems'));
+  const [bio, setBio] = useState(safeStorage.get('linacre_brand_bio', 'Building practical software, open-source tools, and reliable automation systems.'));
+  const [email, setEmail] = useState(safeStorage.get('linacre_brand_email', 'david@linacre.site'));
+  const [website, setWebsite] = useState(safeStorage.get('linacre_brand_website', 'https://www.linacre.site'));
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('banner');
+  const [copied, setCopied] = useState<string | null>(null);
 
-  // Premium Typography Pairings (dynamically loaded via Google Fonts link)
-  const fonts = [
-    {
-      id: 'cyber',
-      name: 'Space Tech',
-      import: "@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap');",
-      displayFamily: "'Space Grotesk', sans-serif",
-      monoFamily: "'JetBrains Mono', monospace",
-    },
-    {
-      id: 'neotech',
-      name: 'Futuristic Orbit',
-      import: "@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800&family=Share+Tech+Mono&display=swap');",
-      displayFamily: "'Orbitron', sans-serif",
-      monoFamily: "'Share Tech Mono', monospace",
-    },
-    {
-      id: 'brutalist',
-      name: 'Technical Mono',
-      import: "@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Plus+Jakarta+Sans:wght@500;800&display=swap');",
-      displayFamily: "'Plus Jakarta Sans', sans-serif",
-      monoFamily: "'Fira Code', monospace",
-    },
-    {
-      id: 'editorial',
-      name: 'Editorial Serif',
-      import: "@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Fira+Mono&display=swap');",
-      displayFamily: "'Playfair Display', serif",
-      monoFamily: "'Fira Mono', monospace",
-    }
-  ];
-
-  const [activeColor, setActiveColor] = useState(() => {
-    const saved = localStorage.getItem('linacre_brand_color');
-    return colors.find(c => c.id === saved) || colors[0];
-  });
-
-  const [customEmblems, setCustomEmblems] = useState<CustomEmblem[]>(() => {
-    try {
-      const saved = localStorage.getItem('linacre_custom_emblems');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      console.error(e);
-      return [];
-    }
-  });
-
-  const [activeFrame, setActiveFrame] = useState(() => {
-    const saved = localStorage.getItem('linacre_brand_frame') || 'hexagon';
-    if (saved.startsWith('custom-')) {
-      try {
-        const savedEmblemsStr = localStorage.getItem('linacre_custom_emblems');
-        const savedEmblems = savedEmblemsStr ? JSON.parse(savedEmblemsStr) : [];
-        const exists = savedEmblems.some((e: any) => e.id === saved);
-        if (exists) return saved;
-      } catch (e) {
-        console.error(e);
-      }
-      return 'hexagon';
-    }
-    return saved;
-  });
-
-  const [activeMotion, setActiveMotion] = useState(() => localStorage.getItem('linacre_brand_motion') || 'pulse');
-  const [activePulseSpeed, setActivePulseSpeed] = useState(() => localStorage.getItem('linacre_brand_pulse_speed') || 'slow');
-  const [activeFont, setActiveFont] = useState(() => {
-    const saved = localStorage.getItem('linacre_brand_font');
-    return fonts.find(f => f.id === saved) || fonts[0];
-  });
-  const [glowIntensity, setGlowIntensity] = useState<number>(() => Number(localStorage.getItem('linacre_brand_glow') || '3'));
-  const [a11yIdentityMsg, setA11yIdentityMsg] = useState('');
-
-  const [isPreviewDragOver, setIsPreviewDragOver] = useState(false);
+  const palette = PALETTES.find((option) => option.id === paletteId) || PALETTES[0];
+  const activeFont = FONTS.find((option) => option.id === fontId) || FONTS[0];
 
   useEffect(() => {
-    try {
-      localStorage.setItem('linacre_custom_emblems', JSON.stringify(customEmblems));
-    } catch (e) {
-      console.error('Failed to save custom emblems', e);
-    }
-  }, [customEmblems]);
-
-  const handleCustomEmblemUpload = (name: string, type: 'svg' | 'image', content: string) => {
-    const newId = `custom-${Date.now()}`;
-    const newEmblem = { id: newId, name, type, content };
-    setCustomEmblems(prev => [newEmblem, ...prev]);
-    setActiveFrame(newId);
-    setA11yIdentityMsg(`Custom emblem "${name}" uploaded and activated.`);
-  };
-
-  const handleDeleteCustomEmblem = (id: string) => {
-    setCustomEmblems(prev => prev.filter(e => e.id !== id));
-    if (activeFrame === id) {
-      setActiveFrame('hexagon');
-      setA11yIdentityMsg(`Custom emblem deleted. Active shape reset to Pipeline Nexus.`);
-    } else {
-      setA11yIdentityMsg(`Custom emblem deleted.`);
-    }
-  };
-
-  const handlePreviewDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsPreviewDragOver(true);
-  };
-
-  const handlePreviewDragLeave = () => {
-    setIsPreviewDragOver(false);
-  };
-
-  const handlePreviewDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsPreviewDragOver(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const file = e.dataTransfer.files[0];
-      if (file.size > 300 * 1024) {
-        alert('File is too large (max 300KB).');
-        return;
-      }
-      const isSvg = file.type === 'image/svg+xml' || file.name.endsWith('.svg');
-      const isImage = file.type.startsWith('image/png') || file.type.startsWith('image/jpeg') || file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg');
-      if (!isSvg && !isImage) {
-        alert('Unsupported format. Please upload SVG, PNG, or JPG.');
-        return;
-      }
-      const reader = new FileReader();
-      if (isSvg) {
-        reader.onload = (el) => {
-          const text = el.target?.result as string;
-          if (text.includes('<svg') || text.includes('<path') || text.includes('<rect') || text.includes('<circle')) {
-            handleCustomEmblemUpload(file.name.replace(/\.[^/.]+$/, ""), 'svg', text);
-          } else {
-            alert('Invalid SVG file.');
-          }
-        };
-        reader.readAsText(file);
-      } else {
-        reader.onload = (el) => {
-          const base64 = el.target?.result as string;
-          handleCustomEmblemUpload(file.name.replace(/\.[^/.]+$/, ""), 'image', base64);
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-  };
-  
-  // User Profile Data
-  const [userName, setUserName] = useState(() => localStorage.getItem('linacre_brand_name') || 'DAVID LINACRE');
-  const [userTitle, setUserTitle] = useState(() => localStorage.getItem('linacre_brand_title') || 'Full Stack & AI Engineer');
-  const [userBio, setUserBio] = useState(() => localStorage.getItem('linacre_brand_bio') || 'Crafting pristine digital tools, robust server proxy networks, and intelligent sandbox applications.');
-  
-  // Social links for email signature and badges
-  const [userEmail, setUserEmail] = useState(() => localStorage.getItem('linacre_brand_email') || 'david@linacre.site');
-  const [userGithub, setUserGithub] = useState(() => localStorage.getItem('linacre_brand_github') || 'github.com/LIN4CRE');
-  const [userLinkedin, setUserLinkedin] = useState(() => localStorage.getItem('linacre_brand_linkedin') || 'linkedin.com/in/david-linacre');
-  const [userWebsite, setUserWebsite] = useState(() => localStorage.getItem('linacre_brand_website') || 'https://www.linacre.site');
-
-  // Dynamically insert link tag for Google Fonts to satisfy strict CSP rules
-  useEffect(() => {
-    const linkId = 'dynamic-google-fonts';
-    let link = document.getElementById(linkId) as HTMLLinkElement;
-    if (!link) {
-      link = document.createElement('link');
-      link.id = linkId;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-    }
-    const match = activeFont.import.match(/url\(['"]([^'"]+)['"]\)/);
-    if (match && match[1]) {
-      link.href = match[1];
-    }
-  }, [activeFont]);
-
-  useEffect(() => {
-    localStorage.setItem('linacre_brand_color', activeColor.id);
-    localStorage.setItem('linacre_brand_font', activeFont.id);
-    localStorage.setItem('linacre_brand_frame', activeFrame);
-    localStorage.setItem('linacre_brand_motion', activeMotion);
-    localStorage.setItem('linacre_brand_pulse_speed', activePulseSpeed);
-    localStorage.setItem('linacre_brand_name', userName);
-    localStorage.setItem('linacre_brand_title', userTitle);
-    localStorage.setItem('linacre_brand_bio', userBio);
-    localStorage.setItem('linacre_brand_email', userEmail);
-    localStorage.setItem('linacre_brand_github', userGithub);
-    localStorage.setItem('linacre_brand_linkedin', userLinkedin);
-    localStorage.setItem('linacre_brand_website', userWebsite);
-    localStorage.setItem('linacre_brand_glow', glowIntensity.toString());
-    
-    // Dispatch event to notify other components reactively (e.g. App.tsx)
+    safeStorage.set('linacre_brand_color', palette.id);
+    safeStorage.set('linacre_brand_frame', frame);
+    safeStorage.set('linacre_brand_font', activeFont.id);
+    safeStorage.set('linacre_brand_motion', motionMode);
+    safeStorage.set('linacre_brand_pulse_speed', 'slow');
+    safeStorage.set('linacre_brand_glow', String(glow));
+    safeStorage.set('linacre_brand_name', name);
+    safeStorage.set('linacre_brand_title', title);
+    safeStorage.set('linacre_brand_bio', bio);
+    safeStorage.set('linacre_brand_email', email);
+    safeStorage.set('linacre_brand_website', website);
     window.dispatchEvent(new Event('linacre-identity-updated'));
+  }, [palette, frame, activeFont, motionMode, glow, name, title, bio, email, website]);
 
-    // Announce change to screen readers (debounced via the state reset pattern)
-    setA11yIdentityMsg('');
-    const frameName = frames.find(f => f.id === activeFrame)?.name 
-      || [
-        { id: 'dl-geo', name: 'DL Geometric Shield' },
-        { id: 'dl-terminal', name: 'DL Terminal Box' },
-        { id: 'dl-sacred', name: 'DL Sacred Geometry' },
-        { id: 'dl-crest', name: 'DL Cyberpunk Crest' }
-      ].find(f => f.id === activeFrame)?.name
-      || customEmblems.find(e => e.id === activeFrame)?.name
-      || activeFrame;
-
-    const t = setTimeout(() => setA11yIdentityMsg(
-      `Brand updated: ${activeColor.name} colour, ${frameName} frame, ${activeFont.name} font.`
-    ), 50);
-    return () => clearTimeout(t);
-  }, [
-    activeColor,
-    activeFont,
-    activeFrame,
-    activeMotion,
-    activePulseSpeed,
-    userName,
-    userTitle,
-    userBio,
-    userEmail,
-    userGithub,
-    userLinkedin,
-    userWebsite,
-    glowIntensity
-  ]);
-
-  // Preview Layout switcher
-  const [activeLayout, setActiveLayout] = useState<'panoramic' | 'avatar' | 'card'>('panoramic');
-  
-  const [copiedType, setCopiedType] = useState<string | null>(null);
-
-  // Copy animation feedback
-  const triggerCopyFeedback = (type: string) => {
-    setCopiedType(type);
-    setTimeout(() => setCopiedType(null), 2000);
-  };
-
-  // Generate the customized SVG code
-  const getSVGCode = () => {
-    return getEmblemSVG(
-      activeFrame,
-      activeColor.primary,
-      activeColor.secondary,
-      activeMotion,
-      activePulseSpeed,
-      glowIntensity,
-      customEmblems
-    );
-  };
-
-  // Generate the tailored React / JSX Code
-  const getReactCode = () => {
-    const p = activeColor.primary;
-    const s = activeColor.secondary;
-    const frame = activeFrame;
-    const speedSeconds = activePulseSpeed === 'fast' ? '1.0s' : activePulseSpeed === 'breathe' ? '5.0s' : '2.5s';
-
-    let extraGradientsJSX = '';
-    let styleJSX = '';
-    if (frame === 'streetwear') {
-      extraGradientsJSX = `
-        {/* Carbon Fiber Pattern */}
-        <pattern id="carbonFiber" width="6" height="6" patternUnits="userSpaceOnUse">
-          <rect width="6" height="6" fill="#121217" />
-          <path d="M0,3 L6,3 M3,0 L3,6" stroke="#1d1d26" strokeWidth="0.8" />
-          <path d="M0,0 L6,6 M0,6 L6,0" stroke="#0a0a0f" strokeWidth="0.4" opacity="0.8" />
-          <rect width="3" height="3" fill="#1a1a24" opacity="0.4" />
-          <rect x="3" y="3" width="3" height="3" fill="#0d0d12" opacity="0.4" />
-        </pattern>
-
-        {/* Metallic Graphite Gradients */}
-        <linearGradient id="graphiteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#555566" />
-          <stop offset="20%" stopColor="#2a2a35" />
-          <stop offset="40%" stopColor="#15151f" />
-          <stop offset="60%" stopColor="#3d3d4f" />
-          <stop offset="80%" stopColor="#111116" />
-          <stop offset="100%" stopColor="#22222d" />
-        </linearGradient>
-
-        <linearGradient id="darkMetalGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#2d2d3a" />
-          <stop offset="50%" stopColor="#181822" />
-          <stop offset="100%" stopColor="#09090d" />
-        </linearGradient>
-
-        {/* Specular Highlight Overlay */}
-        <linearGradient id="specularGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0.3" />
-          <stop offset="35%" stopColor="#ffffff" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-
-        <linearGradient id="pinkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#ff6b9d" />
-          <stop offset="100%" stopColor="#6c63ff" />
-        </linearGradient>
-
-        <linearGradient id="visorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#00F0FF" />
-          <stop offset="50%" stopColor="#6c63ff" />
-          <stop offset="100%" stopColor="#ff6b9d" />
-        </linearGradient>
-        
-        <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        
-        <clipPath id="charClip">
-          <circle cx="50" cy="50" r="36" />
-        </clipPath>`;
-      
-      styleJSX = `
-        <style>
-          @keyframes rotateCW {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          @keyframes rotateCCW {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(-360deg); }
-          }
-          @keyframes scanline {
-            0% { transform: translateY(-36px); }
-            100% { transform: translateY(36px); }
-          }
-          @keyframes characterMorph {
-            0%, 28% { opacity: 1; transform: translate(0, 0) scale(1); }
-            33%, 95% { opacity: 0; transform: translate(0, 2px) scale(0.92); }
-            100% { opacity: 1; transform: translate(0, 0) scale(1); }
-          }
-          .g-rotate-cw {
-            transform-origin: 50px 50px;
-            animation: rotateCW 25s linear infinite;
-          }
-          .g-rotate-ccw {
-            transform-origin: 50px 50px;
-            animation: rotateCCW 20s linear infinite;
-          }
-          .scanline-bar {
-            animation: scanline 4s linear infinite;
-          }
-          .char-layer {
-            transform-origin: 50px 50px;
-            animation: characterMorph 15s ease-in-out infinite;
-          }
-          .char-ape { animation-delay: 0s; }
-          .char-skull { animation-delay: 5s; }
-          .char-cat { animation-delay: 10s; }
-        </style>`;
-    } else if (activeMotion === 'pulse') {
-      styleJSX = `
-        <style>
-          @keyframes dPulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.95; }
-          }
-          .d-pulse-path {
-            animation: dPulse ${speedSeconds} ease-in-out infinite;
-          }
-        </style>`;
-    } else if (activeMotion === 'spin') {
-      styleJSX = `
-        <style>
-          @keyframes spinLogo {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-          .spin-logo-g {
-            transform-origin: 50px 50px;
-            animation: spinLogo 8s linear infinite;
-          }
-        </style>`;
-    }
-
-    let emblemJSX = '';
-    if (frame === 'hexagon') {
-      emblemJSX = `
-        {/* Pipeline Nexus Hexagon */}
-        <polygon points="50,3 91,25 91,75 50,97 9,75 9,25" fill="none" stroke="${p}" strokeWidth="3" strokeLinejoin="round" />
-        <polygon points="50,8 87,28 87,72 50,92 13,72 13,28" fill="none" stroke="${s}" strokeWidth="1" strokeDasharray="6 4" opacity="0.3" />
-        
-        <g transform="translate(20, 20)" fill="url(#linacreGrad)">
-          <rect x="5" y="5" width="8" height="8" rx="2" opacity="0.4" />
-          <rect x="18" y="5" width="8" height="8" rx="2" opacity="0.6" />
-          <rect x="31" y="5" width="8" height="8" rx="2" />
-          <rect x="44" y="5" width="8" height="8" rx="2" opacity="0.6" />
-          <rect x="5" y="18" width="8" height="8" rx="2" opacity="0.5" />
-          <rect x="18" y="18" width="8" height="8" rx="2" opacity="0.8" />
-          <rect x="31" y="18" width="8" height="8" rx="2" fill="${s}" />
-          <rect x="44" y="18" width="8" height="8" rx="2" opacity="0.5" />
-          <rect x="18" y="31" width="22" height="8" rx="2" fill="#ff6b9d" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />
-          <rect x="5" y="31" width="8" height="8" rx="2" opacity="0.6" />
-          <rect x="44" y="31" width="8" height="8" rx="2" opacity="0.6" />
-          <rect x="5" y="44" width="8" height="8" rx="2" opacity="0.4" />
-          <rect x="18" y="44" width="8" height="8" rx="2" opacity="0.6" />
-          <rect x="31" y="44" width="8" height="8" rx="2" />
-          <rect x="44" y="44" width="8" height="8" rx="2" opacity="0.4" />
-        </g>`;
-    } else if (frame === 'circle') {
-      emblemJSX = `
-        {/* Aether Orb Center */}
-        <circle cx="50" cy="50" r="44" fill="none" stroke="${p}" strokeWidth="2.5" />
-        <circle cx="50" cy="50" r="39" fill="none" stroke="${s}" strokeWidth="1" strokeDasharray="5 3" opacity="0.4" />
-        
-        <circle cx="50" cy="50" r="16" fill="url(#linacreGrad)" />
-        <circle cx="50" cy="50" r="22" fill="none" stroke="${s}" strokeWidth="1.5" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />
-        <path d="M 50,43 L 52,48 L 57,50 L 52,52 L 50,57 L 48,52 L 43,50 L 48,48 Z" fill="#ffffff" />`;
-    } else if (frame === 'brackets') {
-      emblemJSX = `
-        {/* Code Brackets Frame */}
-        <path d="M 24,12 L 10,12 L 10,88 L 24,88" fill="none" stroke="${p}" strokeWidth="4.5" strokeLinecap="round" />
-        <path d="M 76,12 L 90,12 L 90,88 L 76,88" fill="none" stroke="${p}" strokeWidth="4.5" strokeLinecap="round" />
-        
-        <g transform="translate(34, 40)" fill="url(#linacreGrad)">
-          <path d="M 0,4 L 12,10 L 0,16" fill="none" stroke="${p}" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-          <rect x="18" y="15" width="14" height="3" rx="1.5" fill="${s}" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />
-        </g>`;
-    } else if (frame === 'streetwear') {
-      emblemJSX = `
-        {/* Background Component */}
-        <circle cx="50" cy="50" r="47" fill="url(#darkMetalGrad)" stroke="#1a1a26" strokeWidth="1.5" />
-        
-        {/* Rotating Technical Rings */}
-        <circle cx="50" cy="50" r="44" fill="none" stroke="url(#linacreGrad)" strokeWidth="0.8" strokeDasharray="16 28 8 12" className="g-rotate-cw" opacity="0.9" filter="url(#linacreGlow)" />
-        <circle cx="50" cy="50" r="41.8" fill="none" stroke="${s}" strokeWidth="0.5" strokeDasharray="6 30 18 6" className="g-rotate-ccw" opacity="0.6" />
-        <circle cx="50" cy="50" r="39.5" fill="none" stroke="#ffffff" strokeWidth="0.25" strokeDasharray="1 4" opacity="0.2" />
-
-        {/* Corner Crosshair Brackets */}
-        <g stroke="#ffffff" strokeWidth="0.5" opacity="0.3" fill="none">
-          <path d="M 13.5,35 L 13.5,32.5 L 16,32.5" />
-          <path d="M 86.5,35 L 86.5,32.5 L 84,32.5" />
-          <path d="M 13.5,65 L 13.5,67.5 L 16,67.5" />
-          <path d="M 86.5,65 L 86.5,67.5 L 84,67.5" />
-        </g>
-
-        {/* Masked Moving Scanline Overlay */}
-        <g clipPath="url(#charClip)">
-          <line x1="20" y1="50" x2="80" y2="50" stroke="#00F0FF" strokeWidth="0.4" opacity="0.3" className="scanline-bar" filter="url(#linacreGlow)" />
-        </g>
-
-        {/* CHARACTER 1: THE HIGH-FIDELITY CYBER APE */}
-        <g className="char-layer char-ape">
-          {/* Drop Shadow Base */}
-          <ellipse cx="50" cy="76" rx="12" ry="1.8" fill="rgba(0,0,0,0.5)" />
-          
-          {/* Ribbed Beanie Hat (Graphite) */}
-          <path d="M 33.5,41 C 33.5,24 66.5,24 66.5,41 Z" fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.8" />
-          {/* Beanie Ribbed Texture Lines */}
-          <g stroke="#121217" strokeWidth="0.6" opacity="0.5">
-            <path d="M 38,28 C 39,32 40,36 40,41" />
-            <path d="M 43,26 C 44,30 45,35 45,41" />
-            <path d="M 48,25.2 C 49,30 49,35 49,41" />
-            <path d="M 52,25.2 C 51,30 51,35 51,41" />
-            <path d="M 57,26 C 56,30 55,35 55,41" />
-            <path d="M 62,28 C 61,32 60,36 60,41" />
-          </g>
-          {/* Beanie Fold-up Band */}
-          <path d="M 31.5,39 C 31.5,38 68.5,38 68.5,39 L 67.5,43.5 C 67.5,44.5 32.5,44.5 32.5,43.5 Z" fill="url(#darkMetalGrad)" stroke="#121217" strokeWidth="0.6" />
-          {/* Specular shine on beanie fold */}
-          <path d="M 32.5,39 H 67.5 V 40.5 H 32.5 Z" fill="url(#specularGrad)" />
-          {/* Beanie Woven Label */}
-          <rect x="45.5" y="39.5" width="9" height="3.5" rx="0.5" fill="url(#carbonFiber)" stroke="url(#linacreGrad)" strokeWidth="0.4" />
-          <text x="50" y="42" fontFamily="'JetBrains Mono', monospace" fontSize="1.8" fontWeight="900" fill="#00F0FF" textAnchor="middle" letterSpacing="0.1">LNC</text>
-
-          {/* Ape Head Structure */}
-          {/* Ears */}
-          <circle cx="32" cy="51" r="4.5" fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.6" />
-          <circle cx="32" cy="51" r="2.8" fill="#15151f" stroke="#00f0ff" strokeWidth="0.4" />
-          <circle cx="68" cy="51" r="4.5" fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.6" />
-          <circle cx="68" cy="51" r="2.8" fill="#15151f" stroke="#00f0ff" strokeWidth="0.4" />
-
-          {/* Face */}
-          <path d="M 34.5,48.5 C 34.5,64.5 65.5,64.5 65.5,48.5 C 65.5,42.5 61.5,39.5 50,39.5 C 38.5,39.5 34.5,42.5 34.5,48.5 Z" fill="url(#darkMetalGrad)" stroke="#121217" strokeWidth="0.8" />
-
-          {/* Visor Sunglasses */}
-          <path d="M 33.5,44 C 35,42 65,42 66.5,44 L 64.5,52.5 C 63,54.5 37,54.5 35.5,52.5 Z" fill="url(#carbonFiber)" stroke="#121217" strokeWidth="0.8" />
-          <path d="M 35,45 C 36.5,43.5 63.5,43.5 65,45 L 63.2,51.2 C 62,52.8 38,52.8 36.8,51.2 Z" fill="url(#visorGrad)" stroke="#ffffff" strokeWidth="0.3" opacity="0.9" />
-          <path d="M 35.5,45.2 C 37,44.2 63,44.2 64.5,45.2 L 63.8,47 C 62.5,46.2 37.5,46.2 36.2,47 Z" fill="#ffffff" opacity="0.4" />
-          <line x1="39" y1="46" x2="42" y2="50" stroke="#ffffff" strokeWidth="0.6" opacity="0.3" strokeLinecap="round" />
-          <line x1="40.5" y1="46" x2="43.5" y2="50" stroke="#ffffff" strokeWidth="0.3" opacity="0.2" strokeLinecap="round" />
-
-          {/* Muzzle */}
-          <path d="M 40.5,54.5 C 40.5,63.5 59.5,63.5 59.5,54.5 C 59.5,51.5 40.5,51.5 40.5,54.5 Z" fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.6" />
-          <path d="M 48.5,53.8 Q 50,55.2 51.5,53.8" fill="none" stroke="#121217" strokeWidth="0.8" strokeLinecap="round" />
-          <ellipse cx="48.2" cy="55.2" rx="0.8" ry="0.5" fill="#121217" />
-          <ellipse cx="51.8" cy="55.2" rx="0.8" ry="0.5" fill="#121217" />
-          <path d="M 44.5,58 Q 50,60.8 55.5,58" fill="none" stroke="#00F0FF" strokeWidth="0.6" strokeLinecap="round" />
-
-          {/* Hoodie Collar */}
-          <path d="M 35,63.5 C 32,71.5 68,71.5 65,63.5 L 59,71 H 41 Z" fill="url(#carbonFiber)" stroke="#121217" strokeWidth="0.8" />
-          <circle cx="44" cy="68.5" r="1.3" fill="url(#graphiteGrad)" stroke="#ffffff" strokeWidth="0.3" />
-          <circle cx="56" cy="68.5" r="1.3" fill="url(#graphiteGrad)" stroke="#ffffff" strokeWidth="0.3" />
-          <path d="M 44,69.5 C 43,72 45,74 44.5,76.5" fill="none" stroke="#1a1a24" strokeWidth="0.8" strokeLinecap="round" />
-          <rect x="43.8" y="76.5" width="1.4" height="2.5" rx="0.3" fill="url(#graphiteGrad)" stroke="#ffffff" strokeWidth="0.2" />
-          <path d="M 56,69.5 C 57,72 55,74 55.5,76.5" fill="none" stroke="#1a1a24" strokeWidth="0.8" strokeLinecap="round" />
-          <rect x="54.8" y="76.5" width="1.4" height="2.5" rx="0.3" fill="url(#graphiteGrad)" stroke="#ffffff" stroke-width="0.2" />
-        </g>
-
-        {/* CHARACTER 2: THE HIGH-FIDELITY CYBER SKULL */}
-        <g className="char-layer char-skull" opacity="0">
-          <ellipse cx="50" cy="76" rx="12" ry="1.8" fill="rgba(0,0,0,0.5)" />
-          
-          <g stroke="url(#linacreGrad)" strokeWidth="3" strokeLinecap="round" opacity="0.95">
-            <line x1="28" y1="28" x2="72" y2="72" />
-            <line x1="72" y1="28" x2="28" y2="72" />
-          </g>
-          <g fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.5">
-            <circle cx="26" cy="26" r="2.2" /><circle cx="29" cy="27" r="1.8" />
-            <circle cx="74" cy="26" r="2.2" /><circle cx="71" cy="27" r="1.8" />
-            <circle cx="26" cy="74" r="2.2" /><circle cx="29" cy="73" r="1.8" />
-            <circle cx="74" cy="74" r="2.2" /><circle cx="71" cy="73" r="1.8" />
-          </g>
-
-          <path d="M 36.5,45 C 36.5,33.5 63.5,33.5 63.5,45 C 63.5,55.5 60.5,56.5 57,58.5 L 56.5,65.5 C 56.5,67 43.5,67 43.5,65.5 L 43,58.5 C 39.5,56.5 36.5,55.5 36.5,45 Z" fill="url(#graphiteGrad)" stroke="#15151f" strokeWidth="0.8" />
-          <path d="M 37.5,44.5 C 37.5,34.5 62.5,34.5 62.5,44.5 C 62.5,41 37.5,41 37.5,44.5 Z" fill="url(#specularGrad)" opacity="0.6" />
-          <path d="M 37,45 Q 40,43 40,48 Q 40,53 37,51 Z" fill="#121217" opacity="0.3" />
-          <path d="M 63,45 Q 60,43 60,48 Q 60,53 63,51 Z" fill="#121217" opacity="0.3" />
-
-          {/* Cap */}
-          <path d="M 36,43 C 36,31 64,31 64,43 Z" fill="url(#carbonFiber)" stroke="#121217" strokeWidth="0.6" />
-          <path d="M 31.8,42 Q 50,38 68.2,42" fill="none" stroke="url(#linacreGrad)" strokeWidth="1.2" strokeLinecap="round" filter="url(#linacreGlow)" />
-          <rect x="42.5" y="42.5" width="15" height="3" rx="0.5" fill="#121217" stroke="#333" strokeWidth="0.3" />
-          <circle cx="44.5" cy="44" r="0.4" fill="#FFAA33" />
-          <circle cx="46.5" cy="44" r="0.4" fill="#FFAA33" />
-          <circle cx="48.5" cy="44" r="0.4" fill="#FFAA33" />
-          <circle cx="50.5" cy="44" r="0.4" fill="#FFAA33" />
-          <circle cx="52.5" cy="44" r="0.4" fill="#FFAA33" />
-          <circle cx="54.5" cy="44" r="0.4" fill="#FFAA33" />
-          <circle cx="56.5" cy="44" r="0.4" fill="#FFAA33" />
-
-          {/* Sockets */}
-          <polygon points="38.5,46.5 41.5,43.5 46.5,45.5 46.5,49.5 43,51.5 39.5,49.8" fill="#111116" stroke="#252530" strokeWidth="0.4" />
-          <polygon points="61.5,46.5 58.5,43.5 53.5,45.5 53.5,49.5 57,51.5 60.5,49.8" fill="#111116" stroke="#252530" strokeWidth="0.4" />
-          
-          <circle cx="42.8" cy="47.2" r="2.2" fill="none" stroke="#FFAA33" strokeWidth="0.3" strokeDasharray="1.5 1.5" className="glowing-eye" />
-          <circle cx="42.8" cy="47.2" r="0.8" fill="#FFAA33" />
-          <circle cx="57.2" cy="47.2" r="2.2" fill="none" stroke="#FFAA33" strokeWidth="0.3" strokeDasharray="1.5 1.5" className="glowing-eye" />
-          <circle cx="57.2" cy="47.2" r="0.8" fill="#FFAA33" />
-
-          <path d="M 50,50 L 48,53 Q 50,54 52,53 Z" fill="#111116" stroke="#252530" strokeWidth="0.3" />
-
-          {/* Teeth */}
-          <rect x="44" y="56" width="12" height="4.5" rx="0.8" fill="#111116" stroke="#1d1d26" strokeWidth="0.4" />
-          <rect x="45.2" y="56.2" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="47.2" y="56.2" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="49.2" y="56.2" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="51.2" y="56.2" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="53.2" y="56.2" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="45.2" y="58.3" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="47.2" y="58.3" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="49.2" y="58.3" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="51.2" y="58.3" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <rect x="53.2" y="58.3" width="1.6" height="2" rx="0.3" fill="#E2E2EC" />
-          <line x1="44" y1="58.1" x2="56" y2="58.1" stroke="#111116" strokeWidth="0.3" />
-        </g>
-
-        {/* CHARACTER 3: THE HIGH-FIDELITY CYBER CAT/BEAR */}
-        <g className="char-layer char-cat" opacity="0">
-          <ellipse cx="50" cy="76" rx="12" ry="1.8" fill="rgba(0,0,0,0.5)" />
-          
-          <path d="M 37.5,61 Q 50,66.5 62.5,61 L 59.5,68.5 Q 50,71.5 40.5,68.5 Z" fill="url(#darkMetalGrad)" stroke="#ff6b9d" strokeWidth="0.5" />
-
-          {/* Ears */}
-          <g>
-            <polygon points="35.5,41.5 25.5,21.5 45,35.5" fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.6" strokeLinejoin="round" />
-            <polygon points="34.2,39 27.5,24.5 42,34.8" fill="url(#pinkGrad)" />
-            <line x1="28" y1="26" x2="31" y2="28" stroke="#ffffff" strokeWidth="0.4" opacity="0.8" />
-            <line x1="32" y1="31" x2="35" y2="33" stroke="#ffffff" strokeWidth="0.4" opacity="0.8" />
-          </g>
-          <g>
-            <polygon points="64.5,41.5 74.5,21.5 55,35.5" fill="url(#graphiteGrad)" stroke="#1a1a24" strokeWidth="0.6" strokeLinejoin="round" />
-            <polygon points="65.8,39 72.5,24.5 58,34.8" fill="url(#pinkGrad)" />
-            <line x1="72" y1="26" x2="69" y2="28" stroke="#ffffff" strokeWidth="0.4" opacity="0.8" />
-            <line x1="68" y1="31" x2="65" y2="33" stroke="#ffffff" strokeWidth="0.4" opacity="0.8" />
-          </g>
-
-          {/* Head Base */}
-          <path d="M 34.5,41 C 29,49.2 30.2,60 37,64 C 43.8,67.8 56.2,67.8 63,64 C 69.8,60 71,49.2 65.5,41 C 65.5,38 34.5,38 34.5,41 Z" fill="url(#darkMetalGrad)" stroke="#121217" strokeWidth="0.8" />
-          <path d="M 35.5,40.5 C 38,39 62,39 64.5,40.5 Z" fill="url(#specularGrad)" opacity="0.5" />
-
-          {/* Forehead stitches */}
-          <g stroke="#ff6b9d" strokeWidth="0.4" strokeLinecap="round" opacity="0.8">
-            <line x1="50" y1="38" x2="50" y2="44" />
-            <line x1="48" y1="40" x2="52" y2="40" /><line x1="48.5" y1="42.5" x2="51.5" y2="42.5" />
-          </g>
-
-          {/* Headphones */}
-          <path d="M 31,34.5 C 31,18 69,18 69,34.5" fill="none" stroke="url(#graphiteGrad)" strokeWidth="3" />
-          <path d="M 32.5,34 C 32.5,19 67.5,19 67.5,34" fill="none" stroke="url(#specularGrad)" strokeWidth="1" />
-          <g>
-            <ellipse cx="29.5" cy="41" rx="4.5" ry="8" fill="url(#graphiteGrad)" stroke="#ff6b9d" strokeWidth="0.6" />
-            <ellipse cx="27.8" cy="41" rx="2.5" ry="5" fill="url(#carbonFiber)" />
-            <rect x="29" y="32" width="1.5" height="3" fill="#ffffff" opacity="0.6" />
-          </g>
-          <g>
-            <ellipse cx="70.5" cy="41" rx="4.5" ry="8" fill="url(#graphiteGrad)" stroke="#ff6b9d" strokeWidth="0.6" />
-            <ellipse cx="72.2" cy="41" rx="2.5" ry="5" fill="url(#carbonFiber)" />
-            <rect x="69.5" y="32" width="1.5" height="3" fill="#ffffff" opacity="0.6" />
-          </g>
-
-          {/* Eye X */}
-          <g filter="url(#linacreGlow)">
-            <line x1="36.5" y1="46" x2="43.5" y2="53" stroke="url(#pinkGrad)" strokeWidth="1.8" strokeLinecap="round" />
-            <line x1="43.5" y1="46" x2="36.5" y2="53" stroke="url(#pinkGrad)" stroke-width="1.8" stroke-linecap="round" />
-          </g>
-          <g filter="url(#linacreGlow)">
-            <line x1="56.5" y1="46" x2="63.5" y2="53" stroke="url(#pinkGrad)" stroke-width="1.8" stroke-linecap="round" />
-            <line x1="63.5" y1="46" x2="56.5" y2="53" stroke="url(#pinkGrad)" stroke-width="1.8" stroke-linecap="round" />
-          </g>
-
-          <polygon points="49,54.5 51,54.5 50,56" fill="#ff6b9d" />
-
-          {/* Cheek stitches */}
-          <g stroke="#ff6b9d" strokeWidth="0.3" strokeLinecap="round" opacity="0.7">
-            <line x1="32" y1="53.5" x2="34.5" y2="55.5" /><line x1="34" y1="53" x2="32.5" y2="56" />
-            <line x1="68" y1="53.5" x2="65.5" y2="55.5" /><line x1="66" y1="53" x2="67.5" y2="56" />
-          </g>
-
-          {/* Mouth */}
-          <path d="M 40,58 Q 50,65.5 60,58 Q 50,61 40,58 Z" fill="#111116" stroke="#ff6b9d" strokeWidth="0.6" strokeLinejoin="round" />
-          <polygon points="42.8,58.4 44.8,58.4 43.8,61.2" fill="#ffffff" />
-          <polygon points="57.2,58.4 55.2,58.4 56.2,61.2" fill="#ffffff" />
-        </g>
-
-        {/* FOREGROUND LAYER */}
-        <g fill="none" stroke="url(#linacreGrad)" strokeWidth="0.4" opacity="0.8">
-          <path d="M 23.5,88.5 C 36,93 64,93 76.5,88.5" />
-          <path d="M 23.5,11.5 C 36,7 64,7 76.5,11.5" />
-        </g>
-        <rect x="42.5" y="87" width="15" height="3.8" rx="0.8" fill="#121217" stroke="url(#linacreGrad)" strokeWidth="0.3" />
-        <text x="50" y="89.8" fontFamily="'JetBrains Mono', monospace" fontSize="1.8" fontWeight="900" fill="#00F0FF" textAnchor="middle" letterSpacing="0.2">MORPH.v2</text>`;
-    } else if (frame === 'dl-geo') {
-      emblemJSX = `
-        {/* DL Geometric Shield Monogram */}
-        <polygon points="50,5 88,27 88,73 50,95 12,73 12,27" fill="none" stroke="${p}" strokeWidth="3" strokeLinejoin="round" />
-        <polygon points="50,11 83,30 83,70 50,89 17,70 17,30" fill="none" stroke="${s}" strokeWidth="1" strokeDasharray="4 3" opacity="0.4" />
-        <g stroke="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}">
-          <path d="M32,30 V70 H48 C60,70 68,61 68,50 C 68,39 60,30 48,30 Z" fill="none" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M42,42 V58 H54" fill="none" stroke="${s}" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.9" />
-        </g>`;
-    } else if (frame === 'dl-terminal') {
-      emblemJSX = `
-        {/* DL Terminal Box Monogram */}
-        <rect x="8" y="8" width="84" height="84" rx="12" fill="none" stroke="${p}" strokeWidth="3" />
-        <path d="M 8,24 H 92 M 22,16 H 24 M 30,16 H 32" stroke="${s}" strokeWidth="1.5" opacity="0.5" />
-        <g stroke="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}">
-          <path d="M 18,36 L 24,41 L 18,46" fill="none" stroke="${s}" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 38,34 H 54 C 64,34 68,41 68,48 C 68,55 64,62 54,62 H 38 Z" fill="none" strokeWidth="4.5" strokeLinejoin="round" />
-          <path d="M 46,43 V 56 H 58" fill="none" stroke="${s}" strokeWidth="4" strokeLinecap="round" />
-          <rect x="62" y="55" width="5" height="5" fill="${s}" stroke="none" />
-        </g>`;
-    } else if (frame === 'dl-sacred') {
-      emblemJSX = `
-        {/* DL Sacred Geometry Monogram */}
-        <circle cx="50" cy="50" r="45" fill="none" stroke="${p}" strokeWidth="2" />
-        <circle cx="50" cy="50" r="41" fill="none" stroke="${s}" strokeWidth="0.75" strokeDasharray="3 3" opacity="0.5" />
-        <circle cx="50" cy="50" r="28" fill="none" stroke="${p}" strokeWidth="1" opacity="0.3" />
-        <path d="M 50,5 L 95,50 L 50,95 L 5,50 Z" fill="none" stroke="${s}" strokeWidth="0.5" opacity="0.25" />
-        <path d="M 18,18 L 82,82 M 18,82 L 82,18" stroke="${s}" strokeWidth="0.5" opacity="0.25" />
-        <g stroke="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}">
-          <path d="M 32,32 H 50 A 18,18 0 0,1 50,68 H 32 Z" fill="none" strokeWidth="4.5" strokeLinejoin="round" />
-          <path d="M 40,40 V 60 H 50" fill="none" stroke="${s}" strokeWidth="3.5" strokeLinecap="round" />
-          <circle cx="50" cy="50" r="3" fill="${s}" stroke="none" />
-        </g>`;
-    } else if (frame === 'dl-crest') {
-      emblemJSX = `
-        {/* DL Cyberpunk Crest Monogram */}
-        <path d="M 15,15 H 85 L 92,45 L 50,92 L 8,45 Z" fill="none" stroke="${p}" strokeWidth="3" strokeLinejoin="round" />
-        <path d="M 20,20 H 80 L 86,43 L 50,84 L 14,43 Z" fill="none" stroke="${s}" strokeWidth="1" strokeDasharray="5 4" opacity="0.3" />
-        <path d="M 50,5 V 15 M 50,85 V 95 M 5,50 H 15 M 85,50 H 95" stroke="${s}" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
-        <g stroke="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}">
-          <path d="M 35,32 H 48 A 12,12 0 0,1 60,44 V 44 A 12,12 0 0,1 48,56 H 35 Z" fill="none" strokeWidth="4.5" strokeLinejoin="round" />
-          <path d="M 42,42 V 50 H 52" fill="none" stroke="${s}" strokeWidth="3.5" strokeLinecap="round" />
-        </g>`;
-    } else if (frame.startsWith('custom-')) {
-      const custom = customEmblems.find(e => e.id === frame);
-      if (custom) {
-        if (custom.type === 'svg') {
-          let customInner = custom.content;
-          const svgStartIdx = customInner.indexOf('<svg');
-          if (svgStartIdx !== -1) {
-            const innerStart = customInner.indexOf('>', svgStartIdx) + 1;
-            const innerEnd = customInner.lastIndexOf('</svg>');
-            if (innerEnd !== -1) {
-              customInner = customInner.substring(innerStart, innerEnd);
-            }
-          }
-          customInner = customInner
-            .replace(/stroke="currentColor"/g, `stroke="${p}"`)
-            .replace(/fill="currentColor"/g, `fill="${p}"`);
-
-          emblemJSX = `
-        {/* Custom SVG Monogram */}
-        <g className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}">
-          <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke="${p}" strokeWidth="2.5" opacity="0.3" />
-          <svg x="15" y="15" width="70" height="70" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
-            ${customInner}
-          </svg>
-        </g>`;
-        } else {
-          emblemJSX = `
-        {/* Custom Image Monogram */}
-        <g className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}">
-          <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke="${p}" strokeWidth="2.5" opacity="0.3" />
-          <clipPath id="customImgClipReact">
-            <rect x="15" y="15" width="70" height="70" rx="12" />
-          </clipPath>
-          <image x="15" y="15" width="70" height="70" href="${custom.content}" clipPath="url(#customImgClipReact)" preserveAspectRatio="xMidYMid slice" />
-        </g>`;
-        }
-      } else {
-        emblemJSX = `
-        {/* Minimalist Spark Frame Fallback */}
-        <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke="${p}" strokeWidth="2.5" opacity="0.3" />
-        <path d="M 50,22 Q 50,50 22,50 Q 50,50 50,78 Q 50,50 78,50 Q 50,50 50,22 Z" fill="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />`;
-      }
-    } else {
-      emblemJSX = `
-        {/* Minimalist Spark Frame */}
-        <rect x="12" y="12" width="76" height="76" rx="16" fill="none" stroke="${p}" strokeWidth="2.5" opacity="0.3" />
-        <path d="M 50,22 Q 50,50 22,50 Q 50,50 50,78 Q 50,50 78,50 Q 50,50 50,22 Z" fill="url(#linacreGrad)" className="${activeMotion === 'pulse' ? 'd-pulse-path' : ''}" />`;
-    }
-
-    return `import React from 'react';
-
-export function LinacreEmblem({ className = 'w-16 h-16' }) {
-  return (
-    <svg className={className} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <filter id="linacreGlow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="${glowIntensity}" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-        <linearGradient id="linacreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="${p}" />
-          <stop offset="100%" stopColor="${s}" />
-        </linearGradient>${extraGradientsJSX}${styleJSX}
-      </defs>
-      
-      <g className="\${activeMotion === 'spin' && '${frame}' !== 'streetwear' ? 'spin-logo-g' : ''}" filter="url(#linacreGlow)">
-        \${emblemJSX}
-      </g>
-    </svg>
+  const emblem = useMemo(
+    () => getEmblemSVG(frame, palette.primary, palette.secondary, motionMode, 'slow', glow, []),
+    [frame, palette, motionMode, glow],
   );
-};`;
+
+  const bannerSvg = useMemo(() => {
+    const safeName = xmlEscape(name || 'DAVID LINACRE');
+    const safeTitle = xmlEscape(title || 'Software engineer · useful tools · AI systems');
+    const safeWebsite = xmlEscape(website.replace(/^https?:\/\//, '') || 'linacre.site');
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" style="width:100%;height:100%;display:block">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset="0.55" stop-color="#061520"/><stop offset="1" stop-color="#08202a"/></linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${palette.primary}"/><stop offset="1" stop-color="${palette.secondary}"/></linearGradient>
+    <radialGradient id="aura"><stop stop-color="${palette.primary}" stop-opacity=".18"/><stop offset="1" stop-color="${palette.primary}" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="${palette.primary}" stroke-opacity=".08"/></pattern>
+  </defs>
+  <rect width="1280" height="320" fill="url(#bg)"/>
+  <rect width="1280" height="320" fill="url(#grid)"/>
+  <circle cx="160" cy="160" r="230" fill="url(#aura)"/>
+  <path d="M760 274h120l34-30h170l34 30h162" fill="none" stroke="${palette.secondary}" stroke-opacity=".24" stroke-width="2"/>
+  <circle cx="914" cy="244" r="4" fill="${palette.primary}"/><circle cx="1084" cy="244" r="4" fill="${palette.secondary}"/>
+  <rect x="58" y="46" width="228" height="228" rx="38" fill="#081c28" fill-opacity=".9" stroke="${palette.primary}" stroke-opacity=".22"/>
+  <svg x="82" y="70" width="180" height="180" viewBox="0 0 100 100">${emblem}</svg>
+  <text x="342" y="78" fill="${palette.secondary}" font-family="JetBrains Mono, monospace" font-size="15" font-weight="700" letter-spacing="1.5">CYBERBLUE / VERIFIED IDENTITY</text>
+  <text x="338" y="145" fill="#ecfeff" font-family="Space Grotesk, Inter, sans-serif" font-size="52" font-weight="700" letter-spacing="-1.5">${safeName}</text>
+  <text x="342" y="187" fill="#9ab7c3" font-family="Inter, sans-serif" font-size="22">${safeTitle}</text>
+  <rect x="342" y="218" width="238" height="38" rx="19" fill="#082330" stroke="${palette.primary}" stroke-opacity=".65"/>
+  <text x="363" y="243" fill="${palette.primary}" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700">${safeWebsite}</text>
+  <circle cx="1090" cy="268" r="5" fill="${palette.secondary}"/>
+  <text x="1107" y="273" fill="${palette.secondary}" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">AVAILABLE / ONLINE</text>
+</svg>`;
+  }, [emblem, name, title, website, palette]);
+
+  const avatarSvg = useMemo(() => `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" style="width:100%;height:100%;display:block">
+  <defs><linearGradient id="avatarBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset="1" stop-color="#0a2632"/></linearGradient><radialGradient id="avatarAura"><stop stop-color="${palette.primary}" stop-opacity=".22"/><stop offset="1" stop-color="${palette.primary}" stop-opacity="0"/></radialGradient></defs>
+  <rect width="512" height="512" rx="108" fill="url(#avatarBg)"/>
+  <circle cx="256" cy="256" r="245" fill="url(#avatarAura)"/>
+  <rect x="44" y="44" width="424" height="424" rx="92" fill="none" stroke="${palette.primary}" stroke-opacity=".38" stroke-width="3"/>
+  <svg x="96" y="96" width="320" height="320" viewBox="0 0 100 100">${emblem}</svg>
+</svg>`, [emblem, palette]);
+
+  const socialSvg = useMemo(() => `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" style="width:100%;height:100%;display:block">
+  <defs><linearGradient id="socialBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset=".6" stop-color="#061520"/><stop offset="1" stop-color="#0a2932"/></linearGradient><pattern id="socialGrid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="${palette.primary}" stroke-opacity=".07"/></pattern></defs>
+  <rect width="1200" height="630" fill="url(#socialBg)"/><rect width="1200" height="630" fill="url(#socialGrid)"/>
+  <rect x="70" y="135" width="330" height="330" rx="72" fill="#081c28" stroke="${palette.primary}" stroke-opacity=".3"/>
+  <svg x="110" y="175" width="250" height="250" viewBox="0 0 100 100">${emblem}</svg>
+  <text x="470" y="190" fill="${palette.secondary}" font-family="JetBrains Mono, monospace" font-size="17" font-weight="700">LINACRE / USEFUL SOFTWARE</text>
+  <text x="462" y="272" fill="#ecfeff" font-family="Space Grotesk, Inter, sans-serif" font-size="57" font-weight="700">${xmlEscape(name)}</text>
+  <text x="470" y="320" fill="${palette.primary}" font-family="JetBrains Mono, monospace" font-size="21">${xmlEscape(title)}</text>
+  <text x="470" y="377" fill="#9ab7c3" font-family="Inter, sans-serif" font-size="20">${xmlEscape(bio).slice(0, 92)}</text>
+  <rect x="470" y="420" width="285" height="46" rx="23" fill="#082330" stroke="${palette.primary}" stroke-opacity=".7"/>
+  <text x="494" y="450" fill="${palette.primary}" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700">${xmlEscape(website.replace(/^https?:\/\//, ''))}</text>
+</svg>`, [emblem, name, title, bio, website, palette]);
+
+  const currentAsset = previewMode === 'banner'
+    ? { svg: bannerSvg, width: 1280, height: 320, name: 'linacre-github-banner' }
+    : previewMode === 'avatar'
+      ? { svg: avatarSvg, width: 512, height: 512, name: 'linacre-avatar' }
+      : { svg: socialSvg, width: 1200, height: 630, name: 'linacre-social-card' };
+
+  const copy = async (value: string, key: string) => {
+    try {
+      await navigator.clipboard.writeText(value);
+    } catch {
+      const textarea = document.createElement('textarea');
+      textarea.value = value;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+    }
+    setCopied(key);
+    window.setTimeout(() => setCopied(null), 1_600);
   };
 
-  // Generate Email Signature HTML (Clean tables based HTML for cross-client compatibility)
-  const getEmailSignatureHTML = () => {
-    return `<table cellpadding="0" cellspacing="0" border="0" style="font-family: ${activeFont.displayFamily || 'sans-serif'}; color: #cdd6f4; background-color: #0d1117; padding: 20px; border-radius: 12px; border: 1px solid ${activeColor.primary}30; max-width: 500px;">
-  <tr>
-    <td style="vertical-align: top; padding-right: 20px; width: 80px;">
-      <!-- Logo Vector Frame embedded cleanly inside table -->
-      <div style="width: 70px; height: 70px; border: 1px solid ${activeColor.primary}40; border-radius: 10px; padding: 5px; background-color: #090b0f;">
-        ${getSVGCode()}
-      </div>
-    </td>
-    <td style="vertical-align: top; border-left: 1px solid #313244; padding-left: 20px;">
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td>
-            <div style="font-size: 16px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase; font-family: ${activeFont.displayFamily}">${userName}</div>
-            <div style="font-size: 12px; color: ${activeColor.primary}; font-weight: 600; margin-top: 2px; font-family: ${activeFont.monoFamily}">${userTitle}</div>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding-top: 10px;">
-            <div style="font-size: 11px; color: #a6adc8; line-height: 1.4; font-family: ${activeFont.displayFamily}">${userBio}</div>
-          </td>
-        </tr>
-        <tr>
-          <td style="padding-top: 12px;">
-            <table cellpadding="0" cellspacing="0" border="0" style="font-size: 11px; font-family: ${activeFont.monoFamily}">
-              <tr>
-                <td style="padding-right: 15px; color: #89b4fa;"><span style="color: ${activeColor.primary};">&gt;</span> <a href="mailto:${userEmail}" style="color: #a6adc8; text-decoration: none;">${userEmail}</a></td>
-                <td style="color: #89b4fa;"><span style="color: ${activeColor.primary};">&gt;</span> <a href="${userWebsite}" style="color: #a6adc8; text-decoration: none;">linacre.site</a></td>
-              </tr>
-              <tr>
-                <td style="padding-top: 4px; padding-right: 15px; color: #89b4fa;"><span style="color: ${activeColor.primary};">&gt;</span> <a href="https://${userGithub}" style="color: #a6adc8; text-decoration: none;">github</a></td>
-                <td style="padding-top: 4px; color: #89b4fa;"><span style="color: ${activeColor.primary};">&gt;</span> <a href="https://${userLinkedin}" style="color: #a6adc8; text-decoration: none;">linkedin</a></td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>`;
+  const cssTokens = `:root {
+  --brand-primary: ${palette.primary};
+  --brand-secondary: ${palette.secondary};
+  --brand-background: #030c14;
+  --brand-surface: #081c28;
+  --brand-text: #ecfeff;
+  --brand-muted: #9ab7c3;
+  --brand-gradient: linear-gradient(135deg, ${palette.primary}, ${palette.secondary});
+}`;
+
+  const applyCyberPreset = () => {
+    setPaletteId('cyber');
+    setFrame('dl-geo');
+    setFontId('cyber');
+    setMotionMode('pulse');
+    setGlow(2);
   };
 
-  // Generate and copy shareable custom theme link
-  const handleCopyThemeLink = () => {
-    const url = new URL(window.location.origin + window.location.pathname);
-    url.searchParams.set('brand_color', activeColor.id);
+  const copyThemeLink = () => {
+    const url = new URL('/identity', window.location.origin);
+    url.searchParams.set('brand_color', palette.id);
     url.searchParams.set('brand_font', activeFont.id);
-    url.searchParams.set('brand_frame', activeFrame);
-    url.searchParams.set('brand_motion', activeMotion);
-    if (activeMotion === 'pulse') {
-      url.searchParams.set('brand_pulse_speed', activePulseSpeed);
-    }
-    url.searchParams.set('brand_glow', glowIntensity.toString());
-    url.searchParams.set('brand_name', userName);
-
-    handleCopy(url.toString(), 'theme-link');
+    url.searchParams.set('brand_frame', frame);
+    url.searchParams.set('brand_motion', motionMode);
+    url.searchParams.set('brand_glow', String(glow));
+    url.searchParams.set('brand_name', name);
+    copy(url.toString(), 'link');
   };
 
-  // Helper to copy code to clipboard
-  const handleCopy = (text: string, type: string) => {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text)
-        .then(() => triggerCopyFeedback(type))
-        .catch((err) => {
-          console.warn('Navigator clipboard copy failed, falling back: ', err);
-          fallbackCopyText(text, type);
-        });
-    } else {
-      fallbackCopyText(text, type);
-    }
-  };
-
-  const fallbackCopyText = (text: string, type: string) => {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.position = "fixed";
-    textArea.style.opacity = "0";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      const successful = document.execCommand('copy');
-      if (successful) {
-        triggerCopyFeedback(type);
-      } else {
-        console.error('Fallback copy command was unsuccessful');
-      }
-    } catch (err) {
-      console.error('Fallback copy failed', err);
-    }
-    document.body.removeChild(textArea);
-  };
-
-  // Copy Email Signature to clipboard as RICH TEXT (so they can paste straight into Outlook / Gmail!)
-  const handleCopyRichTextSignature = () => {
-    try {
-      const container = document.createElement('div');
-      container.innerHTML = getEmailSignatureHTML();
-      document.body.appendChild(container);
-      
-      // Select element contents
-      const range = document.createRange();
-      range.selectNode(container);
-      
-      const selection = window.getSelection();
-      if (selection) {
-        selection.removeAllRanges();
-        selection.addRange(range);
-        document.execCommand('copy');
-        selection.removeAllRanges();
-      }
-      
-      document.body.removeChild(container);
-      triggerCopyFeedback('signature-rich');
-    } catch (e) {
-      // Fallback
-      handleCopy(getEmailSignatureHTML(), 'signature-rich');
-    }
-  };
-
-  // Trigger browser download for the SVG logo
-  const downloadSVGAsset = () => {
-    const svgCode = getSVGCode();
-    const blob = new Blob([svgCode], { type: 'image/svg+xml;charset=utf-8' });
-    const blobURL = URL.createObjectURL(blob);
-    
-    const downloadLink = document.createElement('a');
-    downloadLink.href = blobURL;
-    downloadLink.download = `${userName.toLowerCase().replace(/\s+/g, '_')}_signature_emblem.svg`;
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
-  };
-
-  const darkContrast = getContrastRatio(activeColor.primary, '#0b0e14');
-  const lightContrast = getContrastRatio(activeColor.primary, '#ffffff');
+  const darkContrast = contrastRatio(palette.primary, '#030c14');
 
   return (
-    <div className="space-y-10 pb-16" id="identity-brand-hub">
-
-      {/* Screen-reader live region for brand setting changes */}
-      <div
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        style={{ position: 'fixed', left: '-9999px', width: '1px', height: '1px', overflow: 'hidden' }}
-      >
-        {a11yIdentityMsg}
-      </div>
-
-      {/* Intro Header */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-xs text-amber-color bg-amber-color/10 px-2.5 py-1 rounded font-semibold border border-amber-color/20">
-            Brand Assets & Identity Hub
-          </span>
-          <span className="text-xs text-muted-foreground">· Dynamic Canvas Engine</span>
+    <div className="space-y-10 pb-12" id="identity-brand-studio">
+      <section className="relative overflow-hidden rounded-3xl border border-border-color bg-[var(--linacre-panel)] p-6 shadow-[var(--linacre-card-shadow)] sm:p-8">
+        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-cyan/10 blur-3xl" />
+        <div className="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-color">
+              <ShieldCheck className="h-4 w-4" /> Identity Studio v6
+            </span>
+            <h1 className="mt-3 font-display text-3xl font-bold tracking-[-0.04em] text-foreground sm:text-4xl">
+              One identity. Every useful asset.
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
+              Choose a palette and mark once, preview the result in real formats, then export production-ready SVG or PNG assets. No sprawling controls and no guesswork.
+            </p>
+          </div>
+          <button
+            onClick={applyCyberPreset}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-color px-4 py-3 font-mono text-xs font-bold text-[#031018] shadow-[0_0_28px_rgba(34,211,238,.2)] hover:bg-amber-glow"
+          >
+            <WandSparkles className="h-4 w-4" /> Apply CyberBlue preset
+          </button>
         </div>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-amber-color animate-pulse" />
-          <span>The New Linacre Signature Identity</span>
-        </h1>
-        <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
-          Unify your digital footprint across socials, GitHub, and email clients. Customize your interactive vector monogram emblem, swap typography vibes, and download copy-pasteable assets built to represent David Linacre's pristine brand.
-        </p>
-      </div>
+      </section>
 
-      {/* Main Grid: Designer Left, Live Preview Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        {/* Left Column: Interactive Settings (lg:col-span-5) */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="border border-border-color bg-muted/10 dark:bg-[#10141d]/40 rounded-xl p-5 space-y-6 shadow-md">
-            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2 pb-2 border-b border-border-color/40">
-              <Palette className="w-4 h-4 text-amber-color" />
-              <span>Identity Customizer</span>
-            </h2>
-
-            {/* Customizer Option 1: Palette choice */}
-            <div className="space-y-3">
-              <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Sliders className="w-3.5 h-3.5 text-amber-color" />
-                <span>Brand Color Signature</span>
-              </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {colors.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => setActiveColor(c)}
-                    className={`px-2.5 py-1.5 rounded-lg border text-[11px] font-mono flex items-center gap-1.5 transition-all text-left cursor-pointer ${
-                      activeColor.id === c.id
-                        ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                        : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                    }`}
-                  >
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: c.primary }} />
-                    <span className="truncate">{c.name}</span>
-                  </button>
-                ))}
-              </div>
-
-              {/* WCAG Contrast Checker Panel (TASK-010) */}
-              <div className="mt-4 p-3.5 bg-[#080b0f] border border-border-color/30 rounded-lg space-y-3 font-mono text-[10px] leading-relaxed">
-                <div className="flex items-center justify-between border-b border-border-color/20 pb-2">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-cyan" />
-                    <span>WCAG 2.2 Contrast Ratio</span>
-                  </span>
-                  <div className="relative group/tooltip">
-                    <span className="text-cyan hover:text-amber-color underline cursor-help transition-colors">[accessibility info]</span>
-                    <div className="absolute right-0 bottom-full mb-2 w-64 bg-zinc-950 text-muted-foreground p-3 rounded-lg border border-border-color shadow-2xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all duration-200 z-50 leading-relaxed font-sans normal-case">
-                      <p className="font-bold text-foreground mb-1">WCAG AA Contrast Criteria:</p>
-                      <p className="mb-1.5">• Normal text: ≥ 4.5:1 ratio</p>
-                      <p className="mb-2">• Large text (&gt;18px): ≥ 3.0:1 ratio</p>
-                      <p className="text-amber-color/90 border-t border-border-color/20 pt-1.5">Tip: A higher ratio ensures your brand is clearly legible for all users.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Dark Mode BG Check */}
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-center text-muted-foreground">
-                      <span>Dark BG (#0b0e14)</span>
-                      <span className="text-foreground font-semibold bg-zinc-900/60 px-1.5 py-0.5 rounded border border-border-color/10">
-                        {darkContrast.toFixed(2)}:1
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {darkContrast >= 4.5 ? (
-                        <span className="text-emerald-color flex items-center gap-1.5 font-bold">
-                          <Check className="w-3.5 h-3.5 bg-emerald-color/10 border border-emerald-color/25 p-0.5 rounded" />
-                          <span>Passes AA (Full)</span>
-                        </span>
-                      ) : darkContrast >= 3.0 ? (
-                        <span className="text-amber-color flex items-center gap-1.5 font-bold">
-                          <Check className="w-3.5 h-3.5 bg-amber-color/10 border border-amber-color/25 p-0.5 rounded" />
-                          <span>Passes AA (Large Only)</span>
-                        </span>
-                      ) : (
-                        <span className="text-rose-500 flex items-center gap-1.5 font-bold">
-                          <X className="w-3.5 h-3.5 bg-rose-500/10 border border-rose-500/25 p-0.5 rounded" />
-                          <span>Fails Contrast</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Light Mode BG Check */}
-                  <div className="space-y-1.5 sm:border-l sm:border-border-color/20 sm:pl-4">
-                    <div className="flex justify-between items-center text-muted-foreground">
-                      <span>Light BG (#ffffff)</span>
-                      <span className="text-foreground font-semibold bg-zinc-900/60 px-1.5 py-0.5 rounded border border-border-color/10">
-                        {lightContrast.toFixed(2)}:1
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {lightContrast >= 4.5 ? (
-                        <span className="text-emerald-color flex items-center gap-1.5 font-bold">
-                          <Check className="w-3.5 h-3.5 bg-emerald-color/10 border border-emerald-color/25 p-0.5 rounded" />
-                          <span>Passes AA (Full)</span>
-                        </span>
-                      ) : lightContrast >= 3.0 ? (
-                        <span className="text-amber-color flex items-center gap-1.5 font-bold">
-                          <Check className="w-3.5 h-3.5 bg-amber-color/10 border border-amber-color/25 p-0.5 rounded" />
-                          <span>Passes AA (Large Only)</span>
-                        </span>
-                      ) : (
-                        <span className="text-rose-500 flex items-center gap-1.5 font-bold">
-                          <X className="w-3.5 h-3.5 bg-rose-500/10 border border-rose-500/25 p-0.5 rounded" />
-                          <span>Fails Contrast</span>
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,.82fr)_minmax(0,1.18fr)]">
+        <div className="space-y-5">
+          <section className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <Palette className="h-4 w-4 text-amber-color" />
+              <h2 className="font-display text-base font-bold text-foreground">1. Colour system</h2>
             </div>
-
-            {/* Customizer Option 2: Dynamic Typography Pairing selection */}
-            <div className="space-y-3">
-              <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Type className="w-3.5 h-3.5 text-amber-color" />
-                <span>Typography & Font Vibe</span>
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {fonts.map((f) => (
-                  <button
-                    key={f.id}
-                    onClick={() => setActiveFont(f)}
-                    className={`px-3 py-1.5 rounded-lg border text-[11px] text-left transition-all cursor-pointer flex flex-col justify-between h-14 ${
-                      activeFont.id === f.id
-                        ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                        : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                    }`}
-                  >
-                    <span className="font-bold text-xs" style={{ fontFamily: f.displayFamily }}>{f.name}</span>
-                    <span className="text-[10px] opacity-60 font-mono" style={{ fontFamily: f.monoFamily }}>Abc 123</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Customizer Option 3: Frame choice */}
-            <div className="space-y-4">
-              <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Shield className="w-3.5 h-3.5 text-amber-color" />
-                <span>Outer Shield & Monogram Structure</span>
-              </label>
-
-              {/* Sub-group A: Base Tech Frames */}
-              <div className="space-y-1.5">
-                <div className="text-[10px] font-mono text-muted-foreground/75 uppercase tracking-wider">Base Tech Frames</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {frames.map((f) => (
-                    <button
-                      key={f.id}
-                      onClick={() => setActiveFrame(f.id)}
-                      className={`px-3 py-1.5 rounded-lg border text-[11px] font-mono flex items-center justify-between transition-all cursor-pointer ${
-                        activeFrame === f.id
-                          ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                          : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                      }`}
-                    >
-                      <span className="truncate">{f.name}</span>
-                      <ChevronRight className={`w-3 h-3 text-muted-foreground/50 transition-transform shrink-0 ${activeFrame === f.id ? 'translate-x-0.5' : ''}`} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sub-group B: Personal DL Monograms */}
-              <div className="space-y-1.5">
-                <div className="text-[10px] font-mono text-muted-foreground/75 uppercase tracking-wider">Personal DL Monograms</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: 'dl-geo', name: 'DL Geometric Shield' },
-                    { id: 'dl-terminal', name: 'DL Terminal Box' },
-                    { id: 'dl-sacred', name: 'DL Sacred Geometry' },
-                    { id: 'dl-crest', name: 'DL Cyberpunk Crest' }
-                  ].map((f) => (
-                    <button
-                      key={f.id}
-                      onClick={() => setActiveFrame(f.id)}
-                      className={`px-3 py-1.5 rounded-lg border text-[11px] font-mono flex items-center justify-between transition-all cursor-pointer ${
-                        activeFrame === f.id
-                          ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                          : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                      }`}
-                    >
-                      <span className="truncate">{f.name}</span>
-                      <ChevronRight className={`w-3 h-3 text-muted-foreground/50 transition-transform shrink-0 ${activeFrame === f.id ? 'translate-x-0.5' : ''}`} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sub-group C: Custom Uploads and Dropper */}
-              <div className="space-y-2 pt-2 border-t border-border-color/30">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-muted-foreground/75 uppercase tracking-wider">Custom Assets</span>
-                  <span className="text-[9px] font-mono text-muted-foreground/50">SVG / PNG / JPG</span>
-                </div>
-
-                {/* Uploaded Gallery */}
-                {customEmblems.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2">
-                    {customEmblems.map((emblem) => (
-                      <div
-                        key={emblem.id}
-                        className={`group relative px-3 py-1.5 rounded-lg border text-[11px] font-mono flex items-center justify-between transition-all ${
-                          activeFrame === emblem.id
-                            ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                            : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                        }`}
-                      >
-                        <button
-                          onClick={() => setActiveFrame(emblem.id)}
-                          className="flex-1 text-left truncate cursor-pointer mr-1 focus:outline-none"
-                        >
-                          <span className="truncate">{emblem.name}</span>
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCustomEmblem(emblem.id);
-                          }}
-                          className="text-rose-500/70 hover:text-rose-500 hover:scale-110 focus:outline-none transition-all p-0.5 cursor-pointer"
-                          title="Delete custom emblem"
-                          aria-label={`Delete custom emblem ${emblem.name}`}
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Accessible Drag & Drop Box */}
-                <CustomEmblemUploader onUpload={handleCustomEmblemUpload} />
-              </div>
-            </div>
-
-            {/* Customizer Option 3.5: Motion and Pulse Mode choice */}
-            <div className="space-y-3">
-              <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-amber-color" />
-                <span>Signature Motion & Mode</span>
-              </label>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { id: 'pulse', name: 'Pulsing D-Mode', desc: 'D-shape pulses' },
-                  { id: 'spin', name: 'Spinning Orbit', desc: 'Slow rotation' },
-                  { id: 'static', name: 'Static Solid', desc: 'Clean lines' }
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setActiveMotion(m.id)}
-                    className={`px-2.5 py-2 rounded-lg border text-[11px] font-mono flex flex-col justify-center gap-0.5 transition-all cursor-pointer text-left h-[52px] ${
-                      activeMotion === m.id
-                        ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                        : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                    }`}
-                    title={m.desc}
-                  >
-                    <span className="font-bold">{m.name}</span>
-                    <span className="text-[9px] opacity-65 leading-none">{m.desc}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Customizer Option 3.6: Pulse Speed choice (rendered only if motion is pulse) */}
-            {activeMotion === 'pulse' && (
-              <div className="space-y-3 animate-fade-in">
-                <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-amber-color" />
-                  <span>Emblem Pulse Speed</span>
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: 'fast', name: 'Fast', desc: '1.0s loop' },
-                    { id: 'slow', name: 'Standard', desc: '2.5s loop' },
-                    { id: 'breathe', name: 'Breathe', desc: '5.0s loop' }
-                  ].map((s) => (
-                    <button
-                      key={s.id}
-                      onClick={() => setActivePulseSpeed(s.id)}
-                      className={`px-2.5 py-2 rounded-lg border text-[11px] font-mono flex flex-col justify-center gap-0.5 transition-all cursor-pointer text-left h-[52px] ${
-                        activePulseSpeed === s.id
-                          ? 'bg-muted/50 border-amber-color/80 dark:border-amber-color text-foreground shadow-sm'
-                          : 'bg-background/20 border-border-color/60 text-muted-foreground hover:text-foreground hover:bg-muted/20'
-                      }`}
-                      title={s.desc}
-                    >
-                      <span className="font-bold">{s.name}</span>
-                      <span className="text-[9px] opacity-65 leading-none">{s.desc}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Customizer Option 4: Glow sliders */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label htmlFor="aura-glow-intensity" className="block text-xs font-semibold text-muted-foreground">Aura Glow Intensity</label>
-                <span className="text-[10px] font-mono text-amber-color bg-amber-color/10 px-1.5 py-0.2 rounded">
-                  {glowIntensity === 1 ? 'Minimal' : glowIntensity === 5 ? 'Max Overclock' : `Level ${glowIntensity}`}
-                </span>
+              {PALETTES.map((option) => {
+                const active = option.id === palette.id;
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => setPaletteId(option.id)}
+                    className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all ${active ? 'bg-muted/40 text-foreground' : 'border-border-color bg-background/20 text-muted-foreground hover:bg-muted/20'}`}
+                    style={active ? { borderColor: option.primary, boxShadow: `0 0 0 1px ${option.primary}22` } : undefined}
+                  >
+                    <span className="flex shrink-0 -space-x-1">
+                      <span className="h-8 w-8 rounded-full border-2 border-[var(--linacre-panel)]" style={{ background: option.primary }} />
+                      <span className="h-8 w-8 rounded-full border-2 border-[var(--linacre-panel)]" style={{ background: option.secondary }} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-mono text-xs font-bold">{option.name}</span>
+                      <span className="mt-0.5 block text-[11px] leading-4 text-muted-foreground">{option.description}</span>
+                    </span>
+                    {active && <Check className="h-4 w-4 shrink-0" style={{ color: option.secondary }} />}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-4 flex items-center justify-between rounded-xl border border-border-color bg-[#030c14] p-3 font-mono text-[10px]">
+              <span className="text-[#9ab7c3]">Contrast on dark</span>
+              <span className={darkContrast >= 4.5 ? 'text-emerald-color' : 'text-error'}>
+                {darkContrast.toFixed(2)}:1 · {darkContrast >= 4.5 ? 'AA pass' : 'Large text only'}
+              </span>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-amber-color" />
+              <h2 className="font-display text-base font-bold text-foreground">2. Mark and motion</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {FRAMES.map((option) => {
+                const active = option.id === frame;
+                const preview = getEmblemSVG(option.id, palette.primary, palette.secondary, 'static', 'slow', 1, []);
+                return (
+                  <button
+                    key={option.id}
+                    onClick={() => setFrame(option.id)}
+                    className={`rounded-xl border p-3 text-left transition-all ${active ? 'bg-muted/40' : 'border-border-color bg-background/20 hover:bg-muted/20'}`}
+                    style={active ? { borderColor: palette.primary } : undefined}
+                  >
+                    <span className="mx-auto block h-12 w-12" dangerouslySetInnerHTML={{ __html: preview }} />
+                    <span className="mt-2 block font-mono text-[10px] font-bold text-foreground">{option.name}</span>
+                    <span className="mt-0.5 block text-[9px] text-muted-foreground">{option.description}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Motion</label>
+                <div className="flex rounded-xl border border-border-color bg-background/30 p-1">
+                  {[
+                    ['static', 'Static'],
+                    ['pulse', 'Pulse'],
+                    ['spin', 'Orbit'],
+                  ].map(([id, label]) => (
+                    <button
+                      key={id}
+                      onClick={() => setMotionMode(id)}
+                      className={`flex-1 rounded-lg px-2 py-2 font-mono text-[10px] font-bold ${motionMode === id ? 'text-[#031018]' : 'text-muted-foreground hover:text-foreground'}`}
+                      style={motionMode === id ? { background: palette.primary } : undefined}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <input
-                id="aura-glow-intensity"
-                type="range"
-                min="1"
-                max="5"
-                value={glowIntensity}
-                onChange={(e) => setGlowIntensity(parseInt(e.target.value))}
-                className="w-full accent-amber-color h-1 bg-muted rounded-lg cursor-pointer"
+              <div>
+                <div className="mb-2 flex items-center justify-between font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <label htmlFor="brand-glow">Glow</label><span style={{ color: palette.primary }}>{glow}/4</span>
+                </div>
+                <input id="brand-glow" type="range" min="0" max="4" value={glow} onChange={(event) => setGlow(Number(event.target.value))} className="w-full" />
+              </div>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <Type className="h-4 w-4 text-amber-color" />
+              <h2 className="font-display text-base font-bold text-foreground">3. Type and profile</h2>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {FONTS.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setFontId(option.id)}
+                  className={`rounded-xl border p-3 text-left ${option.id === activeFont.id ? 'bg-muted/40' : 'border-border-color bg-background/20'}`}
+                  style={option.id === activeFont.id ? { borderColor: palette.primary } : undefined}
+                >
+                  <span className="block text-xs font-bold text-foreground" style={{ fontFamily: option.display }}>{option.name}</span>
+                  <span className="mt-1 block text-[9px] text-muted-foreground">{option.sample}</span>
+                </button>
+              ))}
+            </div>
+            <div className="mt-4 space-y-3">
+              <label className="block">
+                <span className="mb-1.5 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Display name</span>
+                <input value={name} onChange={(event) => setName(event.target.value.toUpperCase())} className="h-11 w-full rounded-xl border border-border-color bg-background/40 px-3 font-mono text-xs text-foreground focus:border-amber-color focus:outline-none" />
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Professional line</span>
+                <input value={title} onChange={(event) => setTitle(event.target.value)} className="h-11 w-full rounded-xl border border-border-color bg-background/40 px-3 text-xs text-foreground focus:border-amber-color focus:outline-none" />
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Short bio</span>
+                <textarea value={bio} onChange={(event) => setBio(event.target.value)} rows={3} className="w-full resize-none rounded-xl border border-border-color bg-background/40 p-3 text-xs leading-5 text-foreground focus:border-amber-color focus:outline-none" />
+              </label>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-1.5 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Email</span>
+                  <input value={email} onChange={(event) => setEmail(event.target.value)} className="h-11 w-full rounded-xl border border-border-color bg-background/40 px-3 font-mono text-[10px] text-foreground focus:border-amber-color focus:outline-none" />
+                </label>
+                <label className="block">
+                  <span className="mb-1.5 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Website</span>
+                  <input value={website} onChange={(event) => setWebsite(event.target.value)} className="h-11 w-full rounded-xl border border-border-color bg-background/40 px-3 font-mono text-[10px] text-foreground focus:border-amber-color focus:outline-none" />
+                </label>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className="space-y-5 lg:sticky lg:top-24">
+          <section className="overflow-hidden rounded-2xl border border-border-color bg-[var(--linacre-panel)] shadow-[var(--linacre-card-shadow)]">
+            <div className="flex flex-col justify-between gap-3 border-b border-border-color bg-muted/20 p-3 sm:flex-row sm:items-center">
+              <div className="flex items-center gap-2 px-1 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <LayoutTemplate className="h-4 w-4 text-amber-color" /> Live export preview
+              </div>
+              <div className="flex rounded-xl border border-border-color bg-background/40 p-1" role="tablist" aria-label="Asset preview">
+                {[
+                  ['banner', 'GitHub', Github],
+                  ['avatar', 'Avatar', CircleUserRound],
+                  ['social', 'Social', ImageIcon],
+                ].map(([id, label, Icon]) => (
+                  <button
+                    key={id as string}
+                    onClick={() => setPreviewMode(id as PreviewMode)}
+                    className={`flex items-center gap-1.5 rounded-lg px-3 py-2 font-mono text-[10px] font-bold ${previewMode === id ? 'text-[#031018]' : 'text-muted-foreground hover:text-foreground'}`}
+                    style={previewMode === id ? { background: palette.primary } : undefined}
+                  >
+                    <Icon className="h-3.5 w-3.5" /> {label as string}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-[#020a11] p-4 sm:p-6">
+              <motion.div
+                key={`${previewMode}-${palette.id}-${frame}-${fontId}`}
+                initial={{ opacity: 0, scale: 0.985 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`mx-auto overflow-hidden rounded-xl border border-white/10 shadow-2xl ${previewMode === 'avatar' ? 'max-w-sm' : 'w-full'}`}
+                style={{ aspectRatio: `${currentAsset.width}/${currentAsset.height}` }}
+                dangerouslySetInnerHTML={{ __html: currentAsset.svg }}
               />
             </div>
 
-            {/* Customizer Option 5: Contact Details for email signatures / badges */}
-            <div className="space-y-3 pt-2">
-              <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                <Terminal className="w-3.5 h-3.5 text-amber-color" />
-                <span>Personalization Metadata</span>
-              </label>
-              <div className="space-y-2.5">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <label htmlFor="meta-display-name" className="text-[10px] text-muted-foreground font-mono">Display Name</label>
-                    <input
-                      id="meta-display-name"
-                      type="text"
-                      placeholder="Name / Brand"
-                      value={userName}
-                      onChange={(e) => setUserName(e.target.value.toUpperCase())}
-                      className="w-full bg-background border border-border-color rounded-lg px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label htmlFor="meta-professional-title" className="text-[10px] text-muted-foreground font-mono">Professional Title</label>
-                    <input
-                      id="meta-professional-title"
-                      type="text"
-                      placeholder="Title / Subtitle"
-                      value={userTitle}
-                      onChange={(e) => setUserTitle(e.target.value)}
-                      className="w-full bg-background border border-border-color rounded-lg px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
-                    />
-                  </div>
-                </div>
+            <div className="grid gap-2 border-t border-border-color p-4 sm:grid-cols-3">
+              <button onClick={() => downloadText(currentAsset.svg, `${currentAsset.name}.svg`)} className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-color px-3 py-2.5 font-mono text-[10px] font-bold text-[#031018] hover:bg-amber-glow">
+                <Download className="h-4 w-4" /> SVG
+              </button>
+              <button onClick={() => svgToPng(currentAsset.svg, `${currentAsset.name}.png`, currentAsset.width, currentAsset.height)} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border-color bg-muted/20 px-3 py-2.5 font-mono text-[10px] font-bold text-foreground hover:border-amber-color/50">
+                <FileImage className="h-4 w-4" /> PNG
+              </button>
+              <button onClick={() => copy(currentAsset.svg, 'asset')} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border-color bg-muted/20 px-3 py-2.5 font-mono text-[10px] font-bold text-foreground hover:border-amber-color/50">
+                {copied === 'asset' ? <Check className="h-4 w-4 text-emerald-color" /> : <Copy className="h-4 w-4" />} {copied === 'asset' ? 'Copied' : 'Copy code'}
+              </button>
+            </div>
+          </section>
 
-                <div className="space-y-1">
-                  <label htmlFor="meta-elevator-pitch" className="text-[10px] text-muted-foreground font-mono">Elevator Pitch</label>
-                  <textarea
-                    id="meta-elevator-pitch"
-                    placeholder="Short bio for banners"
-                    value={userBio}
-                    onChange={(e) => setUserBio(e.target.value)}
-                    rows={2}
-                    className="w-full bg-background border border-border-color rounded-lg p-2.5 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <label htmlFor="meta-email-address" className="text-[10px] text-muted-foreground font-mono">Email Address</label>
-                    <input
-                      id="meta-email-address"
-                      type="email"
-                      value={userEmail}
-                      onChange={(e) => setUserEmail(e.target.value)}
-                      className="w-full bg-background border border-border-color rounded-lg px-2.5 py-1.2 text-[11px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label htmlFor="meta-personal-website" className="text-[10px] text-muted-foreground font-mono">Personal Website</label>
-                    <input
-                      id="meta-personal-website"
-                      type="text"
-                      value={userWebsite}
-                      onChange={(e) => setUserWebsite(e.target.value)}
-                      className="w-full bg-background border border-border-color rounded-lg px-2.5 py-1.2 text-[11px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
-                    />
-                  </div>
-                </div>
+          <section className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-base font-bold text-foreground">Export the full asset set</h2>
+                <p className="mt-1 text-[11px] text-muted-foreground">Exact dimensions, transparent-safe SVG, and crisp PNG rendering.</p>
               </div>
-
-              {/* Share Custom Theme Link */}
-              <div className="space-y-3 pt-4 border-t border-border-color/30">
-                <label className="block text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-color animate-pulse" />
-                  <span>Share Custom Theme Identity</span>
-                </label>
-                <button
-                  onClick={handleCopyThemeLink}
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-amber-color text-[#0b0e14] font-mono text-xs font-bold rounded-lg hover:bg-amber-glow transition-all active:scale-95 cursor-pointer shadow-[0_0_15px_rgba(245,158,11,0.15)]"
-                >
-                  {copiedType === 'theme-link' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  <span>{copiedType === 'theme-link' ? 'Link Copied to Clipboard!' : 'Copy Shareable Theme Link'}</span>
+              <ShieldCheck className="h-5 w-5 text-emerald-color" />
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {[
+                { label: 'Logo SVG', note: 'Scalable mark', icon: Sparkles, action: () => downloadText(emblem, 'linacre-emblem.svg') },
+                { label: 'GitHub banner', note: '1280 × 320 PNG', icon: Github, action: () => svgToPng(bannerSvg, 'linacre-github-banner.png', 1280, 320) },
+                { label: 'Social card', note: '1200 × 630 PNG', icon: ImageIcon, action: () => svgToPng(socialSvg, 'linacre-social-card.png', 1200, 630) },
+                { label: 'Avatar', note: '512 × 512 PNG', icon: CircleUserRound, action: () => svgToPng(avatarSvg, 'linacre-avatar.png', 512, 512) },
+              ].map((asset) => (
+                <button key={asset.label} onClick={asset.action} className="group flex items-center gap-3 rounded-xl border border-border-color bg-background/25 p-3 text-left hover:border-amber-color/45 hover:bg-muted/20">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-amber-color/10 text-amber-color"><asset.icon className="h-4 w-4" /></span>
+                  <span className="min-w-0 flex-1"><span className="block font-mono text-[10px] font-bold text-foreground">{asset.label}</span><span className="mt-0.5 block text-[9px] text-muted-foreground">{asset.note}</span></span>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-amber-color" />
                 </button>
-              </div>
+              ))}
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Right Column: Live Vector Playground (lg:col-span-7) */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="border border-border-color bg-[#090b0f] rounded-xl overflow-hidden shadow-lg flex flex-col">
-            
-            {/* Window bar */}
-            <div className="px-4 py-2.5 bg-muted/20 border-b border-border-color/60 flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-red/30" />
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-color/30" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-color/30" />
-                <span className="text-[10px] font-mono text-muted-foreground ml-2">linacre_interactive_canvas.svg</span>
-              </div>
-              <span className="text-[9px] font-mono text-emerald-color font-semibold uppercase bg-emerald-color/10 px-1.5 py-0.5 rounded">
-                Retina Scalable Vector
-              </span>
+          <section className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2"><Code2 className="h-4 w-4 text-amber-color" /><h2 className="font-display text-base font-bold text-foreground">Brand tokens</h2></div>
+              <button onClick={() => copy(cssTokens, 'tokens')} className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold text-amber-color hover:text-amber-glow">
+                {copied === 'tokens' ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} {copied === 'tokens' ? 'Copied' : 'Copy CSS'}
+              </button>
             </div>
-
-            {/* Dynamic Vector Logo Center Box */}
-            <div 
-              onDragOver={handlePreviewDragOver}
-              onDragLeave={handlePreviewDragLeave}
-              onDrop={handlePreviewDrop}
-              className={`p-8 flex flex-col sm:flex-row items-center justify-center gap-8 bg-gradient-to-br from-background/80 via-[#0b0e14] to-background/50 border-b border-border-color/40 min-h-[300px] relative transition-all duration-300 ${
-                isPreviewDragOver ? 'ring-2 ring-amber-color ring-inset bg-amber-color/[0.03]' : ''
-              }`}
-            >
-              {isPreviewDragOver && (
-                <div className="absolute inset-0 bg-background/90 backdrop-blur-sm z-30 flex flex-col items-center justify-center text-amber-color space-y-2 pointer-events-none animate-pulse">
-                  <Sparkles className="w-10 h-10 animate-bounce" />
-                  <span className="font-mono text-sm font-bold">Drop emblem file to apply instantly</span>
-                  <span className="font-mono text-xs opacity-60">SVG, PNG, or JPG (max 300KB)</span>
-                </div>
-              )}
-              
-              {/* Customizable SVG dynamic element container */}
-              <div className="w-44 h-44 shrink-0 p-3.5 bg-[#0d1117] rounded-2xl border border-border-color/80 shadow-2xl flex items-center justify-center relative group">
-                <div className="absolute inset-0 bg-radial from-transparent to-[#0d1117] opacity-60 rounded-2xl" />
-                <div 
-                  className="w-full h-full relative z-10 transition-all duration-300 group-hover:scale-105"
-                  dangerouslySetInnerHTML={{ __html: getSVGCode() }}
-                />
-                
-                {/* Visual grid coordinates lines */}
-                <span className="absolute top-2 left-2.5 text-[8px] font-mono text-muted-foreground/30 font-bold select-none">ID: DN_LINACRE</span>
-                <span className="absolute bottom-2 right-2.5 text-[8px] font-mono text-muted-foreground/30 font-bold select-none">RESO: SCALABLE</span>
-              </div>
-
-              {/* Asset Information list with custom font family rendering live */}
-              <div className="space-y-4 text-center sm:text-left flex-1">
-                <div className="space-y-1.5">
-                  <h3 className="text-lg font-bold text-slate-100 tracking-tight" style={{ fontFamily: activeFont.displayFamily }}>
-                    The Linacre Emblem
-                  </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    An abstract representation of the modern digital builder. Fuses DevOps pipeline elements, conic-gradient orb systems, and clean terminal brackets to represent code orchestration and AI automation.
-                  </p>
-                </div>
-
-                {/* Instant Action buttons */}
-                <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                  <button
-                    onClick={downloadSVGAsset}
-                    className="flex items-center gap-1.5 px-3 py-1.8 rounded bg-amber-color text-[#0b0e14] text-xs font-bold cursor-pointer shadow hover:opacity-95 select-none transition-all active:scale-95"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download SVG</span>
-                  </button>
-                  <button
-                    onClick={() => handleCopy(getSVGCode(), 'svg')}
-                    className="flex items-center gap-1.5 px-3 py-1.8 rounded bg-muted/60 border border-border-color hover:bg-muted text-foreground text-xs font-mono cursor-pointer select-none transition-all active:scale-95"
-                  >
-                    {copiedType === 'svg' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedType === 'svg' ? 'Copied SVG!' : 'Copy Code'}</span>
-                  </button>
-                  <button
-                    onClick={() => handleCopy(getReactCode(), 'react')}
-                    className="flex items-center gap-1.5 px-3 py-1.8 rounded bg-muted/60 border border-border-color hover:bg-muted text-foreground text-xs font-mono cursor-pointer select-none transition-all active:scale-95"
-                  >
-                    {copiedType === 'react' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Code className="w-3.5 h-3.5" />}
-                    <span>React Component</span>
-                  </button>
-                </div>
-              </div>
+            <pre className="overflow-x-auto rounded-xl border border-border-color bg-[#020a11] p-4 font-mono text-[10px] leading-5 text-[#9ab7c3]">{cssTokens}</pre>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <button onClick={copyThemeLink} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border-color px-3 py-2.5 font-mono text-[10px] font-bold text-foreground hover:border-amber-color/50">
+                {copied === 'link' ? <Check className="h-4 w-4 text-emerald-color" /> : <Link2 className="h-4 w-4" />} {copied === 'link' ? 'Theme link copied' : 'Copy theme link'}
+              </button>
+              <button onClick={applyCyberPreset} className="inline-flex items-center justify-center gap-2 rounded-xl border border-border-color px-3 py-2.5 font-mono text-[10px] font-bold text-foreground hover:border-amber-color/50">
+                <RefreshCw className="h-4 w-4" /> Reset to system default
+              </button>
             </div>
-
-            {/* Bottom Section: Dynamic badge widgets */}
-            <div className="p-5 bg-muted/5 space-y-4">
-              <h3 className="font-mono text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
-                <FileCode className="w-4 h-4 text-cyan" />
-                <span>Integration Badges</span>
-              </h3>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Snippet 1: Markdown badge */}
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono text-muted-foreground">GitHub Profile Shield:</span>
-                  <div className="flex items-center bg-background border border-border-color/80 rounded-lg overflow-hidden px-2.5 py-1">
-                    <input
-                      type="text"
-                      readOnly
-                      value={`[![David Linacre](https://img.shields.io/badge/linacre.site-developer-${activeColor.id === 'crimson' ? 'red' : activeColor.id === 'amber' ? 'amber' : activeColor.id === 'emerald' ? 'emerald' : activeColor.id === 'mono' ? 'lightgrey' : 'cyan'})](https://www.linacre.site)`}
-                      className="w-full bg-transparent text-[10px] font-mono text-muted-foreground focus:outline-none select-all"
-                    />
-                    <button
-                      onClick={() => handleCopy(`[![David Linacre](https://img.shields.io/badge/linacre.site-developer-${activeColor.id === 'crimson' ? 'red' : activeColor.id === 'amber' ? 'amber' : activeColor.id === 'emerald' ? 'emerald' : activeColor.id === 'mono' ? 'lightgrey' : 'cyan'})](https://www.linacre.site)`, 'markdown')}
-                      aria-label="Copy GitHub Profile Shield markdown code"
-                      className="p-1.5 hover:text-foreground text-muted-foreground/60 focus:outline-none cursor-pointer"
-                    >
-                      {copiedType === 'markdown' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Snippet 2: Custom HTML Embedded tag */}
-                <div className="space-y-1.5">
-                  <span className="text-[10px] font-mono text-muted-foreground">App Footer Anchor Link:</span>
-                  <div className="flex items-center bg-background border border-border-color/80 rounded-lg overflow-hidden px-2.5 py-1">
-                    <input
-                      type="text"
-                      readOnly
-                      value={`<a href="${userWebsite}" style="font-family: ${activeFont.monoFamily}; font-size: 11px; color: ${activeColor.primary}; text-decoration: none; border: 1px solid ${activeColor.primary}20; padding: 3px 8px; border-radius: 4px;">&gt; ${userName.toLowerCase().replace(/\s+/g, '')}</a>`}
-                      className="w-full bg-transparent text-[10px] font-mono text-muted-foreground focus:outline-none select-all"
-                    />
-                    <button
-                      onClick={() => handleCopy(`<a href="${userWebsite}" style="font-family: ${activeFont.monoFamily}; font-size: 11px; color: ${activeColor.primary}; text-decoration: none; border: 1px solid ${activeColor.primary}20; padding: 3px 8px; border-radius: 4px;">&gt; ${userName.toLowerCase().replace(/\s+/g, '')}</a>`, 'html')}
-                      aria-label="Copy App Footer anchor link HTML code"
-                      className="p-1.5 hover:text-foreground text-muted-foreground/60 focus:outline-none cursor-pointer"
-                    >
-                      {copiedType === 'html' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Snippet 3: PayPal styled QR/Link markdown */}
-                <div className="space-y-1.5 col-span-full border-t border-border-color/20 pt-4 mt-2">
-                  <span className="text-[10px] font-mono text-muted-foreground">GitHub Profile Sponsor QR (with Styled Dark Mode QR):</span>
-                  <div className="flex items-center bg-background border border-border-color/80 rounded-lg overflow-hidden px-2.5 py-1">
-                    <input
-                      type="text"
-                      readOnly
-                      value={`[![Support David Linacre](https://www.linacre.site/paypal-qr-styled.png)](https://paypal.me/DLinacre16)`}
-                      className="w-full bg-transparent text-[10px] font-mono text-muted-foreground focus:outline-none select-all"
-                    />
-                    <button
-                      onClick={() => handleCopy(`[![Support David Linacre](https://www.linacre.site/paypal-qr-styled.png)](https://paypal.me/DLinacre16)`, 'paypal-md')}
-                      aria-label="Copy PayPal QR link markdown code"
-                      className="p-1.5 hover:text-foreground text-muted-foreground/60 focus:outline-none cursor-pointer"
-                    >
-                      {copiedType === 'paypal-md' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
       </div>
 
-      {/* Social Cover & Avatar Card Generator (Modular Layout Picker) */}
-      <div className="border border-border-color bg-muted/10 dark:bg-[#10141d]/40 rounded-xl overflow-hidden shadow-md">
-        
-        {/* Navigation Tabs for dynamic Layout Previews */}
-        <div className="px-5 py-3 border-b border-border-color/60 bg-muted/20 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: activeColor.primary }} />
-            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Dynamic Brand Asset Generators
-            </h2>
+      <section className="grid gap-4 md:grid-cols-3">
+        {[
+          { icon: Github, title: 'GitHub', text: 'Use the wide banner and geometric DL mark. Keep README headers short and useful.' },
+          { icon: Mail, title: 'Email and documents', text: `Use ${email} and the CyberBlue palette on a plain dark or white surface.` },
+          { icon: ImageIcon, title: 'Social profiles', text: 'Use the square avatar at small sizes and the 1200 × 630 card for shared links.' },
+        ].map((rule) => (
+          <div key={rule.title} className="rounded-2xl border border-border-color bg-muted/10 p-5">
+            <rule.icon className="h-5 w-5 text-amber-color" />
+            <h2 className="mt-4 font-display text-base font-bold text-foreground">{rule.title}</h2>
+            <p className="mt-2 text-xs leading-5 text-muted-foreground">{rule.text}</p>
           </div>
-          
-          <div className="flex bg-background border border-border-color/60 p-1 rounded-lg gap-1 self-start sm:self-auto">
-            <button
-              onClick={() => setActiveLayout('panoramic')}
-              className={`px-3 py-1 text-[10px] font-mono rounded-md flex items-center gap-1 transition-all cursor-pointer ${
-                activeLayout === 'panoramic' ? 'bg-amber-color/15 text-amber-color font-semibold' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <ImageIcon className="w-3 h-3" />
-              <span>GitHub Banner</span>
-            </button>
-            <button
-              onClick={() => setActiveLayout('avatar')}
-              className={`px-3 py-1 text-[10px] font-mono rounded-md flex items-center gap-1 transition-all cursor-pointer ${
-                activeLayout === 'avatar' ? 'bg-amber-color/15 text-amber-color font-semibold' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <Shield className="w-3 h-3" />
-              <span>Social Avatar</span>
-            </button>
-            <button
-              onClick={() => setActiveLayout('card')}
-              className={`px-3 py-1 text-[10px] font-mono rounded-md flex items-center gap-1 transition-all cursor-pointer ${
-                activeLayout === 'card' ? 'bg-amber-color/15 text-amber-color font-semibold' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <IdCard className="w-3 h-3" />
-              <span>Cyber Keycard</span>
-            </button>
-          </div>
-        </div>
-
-        <div className="p-6">
-          <AnimatePresence mode="wait">
-            {/* 1. PANORAMIC WIDESCREEN BANNER PREVIEW */}
-            {activeLayout === 'panoramic' && (
-              <motion.div
-                key="panoramic"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.15 }}
-                className="space-y-6"
-              >
-                <div className="relative w-full rounded-lg overflow-hidden border border-border-color bg-[#07090d] select-none shadow-inner" style={{ aspectRatio: '16/5', minHeight: '170px' }}>
-                  {/* Cyber grid overlay */}
-                  <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-                  
-                  {/* Neon radial backdrop glows */}
-                  <div 
-                    className="absolute -right-36 -top-36 w-96 h-96 rounded-full blur-[90px] transition-all duration-700 opacity-25"
-                    style={{ backgroundColor: activeColor.primary }}
-                  />
-                  <div 
-                    className="absolute -left-36 -bottom-36 w-96 h-96 rounded-full blur-[90px] transition-all duration-700 opacity-25"
-                    style={{ backgroundColor: activeColor.primary }}
-                  />
-
-                  {/* High-end vector neon path lines */}
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-25" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M -10,60 Q 150,130 450,25 T 950,110 T 1400,60" fill="none" stroke={activeColor.primary} strokeWidth="1.8" />
-                    <path d="M -20,120 Q 350,35 750,140 T 1250,35" fill="none" stroke={activeColor.secondary} strokeWidth="1" strokeDasharray="6 6" />
-                  </svg>
-
-                  {/* Content Overlays */}
-                  <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-1.5 text-[9px] text-muted-foreground/60" style={{ fontFamily: activeFont.monoFamily }}>
-                        <span className={activeColor.text}>&gt;</span>
-                        <span>{userWebsite.replace('https://', '')}</span>
-                        <span className="text-muted-foreground/30">·</span>
-                        <span>profile_verified</span>
-                      </div>
-                      <div className="flex items-center gap-1 bg-[#10141d]/80 border border-slate-800/80 rounded px-2 py-0.5 text-[8px] text-muted-foreground" style={{ fontFamily: activeFont.monoFamily }}>
-                        <Shield className="w-2.5 h-2.5 text-emerald-color" />
-                        <span>SECURE IDENTITY</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 sm:gap-6">
-                      <div 
-                        className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl border flex items-center justify-center bg-[#0d1117] shrink-0 transition-all shadow-lg"
-                        style={{ borderColor: `${activeColor.primary}40` }}
-                      >
-                        <div className="w-[80%] h-[80%]" dangerouslySetInnerHTML={{ __html: getSVGCode() }} />
-                      </div>
-
-                      <div className="space-y-1">
-                        <h3 className="text-sm sm:text-base md:text-2xl font-bold tracking-tight text-slate-100 uppercase" style={{ fontFamily: activeFont.displayFamily }}>
-                          {userName || 'DAVID LINACRE'}
-                        </h3>
-                        <div className="flex items-center gap-2">
-                          <span className={`w-1.5 h-1.5 rounded-full`} style={{ backgroundColor: activeColor.primary }} />
-                          <span className="text-[10px] sm:text-xs text-muted-foreground font-semibold" style={{ fontFamily: activeFont.monoFamily }}>
-                            {userTitle || 'Full Stack & AI Architect'}
-                          </span>
-                        </div>
-                        <p className="text-[9px] sm:text-[10px] text-muted-foreground/75 leading-snug hidden md:block max-w-xl truncate" style={{ fontFamily: activeFont.displayFamily }}>
-                          {userBio}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-border-color/20 pt-2 text-[8px] sm:text-[9px] text-muted-foreground/50" style={{ fontFamily: activeFont.monoFamily }}>
-                      <div className="flex items-center gap-4">
-                        <span className="flex items-center gap-1">
-                          <Globe className="w-2.5 h-2.5 text-muted-foreground/40" />
-                          <span>{userWebsite}</span>
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Github className="w-2.5 h-2.5 text-muted-foreground/40" />
-                          <span>{userGithub}</span>
-                        </span>
-                      </div>
-                      <span className="hidden sm:inline">COMPILER: <span className="text-emerald-color font-bold">ONLINE</span></span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* 2. SQUARE SOCIAL PROFILE AVATAR CARD */}
-            {activeLayout === 'avatar' && (
-              <motion.div
-                key="avatar"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.15 }}
-                className="flex flex-col items-center justify-center p-6 bg-[#07090d] border border-border-color rounded-lg min-h-[220px]"
-              >
-                <div className="relative flex flex-col items-center text-center space-y-4 max-w-sm">
-                  {/* Large Outer Profile Ring */}
-                  <div className="relative w-28 h-28 rounded-full p-1 border-2 border-dashed border-border-color flex items-center justify-center">
-                    {/* Pulsing Backlit Aura */}
-                    <div 
-                      className="absolute inset-0.5 rounded-full blur-xl opacity-30 animate-pulse"
-                      style={{ backgroundColor: activeColor.primary }}
-                    />
-                    <div className="w-24 h-24 rounded-full bg-[#0d1117] border border-border-color flex items-center justify-center p-3 relative z-10">
-                      <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: getSVGCode() }} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <h3 className="text-base font-bold text-slate-100 uppercase" style={{ fontFamily: activeFont.displayFamily }}>
-                      {userName}
-                    </h3>
-                    <p className="text-xs text-amber-color font-mono" style={{ fontFamily: activeFont.monoFamily }}>
-                      @{userName.toLowerCase().replace(/\s+/g, '')}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* 3. CYBER KEYCARD ID PASS PREVIEW */}
-            {activeLayout === 'card' && (
-              <motion.div
-                key="card"
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -5 }}
-                transition={{ duration: 0.15 }}
-                className="flex items-center justify-center p-4 bg-[#07090d] border border-border-color rounded-lg"
-              >
-                {/* Horizontal badge pass (Golden ratio ID shape) */}
-                <div className="w-full max-w-md bg-gradient-to-br from-[#101319] to-[#0a0d13] border border-border-color rounded-xl p-5 relative overflow-hidden shadow-2xl min-h-[190px] flex flex-col justify-between">
-                  {/* Subtle Tech accents */}
-                  <div className="absolute right-0 top-0 w-24 h-24 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #ffffff 1.2px, transparent 1.2px)', backgroundSize: '10px 10px' }} />
-                  <div className="absolute -left-12 -bottom-12 w-32 h-32 rounded-full blur-2xl opacity-15" style={{ backgroundColor: activeColor.primary }} />
-
-                  {/* Top Bar */}
-                  <div className="flex items-center justify-between border-b border-border-color/30 pb-3 font-mono text-[9px] text-muted-foreground/70">
-                    <div className="flex items-center gap-1">
-                      <Briefcase className="w-3 h-3 text-amber-color" />
-                      <span>DEVELOPER CREDENTIAL</span>
-                    </div>
-                    <span className="font-mono text-emerald-color">SECURE_ROOT_LIVE</span>
-                  </div>
-
-                  {/* Body Info */}
-                  <div className="flex items-center gap-4 py-4">
-                    <div className="w-16 h-16 bg-[#0a0c10] border rounded-lg p-2 shrink-0 flex items-center justify-center" style={{ borderColor: `${activeColor.primary}50` }}>
-                      <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: getSVGCode() }} />
-                    </div>
-
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-bold tracking-tight text-white uppercase" style={{ fontFamily: activeFont.displayFamily }}>
-                        {userName}
-                      </h3>
-                      <p className="text-[11px] font-mono text-muted-foreground font-semibold" style={{ color: activeColor.primary, fontFamily: activeFont.monoFamily }}>
-                        {userTitle}
-                      </p>
-                      <p className="text-[9px] text-muted-foreground/60 font-mono leading-none" style={{ fontFamily: activeFont.monoFamily }}>
-                        REF_ID: 61240D57_SERVER
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Footer metadata bar */}
-                  <div className="border-t border-border-color/30 pt-3 flex items-center justify-between text-[9px] font-mono text-muted-foreground/50" style={{ fontFamily: activeFont.monoFamily }}>
-                    <span>VERIFIED VIA: <span className="text-white">AI_STUDY_BUILD</span></span>
-                    <span>EXP: PERPETUAL</span>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Professional Email Signature Builder with Live Gmail/Outlook interactive Preview */}
-      <div className="border border-border-color bg-muted/10 dark:bg-[#10141d]/40 rounded-xl overflow-hidden shadow-md">
-        <div className="px-5 py-3 border-b border-border-color/60 bg-muted/20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Mail className="w-4 h-4 text-amber-color" />
-            <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Embeddable HTML Email Signature Builder
-            </h2>
-          </div>
-          <span className="text-[9px] font-mono text-emerald-color font-semibold uppercase bg-emerald-color/10 px-2 py-0.5 rounded">
-            Copy-Paste Ready
-          </span>
-        </div>
-
-        <div className="p-6 space-y-6">
-          <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
-            Need your signature on all your active client mail threads? Fill in your social tags on the left customizer and copy the styled **Rich Text** below directly into Gmail, Outlook, or Apple Mail, or grab the raw HTML code.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            
-            {/* Live Interactive Copy Signature Panel */}
-            <div className="md:col-span-7 space-y-3">
-              <span className="text-[10px] font-mono text-muted-foreground">Gmail / Outlook Live Preview Box:</span>
-              <div className="p-5 bg-[#090b0f] rounded-lg border border-border-color overflow-x-auto min-h-[180px] flex items-center justify-center">
-                {/* Embedded HTML container for rendering */}
-                <div dangerouslySetInnerHTML={{ __html: getEmailSignatureHTML() }} />
-              </div>
-            </div>
-
-            {/* Email Actions Panel */}
-            <div className="md:col-span-5 flex flex-col justify-center space-y-4">
-              <div className="bg-[#10141d]/30 p-4 border border-border-color/40 rounded-lg space-y-2.5">
-                <h3 className="font-mono text-xs font-bold text-foreground">Interactive Actions:</h3>
-                <p className="text-[11px] text-muted-foreground">
-                  The **Copy Rich Text Signature** parses CSS and tables on the fly. Simply click it and then press **Ctrl+V / Cmd+V** in your email signature settings panel!
-                </p>
-                <div className="flex flex-col gap-2 pt-2">
-                  <button
-                    onClick={handleCopyRichTextSignature}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-amber-color text-[#0b0e14] text-xs font-bold cursor-pointer transition-all active:scale-95"
-                  >
-                    {copiedType === 'signature-rich' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{copiedType === 'signature-rich' ? 'Signature Copied!' : 'Copy Rich Text Signature'}</span>
-                  </button>
-                  <button
-                    onClick={() => handleCopy(getEmailSignatureHTML(), 'signature-html')}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2 rounded bg-muted/60 hover:bg-muted border border-border-color text-foreground text-xs font-mono cursor-pointer transition-all active:scale-95"
-                  >
-                    {copiedType === 'signature-html' ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Code className="w-3.5 h-3.5" />}
-                    <span>{copiedType === 'signature-html' ? 'HTML Code Copied!' : 'Copy raw HTML Signature'}</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        ))}
+      </section>
     </div>
   );
 }

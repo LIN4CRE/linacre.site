@@ -18,7 +18,7 @@ export default function AccessibilityStatement() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="show"

@@ -22,9 +22,9 @@ export default function Learn() {
   }, [completedSteps]);
 
   const toggleStep = (stepNum: number) => {
-    setCompletedSteps(prev => 
-      prev.includes(stepNum) 
-        ? prev.filter(n => n !== stepNum) 
+    setCompletedSteps(prev =>
+      prev.includes(stepNum)
+        ? prev.filter(n => n !== stepNum)
         : [...prev, stepNum]
     );
   };
@@ -53,7 +53,7 @@ export default function Learn() {
             <GraduationCap className="w-5 h-5 text-amber-color" />
             <h2 className="font-display text-lg font-bold tracking-tight text-foreground">The Roadmap</h2>
           </div>
-          
+
           <div className="flex items-center gap-3 bg-muted/10 border border-border-color/30 rounded-xl px-4 py-2 text-xs font-mono w-full sm:w-[320px]">
             <div className="flex-1">
               <div className="flex justify-between text-[10px] text-muted-foreground uppercase font-bold mb-1">
@@ -61,9 +61,9 @@ export default function Learn() {
                 <span>{completedSteps.length} / {ROADMAP_STEPS.length} Completed ({progressPercent}%)</span>
               </div>
               <div className="w-full h-1.5 bg-zinc-950 rounded-full overflow-hidden border border-border-color/20">
-                <div 
-                  className="h-full bg-amber-color transition-all duration-300" 
-                  style={{ width: `${progressPercent}%` }} 
+                <div
+                  className="h-full bg-amber-color transition-all duration-300"
+                  style={{ width: `${progressPercent}%` }}
                 />
               </div>
             </div>
@@ -89,9 +89,9 @@ export default function Learn() {
                   <button
                     onClick={() => toggleStep(step.n)}
                     className={`w-8 h-8 rounded-full border-2 flex items-center justify-center font-mono text-xs font-bold transition-all cursor-pointer shadow-sm select-none z-10 ${
-                      isCompleted 
-                        ? 'bg-amber-color border-amber-color text-black shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:scale-105' 
-                        : 'bg-background dark:bg-[#0b0e14] border-border-color text-muted-foreground hover:border-amber-color hover:text-amber-color hover:scale-105'
+                      isCompleted
+                        ? 'bg-amber-color border-amber-color text-black shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:scale-105'
+                        : 'bg-background dark:bg-[#030c14] border-border-color text-muted-foreground hover:border-amber-color hover:text-amber-color hover:scale-105'
                     }`}
                     aria-label={`Mark step ${step.n} as ${isCompleted ? 'uncompleted' : 'completed'}`}
                   >
@@ -100,11 +100,11 @@ export default function Learn() {
                 </div>
 
                 {/* Step Content */}
-                <div 
+                <div
                   onClick={() => toggleStep(step.n)}
                   className={`bg-muted/10 border p-5 rounded-2xl transition-all cursor-pointer shadow-sm text-left ${
                     isCompleted
-                      ? 'border-amber-color/55 bg-amber-color/5 dark:bg-amber-color/5 shadow-[0_0_15px_rgba(245,158,11,0.03)]'
+                      ? 'border-amber-color/55 bg-amber-color/5 dark:bg-amber-color/5 shadow-[0_0_15px_rgba(34,211,238,0.03)]'
                       : 'border-amber-color/12 dark:bg-[#0B1220]/70 hover:border-amber-color/25 hover:bg-muted/20 dark:hover:bg-[#111827]/95'
                   }`}
                   style={{ transitionDuration: 'var(--linacre-duration-base)' }}

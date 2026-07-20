@@ -1,7 +1,7 @@
 // linacre.site service worker
-// v9 — audit #029: add offline.html fallback, precache 404/500 templates,
-// keep API + cross-origin requests untouched (Lab streaming still works).
-var CACHE = "linacre-v9";
+// v10 — CyberBlue-Green identity, curated portfolio, and regenerated app assets.
+// Keep API + cross-origin requests untouched (Lab streaming still works).
+var CACHE = "linacre-v10";
 var OFFLINE_URL = "offline.html";
 var URLS = [
   ".",

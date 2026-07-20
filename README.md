@@ -10,7 +10,7 @@
 </p>
 # linacre.site
 
-A utility-first start page, free web-tool collection, and developer portfolio by David Linacre, deployed at [linacresite.vercel.app](https://linacresite.vercel.app) (canonical domain: linacre.site).
+A CyberBlue-Green utility-first start page, private browser-tool collection, and edited developer portfolio by David Linacre, deployed at [linacresite.vercel.app](https://linacresite.vercel.app) (canonical domain: linacre.site).
 
 It's a single-page React app with a tabbed interface covering several self-contained mini-apps:
 
@@ -19,9 +19,9 @@ It's a single-page React app with a tabbed interface covering several self-conta
 - **Learn** — a curated, step-by-step learning roadmap and list of free learning resources for self-taught engineers.
 - **Lab** — a live AI chat playground with a mock file-tree workspace viewer, backed by an Express API route that proxies chat requests to Gemini (via `@google/genai`) with an OpenAI fallback.
 - **Dashboard** — a password-gated panel with a Chart.js radar chart, MCP server directory, and reusable "skill template" snippets.
-- **Identity** — a live brand/monogram customizer: pick colors, fonts, frame shapes, and animation styles for an SVG emblem and export the result.
+- **Identity** — a focused CyberBlue brand studio for coordinated logo, GitHub banner, avatar and social-card previews with SVG/PNG export.
 - **Playground** — an interactive C code playground/step-through tool.
-- **Projects** — a filterable, editable showcase of personal projects, with local CRUD via localStorage.
+- **Projects** — an edited portfolio limited to verified live products, downloadable releases and inspectable source projects.
 - **Agents** — a lighthearted animated "agent hub" simulating background dev/devops/security/librarian agents with status logs.
 
 The app is a PWA (manifest + service worker), supports light/dark themes, and shows an offline banner when connectivity drops.

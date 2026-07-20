@@ -31,7 +31,7 @@ vercel.json            (API rewrites and CSP security headers)
   - **Dashboard:** Code runner stats, path audits.
   - **Identity:** Live vector monogram customizer and SVG builder.
   - **Playground / Projects / Agents:** Dev tools, git maps, and agent executor triggers.
-- Noir theme: #0b0e14 background, #e5e5e5 text, amber accent / Kaitou red.
+- CyberBlue-Green theme: #030c14 background, #ecfeff text, cyan #22D3EE primary and signal green #34D399 secondary.
 
 ## Context
 For full brand knowledge, read D:\AI Truth\ directory.

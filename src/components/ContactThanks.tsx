@@ -60,7 +60,7 @@ export default function ContactThanks() {
       <div className="pt-4 flex flex-wrap justify-center gap-3">
         <a
           href="mailto:david@linacre.site?subject=Book%20a%2015-min%20intro%20call"
-          className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-color text-black font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all shadow-[0_0_20px_rgba(245,158,11,0.35)]"
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-color text-black font-mono text-sm font-bold rounded-lg hover:bg-amber-glow transition-all shadow-[0_0_20px_rgba(34,211,238,0.35)]"
           data-analytics="thanks_book_email"
         >
           <Calendar className="w-4 h-4" aria-hidden="true" />

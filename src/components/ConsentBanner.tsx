@@ -76,7 +76,7 @@ export default function ConsentBanner() {
       role="dialog"
       aria-labelledby="lc-consent-title"
       aria-describedby="lc-consent-desc"
-      className="fixed left-0 right-0 bottom-0 z-[9999] bg-[#11151f] border-t border-amber-color/30 text-foreground px-5 py-4 shadow-[0_-8px_32px_rgba(0,0,0,0.5)]"
+      className="fixed left-0 right-0 bottom-0 z-[9999] bg-[#061923] border-t border-amber-color/30 text-foreground px-5 py-4 shadow-[0_-8px_32px_rgba(0,0,0,0.5)]"
       id="lc-consent"
     >
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
@@ -95,7 +95,7 @@ export default function ConsentBanner() {
         <div className="flex flex-wrap gap-2 shrink-0">
           <button
             onClick={() => close('all')}
-            className="px-4 py-2 rounded-lg bg-amber-color text-[#0b0e14] font-mono text-xs font-bold hover:bg-amber-glow transition-colors"
+            className="px-4 py-2 rounded-lg bg-amber-color text-[#030c14] font-mono text-xs font-bold hover:bg-amber-glow transition-colors"
             data-analytics="consent_accept_all"
           >
             Accept all

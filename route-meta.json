@@ -8,13 +8,13 @@
   "routes": {
     "/": {
       "title": "Linacre Start — Free browser tools that get things done",
-      "description": "A useful start page with private JSON, Base64, timestamp and secure-value tools, plus free UK mobile, Pokémon card, AI model and point-of-sale apps.",
+      "description": "A useful start page with private JSON, Base64, timestamp and secure-value tools, plus free UK mobile, Pokémon card, Android and point-of-sale apps.",
       "canonical": "https://www.linacre.site/",
       "index": true
     },
     "/projects": {
       "title": "Projects | David Linacre — Live builds, tools and Mob Deals",
-      "description": "Selected production websites, open-source tools, AI systems and Mob Deals — a UK mobile provider decision tool with live source checks and number-switching help.",
+      "description": "Eight edited, verified projects with live products, downloadable Android releases or inspectable source — including Mob Deals, PokeGuru and DKMA Monster.",
       "canonical": "https://www.linacre.site/projects",
       "index": true
     },
@@ -38,17 +38,9 @@
     },
     "/blog": {
       "title": "Engineering notes | David Linacre",
-      "description": "Technical notes on Go concurrency, React theming, caching and developer tooling.",
+      "description": "Practical engineering notes on React theming, interface systems, caching and developer tooling.",
       "canonical": "https://www.linacre.site/blog",
       "index": true
-    },
-    "/blog/go-concurrency-patterns": {
-      "title": "Go Concurrency Patterns | David Linacre",
-      "description": "Deep dive into worker pools, rate limiters, and channel synchronization in Go.",
-      "canonical": "https://www.linacre.site/blog/go-concurrency-patterns",
-      "index": true,
-      "type": "article",
-      "published": "2026-06-15"
     },
     "/blog/dynamic-hsl-theme-variables": {
       "title": "Dynamic HSL Theme Customization | David Linacre",
@@ -109,8 +101,8 @@
       "index": true
     },
     "/identity": {
-      "title": "Identity Hub | Live brand and monogram builder | David Linacre",
-      "description": "Customise the linacre.site brand system live: colours, frames, motion and typography with exportable SVG monograms.",
+      "title": "CyberBlue Identity Studio | Brand asset exporter | David Linacre",
+      "description": "Create and export coordinated SVG and PNG logos, GitHub banners, avatars and social cards using the CyberBlue-Green brand system.",
       "canonical": "https://www.linacre.site/identity",
       "index": true
     },

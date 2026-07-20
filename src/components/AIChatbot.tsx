@@ -14,7 +14,7 @@ export default function AIChatbot() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'assistant',
-      content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like Mob Deals, GhostMail and DomainDeals), his skills, or his professional background.",
+      content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like Mob Deals, PokeGuru and DKMA Monster), his skills, or his professional background.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -89,7 +89,7 @@ export default function AIChatbot() {
     setMessages([
       {
         role: 'assistant',
-        content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like Mob Deals, GhostMail and DomainDeals), his skills, or his professional background.",
+        content: "Hello! I am David's virtual assistant. Ask me anything about his technical projects (like Mob Deals, PokeGuru and DKMA Monster), his skills, or his professional background.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
@@ -161,7 +161,7 @@ export default function AIChatbot() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-40 p-3.5 bg-amber-color text-[#0b0e14] rounded-full hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-amber-color flex items-center justify-center cursor-pointer select-none"
+        className="fixed bottom-6 right-6 z-40 p-3.5 bg-amber-color text-[#030c14] rounded-full hover:scale-105 transition-transform focus:outline-none focus:ring-2 focus:ring-amber-color flex items-center justify-center cursor-pointer select-none"
         style={{ boxShadow: 'var(--linacre-glow-strong)' }}
         aria-label="Toggle AI Assistant"
         id="btn-chatbot-toggle"
@@ -176,11 +176,11 @@ export default function AIChatbot() {
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            className="fixed bottom-22 right-6 z-40 w-[330px] sm:w-[360px] h-[450px] bg-[#0b0e14] border border-border-color rounded-xl overflow-hidden shadow-2xl flex flex-col font-mono text-xs"
+            className="fixed bottom-22 right-6 z-40 w-[330px] sm:w-[360px] h-[450px] bg-[#030c14] border border-border-color rounded-xl overflow-hidden shadow-2xl flex flex-col font-mono text-xs"
             id="chatbot-window"
           >
             {/* Terminal Header */}
-            <div className="bg-[#111622] px-4 py-3 flex items-center justify-between border-b border-border-color/30">
+            <div className="bg-[#061520] px-4 py-3 flex items-center justify-between border-b border-border-color/30">
               <div className="flex items-center gap-2">
                 <Terminal className="w-4 h-4 text-amber-color" />
                 <span className="text-foreground font-bold text-[11px]">linacre-assistant.sh</span>
@@ -202,17 +202,17 @@ export default function AIChatbot() {
             </div>
 
             {/* Messages Area */}
-            <div 
+            <div
               ref={scrollRef}
               className="flex-1 p-4 overflow-y-auto space-y-4 bg-background/40"
               id="chatbot-messages"
             >
               {messages.map((msg, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
                 >
-                  <div 
+                  <div
                     className={`max-w-[85%] p-3 rounded-lg leading-relaxed ${
                       msg.role === 'user'
                         ? 'bg-amber-color/10 border border-amber-color/25 text-amber-color rounded-tr-none'
@@ -257,9 +257,9 @@ export default function AIChatbot() {
             </div>
 
             {/* Input Form */}
-            <form 
+            <form
               onSubmit={handleSend}
-              className="p-3 bg-[#111622] border-t border-border-color/30 flex items-center gap-2"
+              className="p-3 bg-[#061520] border-t border-border-color/30 flex items-center gap-2"
             >
               <input
                 type="text"

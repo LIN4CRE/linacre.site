@@ -1,6 +1,6 @@
 {
-  "name": "Linacre Start — Useful Browser Tools",
-  "description": "A utility-first start page with private JSON, Base64, timestamp and secure-value tools, free practical web apps, a developer toolkit, and David Linacre's project portfolio.",
+  "name": "Linacre Start — CyberBlue Browser Tools",
+  "description": "A CyberBlue-Green utility-first start page with private browser tools, verified practical apps, an edited project portfolio, and a focused identity asset studio.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

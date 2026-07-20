@@ -376,7 +376,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={status === 'submitting' || !consent}
-                      className="flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-color hover:bg-amber-glow text-black font-bold rounded-lg text-sm font-mono transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none shadow-[0_0_16px_rgba(245,158,11,0.3)]"
+                      className="flex items-center justify-center gap-2 px-5 py-2.5 bg-amber-color hover:bg-amber-glow text-black font-bold rounded-lg text-sm font-mono transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none shadow-[0_0_16px_rgba(34,211,238,0.3)]"
                       data-analytics="contact_submit"
                     >
                       {status === 'submitting' ? (

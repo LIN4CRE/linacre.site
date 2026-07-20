@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Braces, 
-  Copy, 
-  Check, 
-  Sliders, 
-  Search, 
-  Key, 
-  Sparkles, 
-  AlertCircle, 
-  CheckCircle, 
+import {
+  Braces,
+  Copy,
+  Check,
+  Sliders,
+  Search,
+  Key,
+  Sparkles,
+  AlertCircle,
+  CheckCircle,
   RefreshCw,
   HelpCircle,
   Code,
@@ -390,17 +390,17 @@ export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
       code: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#fbbf24" stop-opacity="1" />
-      <stop offset="50%" stop-color="#d97706" stop-opacity="0.5" />
+      <stop offset="0%" stop-color="#34D399" stop-opacity="1" />
+      <stop offset="50%" stop-color="#0891B2" stop-opacity="0.5" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
     <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="0%" stop-color="#22D3EE" />
       <stop offset="50%" stop-color="#06b6d4" />
-      <stop offset="100%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#34D399" />
     </linearGradient>
   </defs>
-  <rect width="100%" height="100%" fill="#070a0f" />
+  <rect width="100%" height="100%" fill="#020a11" />
   <g transform="translate(100, 100)">
     <circle cx="0" cy="0" r="80" fill="none" stroke="#1e293b" stroke-width="1" stroke-dasharray="4 4" />
     <circle cx="0" cy="0" r="60" fill="none" stroke="#1e293b" stroke-width="1" />
@@ -411,10 +411,10 @@ export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
       <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="6s" repeatCount="indefinite" />
     </circle>
     <circle cx="0" cy="0" r="35" fill="url(#coreGlow)" />
-    <polygon points="0,-20 17.32,-10 17.32,10 0,20 -17.32,10 -17.32,-10" fill="#070a0f" stroke="#fbbf24" stroke-width="3">
-      <animate attributeName="stroke" values="#fbbf24;#06b6d4;#fbbf24" dur="4s" repeatCount="indefinite" />
+    <polygon points="0,-20 17.32,-10 17.32,10 0,20 -17.32,10 -17.32,-10" fill="#020a11" stroke="#34D399" stroke-width="3">
+      <animate attributeName="stroke" values="#34D399;#06b6d4;#34D399" dur="4s" repeatCount="indefinite" />
     </polygon>
-    <circle cx="0" cy="0" r="6" fill="#fbbf24">
+    <circle cx="0" cy="0" r="6" fill="#34D399">
       <animate attributeName="r" values="4;8;4" dur="2s" repeatCount="indefinite" />
       <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" />
     </circle>
@@ -424,14 +424,14 @@ export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
     pulse: {
       name: 'Pulse Wave',
       code: `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#070a0f" />
+  <rect width="100%" height="100%" fill="#020a11" />
   <path d="M 10 50 Q 50 20 90 50 T 170 50" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round">
     <animate attributeName="stroke-dasharray" values="0 1000;1000 0" dur="3s" repeatCount="indefinite" />
   </path>
-  <path d="M 10 50 Q 50 80 90 50 T 170 50" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5 5">
+  <path d="M 10 50 Q 50 80 90 50 T 170 50" fill="none" stroke="#22D3EE" stroke-width="1.5" stroke-dasharray="5 5">
     <animateTransform attributeName="transform" type="translate" values="0,0; -20,0" dur="4s" repeatCount="indefinite" />
   </path>
-  <circle cx="10" cy="50" r="4" fill="#fbbf24" />
+  <circle cx="10" cy="50" r="4" fill="#34D399" />
   <circle cx="170" cy="50" r="4" fill="#06b6d4" />
 </svg>`
     },
@@ -444,7 +444,7 @@ export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
       <stop offset="100%" stop-color="#a855f7" />
     </linearGradient>
   </defs>
-  <rect width="100%" height="100%" fill="#070a0f" />
+  <rect width="100%" height="100%" fill="#020a11" />
   <g transform="translate(100, 100)">
     <path d="M -60 -40 L -80 -40 L -80 40 L -60 40" fill="none" stroke="url(#cyberGrad)" stroke-width="2.5" />
     <path d="M 60 -40 L 80 -40 L 80 40 L 60 40" fill="none" stroke="url(#cyberGrad)" stroke-width="2.5" />
@@ -460,7 +460,7 @@ export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
     nodes: {
       name: 'Infinite Grid Spiral',
       code: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100%" height="100%" fill="#070a0f" />
+  <rect width="100%" height="100%" fill="#020a11" />
   <g transform="translate(100, 100)">
     <circle cx="0" cy="0" r="70" fill="none" stroke="#1e293b" stroke-width="1.5" />
     <line x1="-80" y1="-80" x2="80" y2="80" stroke="#1e293b" stroke-width="0.5" />
@@ -469,7 +469,7 @@ export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
       <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="20s" repeatCount="indefinite" />
       <circle cx="50" cy="0" r="5" fill="#10b981" />
       <circle cx="-50" cy="0" r="5" fill="#06b6d4" />
-      <circle cx="0" cy="50" r="5" fill="#f59e0b" />
+      <circle cx="0" cy="50" r="5" fill="#22D3EE" />
       <circle cx="0" cy="-50" r="5" fill="#a855f7" />
       <path d="M 50 0 L 0 50 L -50 0 L 0 -50 Z" fill="none" stroke="#334155" stroke-width="1" />
     </g>
@@ -659,26 +659,25 @@ ${svgCode}`;
 
   // Sync identity parameters for active theme colors
   const [activeColor, setActiveColor] = useState({
-    primary: '#f59e0b',
-    secondary: '#fbbf24',
-    glow: 'rgba(245, 158, 11, 0.25)',
+    primary: '#22D3EE',
+    secondary: '#34D399',
+    glow: 'rgba(34, 211, 238, 0.25)',
     text: 'text-amber-color',
     bg: 'bg-amber-color/10'
   });
 
   const syncBrandColors = () => {
-    const brandColor = localStorage.getItem('linacre_brand_color') || 'amber';
-    if (brandColor === 'cyan') {
-      setActiveColor({ primary: '#06b6d4', secondary: '#22d3ee', glow: 'rgba(6, 182, 212, 0.25)', text: 'text-cyan', bg: 'bg-cyan/10' });
-    } else if (brandColor === 'emerald') {
-      setActiveColor({ primary: '#10b981', secondary: '#34d399', glow: 'rgba(16, 185, 129, 0.25)', text: 'text-emerald-color', bg: 'bg-emerald-color/10' });
-    } else if (brandColor === 'crimson') {
-      setActiveColor({ primary: '#ef4444', secondary: '#f87171', glow: 'rgba(239, 68, 68, 0.25)', text: 'text-rose-500', bg: 'bg-rose-500/10' });
+    const brandColor = localStorage.getItem('linacre_brand_color') || 'cyber';
+    if (brandColor === 'ocean' || brandColor === 'cyan') {
+      setActiveColor({ primary: '#38BDF8', secondary: '#2DD4BF', glow: 'rgba(56, 189, 248, 0.22)', text: 'text-cyan', bg: 'bg-cyan/10' });
+    } else if (brandColor === 'matrix' || brandColor === 'emerald') {
+      setActiveColor({ primary: '#2DD4BF', secondary: '#A3E635', glow: 'rgba(45, 212, 191, 0.22)', text: 'text-emerald-color', bg: 'bg-emerald-color/10' });
+    } else if (brandColor === 'violet' || brandColor === 'crimson') {
+      setActiveColor({ primary: '#818CF8', secondary: '#22D3EE', glow: 'rgba(129, 140, 248, 0.22)', text: 'text-purple-color', bg: 'bg-purple-color/10' });
     } else if (brandColor === 'mono') {
-      setActiveColor({ primary: '#e2e8f0', secondary: '#94a3b8', glow: 'rgba(226, 232, 240, 0.15)', text: 'text-slate-200', bg: 'bg-slate-800/40' });
+      setActiveColor({ primary: '#E2F7FA', secondary: '#7DD3FC', glow: 'rgba(226, 247, 250, 0.15)', text: 'text-slate-200', bg: 'bg-slate-800/40' });
     } else {
-      // Amber default
-      setActiveColor({ primary: '#f59e0b', secondary: '#fbbf24', glow: 'rgba(245, 158, 11, 0.25)', text: 'text-amber-color', bg: 'bg-amber-color/10' });
+      setActiveColor({ primary: '#22D3EE', secondary: '#34D399', glow: 'rgba(34, 211, 238, 0.22)', text: 'text-amber-color', bg: 'bg-amber-color/10' });
     }
   };
 
@@ -809,7 +808,7 @@ ${svgCode}`;
   const getGlassStyle = () => {
     let bg = 'rgba(16, 20, 29, 0.25)';
     let border = 'rgba(38, 45, 59, 0.4)';
-    
+
     if (glassColor === 'light') {
       bg = `rgba(255, 255, 255, ${glassOpacity / 100})`;
       border = `rgba(228, 228, 230, ${Math.min((glassOpacity + 15) / 100, 0.8)})`;
@@ -851,7 +850,7 @@ border-radius: 12px;`;
   };
 
   const getGlassTailwindString = () => {
-    let bgClass = 'bg-[#10141d]/25';
+    let bgClass = 'bg-[#081c28]/25';
     let borderClass = 'border-border-color/40';
     if (glassColor === 'light') {
       bgClass = `bg-white/[0.${glassOpacity}]`;
@@ -886,12 +885,12 @@ border-radius: 12px;`;
     try {
       const re = new RegExp(regexPattern, regexFlags);
       const matches: any[] = [];
-      
+
       if (regexFlags.includes('g')) {
         let match;
         let iteration = 0;
         re.lastIndex = 0; // reset
-        
+
         while ((match = re.exec(regexText)) !== null) {
           iteration++;
           if (iteration > 200) {
@@ -903,7 +902,7 @@ border-radius: 12px;`;
             value: match[0],
             groups: match.slice(1)
           });
-          
+
           if (match[0] === '') {
             re.lastIndex++; // Avoid zero-width match infinite loops
           }
@@ -918,7 +917,7 @@ border-radius: 12px;`;
           });
         }
       }
-      
+
       setRegexMatches(matches);
       setRegexError(null);
     } catch (e: any) {
@@ -950,7 +949,7 @@ border-radius: 12px;`;
 
         const matchedText = match[0];
         const matchIndex = match.index;
-        
+
         // Append text preceding match
         output += regexText.slice(lastIndex, matchIndex)
           .replace(/&/g, '&amp;')
@@ -965,7 +964,7 @@ border-radius: 12px;`;
 
         // Append highlighted match
         output += `<span class="bg-amber-color/25 text-amber-color font-bold border-b border-amber-color/60 px-0.5 rounded px-1" title="Match ${count}">${escapedMatched}</span>`;
-        
+
         lastIndex = re.lastIndex;
         if (matchedText === '') {
           re.lastIndex++;
@@ -1054,7 +1053,7 @@ border-radius: 12px;`;
 
   const getPasswordStrength = () => {
     if (!passwordResult || passwordResult.includes(' ')) return { label: 'Weak', percent: 20, color: 'bg-rose-500' };
-    
+
     let score = 0;
     if (passwordResult.length >= 8) score++;
     if (passwordResult.length >= 12) score++;
@@ -1093,7 +1092,7 @@ border-radius: 12px;`;
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
               activeTool === 'jwt'
                 ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
-                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Braces className="w-4 h-4 text-cyan" />
@@ -1108,7 +1107,7 @@ border-radius: 12px;`;
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
               activeTool === 'glass'
                 ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
-                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Sparkles className="w-4 h-4 text-cyan" />
@@ -1123,7 +1122,7 @@ border-radius: 12px;`;
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
               activeTool === 'regex'
                 ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
-                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Search className="w-4 h-4 text-cyan" />
@@ -1138,7 +1137,7 @@ border-radius: 12px;`;
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
               activeTool === 'gen'
                 ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
-                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Key className="w-4 h-4 text-cyan" />
@@ -1153,7 +1152,7 @@ border-radius: 12px;`;
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
               activeTool === 'c_to_wasm'
                 ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
-                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Code className="w-4 h-4 text-cyan" />
@@ -1168,7 +1167,7 @@ border-radius: 12px;`;
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
               activeTool === 'svg_creator'
                 ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
-                : 'bg-muted/15 dark:bg-[#10141d]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
             }`}
           >
             <Sparkles className="w-4 h-4 text-cyan" />
@@ -1180,7 +1179,7 @@ border-radius: 12px;`;
         </div>
 
         {/* Action Canvas */}
-        <div className="lg:col-span-3 border border-border-color bg-muted/10 dark:bg-[#10141d]/20 rounded-xl overflow-hidden min-h-[500px]">
+        <div className="lg:col-span-3 border border-border-color bg-muted/10 dark:bg-[#081c28]/20 rounded-xl overflow-hidden min-h-[500px]">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTool}
@@ -1215,13 +1214,13 @@ border-radius: 12px;`;
                         value={jwtInput}
                         onChange={(e) => setJwtInput(e.target.value)}
                         placeholder="Paste your encoded JWT here..."
-                        className="w-full h-80 p-3 bg-[#090b0f] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-[#ff79c6] break-all leading-normal"
+                        className="w-full h-80 p-3 bg-[#031018] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-[#ff79c6] break-all leading-normal"
                         id="jwt-textarea-input"
                       />
-                      
+
                       {jwtExpiryStatus !== 'none' && (
                         <div className={`p-2.5 rounded-md border text-xs font-mono flex items-center gap-2 ${
-                          jwtExpiryStatus === 'valid' 
+                          jwtExpiryStatus === 'valid'
                             ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-color'
                             : 'bg-rose-500/10 border-rose-500/20 text-rose-500'
                         }`}>
@@ -1263,10 +1262,10 @@ border-radius: 12px;`;
                             </button>
                           )}
                         </div>
-                        <pre 
-                          tabIndex={0} 
+                        <pre
+                          tabIndex={0}
                           aria-label="Decoded JWT header JSON"
-                          className="w-full h-24 p-3 bg-[#090b0f] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-amber-color focus:outline-none focus:ring-1 focus:ring-amber-color"
+                          className="w-full h-24 p-3 bg-[#031018] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-amber-color focus:outline-none focus:ring-1 focus:ring-amber-color"
                         >
                           {jwtHeader ? jwtHeader : <span className="text-muted-foreground/40">// waiting for input...</span>}
                         </pre>
@@ -1286,10 +1285,10 @@ border-radius: 12px;`;
                             </button>
                           )}
                         </div>
-                        <pre 
-                          tabIndex={0} 
+                        <pre
+                          tabIndex={0}
                           aria-label="Decoded JWT payload JSON"
-                          className="w-full h-44 p-3 bg-[#090b0f] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-cyan focus:outline-none focus:ring-1 focus:ring-cyan"
+                          className="w-full h-44 p-3 bg-[#031018] text-[11px] font-mono rounded-lg border border-border-color overflow-y-auto scrollbar-thin text-cyan focus:outline-none focus:ring-1 focus:ring-cyan"
                         >
                           {jwtPayload ? jwtPayload : <span className="text-muted-foreground/40">// waiting for input...</span>}
                         </pre>
@@ -1325,7 +1324,7 @@ border-radius: 12px;`;
                           max="40"
                           value={glassBlur}
                           onChange={(e) => setGlassBlur(Number(e.target.value))}
-                          className="w-full accent-cyan bg-[#090b0f] h-1.5 rounded-lg appearance-none cursor-pointer"
+                          className="w-full accent-cyan bg-[#031018] h-1.5 rounded-lg appearance-none cursor-pointer"
                         />
                       </div>
 
@@ -1342,7 +1341,7 @@ border-radius: 12px;`;
                           max="90"
                           value={glassOpacity}
                           onChange={(e) => setGlassOpacity(Number(e.target.value))}
-                          className="w-full accent-cyan bg-[#090b0f] h-1.5 rounded-lg appearance-none cursor-pointer"
+                          className="w-full accent-cyan bg-[#031018] h-1.5 rounded-lg appearance-none cursor-pointer"
                         />
                       </div>
 
@@ -1359,7 +1358,7 @@ border-radius: 12px;`;
                           max="5"
                           value={glassBorder}
                           onChange={(e) => setGlassBorder(Number(e.target.value))}
-                          className="w-full accent-cyan bg-[#090b0f] h-1.5 rounded-lg appearance-none cursor-pointer"
+                          className="w-full accent-cyan bg-[#031018] h-1.5 rounded-lg appearance-none cursor-pointer"
                         />
                       </div>
 
@@ -1376,7 +1375,7 @@ border-radius: 12px;`;
                           max="12"
                           value={glassGlow}
                           onChange={(e) => setGlassGlow(Number(e.target.value))}
-                          className="w-full accent-cyan bg-[#090b0f] h-1.5 rounded-lg appearance-none cursor-pointer"
+                          className="w-full accent-cyan bg-[#031018] h-1.5 rounded-lg appearance-none cursor-pointer"
                         />
                       </div>
 
@@ -1403,7 +1402,7 @@ border-radius: 12px;`;
 
                     {/* Preview Panel */}
                     <div className="flex flex-col space-y-4">
-                      <div className="relative h-44 rounded-xl overflow-hidden border border-border-color flex items-center justify-center bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] bg-[#090b0f]">
+                      <div className="relative h-44 rounded-xl overflow-hidden border border-border-color flex items-center justify-center bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px] bg-[#031018]">
                         {/* Decorative floating balls behind card */}
                         <div className="absolute top-6 left-8 w-20 h-20 rounded-full bg-cyan/30 blur-md animate-pulse" />
                         <div className="absolute bottom-6 right-8 w-20 h-20 rounded-full bg-purple-color/30 blur-md animate-pulse" style={{ animationDuration: '4s' }} />
@@ -1450,10 +1449,10 @@ border-radius: 12px;`;
                             </button>
                           </div>
                         </div>
-                        <pre 
+                        <pre
                           tabIndex={0}
                           aria-label="Generated CSS code output"
-                          className="p-3 bg-[#090b0f] text-[10px] font-mono rounded-lg border border-border-color h-24 overflow-y-auto scrollbar-thin text-muted-foreground select-text focus:outline-none focus:ring-1 focus:ring-cyan"
+                          className="p-3 bg-[#031018] text-[10px] font-mono rounded-lg border border-border-color h-24 overflow-y-auto scrollbar-thin text-muted-foreground select-text focus:outline-none focus:ring-1 focus:ring-cyan"
                         >
                           {getGlassCssString()}
                         </pre>
@@ -1485,7 +1484,7 @@ border-radius: 12px;`;
                             value={regexPattern}
                             onChange={(e) => setRegexPattern(e.target.value)}
                             placeholder="Enter regex pattern..."
-                            className="w-full pl-5 pr-5 py-2 bg-[#090b0f] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none text-[#ffb454]"
+                            className="w-full pl-5 pr-5 py-2 bg-[#031018] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none text-[#22D3EE]"
                             id="regex-pattern-input"
                           />
                           <span className="absolute right-3 top-2.5 text-muted-foreground/50">/</span>
@@ -1500,7 +1499,7 @@ border-radius: 12px;`;
                           value={regexFlags}
                           onChange={(e) => setRegexFlags(e.target.value)}
                           placeholder="g, i, m..."
-                          className="w-full px-3 py-2 bg-[#090b0f] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none text-cyan"
+                          className="w-full px-3 py-2 bg-[#031018] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none text-cyan"
                           id="regex-flags-input"
                         />
                       </div>
@@ -1520,7 +1519,7 @@ border-radius: 12px;`;
                         value={regexText}
                         onChange={(e) => setRegexText(e.target.value)}
                         placeholder="Type or paste string to test regex matches..."
-                        className="w-full h-24 p-3 bg-[#090b0f] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-foreground leading-relaxed"
+                        className="w-full h-24 p-3 bg-[#031018] text-xs font-mono rounded-lg border border-border-color focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-foreground leading-relaxed"
                         id="regex-test-textarea"
                       />
                     </div>
@@ -1528,8 +1527,8 @@ border-radius: 12px;`;
                     {/* Highlights Output */}
                     <div className="space-y-1.5">
                       <span className="block text-xs font-semibold text-muted-foreground text-cyan">Real-Time Match Highlights</span>
-                      <div 
-                        className="w-full min-h-16 p-3.5 bg-[#090b0f]/50 border border-border-color/60 rounded-lg text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
+                      <div
+                        className="w-full min-h-16 p-3.5 bg-[#031018]/50 border border-border-color/60 rounded-lg text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap select-text"
                         dangerouslySetInnerHTML={{ __html: renderRegexHighlightedText() }}
                       />
                     </div>
@@ -1539,7 +1538,7 @@ border-radius: 12px;`;
                       <span className="block text-xs font-semibold text-muted-foreground">
                         Matches Found ({regexMatches.length})
                       </span>
-                      <div className="max-h-36 overflow-y-auto scrollbar-thin border border-border-color/40 rounded-lg bg-[#090b0f]/20">
+                      <div className="max-h-36 overflow-y-auto scrollbar-thin border border-border-color/40 rounded-lg bg-[#031018]/20">
                         {regexMatches.map((m, idx) => (
                           <div
                             key={idx}
@@ -1574,7 +1573,7 @@ border-radius: 12px;`;
                       <h2 className="font-display text-base font-bold text-foreground">Secure UUID & Password Generator</h2>
                     </div>
                     {/* Inner Tabs */}
-                    <div className="flex gap-1 border border-border-color/60 rounded-lg p-0.5 bg-[#090b0f]">
+                    <div className="flex gap-1 border border-border-color/60 rounded-lg p-0.5 bg-[#031018]">
                       <button
                         onClick={() => setGenType('uuid')}
                         className={`px-3 py-1 font-mono text-[10px] rounded uppercase cursor-pointer font-bold ${
@@ -1607,7 +1606,7 @@ border-radius: 12px;`;
                         exit={{ opacity: 0, x: 6 }}
                         className="space-y-4"
                       >
-                        <div className="p-5 rounded-lg border border-border-color bg-[#090b0f] flex items-center justify-between relative group">
+                        <div className="p-5 rounded-lg border border-border-color bg-[#031018] flex items-center justify-between relative group">
                           <code className="text-sm font-mono font-semibold text-cyan break-all select-all pr-8" id="uuid-output-text">
                             {uuidResult}
                           </code>
@@ -1644,7 +1643,7 @@ border-radius: 12px;`;
                         exit={{ opacity: 0, x: -6 }}
                         className="space-y-4 font-mono text-xs"
                       >
-                        <div className="p-5 rounded-lg border border-border-color bg-[#090b0f] flex items-center justify-between relative">
+                        <div className="p-5 rounded-lg border border-border-color bg-[#031018] flex items-center justify-between relative">
                           <code className="text-sm font-mono font-semibold text-cyan break-all select-all pr-8" id="password-output-text">
                             {passwordResult}
                           </code>
@@ -1672,7 +1671,7 @@ border-radius: 12px;`;
                             <span>Password Strength</span>
                             <span className={getPasswordStrength().color.replace('bg-', 'text-')}>{getPasswordStrength().label}</span>
                           </div>
-                          <div className="w-full h-1.5 bg-[#090b0f] rounded-full overflow-hidden">
+                          <div className="w-full h-1.5 bg-[#031018] rounded-full overflow-hidden">
                             <div
                               className={`h-full transition-all duration-300 ${getPasswordStrength().color}`}
                               style={{ width: `${getPasswordStrength().percent}%` }}
@@ -1694,7 +1693,7 @@ border-radius: 12px;`;
                               max="64"
                               value={passLength}
                               onChange={(e) => setPassLength(Number(e.target.value))}
-                              className="w-full accent-cyan bg-[#090b0f] h-1.5 rounded-lg appearance-none cursor-pointer"
+                              className="w-full accent-cyan bg-[#031018] h-1.5 rounded-lg appearance-none cursor-pointer"
                             />
                           </div>
 
@@ -1757,7 +1756,7 @@ border-radius: 12px;`;
                         <p className="text-[10px] text-muted-foreground mt-0.5">Explore how registers, pointer offsets, and stacks behave when compiled into low-level WebAssembly (Wasm) bytecode.</p>
                       </div>
                     </div>
-                    
+
                     {/* Select active algorithm preset */}
                     <div className="flex items-center gap-2 font-mono text-xs">
                       <label htmlFor="preset-select" className="text-muted-foreground">Preset:</label>
@@ -1768,7 +1767,7 @@ border-radius: 12px;`;
                           const prog = C_PROGRAMS.find(p => p.id === e.target.value);
                           if (prog) setSelectedProgram(prog);
                         }}
-                        className="bg-[#070a0f] border border-border-color/60 text-foreground text-[10px] rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer font-bold"
+                        className="bg-[#020a11] border border-border-color/60 text-foreground text-[10px] rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer font-bold"
                       >
                         {C_PROGRAMS.map(p => (
                           <option key={p.id} value={p.id}>{p.name}</option>
@@ -1785,9 +1784,9 @@ border-radius: 12px;`;
                           <span className="text-muted-foreground">C Source Editor (Clang v16)</span>
                           <span className="text-[10px] text-cyan">[read-only preset]</span>
                         </div>
-                        <div className="relative border border-border-color/60 rounded-lg overflow-hidden bg-[#070a0f] p-4 font-mono text-xs text-foreground min-h-[280px] leading-relaxed">
+                        <div className="relative border border-border-color/60 rounded-lg overflow-hidden bg-[#020a11] p-4 font-mono text-xs text-foreground min-h-[280px] leading-relaxed">
                           {/* Code with step line highlighting! */}
-                          <pre 
+                          <pre
                             tabIndex={0}
                             aria-label="C source editor code"
                             className="overflow-x-auto whitespace-pre focus:outline-none focus:ring-1 focus:ring-amber-color rounded"
@@ -1795,11 +1794,11 @@ border-radius: 12px;`;
                             {editableCode.split('\n').map((lineText, lineIdx) => {
                               const isCurrentLine = compileSuccess && selectedProgram.steps[currentStepIndex]?.line === (lineIdx + 1);
                               return (
-                                <div 
-                                  key={lineIdx} 
+                                <div
+                                  key={lineIdx}
                                   className={`flex gap-3 px-2 py-0.5 transition-all ${
-                                    isCurrentLine 
-                                      ? 'bg-amber-color/15 border-l-2 border-amber-color text-amber-color font-bold shadow-[inset_0_0_10px_rgba(245,158,11,0.05)]' 
+                                    isCurrentLine
+                                      ? 'bg-amber-color/15 border-l-2 border-amber-color text-amber-color font-bold shadow-[inset_0_0_10px_rgba(34,211,238,0.05)]'
                                       : 'opacity-75'
                                   }`}
                                 >
@@ -1822,7 +1821,7 @@ border-radius: 12px;`;
                           <Cpu className={`w-4 h-4 ${isCompiling ? 'animate-spin' : ''}`} />
                           <span>{isCompiling ? 'Compiling to WASM...' : 'Compile to Wasm'}</span>
                         </button>
-                        
+
                         <button
                           onClick={() => {
                             setCompileSuccess(false);
@@ -1830,7 +1829,7 @@ border-radius: 12px;`;
                             setIsPlaying(false);
                             setCompileLogs([]);
                           }}
-                          className="px-3.5 border border-border-color bg-[#070a0f] hover:text-rose-400 transition-colors rounded-lg font-mono text-xs flex items-center justify-center cursor-pointer"
+                          className="px-3.5 border border-border-color bg-[#020a11] hover:text-rose-400 transition-colors rounded-lg font-mono text-xs flex items-center justify-center cursor-pointer"
                           title="Flush compiler buffer"
                         >
                           Reset
@@ -1915,7 +1914,7 @@ border-radius: 12px;`;
                           </div>
 
                           {/* 2. Visual Memory & Pointer Address Grid (Stack and Heap representation) */}
-                          <div className="p-4 bg-[#070a0f] border border-border-color rounded-xl space-y-3 font-mono">
+                          <div className="p-4 bg-[#020a11] border border-border-color rounded-xl space-y-3 font-mono">
                             <div className="flex items-center justify-between text-xs border-b border-border-color/20 pb-2">
                               <span className="text-muted-foreground uppercase text-[10px] font-bold">Dynamic Wasm linear memory block</span>
                               <span className="text-xs text-amber-color">Address base: 0x1000</span>
@@ -1935,13 +1934,13 @@ border-radius: 12px;`;
                                         <div className="absolute bottom-1 flex flex-col items-center space-y-1 animate-bounce">
                                           <div className="flex gap-1">
                                             {cellPointers.map(pName => (
-                                              <span 
-                                                key={pName} 
+                                              <span
+                                                key={pName}
                                                 className={`text-[8px] font-bold px-1 py-0.5 rounded border uppercase ${
-                                                  pName === 'arr' || pName === 'low' 
-                                                    ? 'bg-cyan/10 border-cyan text-cyan' 
-                                                    : pName === 'high' 
-                                                    ? 'bg-purple-500/10 border-purple-500 text-purple-400' 
+                                                  pName === 'arr' || pName === 'low'
+                                                    ? 'bg-cyan/10 border-cyan text-cyan'
+                                                    : pName === 'high'
+                                                    ? 'bg-purple-500/10 border-purple-500 text-purple-400'
                                                     : 'bg-amber-color/10 border-amber-color text-amber-color'
                                                 }`}
                                               >
@@ -1965,11 +1964,11 @@ border-radius: 12px;`;
                                   const hasPointers = Object.values(selectedProgram.steps[currentStepIndex]?.pointers || {}).includes(mIdx);
 
                                   return (
-                                    <div 
-                                      key={mIdx} 
+                                    <div
+                                      key={mIdx}
                                       className={`p-3 rounded-lg border text-center transition-all ${
-                                        hasPointers 
-                                          ? 'border-amber-color/50 bg-amber-color/[0.03] shadow-[0_0_10px_rgba(245,158,11,0.08)]' 
+                                        hasPointers
+                                          ? 'border-amber-color/50 bg-amber-color/[0.03] shadow-[0_0_10px_rgba(34,211,238,0.08)]'
                                           : 'border-border-color/60 bg-[#0a0f1d]/40'
                                       }`}
                                     >
@@ -1985,15 +1984,15 @@ border-radius: 12px;`;
                           {/* 3. Assembly instruction block (WAT view) */}
                           <div className="space-y-2">
                             <span className="block text-xs font-mono text-muted-foreground">Compiled WebAssembly Text (WAT instructions)</span>
-                            <div className="p-4 bg-[#070a0f] border border-border-color rounded-xl h-44 overflow-y-auto scrollbar-thin text-[10px] font-mono leading-relaxed text-[#8be9fd]">
+                            <div className="p-4 bg-[#020a11] border border-border-color rounded-xl h-44 overflow-y-auto scrollbar-thin text-[10px] font-mono leading-relaxed text-[#8be9fd]">
                               {selectedProgram.wat.split('\n').map((watLine, wIdx) => {
                                 const isCurrentWatLine = selectedProgram.steps[currentStepIndex]?.watHighlightIndex === (wIdx + 1);
                                 return (
-                                  <div 
-                                    key={wIdx} 
+                                  <div
+                                    key={wIdx}
                                     className={`px-2 py-0.5 rounded transition-all flex gap-3 ${
-                                      isCurrentWatLine 
-                                        ? 'bg-cyan/15 text-cyan font-bold border-l-2 border-cyan shadow-[inset_0_0_8px_rgba(34,211,238,0.05)]' 
+                                      isCurrentWatLine
+                                        ? 'bg-cyan/15 text-cyan font-bold border-l-2 border-cyan shadow-[inset_0_0_8px_rgba(34,211,238,0.05)]'
                                         : 'opacity-65'
                                     }`}
                                   >
@@ -2006,7 +2005,7 @@ border-radius: 12px;`;
                           </div>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center justify-center text-center p-10 border border-border-color/40 bg-[#070a0f]/40 rounded-xl min-h-[380px] space-y-4">
+                        <div className="flex flex-col items-center justify-center text-center p-10 border border-border-color/40 bg-[#020a11]/40 rounded-xl min-h-[380px] space-y-4">
                           <Cpu className="w-10 h-10 text-muted-foreground/30 animate-pulse" />
                           <div className="space-y-1">
                             <h3 className="font-mono text-sm font-bold text-foreground uppercase tracking-wider">Compiler Standby</h3>
@@ -2032,7 +2031,7 @@ border-radius: 12px;`;
                         <p className="text-[10px] text-muted-foreground mt-0.5">Draft, style, and animate scalable vector graphics with help from a specialized AI Developer Team.</p>
                       </div>
                     </div>
-                    
+
                     {/* Presets dropdown */}
                     <div className="flex items-center gap-2 font-mono text-xs">
                       <label htmlFor="svg-preset-select" className="text-muted-foreground">Preset:</label>
@@ -2043,7 +2042,7 @@ border-radius: 12px;`;
                           const preset = SVG_PRESETS[e.target.value as keyof typeof SVG_PRESETS];
                           if (preset) setSvgCode(preset.code);
                         }}
-                        className="bg-[#070a0f] border border-border-color/60 text-foreground text-[10px] rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer font-bold"
+                        className="bg-[#020a11] border border-border-color/60 text-foreground text-[10px] rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-color cursor-pointer font-bold"
                       >
                         <option value="" disabled>-- Custom SVG --</option>
                         {Object.entries(SVG_PRESETS).map(([key, p]) => (
@@ -2081,7 +2080,7 @@ border-radius: 12px;`;
                           value={svgCode}
                           onChange={(e) => setSvgCode(e.target.value)}
                           placeholder="Write raw SVG XML here..."
-                          className="w-full h-[320px] p-3.5 bg-[#070a0f] text-xs font-mono rounded-lg border border-border-color/60 focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-cyan leading-relaxed select-text"
+                          className="w-full h-[320px] p-3.5 bg-[#020a11] text-xs font-mono rounded-lg border border-border-color/60 focus:border-amber-color focus:outline-none resize-none scrollbar-thin text-cyan leading-relaxed select-text"
                           id="svg-code-editor"
                         />
                       </div>
@@ -2133,11 +2132,11 @@ border-radius: 12px;`;
                         </div>
 
                         {/* Rendering Frame */}
-                        <div 
+                        <div
                           className={`relative border border-border-color/60 rounded-lg h-[260px] overflow-hidden flex items-center justify-center ${
-                            showSvgGrid 
-                              ? 'bg-[radial-gradient(#1e293b_1.2px,transparent_1.2px)] [background-size:16px_16px] bg-[#090c12]' 
-                              : 'bg-[#090c12]'
+                            showSvgGrid
+                              ? 'bg-[radial-gradient(#1e293b_1.2px,transparent_1.2px)] [background-size:16px_16px] bg-[#031018]'
+                              : 'bg-[#031018]'
                           }`}
                         >
                           <div
@@ -2155,17 +2154,17 @@ border-radius: 12px;`;
                             <Bot className="w-4 h-4 text-amber-color" />
                             <span className="text-[10px] font-bold font-mono uppercase tracking-wider text-foreground">AI Dev Team Orchestrator</span>
                           </div>
-                          
+
                           {/* Active agent status block */}
                           <div className="flex gap-1.5">
                             {(['architect', 'coder', 'security', 'devops'] as const).map((role, idx) => {
                               const isActive = svgOrchestrationStep === idx;
                               const isFinished = svgOrchestrationStep > idx;
                               return (
-                                <span 
-                                  key={role} 
+                                <span
+                                  key={role}
                                   className={`text-[8px] font-mono px-1.5 py-0.5 rounded border uppercase transition-all ${
-                                    isActive 
+                                    isActive
                                       ? 'bg-amber-color/10 border-amber-color text-amber-color font-bold animate-pulse'
                                       : isFinished
                                       ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-color'
@@ -2180,7 +2179,7 @@ border-radius: 12px;`;
                         </div>
 
                         {/* Logs Dialogue */}
-                        <div className="h-28 overflow-y-auto scrollbar-thin space-y-2 text-[10px] font-mono leading-relaxed bg-[#070a0f] p-3 rounded-lg border border-border-color/30">
+                        <div className="h-28 overflow-y-auto scrollbar-thin space-y-2 text-[10px] font-mono leading-relaxed bg-[#020a11] p-3 rounded-lg border border-border-color/30">
                           {svgAiLogs.map((log, idx) => {
                             const isUser = log.role === 'user';
                             const isOrch = log.content.startsWith('[Orchestration]');
@@ -2206,7 +2205,7 @@ border-radius: 12px;`;
                             onChange={(e) => setSvgAiPrompt(e.target.value)}
                             disabled={isSvgGenerating}
                             placeholder="ask the ai dev team to design or modify the vector..."
-                            className="flex-1 px-3 py-1.5 bg-[#070a0f] text-xs font-mono rounded-lg border border-border-color/80 focus:border-amber-color focus:outline-none disabled:opacity-50 text-foreground"
+                            className="flex-1 px-3 py-1.5 bg-[#020a11] text-xs font-mono rounded-lg border border-border-color/80 focus:border-amber-color focus:outline-none disabled:opacity-50 text-foreground"
                           />
                           <button
                             type="submit"

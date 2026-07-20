@@ -46,8 +46,8 @@ export default function FAQ() {
         {faqData.map((item, idx) => {
           const isOpen = openIndex === idx;
           return (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="border border-border-color/30 rounded-lg overflow-hidden bg-muted/5 hover:bg-muted/10 transition-colors"
             >
               <button
@@ -63,7 +63,7 @@ export default function FAQ() {
                   <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
                 )}
               </button>
-              
+
               <AnimatePresence initial={false}>
                 {isOpen && (
                   <motion.div

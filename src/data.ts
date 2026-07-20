@@ -1,6 +1,5 @@
 export { CHANGELOG, TERMINAL_LINES } from './data/core';
 import { Tool, Project, MCPServer, SkillTemplate, BlogPost } from './types';
-import ecosystem from './data/ecosystem.json';
 
 export const TOOLS: Tool[] = [
   // START
@@ -437,86 +436,118 @@ export const TOOLS: Tool[] = [
 export const MANUAL_PROJECTS: Project[] = [
   {
     name: 'linacre.site',
-    category: 'deploy',
-    description: 'This very site. Terminal-styled toolkit + AI Lab. Rebuilt in React, Tailwind CSS v4, TypeScript and Node server, deployed on Vercel.',
-    url: 'https://www.linacre.site',
+    category: 'build',
+    description: 'A utility-first start page and open developer studio with private browser tools, curated project stories, learning resources, and an optional AI playground.',
+    url: 'https://www.linacre.site/',
     host: 'linacre.site',
-    tag: 'Live',
-    role: 'Lead Architect & Designer',
-    challenges: 'Upgrading from static HTML to dynamic compiled React while preserving the instant-load terminal theme and strict CSP headers.',
-    solution: 'Engineered custom lazy-loaded modules, optimized SVG emblems, and integrated Express server routes with auto-fallback proxy limits.',
-    tech: ['React', 'TypeScript', 'Tailwind CSS v4', 'Express', 'Motion'],
-    liveUrl: 'https://www.linacre.site',
-    repoUrl: 'https://github.com/LIN4CRE/linacre.site',
-    paypalUrl: 'https://paypal.me/DLinacre16'
+    tag: 'Featured · Live',
+    role: 'Product engineer and designer',
+    challenges: 'Turn a sprawling portfolio into a fast, useful product without losing the deeper tools and case studies already available on the site.',
+    solution: 'Created a focused start page, client-side utility suite, cleaner route system, accessible CyberBlue design language, static prerendering, and installable PWA shell.',
+    tech: ['React', 'TypeScript', 'Vite', 'Express', 'PWA', 'Vercel'],
+    liveUrl: 'https://www.linacre.site/',
+    repoUrl: 'https://github.com/LIN4CRE/linacre.site'
   },
   {
     name: 'Mob Deals',
     category: 'build',
-    description: 'UK mobile decision tool with a 64-source provider directory, live public source checks, SIM-only comparison data and plain-English PAC/STAC switching help for people who want to keep their number.',
+    description: 'A transparent UK SIM-only comparison and switching guide with 64 provider records, public source checks, and plain-English PAC/STAC help.',
     url: 'https://lin4cre.github.io/mob-deals/',
     host: 'lin4cre.github.io/mob-deals',
-    tag: 'Featured Live',
-    role: 'Product Designer, Full-stack Developer & Automation Architect',
-    challenges: 'Turning a risky prototype with unsupported scraping claims into a trustworthy public decision tool that can scale across UK mobile providers without publishing fake live prices.',
-    solution: 'Built a static, accessible GitHub Pages app with provider data JSON, scheduled public source checks, transparent methodology, number-switching help, quality workflows and a mirrored LIN4CRE repository.',
-    tech: ['HTML', 'CSS', 'JavaScript', 'GitHub Actions', 'GitHub Pages', 'SEO', 'Accessibility'],
+    tag: 'Featured · Live',
+    role: 'Product designer and developer',
+    challenges: 'Mobile comparison sites often blur live prices, affiliate claims, and editorial data, making it hard for non-technical users to judge what is current.',
+    solution: 'Separated manually reviewed deal entries from automated reachability checks, linked every source, added clear disclaimers, and built an accessible number-switching flow.',
+    tech: ['HTML', 'CSS', 'JavaScript', 'GitHub Actions', 'Accessibility', 'SEO'],
     liveUrl: 'https://lin4cre.github.io/mob-deals/',
-    repoUrl: 'https://github.com/LIN4CRE/mob-deals',
-    paypalUrl: 'https://paypal.me/DLinacre16'
+    repoUrl: 'https://github.com/LIN4CRE/mob-deals'
   },
   {
-    name: 'GhostMail',
+    name: 'PokeGuru',
     category: 'build',
-    description: 'Disposable email service. Built in Go to explore secure messaging and learn high-performance concurrent processing.',
-    url: 'https://github.com/LIN4CRE/GhostMail',
-    host: 'github.com/LIN4CRE/GhostMail',
-    tag: 'Open Source',
-    role: 'Creator & Maintainer',
-    challenges: 'Handling thousands of temporary connections concurrently without leaking file descriptors or memory.',
-    solution: 'Designed a pool of workers using Go channels, leveraging SQLite for local storage persistence and Docker multi-stage builds.',
-    tech: ['Go', 'Docker', 'SQLite', 'SMTP', 'Linux'],
-    repoUrl: 'https://github.com/LIN4CRE/GhostMail',
-    liveUrl: 'https://github.com/LIN4CRE/GhostMail',
-    paypalUrl: 'https://paypal.me/DLinacre16'
+    description: 'A fast Pokémon TCG database with advanced search, UK prices in GBP, set history, chase-card discovery, and a local collection vault.',
+    url: 'https://lin4cre.github.io/PokeGuru/',
+    host: 'lin4cre.github.io/PokeGuru',
+    tag: 'Featured · Live',
+    role: 'Frontend and product engineer',
+    challenges: 'Large card catalogues need responsive search and useful market context without overwhelming collectors on mobile devices.',
+    solution: 'Built a typed React interface with route-based search, set browsing, GBP-first presentation, local collection tracking, and a static GitHub Pages deployment.',
+    tech: ['React', 'TypeScript', 'Vite', 'PWA', 'GitHub Pages'],
+    liveUrl: 'https://lin4cre.github.io/PokeGuru/',
+    repoUrl: 'https://github.com/LIN4CRE/PokeGuru'
   },
   {
-    name: 'DomainDeals',
-    category: 'start',
-    description: 'Domain marketplace — discover, list, and broker great domain names through an elegant search index.',
-    url: 'https://github.com/LIN4CRE/DomainDeals',
-    host: 'github.com/LIN4CRE/DomainDeals',
-    tag: 'Open Source',
-    role: 'Full Stack Developer',
-    challenges: 'Creating a fast domain checker and indexing system that loads search requests in under 100ms.',
-    solution: 'Implemented client-side memoized filters and pre-loaded JSON indexes, styled with brutalist wireframe accents.',
-    tech: ['TypeScript', 'React', 'Tailwind CSS', 'Vite', 'JSON Search'],
-    repoUrl: 'https://github.com/LIN4CRE/DomainDeals',
-    liveUrl: 'https://github.com/LIN4CRE/DomainDeals',
-    paypalUrl: 'https://paypal.me/DLinacre16'
+    name: 'DKMA Monster',
+    category: 'build',
+    description: 'A practical Android background-app survival toolkit: searchable guidance for 15 OEM families plus CLI, desktop GUI, ADB, root, and Magisk options.',
+    url: 'https://lin4cre.github.io/dkma-monster/',
+    host: 'lin4cre.github.io/dkma-monster',
+    tag: 'Featured · Open source',
+    role: 'Systems designer and maintainer',
+    challenges: 'Android manufacturers hide battery and autostart controls in different places, causing alarms, sync, and background services to stop silently.',
+    solution: 'Centralised OEM-specific guidance in one data model and reused it across a web guide and automation tools, with a no-root path for ordinary users.',
+    tech: ['Android', 'ADB', 'Python', 'Kotlin', 'Magisk', 'HTML'],
+    liveUrl: 'https://lin4cre.github.io/dkma-monster/',
+    repoUrl: 'https://github.com/LIN4CRE/dkma-monster'
+  },
+  {
+    name: 'Linacre Uninstaller',
+    category: 'build',
+    description: 'A downloadable Android cleanup app with searchable app labels, safety tiers, guided review, and a scoped batch-uninstall flow.',
+    url: 'https://github.com/LIN4CRE/LinacreUninstaller/releases/latest',
+    host: 'GitHub Releases',
+    tag: 'Android · v1.3.1',
+    role: 'Android developer and maintainer',
+    challenges: 'Debloat tools can encourage risky removals and often make sideloaded builds difficult to identify or trust.',
+    solution: 'Added explicit risk tiers, review-first interactions, clear launcher labels, a Material dark interface, and versioned APK releases with documented installation notes.',
+    tech: ['Kotlin', 'Android', 'Material Design', 'GitHub Releases'],
+    liveUrl: 'https://github.com/LIN4CRE/LinacreUninstaller/releases/latest',
+    repoUrl: 'https://github.com/LIN4CRE/LinacreUninstaller'
+  },
+  {
+    name: 'MyHub Dev Pipeline',
+    category: 'deploy',
+    description: 'A documented Python DevOps reference project covering CI/CD, security checks, DORA-style metrics, anomaly detection, tests, and automated remediation experiments.',
+    url: 'https://github.com/LIN4CRE/myhub-pipeline',
+    host: 'github.com/LIN4CRE/myhub-pipeline',
+    tag: 'DevOps · Source',
+    role: 'Automation and platform engineer',
+    challenges: 'Pipeline concepts are often presented as disconnected YAML snippets rather than one inspectable system with tests, reports, and operational history.',
+    solution: 'Organised the workflow as a versioned Python project with architecture notes, CI, tests, security reports, release tags, and a repository-hosted demo recording.',
+    tech: ['Python', 'GitHub Actions', 'CI/CD', 'Security', 'DORA Metrics'],
+    repoUrl: 'https://github.com/LIN4CRE/myhub-pipeline'
+  },
+  {
+    name: 'KushCloud',
+    category: 'design',
+    description: 'A polished one-tap browser game with four worlds, combo scoring, power-ups, unlockable cosmetics, synthesised audio, and an optional leaderboard.',
+    url: 'https://lin4cre.github.io/KushCloud/',
+    host: 'lin4cre.github.io/KushCloud',
+    tag: 'Browser game · Live',
+    role: 'Game designer and frontend engineer',
+    challenges: 'Deliver responsive arcade controls, progression, sound, and visual variety without relying on heavy external game assets.',
+    solution: 'Used Canvas 2D, Web Audio, deterministic game state, adaptive quality, keyboard/touch controls, and a PWA-ready React shell.',
+    tech: ['React', 'TypeScript', 'Canvas 2D', 'Web Audio', 'PWA'],
+    liveUrl: 'https://lin4cre.github.io/KushCloud/',
+    repoUrl: 'https://github.com/LIN4CRE/KushCloud'
+  },
+  {
+    name: 'Apex POS',
+    category: 'build',
+    description: 'An offline-first point-of-sale system for the browser with register, stock, customers, expenses, receipts, and business reporting.',
+    url: 'https://dlinacre.github.io/Apex-POS/',
+    host: 'dlinacre.github.io/Apex-POS',
+    tag: 'Offline app · Live',
+    role: 'Product developer and LIN4CRE mirror maintainer',
+    challenges: 'Small operators need a usable register and stock system even when connectivity is poor and without sending business data to a third-party backend.',
+    solution: 'Kept the product client-side with offline storage, responsive register flows, inventory warnings, expense tracking, receipt output, and analytics views.',
+    tech: ['Vue 3', 'Dexie', 'IndexedDB', 'PWA', 'Offline-first'],
+    liveUrl: 'https://dlinacre.github.io/Apex-POS/',
+    repoUrl: 'https://github.com/LIN4CRE/Apex-POS'
   }
 ];
 
-
-// Automatically append ecosystem projects to the dashboard
-const ecoProjects: Project[] = ecosystem.map((item: any) => ({
-  name: item.name,
-  category: item.type.includes('Infrastructure') ? 'deploy' : (item.technologies.length > 0 ? 'build' : 'start'),
-  description: item.description || `${item.type} project — details available on request.`,
-  url: item.remote ? item.remote.replace(/\.git$/, '') : '',
-  host: item.remote ? 'GitHub' : 'Private',
-  tag: item.technologies.length > 0 ? item.technologies.join(', ') : (item.has_git ? 'Git Repo' : 'Internal'),
-  role: item.type,
-  challenges: 'Integrating with local database models and automated workflow systems.',
-  solution: 'Standardized build and deploy configurations under the linacre-devops hub.',
-  tech: item.technologies.length > 0 ? item.technologies : ['Git', 'Local Env']
-}));
-
-const allProjects = [...MANUAL_PROJECTS, ...ecoProjects];
-export const PROJECTS: Project[] = allProjects.filter((project, index) => 
-  allProjects.findIndex(p => p.name.toLowerCase() === project.name.toLowerCase()) === index
-);
-
+export const PROJECTS: Project[] = MANUAL_PROJECTS;
 
 
 export const ROADMAP_STEPS = [
@@ -830,43 +861,6 @@ ANTHROPIC_API_KEY=sk-ant-...`;
 
 export const BLOG_POSTS: BlogPost[] = [
   {
-    slug: 'go-concurrency-patterns',
-    title: 'High-Throughput Go Concurrency Patterns',
-    excerpt: 'Deep dive into worker pools, rate limiters, and channel synchronization built for high-throughput SMTP processing in GhostMail.',
-    content: `When building GhostMail, my open-source disposable email service, the primary technical challenge was managing thousands of incoming SMTP connections concurrently. In this write-up, we explore the exact concurrency patterns that made it possible.
-
-## 1. The Worker Pool Pattern
-Instead of spawning an unbounded number of goroutines for every connection (which causes file descriptor leaks and memory bloat), we use a structured worker pool.
-
-\`\`\`go
-type Worker struct {
-    ID          int
-    JobQueue    chan Job
-    WorkerPool  chan chan Job
-    QuitChannel chan bool
-}
-\`\`\`
-
-Workers register themselves in a global pool and pull jobs from a localized channel. This keeps CPU consumption completely flat.
-
-## 2. Rate Limiting with Token Bucket
-To prevent denial-of-service vectors, we employ a token bucket limiter using Go's \`golang.org/x/time/rate\` package. Connections are checked on accept:
-
-\`\`\`go
-limiter := rate.NewLimiter(10, 30) // 10 tokens per second, burst capacity of 30
-if !limiter.Allow() {
-    return ErrRateLimitExceeded
-}
-\`\`\`
-
-## Conclusion
-By pairing bounded worker pools with token-bucket limiters, GhostMail sustains over 5,000 SMTP transactions per second on a single-core VPS.`,
-    date: '2026-06-15',
-    readTime: '6 min read',
-    tags: ['Go', 'Concurrency', 'SMTP', 'Docker'],
-    category: 'concurrency'
-  },
-  {
     slug: 'dynamic-hsl-theme-variables',
     title: 'Dynamic HSL Theme Customization in React',
     excerpt: 'How to build a theme customization panel using CSS custom properties, HSL color calculations, and local storage preservation.',
@@ -879,7 +873,7 @@ HSL (Hue, Saturation, Lightness) is the optimal color space for programmatically
 :root {
   --color-primary-hue: 215;
   --color-primary-sat: 20%;
-  
+
   --color-primary: hsl(var(--color-primary-hue), var(--color-primary-sat), 10%);
   --color-accent: hsl(var(--color-accent-hue), 90%, 60%);
   --color-border: hsl(var(--color-primary-hue), var(--color-primary-sat), 25%);

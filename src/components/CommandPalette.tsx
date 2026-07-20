@@ -153,7 +153,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#0b0e14]/75 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-[#030c14]/75 backdrop-blur-sm transition-opacity"
           />
 
           {/* Dialog Window */}
@@ -163,7 +163,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: -10 }}
               transition={{ duration: 0.15 }}
-              className="relative w-full max-w-xl overflow-hidden rounded-xl bg-muted/95 dark:bg-[#10141d]/95 border border-border-color shadow-2xl flex flex-col"
+              className="relative w-full max-w-xl overflow-hidden rounded-xl bg-muted/95 dark:bg-[#081c28]/95 border border-border-color shadow-2xl flex flex-col"
             >
               {/* Search input line */}
               <div className="relative border-b border-border-color p-4">
@@ -188,7 +188,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
                 {allItems.map((item, idx) => {
                   const isHighlighted = idx === activeIndex;
                   const Icon = item.icon || Hash;
-                  
+
                   return (
                     <button
                       key={item.id}
@@ -210,7 +210,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
                           </p>
                         )}
                       </div>
-                      
+
                       {isHighlighted && (
                         <div className="flex items-center gap-1 text-[9px] font-mono text-amber-color/60 bg-amber-color/5 px-1 rounded border border-amber-color/15 self-center">
                           <span>select</span>

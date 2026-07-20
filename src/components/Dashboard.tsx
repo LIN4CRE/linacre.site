@@ -244,7 +244,7 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-muted/10 dark:bg-[#10141d]/80 border border-border-color rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl"
+          className="bg-muted/10 dark:bg-[#081c28]/80 border border-border-color rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl"
         >
           {/* Lock header */}
           <div className="flex flex-col items-center text-center space-y-3">
@@ -396,7 +396,7 @@ export default function Dashboard() {
                 placeholder="filter MCP servers..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-muted/30 dark:bg-[#10141d]/30 border border-border-color rounded-lg py-2 pl-9 pr-4 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-cyan text-placeholder placeholder:text-muted-foreground/55 transition-all"
+                className="w-full bg-muted/30 dark:bg-[#081c28]/30 border border-border-color rounded-lg py-2 pl-9 pr-4 text-xs font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-cyan text-placeholder placeholder:text-muted-foreground/55 transition-all"
               />
             </div>
 
@@ -424,7 +424,7 @@ export default function Dashboard() {
                       <span className="text-[10px] font-mono uppercase bg-muted/60 dark:bg-muted/10 border border-border-color/50 px-2 py-0.5 rounded text-muted-foreground">
                         {server.category}
                       </span>
-                      
+
                       <button
                         onClick={() => toggleMcpStatus(server.id)}
                         className={`text-[9px] font-mono px-2 py-0.5 rounded cursor-pointer transition-all uppercase border font-semibold ${
@@ -451,7 +451,7 @@ export default function Dashboard() {
                         <Code className="w-3.5 h-3.5" />
                         <span>{isExpanded ? 'Hide CLI setup' : 'Show CLI setup'}</span>
                       </button>
-                      
+
                       {server.package && (
                         <button
                           onClick={() => handleCopyText(server.package || '', server.id)}
@@ -625,11 +625,11 @@ export default function Dashboard() {
 
             {/* Split Screen: Chart/SVG on Left, Diagnostics on Right */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-              
+
               {/* Topology / Graph display */}
               <div className="col-span-1 lg:col-span-6 bg-black/20 dark:bg-black/10 border border-border-color/40 rounded-xl p-5 flex flex-col justify-between items-center min-h-[350px]">
                 <h4 className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-wider self-start">Network Latency & Connection Strength</h4>
-                
+
                 {/* Radar Chart from ChartJS */}
                 <div className="w-full h-[240px] flex items-center justify-center">
                   <Radar
@@ -681,7 +681,7 @@ export default function Dashboard() {
 
               {/* Diagnostic Panel & Retry list */}
               <div className="col-span-1 lg:col-span-6 space-y-4 flex flex-col justify-between">
-                
+
                 {/* List of Mesh components */}
                 <div className="space-y-3">
                   {(Object.keys(meshStatus) as Array<'fastapi' | 'express' | 'phone' | 'agent' | 'gemini'>).map((key) => {
@@ -695,9 +695,9 @@ export default function Dashboard() {
                     };
 
                     return (
-                      <div 
-                        key={key} 
-                        className="bg-black/30 dark:bg-[#111622] border border-border-color/60 rounded-xl p-3.5 flex items-center justify-between gap-3 group relative hover:border-cyan/40 transition duration-200"
+                      <div
+                        key={key}
+                        className="bg-black/30 dark:bg-[#061520] border border-border-color/60 rounded-xl p-3.5 flex items-center justify-between gap-3 group relative hover:border-cyan/40 transition duration-200"
                         title={comp.reason}
                       >
                         <div className="flex items-center gap-3">
@@ -752,7 +752,7 @@ export default function Dashboard() {
               <h3 className="font-mono text-xs font-bold text-amber-color uppercase tracking-wider">
                 🤖 Direct Ecosystem Action Webhooks
               </h3>
-              
+
               <div className="flex flex-wrap gap-2.5">
                 <button
                   onClick={async () => {

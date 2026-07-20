@@ -6,7 +6,6 @@ dist
 public/wallpapers
 public/emblem-animated.svg
 public/emblem-static.svg
-public/favicon.svg
 public/agent-report.json
 status.txt
 .serena/

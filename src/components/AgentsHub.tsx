@@ -67,7 +67,7 @@ const AVAILABLE_POKEMON = [
 ];
 
 const WORKSTATIONS = [
-  { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#161310]/80 shadow-[0_0_10px_rgba(251,191,36,0.15)]', rgb: '251, 191, 36' },
+  { name: 'Mainframe Node', x: 1, y: 1, icon: Server, color: 'text-amber-color border-amber-color/30 bg-[#061923]/80 shadow-[0_0_10px_rgba(34,211,238,0.15)]', rgb: '34, 211, 238' },
   { name: 'Git Repository', x: 1, y: 8, icon: LayoutGrid, color: 'text-cyan border-cyan/30 bg-[#0d161a]/80 shadow-[0_0_10px_rgba(92,207,230,0.15)]', rgb: '92, 207, 230' },
   { name: 'Database Cluster', x: 8, y: 1, icon: Database, color: 'text-purple-color border-purple-color/30 bg-[#140f1a]/80 shadow-[0_0_10px_rgba(168,85,247,0.15)]', rgb: '168, 85, 247' },
   { name: 'Edge Server', x: 8, y: 8, icon: Award, color: 'text-emerald-color border-emerald-color/30 bg-[#0d1a12]/80 shadow-[0_0_10px_rgba(127,216,143,0.15)]', rgb: '127, 216, 143' },
@@ -107,7 +107,7 @@ const playSynthSound = (type: 'click' | 'success' | 'error', isMuted: boolean) =
       const now = ctx.currentTime;
       gain.gain.setValueAtTime(0.06, now);
       gain.gain.exponentialRampToValueAtTime(0.005, now + 0.4);
-      
+
       const freqs = [523.25, 659.25, 783.99, 1046.50]; // C5 -> E5 -> G5 -> C6
       osc.start(now);
       freqs.forEach((freq, idx) => {
@@ -163,7 +163,7 @@ const DeveloperRobotSVG = ({ color }: { color: string }) => (
     <line x1="50" y1="30" x2="50" y2="38" stroke={color} strokeWidth="4" />
     <rect x="22" y="38" width="56" height="42" rx="4" fill="#0d1117" stroke={color} strokeWidth="4" />
     <circle cx="34" cy="50" r="2.5" fill="#10b981" />
-    <circle cx="34" cy="60" r="2.5" fill="#f59e0b" />
+    <circle cx="34" cy="60" r="2.5" fill="#22D3EE" />
     <circle cx="34" cy="70" r="2.5" fill="#ef4444" />
     <path d="M 22 45 L 8 45 L 8 65" fill="none" stroke={color} strokeWidth="3.5" />
     <path d="M 78 45 L 92 45 L 92 65" fill="none" stroke={color} strokeWidth="3.5" />
@@ -235,7 +235,7 @@ export default function AgentsHub() {
       role: 'Security',
       spriteName: 'magnezone',
       personality: 'pragmatic',
-      color: '#fbbf24',
+      color: '#34D399',
       x: 1,
       y: 1,
       startX: 1,
@@ -414,7 +414,7 @@ export default function AgentsHub() {
   const [selectedAction, setSelectedAction] = useState(predefinedActions[0]);
   const [customActionText, setCustomActionText] = useState('');
   const [inspectingAgent, setInspectingAgent] = useState<Agent | null>(null);
-  
+
   // Factory Form states
   const [newAgentName, setNewAgentName] = useState('');
   const [newAgentRole, setNewAgentRole] = useState<'Dev' | 'DevOps' | 'Security' | 'Librarian'>('Dev');
@@ -447,7 +447,7 @@ export default function AgentsHub() {
   useEffect(() => {
     const interval = setInterval(() => {
       const activeMovingCount = agents.filter(a => !a.isPaused && (a.x !== a.targetX || a.y !== a.targetY)).length;
-      
+
       setTelemetry((prev) => {
         const bandwidthChange = activeMovingCount > 0 ? (Math.random() * 15 + 15) : (Math.random() * 2 + 1);
         const loadChange = Math.min(95, Math.max(5, (activeMovingCount * 22) + Math.floor(Math.random() * 10)));
@@ -472,7 +472,7 @@ export default function AgentsHub() {
           const isWorking = a.x !== a.targetX || a.y !== a.targetY;
           const cpuLoad = isWorking ? Math.floor(Math.random() * 45 + 50) : Math.floor(Math.random() * 10 + 5);
           const ramFootprint = Math.min(1024, Math.max(128, a.ram + Math.floor(Math.random() * 20 - 10)));
-          
+
           const updated = { ...a, cpu: cpuLoad, ram: ramFootprint };
           if (inspectingAgent?.id === a.id) {
             setInspectingAgent(updated);
@@ -501,7 +501,7 @@ export default function AgentsHub() {
               addLog(name, 'Feeling low on charge. Relocating to Game Corner Cafe for quick power recharge.', 'info');
               return { ...agent, startX: x, startY: y, targetX: 5, targetY: 5, status: 'Charging at Cafe' };
             }
-            
+
             if (personality === 'chaotic' && Math.random() < 0.2 && agent.task === 'Idle') {
               const nextStation = WORKSTATIONS[Math.floor(Math.random() * WORKSTATIONS.length)];
               addLog(name, `Matrix anomaly triggered. Routing chaotic sweep to: ${nextStation.name}`, 'warning');
@@ -519,7 +519,7 @@ export default function AgentsHub() {
                 const newQueue = taskQueue.slice(1);
                 const nextStation = WORKSTATIONS[Math.floor(Math.random() * (WORKSTATIONS.length - 1))];
                 addLog(name, `Dequeued next script: "${nextTask}". Routing to ${nextStation.name}...`, 'info');
-                
+
                 return {
                   ...agent,
                   task: nextTask,
@@ -590,14 +590,14 @@ export default function AgentsHub() {
         const res = await fetch('/api/active-logs');
         if (!res.ok) return;
         const data = await res.json();
-        
+
         if (data.logs && Array.isArray(data.logs) && data.logs.length > 0) {
           const latestStep = data.logs[data.logs.length - 1];
           const stepIndex = latestStep.step_index ?? -1;
 
           if (stepIndex > lastStepIndexRef.current) {
             lastStepIndexRef.current = stepIndex;
-            
+
             let targetStation = WORKSTATIONS[4]; // Default: Game Corner Cafe (5, 5)
             let agentStatus = 'Connected to workspace';
             let agentTask = 'Idle';
@@ -649,8 +649,8 @@ export default function AgentsHub() {
 
             setAgents((prevAgents) => {
               const hasAntigravity = prevAgents.some(a => a.id === 'antigravity-live');
-              const actionMsg = latestStep.tool_calls && latestStep.tool_calls.length > 0 
-                ? `Tool Invoked: ${latestStep.tool_calls[0].name}` 
+              const actionMsg = latestStep.tool_calls && latestStep.tool_calls.length > 0
+                ? `Tool Invoked: ${latestStep.tool_calls[0].name}`
                 : latestStep.source === 'MODEL' ? 'Thinking' : 'Awaiting input';
 
               addLog('Antigravity', `${actionMsg} - "${agentStatus}"`, latestStep.source === 'MODEL' ? 'info' : 'success');
@@ -768,7 +768,7 @@ export default function AgentsHub() {
       prev.map((agent) => {
         if (agent.id === selectedAgentId) {
           addLog(agent.name, `Cargo Assigned: "${finalActionText}". Transporting packet to ${targetStation.name}...`, 'info');
-          
+
           const updated = {
             ...agent,
             task: finalActionText,
@@ -778,7 +778,7 @@ export default function AgentsHub() {
             targetY: targetStation.y,
             status: `Active load: ${finalActionText}`
           };
-          
+
           if (inspectingAgent?.id === agent.id) {
             setInspectingAgent(updated);
           }
@@ -820,7 +820,7 @@ export default function AgentsHub() {
     }
 
     playSynthSound('click', isMuted);
-    
+
     // Set destination to selectedNode coordinate
     setAgents((prev) =>
       prev.map((agent) => {
@@ -886,7 +886,7 @@ export default function AgentsHub() {
     const colors = {
       Dev: '#5ccfe6',
       DevOps: '#7fd88f',
-      Security: '#fbbf24',
+      Security: '#34D399',
       Librarian: '#f87171'
     };
 
@@ -923,7 +923,7 @@ export default function AgentsHub() {
   // Build recommendation spawner automatically
   const handleBuildArchitectSuggestion = async () => {
     if (!activeSuggestion) return;
-    
+
     // Map UI suggestion name to backend API script name
     const agentMapping: Record<string, string> = {
       'Repository Janitor': 'janitor',
@@ -932,14 +932,14 @@ export default function AgentsHub() {
       'Code Documenter': 'doc',
       'Release Manager': 'release'
     };
-    
+
     const targetAgentId = agentMapping[activeSuggestion.name];
 
     playSynthSound('success', isMuted);
     const colors = {
       Dev: '#5ccfe6',
       DevOps: '#7fd88f',
-      Security: '#fbbf24',
+      Security: '#34D399',
       Librarian: '#f87171'
     };
 
@@ -967,7 +967,7 @@ export default function AgentsHub() {
 
     setAgents((prev) => [...prev, newAgent]);
     addLog('Agent Architect', `Dispatching real execution for: ${newAgent.name}...`, 'info');
-    
+
     if (targetAgentId) {
       try {
         const res = await fetch(`/api/agents/spawn/${targetAgentId}`, { method: 'POST' });
@@ -989,7 +989,7 @@ export default function AgentsHub() {
   const handleDecommissionAgent = (id: string) => {
     const targetAgent = agents.find(a => a.id === id);
     if (!targetAgent) return;
-    
+
     if (confirm(`Are you sure you want to decommission and remove ${targetAgent.name}?`)) {
       playSynthSound('click', isMuted);
       setAgents((prev) => prev.filter((a) => a.id !== id));
@@ -1064,7 +1064,7 @@ export default function AgentsHub() {
       </div>
 
       {/* NO-SPEND GUARD: Prominent Billing Alert Warning Sign */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-amber-color/30 bg-[#161310] text-amber-color font-mono text-xs shadow-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-amber-color/30 bg-[#061923] text-amber-color font-mono text-xs shadow-md">
         <div className="flex items-center gap-3">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 animate-pulse text-amber-color" />
           <div className="space-y-0.5">
@@ -1105,7 +1105,7 @@ export default function AgentsHub() {
             setIsLiveTracking(!isLiveTracking);
           }}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-mono transition-all cursor-pointer ${
-            isLiveTracking 
+            isLiveTracking
               ? 'border-cyan bg-cyan/10 text-cyan shadow-[0_0_8px_rgba(92,207,230,0.2)]'
               : 'border-border-color bg-muted/10 hover:bg-muted/20 text-muted-foreground hover:text-foreground'
           }`}
@@ -1137,13 +1137,13 @@ export default function AgentsHub() {
             <span className="font-display text-2xl font-bold text-foreground">{telemetry.load}</span>
             <span className="font-mono text-xs text-muted-foreground">%</span>
           </div>
-          
+
           <div className="absolute right-2 bottom-1 w-28 h-6 opacity-35">
             <svg viewBox="0 0 120 24" className="w-full h-full">
               <path
                 d={generatePathData(loadHistory, 100)}
                 fill="none"
-                stroke="#fbbf24"
+                stroke="#34D399"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 className="transition-all duration-500"
@@ -1161,7 +1161,7 @@ export default function AgentsHub() {
             <span className="font-display text-2xl font-bold text-foreground">{telemetry.bandwidth}</span>
             <span className="font-mono text-xs text-muted-foreground">MB/s</span>
           </div>
-          
+
           <div className="absolute right-2 bottom-1 w-28 h-6 opacity-35">
             <svg viewBox="0 0 120 24" className="w-full h-full">
               <path
@@ -1206,10 +1206,10 @@ export default function AgentsHub() {
       </div>
 
       {/* SECTION: 3D Isometric Tactical Agent Grid & Radar */}
-      <div className="relative p-6 rounded-2xl bg-[#0a0f1d]/65 border-2 border-amber-color/25 shadow-[0_0_20px_rgba(245,158,11,0.04)] space-y-6 overflow-hidden" id="agent-grid-tactical-radar">
+      <div className="relative p-6 rounded-2xl bg-[#0a0f1d]/65 border-2 border-amber-color/25 shadow-[0_0_20px_rgba(34,211,238,0.04)] space-y-6 overflow-hidden" id="agent-grid-tactical-radar">
         {/* Decorative scan lines / grid overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808003_1px,transparent_1px),linear-gradient(to_bottom,#80808003_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-        
+
         {/* Glowing spotlight effect */}
         <div className="absolute -left-16 -top-16 w-32 h-32 bg-amber-color/5 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute -right-16 -bottom-16 w-32 h-32 bg-cyan/5 rounded-full blur-2xl pointer-events-none" />
@@ -1243,14 +1243,14 @@ export default function AgentsHub() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
           {/* Left Column: The actual Canvas Grid rendering */}
-          <div className="lg:col-span-8 flex justify-center items-center py-6 relative overflow-hidden bg-[#070a0f]/80 rounded-xl border border-border-color/30 min-h-[380px]">
+          <div className="lg:col-span-8 flex justify-center items-center py-6 relative overflow-hidden bg-[#020a11]/80 rounded-xl border border-border-color/30 min-h-[380px]">
             {/* Grid Map View container */}
             <div className={`relative transition-all duration-700 ease-out p-6 ${
-              gridProjection === 'isometric' 
-                ? 'scale-[0.82] [transform:rotateX(55deg)_rotateZ(-45deg)] [transform-style:preserve-3d]' 
+              gridProjection === 'isometric'
+                ? 'scale-[0.82] [transform:rotateX(55deg)_rotateZ(-45deg)] [transform-style:preserve-3d]'
                 : 'scale-[0.95]'
             }`}>
-              
+
               {/* Actual 10x10 Matrix Board */}
               <div className="grid grid-cols-10 gap-1 w-[280px] sm:w-[340px] md:w-[380px] aspect-square relative z-10">
                 {Array.from({ length: 100 }).map((_, idx) => {
@@ -1271,10 +1271,10 @@ export default function AgentsHub() {
                         }
                       }}
                       className={`relative aspect-square flex items-center justify-center rounded transition-all duration-300 group ${
-                        workstation 
-                          ? 'cursor-pointer hover:scale-110 z-20' 
-                          : isPath 
-                          ? 'bg-[#111827]/40 border border-amber-color/5' 
+                        workstation
+                          ? 'cursor-pointer hover:scale-110 z-20'
+                          : isPath
+                          ? 'bg-[#111827]/40 border border-amber-color/5'
                           : 'opacity-25 hover:opacity-50'
                       }`}
                       style={{
@@ -1295,7 +1295,7 @@ export default function AgentsHub() {
 
                       {/* Spark / Footprint trail */}
                       {hasTrail && !workstation && cellAgents.length === 0 && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0.8, scale: 0.5 }}
                           animate={{ opacity: 0, scale: 1.5 }}
                           transition={{ duration: 1 }}
@@ -1308,16 +1308,16 @@ export default function AgentsHub() {
                         <div className={`relative w-full h-full flex items-center justify-center rounded-lg border-2 transition-all p-1 ${
                           workstation.color
                         } ${
-                          selectedNode?.name === workstation.name 
-                            ? 'ring-2 ring-amber-color border-amber-color shadow-[0_0_12px_rgba(245,158,11,0.4)] scale-105' 
-                            : 'hover:border-amber-color hover:shadow-[0_0_8px_rgba(245,158,11,0.2)]'
+                          selectedNode?.name === workstation.name
+                            ? 'ring-2 ring-amber-color border-amber-color shadow-[0_0_12px_rgba(34,211,238,0.4)] scale-105'
+                            : 'hover:border-amber-color hover:shadow-[0_0_8px_rgba(34,211,238,0.2)]'
                         }`}
                         style={{
                           transform: gridProjection === 'isometric' ? 'translateZ(12px)' : undefined
                         }}
                         >
                           <workstation.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                          
+
                           {/* Pulsing indicator under workstation */}
                           <div className="absolute -inset-0.5 bg-current rounded-lg opacity-10 animate-ping pointer-events-none" />
 
@@ -1330,7 +1330,7 @@ export default function AgentsHub() {
 
                       {/* Agent Avatar render */}
                       {cellAgents.length > 0 && (
-                        <div 
+                        <div
                           className="absolute flex flex-col items-center justify-center z-25 pointer-events-none"
                           style={{
                             transform: gridProjection === 'isometric' ? 'translateZ(20px)' : undefined
@@ -1342,7 +1342,7 @@ export default function AgentsHub() {
                               <div key={agent.id} className="relative w-8 h-8 flex items-center justify-center">
                                 {/* Bottom glowing shadow ring */}
                                 <div className="absolute bottom-0 w-6 h-1.5 bg-black/50 rounded-full border border-current opacity-75 blur-[1px]" style={{ color: agent.color }} />
-                                
+
                                 {hasImageError ? (
                                   <div className="w-7 h-7">
                                     {renderAgentSVG(agent.role, agent.color)}
@@ -1401,7 +1401,7 @@ export default function AgentsHub() {
                 {/* Dispatch Trigger Form */}
                 <div className="space-y-3 p-3 bg-background/40 border border-border-color/40 rounded-xl">
                   <h4 className="text-[10px] text-foreground font-bold uppercase tracking-wider">Dispatch Tactical Unit</h4>
-                  
+
                   <div className="space-y-1">
                     <label htmlFor="select-tactical-agent" className="block text-[8px] text-muted-foreground uppercase font-bold">Select Agent</label>
                     <select
@@ -1409,7 +1409,7 @@ export default function AgentsHub() {
                       aria-label="Select tactical agent"
                       value={tacticalAgentId}
                       onChange={(e) => setTacticalAgentId(e.target.value)}
-                      className="w-full bg-[#070a0f] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
+                      className="w-full bg-[#020a11] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
                     >
                       {agents.map((agent) => (
                         <option key={agent.id} value={agent.id}>
@@ -1426,7 +1426,7 @@ export default function AgentsHub() {
                       aria-label="Select tactical command script"
                       value={tacticalAction}
                       onChange={(e) => setTacticalAction(e.target.value)}
-                      className="w-full bg-[#070a0f] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
+                      className="w-full bg-[#020a11] border border-border-color rounded px-2 py-1 text-[10px] font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-amber-color"
                     >
                       {predefinedActions.map((action, idx) => (
                         <option key={idx} value={action}>
@@ -1466,12 +1466,12 @@ export default function AgentsHub() {
 
       {/* Agent Command Center - Pixel Art Party Roster */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
+
         {/* Left Side: Agent Party Roster Cards */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#10141d]/30 border-2 border-amber-color/20 shadow-xl overflow-hidden">
+          <div className="relative p-6 rounded-2xl bg-muted/10 dark:bg-[#081c28]/30 border-2 border-amber-color/20 shadow-xl overflow-hidden">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808007_1px,transparent_1px),linear-gradient(to_bottom,#80808007_1px,transparent_1px)] bg-[size:14px_24px] pointer-events-none" />
-            
+
             {/* Corner ornaments */}
             <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-amber-color/40" />
             <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-amber-color/40" />
@@ -1487,7 +1487,7 @@ export default function AgentsHub() {
                 {agents.filter(a => !a.isPaused).length}/{agents.length} Active
               </span>
             </div>
-            
+
             {/* Agent Cards Grid */}
             {agents.length === 0 ? (
               <div className="text-center py-12 font-mono text-xs text-muted-foreground">
@@ -1634,7 +1634,7 @@ export default function AgentsHub() {
 
         {/* Right Side: Control Panels & Inspector */}
         <div className="lg:col-span-5 space-y-6">
-          
+
           {/* Panel 1: AI Agent Architect Suggestions Card */}
           <div className="p-5 rounded-2xl bg-purple-color/5 border-2 border-purple-color/40 shadow-[0_0_15px_rgba(168,85,247,0.15)] space-y-4 animate-fade-in relative overflow-hidden">
             <div className="absolute -right-8 -top-8 w-20 h-20 bg-purple-color/10 rounded-full blur-xl pointer-events-none" />
@@ -1642,7 +1642,7 @@ export default function AgentsHub() {
             <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-purple-color/30" />
             <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-purple-color/30" />
             <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-purple-color/30" />
-            
+
             <h3 className="font-mono text-xs font-bold text-purple-color uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-4 h-4 text-purple-color animate-pulse" />
               <span>🧠 Agent Architect Recommendations</span>
@@ -1679,7 +1679,7 @@ export default function AgentsHub() {
                 {/* Auto build click button */}
                 <button
                   onClick={handleBuildArchitectSuggestion}
-                  className="w-full py-2 bg-purple-color hover:bg-purple-color/90 text-[#0b0e14] font-bold rounded-lg transition-colors cursor-pointer text-center text-xs flex items-center justify-center gap-1.5 shadow"
+                  className="w-full py-2 bg-purple-color hover:bg-purple-color/90 text-[#030c14] font-bold rounded-lg transition-colors cursor-pointer text-center text-xs flex items-center justify-center gap-1.5 shadow"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Accept Concept & Build Agent</span>
@@ -1691,7 +1691,7 @@ export default function AgentsHub() {
               </div>
             )}
           </div>
-          
+
           {/* Panel 2: Agent Inspector */}
           <AnimatePresence>
             {inspectingAgent ? (
@@ -1898,7 +1898,7 @@ export default function AgentsHub() {
                   />
                   <button
                     type="submit"
-                    className="absolute right-1 top-1 p-1 bg-purple-color text-[#0b0e14] rounded hover:bg-purple-color/90 transition-colors"
+                    className="absolute right-1 top-1 p-1 bg-purple-color text-[#030c14] rounded hover:bg-purple-color/90 transition-colors"
                     aria-label="Add new action script"
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -1997,8 +1997,8 @@ export default function AgentsHub() {
       </div>
 
       {/* Retro RPG Dialogue Box */}
-      <div className="p-5 rounded-2xl bg-[#080d16] border-4 border-amber-color shadow-[0_0_15px_rgba(251,191,36,0.2)] space-y-2 relative font-mono text-xs text-foreground selection:bg-amber-color/30 animate-fade-in">
-        
+      <div className="p-5 rounded-2xl bg-[#080d16] border-4 border-amber-color shadow-[0_0_15px_rgba(34,211,238,0.2)] space-y-2 relative font-mono text-xs text-foreground selection:bg-amber-color/30 animate-fade-in">
+
         <div className="absolute top-1.5 left-1.5 w-2.5 h-2.5 border-t-2 border-l-2 border-amber-color/50" />
         <div className="absolute top-1.5 right-1.5 w-2.5 h-2.5 border-t-2 border-r-2 border-amber-color/50" />
         <div className="absolute bottom-1.5 left-1.5 w-2.5 h-2.5 border-b-2 border-l-2 border-amber-color/50" />
