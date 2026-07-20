@@ -7,6 +7,11 @@ import { ChangelogItem } from '../types';
 
 export const CHANGELOG: ChangelogItem[] = [
   {
+    version: 'v5.0',
+    title: 'The Useful Start Page',
+    description: 'Replaced the sales-heavy homepage with a practical daily launchpad: smart web and URL search, private JSON and Base64 tools, timestamp conversion, cryptographically secure UUID/password generation, and direct access to useful Linacre products. The portfolio, toolkit, services, and labs remain available as dedicated routes.'
+  },
+  {
     version: 'v4.5',
     title: 'Premium Brand-Kit Alignment',
     description: 'Complete visual overhaul aligned to the Linacre brand-kit: Ink Black backgrounds, Amber Core/Glow accent system, brand gradients and glow shadows, hex-grid hero with CTAs, glassmorphism header with breathing logo, amber pulse-line dividers, upgraded card surfaces across Toolkit/Learn/Terminal, LinkedIn footer link, and unified Python CLI (linacre.py) replacing 4 separate automation scripts.'

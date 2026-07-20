@@ -12,6 +12,7 @@ import { CHANGELOG } from './data/core';
 import { ToolCategory } from './types';
 
 // Lazy-loaded page components for optimization (code splitting)
+const StartPage = lazy(() => import('./components/StartPage'));
 const Toolkit = lazy(() => import('./components/Toolkit'));
 const CommandPalette = lazy(() => import('./components/CommandPalette'));
 const AIChatbot = lazy(() => import('./components/AIChatbot'));
@@ -87,9 +88,9 @@ export default function App() {
     if (validTabs.includes(hash)) {
       return hash;
     }
-    // 3. Root path mapping: if at root '/' or '', it maps to 'toolkit' (which is the homepage!)
+    // 3. Root path mapping: the dedicated utility-first start page.
     if (window.location.pathname === '/' || window.location.pathname === '') {
-      return 'toolkit';
+      return 'home';
     }
     // 4. Default fallback
     return 'projects';
@@ -111,8 +112,8 @@ export default function App() {
     const paths: BreadcrumbPath[] = [
       { 
         label: 'home', 
-        onClick: () => { 
-          setActiveTab('toolkit'); 
+        onClick: () => {
+          setActiveTab('home');
           window.history.pushState(null, '', '/'); 
           window.dispatchEvent(new PopStateEvent('popstate')); 
         } 
@@ -120,7 +121,7 @@ export default function App() {
     ];
     
     if (parts.length === 0) {
-      if (activeTab !== 'toolkit') {
+      if (activeTab !== 'home') {
         const pathKey = `/${activeTab}`;
         paths.push({ label: ROUTE_LABEL[pathKey] || activeTab, active: true });
       }
@@ -183,7 +184,7 @@ export default function App() {
 
   // Map internal tab id back to a real URL path.
   const tabToPath = (tab: string): string => {
-    if (tab === 'toolkit') return '/';
+    if (tab === 'home') return '/';
     if (tab === 'contact-thanks') return '/contact/thanks';
     return `/${tab}`;
   };
@@ -222,7 +223,7 @@ export default function App() {
     }
     // Map new synthetic tabs -> canonical route keys.
     let key: string;
-    if (activeTab === 'toolkit') key = '/';
+    if (activeTab === 'home') key = '/';
     else if (activeTab === 'contact-thanks') key = '/contact/thanks';
     else key = `/${activeTab}`;
     return routeMeta.routes[key as keyof typeof routeMeta.routes] || routeMeta.routes['/'];
@@ -456,7 +457,7 @@ export default function App() {
 
       <main id="main-content" role="main" className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-10 sm:py-14 space-y-12">
         <ErrorBoundary>
-          {activeTab !== 'toolkit' && (
+          {activeTab !== 'home' && (
             <Breadcrumbs paths={getBreadcrumbPaths()} />
           )}
           <Suspense fallback={
@@ -466,6 +467,18 @@ export default function App() {
             </div>
           }>
           <AnimatePresence mode="wait">
+            {activeTab === 'home' && (
+              <motion.div
+                key="home"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.24 }}
+              >
+                <StartPage navigate={setActiveTab} />
+              </motion.div>
+            )}
+
             {activeTab === 'toolkit' && (
             <motion.div
               key="toolkit"
@@ -850,7 +863,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {!['toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
+          {!['home', 'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
             <motion.div
               key="404"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -865,7 +878,7 @@ export default function App() {
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <button
-                  onClick={() => setActiveTab('toolkit')}
+                  onClick={() => setActiveTab('home')}
                   className="px-4 py-2 bg-amber-color text-black font-mono text-xs font-bold rounded-lg hover:bg-amber-glow transition-all cursor-pointer"
                 >
                   Return home

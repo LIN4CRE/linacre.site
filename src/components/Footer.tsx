@@ -156,7 +156,7 @@ export default function Footer() {
                 <DollarSign className="w-4 h-4" />
               </a>
               <span className="font-mono text-[9px] text-muted-foreground/40 border border-amber-color/15 px-1.5 py-0.5 rounded-md select-none">
-                v4.5.0
+                v5.0.0
               </span>
             </div>
           </div>

@@ -1,7 +1,7 @@
 {
-  "name": "linacre.site — Developer Portfolio & Toolkit",
-  "short_name": "linacre.site",
-  "description": "David Linacre's developer portfolio, toolkit directory, project hub, and AI playground.",
+  "name": "Linacre Start — Useful Browser Tools",
+  "short_name": "Linacre Start",
+  "description": "A useful start page with private browser utilities and free practical web apps.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

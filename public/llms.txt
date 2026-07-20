@@ -12,6 +12,7 @@
 - Expertise: React, TypeScript, Go, Docker, AI sandboxes, high-performance systems
 
 ## Key Pages
+- / — Useful start page and private browser utilities
 - /projects — Open source and production projects
 - /about — Detailed bio and skills
 - /blog — Technical deep-dives

@@ -97,7 +97,7 @@ const WEBSITE = {
   '@id': `${SITE}/#website`,
   url: `${SITE}/`,
   name: 'linacre.site',
-  description: 'Developer portfolio, toolkit directory, project hub, and AI playground by David Linacre.',
+  description: 'A useful start page with private browser utilities, free decision tools, developer resources, and software by David Linacre.',
   publisher: { '@id': `${SITE}/#person` },
   inLanguage: 'en-GB',
   potentialAction: {
@@ -208,7 +208,7 @@ function jsonLdFor(route, m) {
       '@type': 'SoftwareApplication',
       '@id': `${SITE}/#app`,
       name: 'linacre.site',
-      description: 'Developer portfolio, toolkit directory, AI playground, and knowledge base by David Linacre.',
+      description: 'A useful start page with private JSON, Base64, timestamp and secure-value tools, plus free practical web applications.',
       url: `${SITE}/`,
       applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Web',
@@ -468,7 +468,7 @@ function headFor(route, m) {
 
 // ------------------------------------------------- static content snapshots
 const NAV = [
-  ['/work', 'Work'], ['/projects', 'Projects'], ['/toolkit', 'Toolkit'], ['/learn', 'Learn'],
+  ['/', 'Home'], ['/toolkit', 'Toolkit'], ['/projects', 'Projects'], ['/work', 'Work'], ['/learn', 'Learn'],
   ['/blog', 'Blog'], ['/playground', 'Playground'], ['/about', 'About'], ['/contact', 'Contact'],
 ];
 
@@ -501,28 +501,31 @@ function pageBody(route, m) {
   switch (true) {
     case route === '/':
       return `
-<h1>David Linacre — full-stack engineer &amp; AI systems builder</h1>
-<p>I design and ship reliable web applications, developer tools and automation systems.
-I&#39;m based in the UK and <strong>currently available for freelance and contract work</strong>. See my <a href="/work">available services</a> —
-from product builds to AI integrations and developer-experience tooling.</p>
-${CTA_BLOCK}
-<h2>What I do</h2>
+<h1>Get something useful done</h1>
+<p>linacre.site is a practical start page: search the web, clean up data, generate secure values,
+or open a free tool for a real job. The quick utilities run locally in your browser — no account,
+no upload, and nothing you paste is sent to a server.</p>
+<h2>Private browser utilities</h2>
 <ul>
-  <li><strong>Product engineering</strong> — React / TypeScript / Node applications, end to end.</li>
-  <li><strong>AI integration</strong> — chat interfaces, agent workflows and model orchestration with cost controls.</li>
-  <li><strong>Developer tooling &amp; automation</strong> — CLIs, pipelines, dashboards and self-hosted infrastructure.</li>
+  <li><strong>JSON formatter</strong> — validate, format and minify JSON.</li>
+  <li><strong>Base64 converter</strong> — encode and decode UTF-8 text.</li>
+  <li><strong>Timestamp converter</strong> — switch between Unix, ISO, local and UTC time.</li>
+  <li><strong>Secure generator</strong> — create UUIDs and strong passwords with browser cryptography.</li>
 </ul>
-<h2>Featured open-source work</h2>
+<p class="meta">Enable JavaScript to use the interactive utilities on this page.</p>
+<h2>Free tools for real jobs</h2>
 <ul>
-${featured.map(p => `  <li><a href="${esc(p.url)}" rel="noopener">${esc(p.name)}</a> — ${esc(p.description)}</li>`).join('\n')}
+  <li><a href="https://lin4cre.github.io/mob-deals/" rel="noopener">Mob Deals</a> — compare UK SIM-only deals and follow a plain-English keep-your-number guide.</li>
+  <li><a href="https://lin4cre.github.io/PokeGuru/" rel="noopener">PokeGuru</a> — search Pokémon cards, browse UK sets and track a collection in GBP.</li>
+  <li><a href="https://lin4cre.github.io/Linacre-LLM-Benchmarks/" rel="noopener">LLM Hub</a> — compare AI models and check what can run on your device.</li>
+  <li><a href="https://dlinacre.github.io/Apex-POS/" rel="noopener">Apex POS</a> — an offline-first point of sale with stock, receipts and reports.</li>
 </ul>
-<h2>Latest writing</h2>
-<ul>
-${posts.map(p => `  <li><a href="/blog/${esc(p.slug)}">${esc(p.title)}</a> <span class="meta">(${esc(p.date)} · ${esc(p.readTime)})</span></li>`).join('\n')}
-</ul>
-<h2>Free developer toolkit</h2>
-<p>A curated directory of ${data.tools.length} free tools across ${data.toolCategoriesCount} categories —
-<a href="/toolkit">browse the toolkit</a> or follow the <a href="/learn">learning roadmap</a>.</p>`;
+<h2>More useful areas</h2>
+<p>Open the <a href="/playground">developer utility playground</a>, browse the
+<a href="/toolkit">curated toolkit</a>, or see <a href="/projects">all projects</a>.</p>
+<h2>Need something that does not exist yet?</h2>
+<p>I build focused web tools and production systems with clear scope and straightforward handover.</p>
+${CTA_BLOCK}`;
 
     case route === '/projects': {
       const rows = publicProjects.map(p =>

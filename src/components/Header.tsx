@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House } from 'lucide-react';
 import InteractiveGlobe from './InteractiveGlobe';
 
 interface HeaderProps {
@@ -16,15 +16,16 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const coreItems = [
-    { id: 'work', label: 'Work', icon: Briefcase },
-    { id: 'projects', label: 'Projects', icon: FolderCode },
+    { id: 'home', label: 'Home', icon: House },
     { id: 'toolkit', label: 'Toolkit', icon: Layers },
-    { id: 'learn', label: 'Learn', icon: BookOpen },
-    { id: 'about', label: 'About', icon: User },
-    { id: 'contact', label: 'Contact', icon: Mail },
+    { id: 'projects', label: 'Projects', icon: FolderCode },
+    { id: 'work', label: 'Work', icon: Briefcase },
   ];
 
   const moreItems = [
+    { id: 'about', label: 'About', icon: User },
+    { id: 'contact', label: 'Contact', icon: Mail },
+    { id: 'learn', label: 'Learn', icon: BookOpen },
     { id: 'blog', label: 'Blog', icon: FileText },
     { id: 'agents', label: 'Agents', icon: Bot },
     { id: 'lab', label: 'AI Lab', icon: Cpu },
@@ -57,7 +58,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
             href="/"
             onClick={(e) => {
               e.preventDefault();
-              setActiveTab('toolkit');
+              setActiveTab('home');
               setMobileMenuOpen(false);
             }}
             className="flex items-center gap-2.5 font-mono font-bold text-lg tracking-tight hover:opacity-90 group focus:outline-none focus:ring-2 focus:ring-cyan/50 rounded p-1 transition-all"
@@ -96,7 +97,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                 <a
                   key={item.id}
                   id={`nav-tab-${item.id}`}
-                  href={`/${item.id}`}
+                  href={item.id === 'home' ? '/' : `/${item.id}`}
                   onClick={(e) => {
                     e.preventDefault();
                     setActiveTab(item.id);
@@ -286,7 +287,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                   <a
                     key={item.id}
                     id={`mobile-nav-tab-${item.id}`}
-                    href={`/${item.id}`}
+                    href={item.id === 'home' ? '/' : `/${item.id}`}
                     onClick={(e) => {
                       e.preventDefault();
                       setActiveTab(item.id);

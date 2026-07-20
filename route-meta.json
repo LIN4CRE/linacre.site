@@ -7,8 +7,8 @@
   },
   "routes": {
     "/": {
-      "title": "David Linacre — Full-stack & AI engineer | Available for freelance",
-      "description": "UK-based full-stack & AI systems engineer. React, TypeScript, Go, Python. Systems audits from £1,800, custom builds from £6,500. Available now.",
+      "title": "Linacre Start — Free browser tools that get things done",
+      "description": "A useful start page with private JSON, Base64, timestamp and secure-value tools, plus free UK mobile, Pokémon card, AI model and point-of-sale apps.",
       "canonical": "https://www.linacre.site/",
       "index": true
     },

@@ -1,6 +1,6 @@
 {
-  "name": "Linacre Portfolio & Toolkit",
-  "description": "David Linacre's personal developer site, toolkit directory, learning portal, AI assistant Lab, and private dashboard.",
+  "name": "Linacre Start — Useful Browser Tools",
+  "description": "A utility-first start page with private JSON, Base64, timestamp and secure-value tools, free practical web apps, a developer toolkit, and David Linacre's project portfolio.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
