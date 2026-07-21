@@ -1169,6 +1169,16 @@ border-radius: 12px;`;
     setCronParsed(parseCron(cronExpr));
   }, [cronExpr]);
 
+  // ==========================================
+  // UTILITY 7: CYBERBLUE HSL THEME ENGINE STATE
+  // ==========================================
+  const [hslHue, setHslHue] = useState(190);
+  const [hslSat, setHslSat] = useState(90);
+  const [hslLight, setHslLight] = useState(50);
+  const [copiedHsl, setCopiedHsl] = useState(false);
+
+  const activeHslCss = `:root {\n  --primary-hue: ${hslHue};\n  --primary-sat: ${hslSat}%;\n  --primary-light: ${hslLight}%;\n  --cyan: hsl(${hslHue}, ${hslSat}%, ${hslLight}%);\n  --cyan-glow: hsla(${hslHue}, ${hslSat}%, ${hslLight}%, 0.25);\n}`;
+
   return (
     <div className="space-y-6">
       {/* Title */}
@@ -1306,6 +1316,21 @@ border-radius: 12px;`;
             <div className="flex-1">
               <div>Cron Explainer</div>
               <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Human schedule & next runs</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTool('theme')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
+              activeTool === 'theme'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Sliders className="w-4 h-4 text-purple-color" />
+            <div className="flex-1">
+              <div>HSL Theme Engine</div>
+              <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Brand HSL sliders & CSS exports</div>
             </div>
           </button>
         </div>
@@ -2459,6 +2484,141 @@ border-radius: 12px;`;
                         </div>
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {/* TOOL 9: CYBERBLUE HSL THEME ENGINE */}
+              {activeTool === 'theme' && (
+                <div className="space-y-6" id="playground-theme-pane">
+                  <div className="flex items-center justify-between border-b border-border-color/60 pb-3">
+                    <div>
+                      <h2 className="font-mono text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Sliders className="w-4 h-4 text-purple-color" />
+                        <span>CyberBlue HSL Theme Engine</span>
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Tweak brand HSL parameters in real time and copy exact CSS root custom properties.</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Controls */}
+                    <div className="space-y-4 bg-muted/15 border border-border-color p-5 rounded-xl">
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between font-mono text-xs">
+                          <span className="text-muted-foreground font-bold">Hue (0° - 360°)</span>
+                          <span className="text-cyan font-bold">{hslHue}°</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="360"
+                          value={hslHue}
+                          onChange={(e) => setHslHue(Number(e.target.value))}
+                          className="w-full cursor-pointer accent-cyan"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between font-mono text-xs">
+                          <span className="text-muted-foreground font-bold">Saturation (0% - 100%)</span>
+                          <span className="text-cyan font-bold">{hslSat}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={hslSat}
+                          onChange={(e) => setHslSat(Number(e.target.value))}
+                          className="w-full cursor-pointer accent-cyan"
+                        />
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <div className="flex justify-between font-mono text-xs">
+                          <span className="text-muted-foreground font-bold">Lightness (0% - 100%)</span>
+                          <span className="text-cyan font-bold">{hslLight}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={hslLight}
+                          onChange={(e) => setHslLight(Number(e.target.value))}
+                          className="w-full cursor-pointer accent-cyan"
+                        />
+                      </div>
+
+                      {/* Quick Presets */}
+                      <div className="space-y-2 pt-2 border-t border-border-color/40">
+                        <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground font-bold">Brand Presets:</span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            { name: 'CyberBlue', h: 190, s: 90, l: 50 },
+                            { name: 'Signal Green', h: 160, s: 84, l: 50 },
+                            { name: 'Neon Violet', h: 260, s: 90, l: 65 },
+                            { name: 'Amber Gold', h: 38, s: 92, l: 50 },
+                            { name: 'Emerald', h: 142, s: 76, l: 45 }
+                          ].map(preset => (
+                            <button
+                              key={preset.name}
+                              onClick={() => {
+                                setHslHue(preset.h);
+                                setHslSat(preset.s);
+                                setHslLight(preset.l);
+                              }}
+                              className="px-2.5 py-1 bg-background/50 border border-border-color hover:border-amber-color text-foreground font-mono text-[10px] rounded-lg transition-all cursor-pointer"
+                            >
+                              {preset.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Preview & Code Export */}
+                    <div className="space-y-4">
+                      <div
+                        className="p-5 rounded-xl border space-y-3 transition-all"
+                        style={{
+                          borderColor: `hsl(${hslHue}, ${hslSat}%, ${hslLight}%)`,
+                          backgroundColor: `hsla(${hslHue}, ${hslSat}%, ${hslLight}%, 0.08)`,
+                          boxShadow: `0 0 20px hsla(${hslHue}, ${hslSat}%, ${hslLight}%, 0.15)`
+                        }}
+                      >
+                        <span className="font-mono text-[10px] uppercase font-bold tracking-wider" style={{ color: `hsl(${hslHue}, ${hslSat}%, ${hslLight}%)` }}>
+                          Live Preview Component
+                        </span>
+                        <h3 className="font-display text-lg font-bold text-foreground">Interactive Theme Sample</h3>
+                        <p className="text-xs text-muted-foreground">Adjusting the sliders updates custom CSS properties in real time across the UI design matrix.</p>
+                        <button
+                          className="px-4 py-2 font-mono text-xs font-bold rounded-lg transition-all"
+                          style={{
+                            backgroundColor: `hsl(${hslHue}, ${hslSat}%, ${hslLight}%)`,
+                            color: '#031018'
+                          }}
+                        >
+                          Action Button
+                        </button>
+                      </div>
+
+                      <div className="relative">
+                        <pre className="p-4 bg-[#020a11] border border-border-color rounded-xl font-mono text-xs text-amber-color overflow-x-auto">
+                          {activeHslCss}
+                        </pre>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(activeHslCss);
+                            setCopiedHsl(true);
+                            setTimeout(() => setCopiedHsl(false), 2000);
+                          }}
+                          className="absolute top-2 right-2 px-3 py-1.5 bg-amber-color hover:bg-amber-glow text-[#031018] font-mono text-[10px] font-bold rounded-lg flex items-center gap-1 cursor-pointer transition-all"
+                        >
+                          {copiedHsl ? <Check className="w-3 h-3 text-emerald-color" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedHsl ? 'Copied!' : 'Copy CSS'}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
