@@ -1,101 +1,44 @@
-# 🗺️ Priority Roadmap — Linacre.site
-
-> **Goal:** Transform Linacre.site from a technically excellent portfolio into a client-generating, search-optimized, fully accessible brand platform.
-
----
-
-## Phase 0: Immediate (Today)
-
-### Quick Wins (< 2 hours total)
-
-- [ ] **SEO-02:** Add `article:published_time` and `article:author` meta tags to all 3 blog posts (15 min)
-- [ ] **PF-05:** Add `prefers-reduced-motion` media query to disable Identity Hub animations (30 min)
-- [ ] **UX-01:** Change "See case studies" button text to "View projects" (5 min)
-- [ ] **PF-03:** Add `<link rel="preconnect">` for `fonts.gstatic.com`, `play.pokemonshowdown.com`, `raw.githubusercontent.com` (10 min)
-- [ ] **UI-02:** Add visual breadcrumb component to all interior pages (1 hr)
+# PHASED ACTION PLAN & ROADMAP
+## Target: https://linacre.site (David Linacre)
 
 ---
 
-## Phase 1: Short-Term (1–2 Weeks)
+## 🚀 1. IMMEDIATE (COMPLETED IN V6.2)
 
-### Week 1: Content Foundation
-
-- [ ] **SEO-01:** Design and implement per-post OG images for 3 blog posts (Design: 1 day)
-- [ ] **SEO-04:** Write and publish 2 new blog posts (Content: 2 days)
-  - Suggested topics: "How I Built the Linacre Identity Hub," "Server-Side AI Proxies: Architecture Patterns"
-- [ ] **CN-01:** Write 2 case study pages (GhostMail deep-dive, DomainDeals deep-dive) (Content: 2 days)
-- [ ] **CR-01:** Reach out to 3 past clients for testimonials; display on Work page (Content: 1 day)
-- [ ] **CN-04:** Expand About page to 300–500 words (Content: 2 hrs)
-
-### Week 2: Technical Improvements
-
-- [ ] **PF-01:** Implement React.lazy() code splitting for Identity, Agents, Playground routes (Engineering: 1 day)
-- [ ] **--:** Set up Plausible Analytics (privacy-first, no cookies) (Engineering: 2 hrs)
-- [ ] **SEO-05:** Implement RSS/Atom feed for blog (Engineering: 2 hrs)
-- [ ] **CR-03:** Add email signup component to Blog and Learn pages (Engineering: 2 hrs)
-- [ ] **AC-01:** Conduct keyboard-only navigation test of all interactive surfaces (Engineering: 3 hrs)
-- [ ] **AC-02:** Add real-time WCAG contrast checker to Identity Hub colour picker (Engineering: 4 hrs)
+1. **Standalone Games Hub (`public/games/index.html` & `src/components/Games.tsx`)**:
+   - Replaced multi-section scrolling resume wall with a focused Games Hub.
+   - Featured real builds: **KushCloud** (live GitHub Pages flyer) and **Snake** (in-page interactive Canvas 2D game).
+   - Documented `GAMES` JSON structure for quick updates when returning to Windows PC.
+2. **Streamlined Toolkit (`src/components/Toolkit.tsx` & `src/data.ts`)**:
+   - Replaced bloated 50+ link directory with **David's Curated Developer Loadout** (~12 daily tools).
+3. **Real CV Data Enforcement**:
+   - Updated background history across `About.tsx`, `gamepage.html`, and `data.ts` to reflect Barnsley, UK location, Tudor Rose Nurseries (2020–2024), Cubley Hall (2020), Five A Day (2013–2020), Fresh Today (2008–2013), and Darton High School (2002–2007).
+4. **Server & Route Rewrites Alignment**:
+   - Added `/games` to `vercel.json` rewrites, `api/server.ts` VALID_ROUTES, `sw.js` precache URLs, `route-meta.json`, and `scripts/prerender.mjs`.
 
 ---
 
-## Phase 2: Medium-Term (1–3 Months)
+## 📅 2. SHORT TERM (1–2 WEEKS)
 
-### Month 1: Content Scale
-
-- [ ] Publish 4 more blog posts to reach 9 total (Content: ongoing)
-- [ ] Create 1 comparison/versus post for SEO (e.g., "React vs Svelte in 2026: A Freelancer's Guide")
-- [ ] Add "Related Posts" section to blog post template
-- [ ] Create downloadable portfolio/CV PDF
-
-### Month 2: UX & Accessibility
-
-- [ ] Full WCAG 2.2 AA manual audit with screen reader (NVDA/VoiceOver)
-- [ ] Fix all identified accessibility issues
-- [ ] Redesign navigation to clearly differentiate Lab/Agents/Playground/Toolkit
-- [ ] Implement AI-powered blog recommendations
-
-### Month 3: Growth & Conversion
-
-- [ ] Set up email nurture sequence for newsletter subscribers
-- [ ] Create lead magnet landing page (beyond Go concurrency kit)
-- [ ] Implement interactive portfolio chatbot (AI-03)
-- [ ] Add `/now` page
-- [ ] Guest post on 1–2 developer blogs for backlinks
+1. **Local Font Hosting for Standalone Pages**:
+   - Self-host Google Fonts locally under `/fonts/` inside `gamepage.html` to guarantee 100% network-independent rendering during offline viewing.
+2. **Automated Link Checker Integration**:
+   - Add a CI check step using `lychee` or `broken-link-checker` in GitHub Actions to verify all external project source links automatically on git push.
 
 ---
 
-## Phase 3: Long-Term (3–12 Months)
+## 🛠️ 3. MEDIUM TERM (1–3 MONTHS)
 
-### Strategic Initiatives
-
-- [ ] **Content Moat:** Build comprehensive "Learn to Code" resource hub (expand /learn)
-- [ ] **Productization:** Consider packaging the Identity Hub as a SaaS tool for other developers
-- [ ] **Speaking & Authority:** Apply to 2–3 tech conferences; record technical talks for YouTube
-- [ ] **Community Building:** Consider a Discord/Slack community for tool users
-- [ ] **Passive Income:** Add affiliate disclosures to toolkit links (transparently) — many linked tools have partner programs (Vercel, Supabase, etc.)
-- [ ] **AI-First Rebrand:** Consider positioning as "AI Engineering Consultant" rather than "Full-Stack Engineer" as AI specialization commands premium rates
+1. **Expanded Engineering Case Studies**:
+   - Write short technical articles on building local-first browser databases with Dexie, optimizing Canvas 2D requestAnimationFrame loops for mobile touch devices, and Web Audio API synthesis.
+2. **Performance Monitoring Workflow**:
+   - Connect automated Lighthouse CI score assertions (Performance ≥ 95, Accessibility = 100) to pull requests.
 
 ---
 
-## Effort Legend
+## 🌐 4. LONG TERM (STRATEGIC)
 
-| Symbol | Meaning | Time |
-|--------|---------|------|
-| S | Small | < 4 hours |
-| M | Medium | 1–3 days |
-| L | Large | 1–2 weeks |
-| XL | Extra Large | 1+ months |
-
----
-
-## Success Metrics to Track (Post-Analytics Setup)
-
-| Metric | Current (Estimated) | 3-Month Target | 12-Month Target |
-|--------|--------------------|----------------|-----------------|
-| Monthly blog visitors | Unknown | 500 | 2,000 |
-| Contact form submissions/mo | Unknown | 10 | 25 |
-| Newsletter subscribers | 0 | 50 | 250 |
-| Avg. pages per session | Unknown | 3.0 | 4.5 |
-| Blog posts published | 3 | 9 | 25 |
-| Client testimonials | 0 | 3 | 8 |
-| Organic keywords ranking | Unknown | 50+ | 200+ |
+1. **Custom Web Audio Game Engines**:
+   - Expand the built-in browser arcade with a 2D puzzle/canvas game utilizing WebGL and procedural sound effects.
+2. **Offline-First PWA Push Updates**:
+   - Add background sync and install prompt custom UI for visitors wanting to use the developer tools offline on desktop and mobile.

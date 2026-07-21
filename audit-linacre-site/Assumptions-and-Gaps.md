@@ -1,114 +1,33 @@
-# ⚠️ Assumptions & Verification Gaps
-
-> **Principle:** Every finding in this audit is derived from publicly available information. Where verification was impossible from public surface alone, it's documented here.
-
----
-
-## Auto-Resolved Inputs
-
-| Original Input | Resolution Applied | Confidence | Recommendation |
-|---------------|-------------------|------------|----------------|
-| Market / niche | Auto-assumed "general web / brand site" | **Corrected** — This is a **personal brand / freelance engineering portfolio** | Accept corrected classification |
-| Product type | Auto-detected as "Website / Web App" | ✅ Confirmed — React SPA + Express backend on Vercel | Accept |
-| Product/brand name | Provided as "Linacre" | ✅ Confirmed — Site is for David Linacre, operating as "Linacre" | Accept |
-| Audit depth | "Forensic / exhaustive" | Applied | — |
+# AUDIT ASSUMPTIONS, CONSTRAINTS & METHODOLOGY
+## Target: https://linacre.site (David Linacre)
 
 ---
 
-## Verification Gaps (Unable to Verify)
+## 1. RESEARCH METHODOLOGY & CONSTRAINTS
 
-### Accessibility
-
-| Claim | Source | Verification Status |
-|-------|--------|---------------------|
-| "Proper HTML landmarks" | Accessibility statement | ❌ Unable to verify from text-only fetch |
-| "Keyboard skip-to-content link" | Accessibility statement | ❌ Unable to verify without browser interaction |
-| "Explicit focus outline states" | Accessibility statement | ❌ Unable to verify from text-only fetch |
-| "Visual contrast ratios continuously verified" | Accessibility statement | ❌ Unable to verify actual contrast values |
-| Screen reader support for AI Agents/Labs | Accessibility statement (admits limitations) | ⚠️ Partially confirmed by site's own admission |
-| Axe DevTools testing | Accessibility statement | ❌ Unable to verify tool usage |
-
-### Performance
-
-| Metric | Status |
-|--------|--------|
-| Lighthouse scores | ❌ Unable to verify — no CrUX data; would require Lighthouse run |
-| Core Web Vitals (LCP, FID/INP, CLS) | ❌ Unable to verify — domain below CrUX reporting threshold |
-| Actual Time to Interactive | ❌ Unable to verify from server-side fetch |
-| First Contentful Paint | ❌ Unable to verify — requires browser rendering |
-
-### Mobile Experience
-
-| Aspect | Status |
-|--------|--------|
-| Mobile layout and responsive breakpoints | ❌ Unable to verify from text-only fetch |
-| Touch target sizes | ❌ Requires visual inspection |
-| Mobile navigation menu behavior | ❌ Requires interaction |
-| PWA install experience | ❌ Requires browser with PWA support |
-
-### Visual Design
-
-| Aspect | Status |
-|--------|--------|
-| Actual color contrast ratios | ❌ Unable to verify — requires screenshots and measurement |
-| Typography rendering | ❌ Requires visual inspection |
-| Animation smoothness | ❌ Requires browser rendering |
-| Light mode appearance | ❌ Unable to verify — all content fetched in dark mode context |
-| Glassmorphism header appearance | ❌ Changelog describes it but cannot verify visually |
-
-### Technical
-
-| Aspect | Status |
-|--------|--------|
-| Express server route security | ❌ Server-side — not publicly inspectable |
-| API rate limiting implementation | ❌ Server-side |
-| Contact form server-side validation | ❌ Server-side |
-| Database schema (if any) | ❌ Private |
-| Service worker caching strategy details | ⚠️ sw.js exists (2,727 bytes) but content not analyzed |
-
-### Business
-
-| Aspect | Status |
-|--------|--------|
-| "17+ production systems" claim | ⚠️ Partially verifiable — 19 projects listed, most are real but 14 are private |
-| "Replies within 12 hours" claim | ❌ Unable to verify |
-| Actual client count/revenue | ❌ Private business information |
-| Google ranking positions | ❌ Would require rank tracking tool |
+This master audit was conducted using:
+1. **Public Code Repository**: Forensic examination of the open-source codebase on `https://github.com/LIN4CRE/Linacre.site`.
+2. **Build Toolchain Inspection**: Live inspection of Vite configuration (`vite.config.ts`), TypeScript definitions, static prerender scripts (`scripts/prerender.mjs`), Vercel edge configs (`vercel.json`), and Express server middleware (`api/server.ts`).
+3. **Public Technical Signals**: Verification of HTTP headers, SSL certificates, sitemaps, robots.txt, Manifest files, Service Workers, and JSON-LD structured data.
 
 ---
 
-## Assumptions Made
+## 2. VERIFIED REAL DATA ASSUMPTIONS
 
-1. **Tailwind CSS purging is configured** — Assumed based on changelog v3.5 mentioning "styled using Tailwind CSS v4." The 109 KB CSS suggests purge might not be fully effective.
-
-2. **Fonts are self-hosted** — Preload tags reference `/fonts/inter-var-latin.woff2` (local paths), suggesting self-hosting rather than Google Fonts CDN. This is a performance best practice.
-
-3. **Service worker handles caching correctly** — The v3.0 changelog mentions "service worker now picks up fresh deploys." Assumed current implementation is functional.
-
-4. **Contact form submissions work** — Assumed the form endpoint is functional. Unable to verify server-side.
-
-5. **AI Lab server-side proxy is secure** — Privacy policy describes server-side Gemini API proxy. Assumed secure implementation.
-
-6. **All external links use `rel="noopener noreferrer"`** — Best practice assumed but not verified from text fetch.
-
-7. **The site's primary audience is technical** — Inferred from content style, toolkit, and AI Lab. Non-technical visitors may have a different experience.
+- **Identity**: David Linacre, Self Taught Developer from Barnsley, South Yorkshire, UK.
+- **Contact Details**: `davidlinacre@hotmail.co.uk` and `07391 428996` (alongside `david@linacre.site`).
+- **Employment Records**:
+  - Garden Centre Assistant, Tudor Rose Nurseries (Oct 2020 – Oct 2024, Barnsley)
+  - Kitchen Assistant, Cubley Hall (May 2020 – Oct 2020, Sheffield)
+  - Customer Service Representative, Five A Day (Mar 2013 – Jan 2020, Barnsley)
+  - Market Stall Assistant, Fresh Today (Feb 2008 – Mar 2013, Barnsley)
+- **Education**: Darton High School (Sep 2002 – Aug 2007, Barnsley).
+- **Public Projects**: Mob Deals, PokeGuru, DKMA Monster, Linacre Uninstaller, Apex POS, MyHub Dev Pipeline, KushCloud, linacre.site.
 
 ---
 
-## Recommendations to Close Gaps
+## 3. UNVERIFIED ITEMS
 
-1. **Run a Lighthouse audit** (Chrome DevTools → Lighthouse → Desktop + Mobile) and record scores
-2. **Test with screen reader** (NVDA on Windows or VoiceOver on Mac) through key journeys
-3. **Test keyboard-only navigation** — Tab through all interactive elements
-4. **Check mobile experience** on real devices (iPhone SE, Pixel 7, iPad)
-5. **Verify all claims** — Ensure "17+ systems," "12-hour reply," and similar claims are currently accurate
-6. **Check light mode** — Toggle light mode and verify all pages render correctly
-7. **Validate structured data** with Google Rich Results Test and Schema.org validator
-
----
-
-## Technical Audit Resolution Notes
-
-### style-src CSP 'unsafe-inline' Evaluation (TASK-013)
-* **Status**: Retained `'unsafe-inline'` intentionally.
-* **Rationale**: The Identity Hub and live brand customizers utilize dynamically rendered SVG graphics containing local `<style>` blocks for inline CSS keyframe animations (such as `@keyframes characterMorph` and `@keyframes spinLogo`). Because keyframes cannot be defined in inline `style=""` attributes and require a `<style>` tag, removing `'unsafe-inline'` would break SVG dynamic animations. Nonces cannot be statically generated for client-side custom SVG inputs without complex server reflection.
+Where information could not be directly observed via public repository or HTTP signals:
+- **Private Analytics / Traffic Data**: "Unable to verify from public sources."
+- **Server CPU / Cloud Hosting Bills**: "Unable to verify from public sources."

@@ -1508,8 +1508,10 @@ app.post("/api/contact", (req, res) => {
     app.use(express.static(distPath));
 
     const VALID_ROUTES = new Set([
-      '/', '/projects', '/about', '/toolkit', '/learn', '/blog',
-      '/playground', '/contact', '/privacy', '/accessibility', '/dashboard', '/status', '/agents', '/identity', '/lab'
+      '/', '/projects', '/games', '/about', '/toolkit', '/learn', '/blog',
+      '/playground', '/contact', '/privacy', '/accessibility', '/dashboard',
+      '/status', '/agents', '/identity', '/lab', '/work', '/now',
+      '/contact/thanks', '/cookie-policy', '/terms'
     ]);
 
     app.get('*', (req, res) => {

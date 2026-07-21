@@ -14,7 +14,7 @@ var URLS = [
   "privacy", "cookie-policy", "terms",
   "accessibility", "blog", "status",
   "agents", "lab", "identity",
-  "projects", "toolkit", "learn",
+  "projects", "games", "toolkit", "learn",
   "playground", "work"
 ];
 
