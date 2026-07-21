@@ -379,6 +379,8 @@ interface DevPlaygroundProps {
   theme?: 'dark' | 'light';
 }
 
+import McpToolboxCallout from './McpToolboxCallout';
+
 export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
   const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm' | 'svg_creator' | 'json2ts' | 'cron'>('jwt');
   const [copiedType, setCopiedType] = useState<string | null>(null);
@@ -1194,6 +1196,9 @@ border-radius: 12px;`;
           Clean, client-side developer tools for daily execution. Fully integrated with your active visual brand configurations, responsive, and secure.
         </p>
       </section>
+
+      {/* Linacre Tool Box — callable over MCP */}
+      <McpToolboxCallout blurb="Prefer to run these from your AI instead of the browser? Every tool here is also a Model Context Protocol tool — add the Linacre Tool Box to Claude or any MCP client." />
 
       {/* Main Tabbed Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">

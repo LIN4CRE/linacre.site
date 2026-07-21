@@ -85,6 +85,8 @@ const MOCK_API_LOGS = [
   { id: 1006, timestamp: '15:53:01', endpoint: '/api/chat', method: 'POST', latency_ms: 310, status: 200, bytes_sent: 890 }
 ];
 
+import McpToolboxCallout from './McpToolboxCallout';
+
 export default function Lab({ theme = 'dark' }: LabProps) {
   const [activeProvider, setActiveProvider] = useState<LabProvider>('gemini');
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -1666,6 +1668,9 @@ You do not need to use all agents if the task is simple, but at least two should
           Connect your choice of AI: Chat with <strong className="text-amber-color">Gemini</strong> securely out of the box, or input keys for OpenAI, a local Docker <strong className="text-foreground">Ollama</strong> instance, LiteLLM, or Claude.
         </p>
       </section>
+
+      {/* Linacre Tool Box — callable over MCP */}
+      <McpToolboxCallout blurb="Chatting with a model here? The same private utilities are callable directly by your AI over MCP — add the Linacre Tool Box to Claude, Cursor or any MCP client." />
 
       {/* Config Toggle Pane */}
       <div className="border border-border-color rounded-xl overflow-hidden bg-muted/15 dark:bg-[#081c28]/40 transition-all duration-300">

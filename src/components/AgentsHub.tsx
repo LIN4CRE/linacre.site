@@ -185,6 +185,8 @@ const WriterRobotSVG = ({ color }: { color: string }) => (
 
 
 
+import McpToolboxCallout from './McpToolboxCallout';
+
 export default function AgentsHub() {
   const [agents, setAgents] = useState<Agent[]>([
     {
@@ -1062,6 +1064,9 @@ export default function AgentsHub() {
           Monitor real-time simulated AI agent operations, telemetry metrics, and background task executions.
         </p>
       </div>
+
+      {/* Linacre Tool Box — callable over MCP */}
+      <McpToolboxCallout blurb="Give agents real, safe capabilities: the Linacre Tool Box exposes these utilities over MCP so any agent runtime can call them locally — no keys, nothing leaves your machine." />
 
       {/* NO-SPEND GUARD: Prominent Billing Alert Warning Sign */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-amber-color/30 bg-[#061923] text-amber-color font-mono text-xs shadow-md">
