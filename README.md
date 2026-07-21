@@ -1,9 +1,10 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/LIN4CRE/linacre.site/main/.github/banner.png" alt="linacre.site banner" width="100%">
+  <img src=".github/banner.svg" alt="linacre.site banner" width="100%">
 </p>
 
 <p align="center">
   <a href="https://www.linacre.site/"><img src="https://img.shields.io/badge/live-linacre.site-22D3EE?style=for-the-badge&logo=vercel&logoColor=white"></a>
+  <a href="https://github.com/LIN4CRE/linacre.site/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/LIN4CRE/linacre.site/ci.yml?branch=main&style=for-the-badge&label=CI%20BUILD&color=34D399"></a>
   <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
   <img src="https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white">

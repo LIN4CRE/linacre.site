@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#030c14" />
+      <stop offset="50%" stop-color="#061520" />
+      <stop offset="100%" stop-color="#081c28" />
+    </linearGradient>
+    <linearGradient id="cyberCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#22D3EE" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#22D3EE" stroke-opacity="0.07" stroke-width="1" />
+    </pattern>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="1280" height="360" fill="url(#bgGrad)" />
+  <rect width="1280" height="360" fill="url(#grid)" />
+  <circle cx="200" cy="180" r="300" fill="url(#aura)" />
+
+  <!-- Geometric Accent Lines -->
+  <path d="M 800 320 L 920 320 L 960 280 L 1120 280 L 1160 320 L 1240 320" stroke="#34D399" stroke-opacity="0.3" stroke-width="2" fill="none" />
+  <circle cx="960" cy="280" r="5" fill="#22D3EE" />
+  <circle cx="1120" cy="280" r="5" fill="#34D399" />
+
+  <!-- Logo Frame Emblem -->
+  <rect x="70" y="65" width="230" height="230" rx="36" fill="#081c28" fill-opacity="0.9" stroke="#22D3EE" stroke-opacity="0.3" stroke-width="2" />
+  
+  <!-- Emblem Icon: Cat Terminal -->
+  <g transform="translate(105, 100) scale(1.6)">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#22D3EE" opacity="0.2"/>
+    <path d="M 12 6 L 15 11 L 20 11 L 16 14 L 18 19 L 12 16 L 6 19 L 8 14 L 4 11 L 9 11 Z" fill="none" stroke="url(#cyberCyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="12" cy="12" r="3" fill="#34D399"/>
+  </g>
+
+  <!-- Typography -->
+  <text x="340" y="110" fill="#34D399" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" letter-spacing="2">VERIFIED DEVELOPER PORTAL &amp; AI LAB</text>
+  <text x="336" y="180" fill="#ECFEFF" font-family="'Space Grotesk', sans-serif" font-size="58" font-weight="700" letter-spacing="-1.5">linacre.site</text>
+  <text x="340" y="225" fill="#9AB7C3" font-family="sans-serif" font-size="22">Autonomous AI Ecosystem · Developer Utilities · CyberBlue Design</text>
+
+  <!-- Status Pill -->
+  <rect x="340" y="255" width="260" height="42" rx="21" fill="#082330" stroke="#22D3EE" stroke-opacity="0.5" stroke-width="1.5" />
+  <circle cx="365" cy="276" r="6" fill="#34D399" />
+  <text x="382" y="281" fill="#22D3EE" font-family="'JetBrains Mono', monospace" font-size="14" font-weight="700">ONLINE / PRODUCTION READY</text>
+</svg>
