@@ -45,6 +45,15 @@ const utilities: Array<{
 
 const products = [
   {
+    name: 'Fleatment 🐱',
+    eyebrow: 'Cat Flea Index & Finder',
+    description: 'UK cat flea & tick treatment finder with live delivered price comparisons and safety guides.',
+    url: 'https://dlinacre.github.io/Fleatment/',
+    action: 'Open Fleatment',
+    icon: ShieldCheck,
+    accent: 'cyan',
+  },
+  {
     name: 'Personal OP Agent',
     eyebrow: 'Zero-setup AI workspace',
     description: 'Single-file HTML AI workspace and prompt controller running 100% in your browser.',

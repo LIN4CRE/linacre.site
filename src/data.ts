@@ -163,6 +163,20 @@ export const TOOLS: Tool[] = [
 
 export const MANUAL_PROJECTS: Project[] = [
   {
+    name: 'Fleatment 🐱',
+    category: 'build',
+    description: 'An open-source UK cat flea & tick treatment finder, live delivered price index, active ingredient strength analyzer, and safety guide.',
+    url: 'https://dlinacre.github.io/Fleatment/',
+    host: 'dlinacre.github.io/Fleatment',
+    tag: 'Featured · Live v1.0.0',
+    role: 'Creator and product engineer',
+    challenges: 'Cat owners struggle to compare real delivered prices (with VAT & shipping) and identify dangerous canine pyrethroid ingredients.',
+    solution: 'Built an offline-first single-page web app with live JSON price auto-fetching, per-dose unit cost calculations, active ingredient matrix, and cost calculator.',
+    tech: ['HTML5', 'Vanilla JS', 'JSON Feed', 'GitHub Pages', 'PWA'],
+    liveUrl: 'https://dlinacre.github.io/Fleatment/',
+    repoUrl: 'https://github.com/DLinacre/Fleatment'
+  },
+  {
     name: 'Personal OP Agent',
     category: 'build',
     description: 'A zero-setup, single-file HTML AI workspace and prompt controller running 100% locally in your browser with context history and model routing.',
