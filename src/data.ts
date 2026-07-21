@@ -174,7 +174,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Built an offline-first single-page web app with live JSON price auto-fetching, per-dose unit cost calculations, active ingredient matrix, and cost calculator.',
     tech: ['HTML5', 'Vanilla JS', 'JSON Feed', 'GitHub Pages', 'PWA'],
     liveUrl: 'https://dlinacre.github.io/Fleatment/',
-    repoUrl: 'https://github.com/DLinacre/Fleatment'
+    repoUrl: 'https://github.com/DLinacre/Fleatment',
+    live: true,
   },
   {
     name: 'Personal OP Agent',
@@ -202,34 +203,35 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Built a modular single-page audit generator with instant search, category filtering, export formats, and zero third-party dependencies.',
     tech: ['HTML5', 'JavaScript', 'Tailwind CSS', 'GitHub Pages'],
     liveUrl: 'https://dlinacre.github.io/a-audit/',
-    repoUrl: 'https://github.com/DLinacre/a-audit'
+    repoUrl: 'https://github.com/DLinacre/a-audit',
+    live: true,
   },
   {
     name: 'APKHub',
     category: 'build',
     description: 'An open-source Android App Store & release indexer that discovers and downloads official APK releases from GitHub & F-Droid with QR installation support.',
-    url: '/tools/apk-hub.html',
-    host: 'linacre.site/tools/apk-hub.html',
+    url: 'https://lin4cre.github.io/APKHub/',
+    host: 'lin4cre.github.io/APKHub',
     tag: 'Featured · App',
     role: 'Creator & Lead Engineer',
     challenges: 'Sideloaded Android APK discovery requires transparent, verified source tracking without re-hosting binaries.',
     solution: 'Engineered a React 19 single-file catalog interface with Python discovery indexers, QR instant-install flows, and direct release fetching.',
     tech: ['React 19', 'TypeScript', 'Vite 7', 'Python', 'Android APK', 'PWA'],
-    liveUrl: '/tools/apk-hub.html',
-    repoUrl: 'https://github.com/LIN4CRE/AppHub'
+    liveUrl: 'https://lin4cre.github.io/APKHub/',
+    repoUrl: 'https://github.com/LIN4CRE/APKHub',
   },
   {
     name: 'OmniRoute LLM Engine',
     category: 'deploy',
     description: 'Enterprise multi-provider AI model gateway & orchestration suite with fallback routing, load balancing, cost tracking, and streaming SSE endpoints.',
-    url: 'https://github.com/DLinacre/OmniRoute-LLM',
-    host: 'github.com/DLinacre/OmniRoute-LLM',
+    url: 'https://github.com/LIN4CRE/OmniRoute-LLM',
+    host: 'github.com/LIN4CRE/OmniRoute-LLM',
     tag: 'Featured · AI Gateway',
     role: 'Systems & AI Architect',
     challenges: 'High-availability AI applications need automated fallback routing across Gemini, OpenAI, Claude, and local Ollama model providers.',
     solution: 'Built a Next.js / TypeScript proxy gateway with Docker Compose orchestrators, Knip complexity checks, rate limiting, and real-time streaming sockets.',
     tech: ['Next.js', 'TypeScript', 'Docker', 'Gemini AI', 'OpenAI', 'Claude', 'Ollama'],
-    repoUrl: 'https://github.com/DLinacre/OmniRoute-LLM'
+    repoUrl: 'https://github.com/LIN4CRE/OmniRoute-LLM',
   },
   {
     name: 'PokeGuru',
@@ -243,7 +245,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Built a typed React interface with route-based search, set browsing, GBP-first presentation, local collection tracking, and static GitHub Pages deployment.',
     tech: ['React', 'TypeScript', 'Vite', 'PWA', 'GitHub Pages'],
     liveUrl: 'https://lin4cre.github.io/PokeGuru/',
-    repoUrl: 'https://github.com/LIN4CRE/PokeGuru'
+    repoUrl: 'https://github.com/LIN4CRE/PokeGuru',
+    live: true,
   },
   {
     name: 'Apex POS',
@@ -257,7 +260,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Kept the product client-side with IndexedDB offline storage, responsive register flows, inventory warnings, expense tracking, and receipt output.',
     tech: ['Vue 3', 'Dexie', 'IndexedDB', 'PWA', 'Offline-first'],
     liveUrl: 'https://dlinacre.github.io/Apex-POS/',
-    repoUrl: 'https://github.com/DLinacre/Apex-POS'
+    repoUrl: 'https://github.com/LIN4CRE/Apex-POS',
+    live: true,
   },
   {
     name: 'Mob Deals',
@@ -271,7 +275,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Separated manually reviewed deal entries from automated reachability checks, linked every source, added clear disclaimers, and built an accessible number-switching flow.',
     tech: ['HTML', 'CSS', 'JavaScript', 'GitHub Actions', 'Accessibility'],
     liveUrl: 'https://dlinacre.github.io/mob-deals/',
-    repoUrl: 'https://github.com/DLinacre/mob-deals'
+    repoUrl: 'https://github.com/DLinacre/mob-deals',
+    live: true,
   },
   {
     name: 'DKMA Monster',
@@ -285,7 +290,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Centralised OEM-specific guidance in one data model and reused it across a web guide and GUI tool (`/tools/dkma-gui.html`), with a no-root path for ordinary users.',
     tech: ['Android', 'ADB', 'Python', 'Kotlin', 'Magisk', 'HTML'],
     liveUrl: 'https://lin4cre.github.io/dkma-monster/',
-    repoUrl: 'https://github.com/LIN4CRE/dkma-monster'
+    repoUrl: 'https://github.com/LIN4CRE/dkma-monster',
+    live: true,
   },
   {
     name: 'Linacre Uninstaller',
@@ -327,7 +333,8 @@ export const MANUAL_PROJECTS: Project[] = [
     solution: 'Used Canvas 2D, Web Audio, deterministic game state, adaptive quality, keyboard/touch controls, and a PWA-ready React shell.',
     tech: ['React', 'TypeScript', 'Canvas 2D', 'Web Audio', 'PWA'],
     liveUrl: 'https://lin4cre.github.io/KushCloud/',
-    repoUrl: 'https://github.com/LIN4CRE/KushCloud'
+    repoUrl: 'https://github.com/LIN4CRE/KushCloud',
+    live: true,
   },
   {
     name: 'MyHub Dev Pipeline',

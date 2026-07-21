@@ -25,6 +25,8 @@ export interface Project {
   repoUrl?: string;
   liveUrl?: string;
   paypalUrl?: string;
+  /** Confirmed live & accessible right now */
+  live?: boolean;
 }
 
 export interface ChatMessage {
