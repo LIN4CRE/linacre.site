@@ -205,6 +205,33 @@ export const MANUAL_PROJECTS: Project[] = [
     repoUrl: 'https://github.com/DLinacre/a-audit'
   },
   {
+    name: 'APKHub',
+    category: 'build',
+    description: 'An open-source Android App Store & release indexer that discovers and downloads official APK releases from GitHub & F-Droid with QR installation support.',
+    url: '/tools/apk-hub.html',
+    host: 'linacre.site/tools/apk-hub.html',
+    tag: 'Featured · App',
+    role: 'Creator & Lead Engineer',
+    challenges: 'Sideloaded Android APK discovery requires transparent, verified source tracking without re-hosting binaries.',
+    solution: 'Engineered a React 19 single-file catalog interface with Python discovery indexers, QR instant-install flows, and direct release fetching.',
+    tech: ['React 19', 'TypeScript', 'Vite 7', 'Python', 'Android APK', 'PWA'],
+    liveUrl: '/tools/apk-hub.html',
+    repoUrl: 'https://github.com/LIN4CRE/AppHub'
+  },
+  {
+    name: 'OmniRoute LLM Engine',
+    category: 'deploy',
+    description: 'Enterprise multi-provider AI model gateway & orchestration suite with fallback routing, load balancing, cost tracking, and streaming SSE endpoints.',
+    url: 'https://github.com/DLinacre/OmniRoute-LLM',
+    host: 'github.com/DLinacre/OmniRoute-LLM',
+    tag: 'Featured · AI Gateway',
+    role: 'Systems & AI Architect',
+    challenges: 'High-availability AI applications need automated fallback routing across Gemini, OpenAI, Claude, and local Ollama model providers.',
+    solution: 'Built a Next.js / TypeScript proxy gateway with Docker Compose orchestrators, Knip complexity checks, rate limiting, and real-time streaming sockets.',
+    tech: ['Next.js', 'TypeScript', 'Docker', 'Gemini AI', 'OpenAI', 'Claude', 'Ollama'],
+    repoUrl: 'https://github.com/DLinacre/OmniRoute-LLM'
+  },
+  {
     name: 'PokeGuru',
     category: 'build',
     description: 'A fast Pokémon TCG database with advanced search, UK prices in GBP, set history, chase-card discovery, and a local collection vault.',

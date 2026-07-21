@@ -21,7 +21,7 @@ const CATEGORY_META: Record<string, { label: string; colour: string }> = {
   design: { label: 'Interactive', colour: '#818CF8' },
 };
 
-const FEATURED_ORDER = ['Fleatment 🐱', 'Personal OP Agent', 'Arena Audit Prompt Builder', 'PokeGuru', 'Apex POS', 'Mob Deals'];
+const FEATURED_ORDER = ['APKHub', 'OmniRoute LLM Engine', 'Fleatment 🐱', 'Personal OP Agent', 'Arena Audit Prompt Builder', 'PokeGuru', 'Apex POS', 'Mob Deals'];
 
 function projectRank(project: Project) {
   const featured = FEATURED_ORDER.indexOf(project.name);
