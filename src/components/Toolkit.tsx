@@ -1,8 +1,37 @@
 import { useState, useEffect, useRef, MouseEvent, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Star, ExternalLink, HelpCircle, Sparkles, Check } from 'lucide-react';
+import { Search, Star, ExternalLink, HelpCircle, Sparkles, Check, Terminal, Copy, Bot } from 'lucide-react';
 import { TOOLS } from '../data';
 import { Tool, ToolCategory } from '../types';
+
+// Tools exposed by the Linacre Tool Box MCP server (mcp/ in this repo).
+const MCP_TOOLS = [
+  'json_format', 'base64', 'jwt_decode', 'regex_test', 'hash', 'uuid_generate',
+  'password_generate', 'uk_vat', 'url_clean', 'timestamp_convert', 'text_tools',
+];
+
+// Small copy-to-clipboard button used by the MCP install snippets.
+function CopyButton({ text, label = 'command' }: { text: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+        } catch (e) {
+          console.error('Clipboard write failed', e);
+        }
+      }}
+      className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-cyan hover:bg-muted/60 transition-colors focus:outline-none focus:ring-1 focus:ring-cyan/40"
+      title={`Copy ${label}`}
+      aria-label={copied ? `${label} copied` : `Copy ${label}`}
+    >
+      {copied ? <Check className="w-3.5 h-3.5 text-emerald-color" /> : <Copy className="w-3.5 h-3.5" />}
+    </button>
+  );
+}
 
 interface ToolkitProps {
   onToolSelect?: (tool: Tool) => void;
@@ -291,7 +320,94 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
         </AnimatePresence>
       </section>
 
+      {/* Linacre Tool Box — MCP server for AI clients */}
+      <section className="space-y-4" id="toolkit-mcp" aria-labelledby="mcp-heading">
+        <div
+          className="rounded-2xl border border-cyan/20 bg-gradient-to-b from-cyan/[0.06] to-transparent p-6 sm:p-8"
+          style={{ boxShadow: 'var(--linacre-card-shadow)' }}
+        >
+          <div className="flex items-start gap-3 mb-5">
+            <div className="w-9 h-9 shrink-0 flex items-center justify-center rounded-lg bg-cyan/10 border border-cyan/30">
+              <Bot className="w-4 h-4 text-cyan" />
+            </div>
+            <div>
+              <h2 id="mcp-heading" className="font-mono text-base sm:text-lg font-semibold text-foreground flex items-center gap-2 flex-wrap">
+                Use these tools in your AI
+                <span className="font-mono text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded text-cyan bg-cyan/10 border border-cyan/20">
+                  MCP
+                </span>
+              </h2>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mt-1 max-w-2xl">
+                The Linacre Tool Box also runs as a{' '}
+                <span className="text-foreground">Model Context Protocol</span> server — the same private,
+                offline utilities, callable by Claude, Cursor or any MCP client. Nothing you pass in ever
+                leaves your machine.
+              </p>
+            </div>
+          </div>
 
+          {/* Tool chips */}
+          <div className="flex flex-wrap gap-1.5 mb-6" aria-label="Tools available over MCP">
+            {MCP_TOOLS.map((t) => (
+              <span
+                key={t}
+                className="font-mono text-[10px] px-2 py-1 rounded-md bg-muted/40 dark:bg-[#0B1220]/60 border border-amber-color/12 text-muted-foreground"
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+
+          {/* Install snippets */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Step 1 — build once */}
+            <div className="rounded-xl border border-amber-color/12 bg-muted/20 dark:bg-[#0B1220]/60 p-4">
+              <div className="flex items-center gap-2 mb-2 font-mono text-xs font-semibold text-foreground">
+                <Terminal className="w-3.5 h-3.5 text-amber-color" /> 1 · Build once
+              </div>
+              <div className="flex items-center gap-2 bg-[#061923] border border-border-color/60 rounded-lg px-3 py-2">
+                <code className="font-mono text-[11px] text-cyan overflow-x-auto whitespace-nowrap flex-1">
+                  cd mcp &amp;&amp; npm install &amp;&amp; npm run build
+                </code>
+                <CopyButton text="cd mcp && npm install && npm run build" />
+              </div>
+              <p className="text-[10px] text-muted-foreground/70 mt-2 leading-relaxed">
+                Builds <code className="text-muted-foreground">mcp/dist/server.js</code> — pure Node, no keys.
+              </p>
+            </div>
+
+            {/* Step 2 — add to Claude */}
+            <div className="rounded-xl border border-amber-color/12 bg-muted/20 dark:bg-[#0B1220]/60 p-4">
+              <div className="flex items-center gap-2 mb-2 font-mono text-xs font-semibold text-foreground">
+                <Terminal className="w-3.5 h-3.5 text-emerald-color" /> 2 · Add to Claude
+              </div>
+              <div className="flex items-center gap-2 bg-[#061923] border border-border-color/60 rounded-lg px-3 py-2">
+                <code className="font-mono text-[11px] text-emerald-color overflow-x-auto whitespace-nowrap flex-1">
+                  claude mcp add linacre-toolbox -- node ./mcp/dist/server.js
+                </code>
+                <CopyButton text="claude mcp add linacre-toolbox -- node ./mcp/dist/server.js" />
+              </div>
+              <p className="text-[10px] text-muted-foreground/70 mt-2 leading-relaxed">
+                Or point Claude Desktop's <code className="text-muted-foreground">mcpServers</code> at that file.
+                All 11 tools appear instantly.
+              </p>
+            </div>
+          </div>
+
+          {/* Links */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 font-mono text-[11px]">
+            <a href="/.well-known/mcp.json" target="_blank" rel="noopener" className="text-muted-foreground hover:text-cyan transition-colors inline-flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> manifest
+            </a>
+            <a href="/skills.txt" target="_blank" rel="noopener" className="text-muted-foreground hover:text-cyan transition-colors inline-flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> skills.txt
+            </a>
+            <a href="https://github.com/LIN4CRE/linacre.site" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-cyan transition-colors inline-flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> source · mcp/
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
