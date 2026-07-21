@@ -18,6 +18,12 @@
       "canonical": "https://www.linacre.site/projects",
       "index": true
     },
+    "/games": {
+      "title": "Games | David Linacre — Playable browser games & arcade flyers",
+      "description": "Playable browser games built by David Linacre, including KushCloud flyer and built-in interactive Snake. Free and open source.",
+      "canonical": "https://www.linacre.site/games",
+      "index": true
+    },
     "/about": {
       "title": "About David Linacre | Full-stack and AI engineer",
       "description": "Learn about David Linacre's background in software engineering, technical philosophy, and operational process. Shipped projects, career milestones, and skills matrix.",

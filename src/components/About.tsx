@@ -70,10 +70,10 @@ export default function About() {
           <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-color"><ShieldCheck className="h-4 w-4" /> About David Linacre</span>
           <h1 className="mt-4 font-display text-4xl font-bold tracking-[-0.05em] text-foreground sm:text-5xl">I build software people can actually use.</h1>
           <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
-            I am a UK-based software engineer focused on practical web products, Android utilities, automation, and local-first experiences. My strongest work turns a specific frustration into a clear interface with honest limitations and a maintainable delivery path.
+            I am a self-taught software developer based in Barnsley, South Yorkshire. With over 16 years of hands-on experience in customer service, health & safety compliance, and stock management, I bring strong organizational skills, reliability, and attention to detail into every project I build.
           </p>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">
-            This site is both a working toolbox and an edited record of what I have shipped. Projects only appear in the portfolio when there is something real to try, download, or inspect.
+            From browser games like KushCloud to Android tools like Linacre Uninstaller and offline-first web apps like Apex POS, I focus on building real, accessible, and open-source tools that solve practical problems.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-amber-color px-4 py-3 font-mono text-xs font-bold text-[#031018] hover:bg-amber-glow"><Github className="h-4 w-4" /> GitHub profile</a>
@@ -103,16 +103,26 @@ export default function About() {
           <div className="flex items-center gap-2 border-b border-white/10 pb-3 text-[10px] text-muted-foreground"><span className="h-2.5 w-2.5 rounded-full bg-[#fb7185]" /><span className="h-2.5 w-2.5 rounded-full bg-[#38bdf8]" /><span className="h-2.5 w-2.5 rounded-full bg-[#34d399]" /><span className="ml-2">profile.json</span></div>
           <pre className="mt-4 whitespace-pre-wrap text-[11px] leading-6 text-[#9ab7c3]">{`{
   "name": "David Linacre",
-  "location": "West Yorkshire, UK",
+  "role": "Self Taught Developer",
+  "location": "Barnsley, South Yorkshire, UK",
+  "phone": "07391 428996",
+  "email": "davidlinacre@hotmail.co.uk",
+  "education": "Darton High School (2002 - 2007)",
+  "experience": [
+    "Tudor Rose Nurseries (2020 - 2024)",
+    "Cubley Hall (2020)",
+    "Five A Day (2013 - 2020)",
+    "Fresh Today (2008 - 2013)"
+  ],
   "focus": [
     "useful web products",
+    "browser games",
     "Android utilities",
-    "automation systems",
-    "accessible interfaces"
+    "offline-first tools"
   ],
   "default": "build, verify, improve"
 }`}</pre>
-          <div className="mt-5 flex items-center gap-2 rounded-xl border border-emerald-color/20 bg-emerald-color/5 p-3 text-[10px] text-emerald-color"><MapPin className="h-4 w-4" /> Bradford / remote worldwide</div>
+          <div className="mt-5 flex items-center gap-2 rounded-xl border border-emerald-color/20 bg-emerald-color/5 p-3 text-[10px] text-emerald-color"><MapPin className="h-4 w-4" /> Barnsley, South Yorkshire / UK</div>
         </div>
 
         <div className="space-y-4">

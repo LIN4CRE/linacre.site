@@ -14,6 +14,7 @@ import { ToolCategory } from './types';
 // Lazy-loaded page components for optimization (code splitting)
 const StartPage = lazy(() => import('./components/StartPage'));
 const Toolkit = lazy(() => import('./components/Toolkit'));
+const Games = lazy(() => import('./components/Games'));
 const CommandPalette = lazy(() => import('./components/CommandPalette'));
 const AIChatbot = lazy(() => import('./components/AIChatbot'));
 const Learn = lazy(() => import('./components/Learn'));
@@ -45,6 +46,7 @@ const ROUTE_LABEL: Record<string, string> = {
   '/now': 'Now',
   '/work': 'Work',
   '/projects': 'Projects',
+  '/games': 'Games',
   '/toolkit': 'Toolkit',
   '/learn': 'Learn',
   '/blog': 'Blog',
@@ -67,7 +69,7 @@ export default function App() {
     const pathname = window.location.pathname.replace(/^\/+|\/+$/g, '');
     const hash = window.location.hash.replace(/^#/, '');
     const validTabs = [
-      'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground',
+      'toolkit', 'games', 'learn', 'lab', 'dashboard', 'identity', 'playground',
       'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work',
       'contact/thanks', 'cookie-policy', 'terms', 'now'
     ];
@@ -726,6 +728,18 @@ export default function App() {
             </motion.div>
           )}
 
+          {activeTab === 'games' && (
+            <motion.div
+              key="games"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <Games />
+            </motion.div>
+          )}
+
           {activeTab === 'work' && (
             <motion.div
               key="work"
@@ -870,7 +884,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {!['home', 'toolkit', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
+          {!['home', 'toolkit', 'games', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
             <motion.div
               key="404"
               initial={{ opacity: 0, scale: 0.95 }}

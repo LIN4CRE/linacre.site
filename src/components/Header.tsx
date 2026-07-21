@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House, Gamepad2 } from 'lucide-react';
 import InteractiveGlobe from './InteractiveGlobe';
 
 interface HeaderProps {
@@ -17,8 +17,9 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
 
   const coreItems = [
     { id: 'home', label: 'Home', icon: House },
-    { id: 'toolkit', label: 'Toolkit', icon: Layers },
     { id: 'projects', label: 'Projects', icon: FolderCode },
+    { id: 'games', label: 'Games', icon: Gamepad2 },
+    { id: 'toolkit', label: 'Toolkit', icon: Layers },
     { id: 'work', label: 'Work', icon: Briefcase },
   ];
 

@@ -7,6 +7,11 @@ import { ChangelogItem } from '../types';
 
 export const CHANGELOG: ChangelogItem[] = [
   {
+    version: 'v6.2',
+    title: 'Games Hub & Focused Developer Loadout',
+    description: 'Upgraded the dedicated Games page with standalone glass layout, live KushCloud arcade flyer, and built-in interactive Snake; streamlined the Toolkit page into a curated daily loadout; and updated all CV and experience records with verified real data.'
+  },
+  {
     version: 'v6.1',
     title: 'Everyday Utility Pack',
     description: 'Added four private, client-side tools to the start page: a UK VAT calculator, text cleaner and counter, SHA-256 generator, and URL parser with common tracking-parameter removal. No sign-up, adverts, analytics, or server processing.'

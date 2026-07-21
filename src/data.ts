@@ -7,7 +7,7 @@ export const TOOLS: Tool[] = [
     id: 'vscode',
     name: 'VS Code',
     category: 'start',
-    description: 'The gold-standard code editor. Extensions for everything. Start here.',
+    description: 'Gold-standard code editor with essential TypeScript, Git, and React extensions.',
     url: 'https://code.visualstudio.com',
     host: 'code.visualstudio.com',
     searchKeywords: 'vs code editor microsoft extensions vscode',
@@ -17,7 +17,7 @@ export const TOOLS: Tool[] = [
     id: 'github',
     name: 'GitHub',
     category: 'start',
-    description: 'Version control + collaboration. Host repos, track issues, showcase work.',
+    description: 'Version control, open-source portfolio hosting, Actions CI/CD, and issue tracking.',
     url: 'https://github.com/LIN4CRE',
     host: 'github.com/LIN4CRE',
     searchKeywords: 'github version control repos repositories git collab',
@@ -27,80 +27,10 @@ export const TOOLS: Tool[] = [
     id: 'git',
     name: 'Git',
     category: 'start',
-    description: 'The version control system underneath it all. Learn it early, love it forever.',
+    description: 'Fundamental CLI version control tool for tracking commits, branches, and releases.',
     url: 'https://git-scm.com',
     host: 'git-scm.com',
     searchKeywords: 'git version control cli terminal commandline',
-    tag: 'Free'
-  },
-  {
-    id: 'copilot',
-    name: 'GitHub Copilot',
-    category: 'start',
-    description: 'AI pair programmer. Free for students & verified open-source contributors.',
-    url: 'https://github.com/features/copilot',
-    host: 'github.com/features/copilot',
-    searchKeywords: 'github copilot ai pair programmer autocomplete coding assistant',
-    tag: 'Free'
-  },
-  {
-    id: 'cursor',
-    name: 'Cursor',
-    category: 'start',
-    description: 'AI-first editor built on VS Code. Generous free tier. Great for learning.',
-    url: 'https://cursor.com',
-    host: 'cursor.com',
-    searchKeywords: 'cursor ai editor vscode code assistant auto-complete',
-    tag: 'Free'
-  },
-  {
-    id: 'notion',
-    name: 'Notion',
-    category: 'start',
-    description: 'Plan projects, take notes, write docs. Great for organising your builds.',
-    url: 'https://notion.so',
-    host: 'notion.so',
-    searchKeywords: 'notion notes docs planning roadmap markdown workspace wiki',
-    tag: 'Free'
-  },
-  {
-    id: 'readme',
-    name: 'Profile README',
-    category: 'start',
-    description: 'Pin your projects and showcase skills. Make your GitHub profile memorable.',
-    url: 'https://github.com/LIN4CRE',
-    host: 'github.com/LIN4CRE',
-    searchKeywords: 'github profile readme showcase portfolio markdown template customizer',
-    tag: 'Free'
-  },
-  {
-    id: 'prettier',
-    name: 'Prettier',
-    category: 'start',
-    description: 'Opinionated code formatter. Consistent style across your whole project, zero config.',
-    url: 'https://prettier.io',
-    host: 'prettier.io',
-    searchKeywords: 'prettier code formatter autoformat lint style consistency',
-    tag: 'Free'
-  },
-  {
-    id: 'linear',
-    name: 'Linear',
-    category: 'start',
-    description: 'Issue tracking and project management. Clean, fast, built for developers.',
-    url: 'https://linear.app',
-    host: 'linear.app',
-    searchKeywords: 'linear project management issues tracking software planning agile board',
-    tag: 'Free'
-  },
-  {
-    id: 'zed',
-    name: 'Zed',
-    category: 'start',
-    description: 'Blazing-fast editor written in Rust. GPU-accelerated, built-in AI, multiplayer editing.',
-    url: 'https://zed.dev',
-    host: 'zed.dev',
-    searchKeywords: 'zed editor fast rust gpu coding team collaboration peer coding',
     tag: 'Free'
   },
 
@@ -109,180 +39,60 @@ export const TOOLS: Tool[] = [
     id: 'react',
     name: 'React',
     category: 'build',
-    description: 'The most popular UI library. Huge ecosystem, great docs. The safe bet.',
+    description: 'Modern component-based UI library powering interactive browser tools and SPAs.',
     url: 'https://react.dev',
     host: 'react.dev',
     searchKeywords: 'react ui library javascript components frontend framework SPA vdom',
     tag: 'Free'
   },
   {
-    id: 'nextjs',
-    name: 'Next.js',
+    id: 'vite',
+    name: 'Vite',
     category: 'build',
-    description: 'Full-stack React framework. Best DX, deploys in seconds.',
-    url: 'https://nextjs.org',
-    host: 'nextjs.org',
-    searchKeywords: 'next.js react framework fullstack server components SSR static hosting vercel',
+    description: 'Lightning-fast dev server and frontend build tool with hot module replacement.',
+    url: 'https://vitejs.dev',
+    host: 'vitejs.dev',
+    searchKeywords: 'vite build tool dev server bundler HMR esbuild rollup',
     tag: 'Free'
   },
   {
     id: 'tailwind',
     name: 'Tailwind CSS',
     category: 'build',
-    description: 'Utility-first CSS. Style things fast without leaving your markup.',
+    description: 'Utility-first CSS framework for rapid responsive layouts and consistent styling.',
     url: 'https://tailwindcss.com',
     host: 'tailwindcss.com',
-    searchKeywords: 'tailwind css utility styling design system utility-first layout responsive',
+    searchKeywords: 'tailwind css utility styling layout responsive',
     tag: 'Free'
   },
   {
-    id: 'supabase',
-    name: 'Supabase',
+    id: 'python',
+    name: 'Python',
     category: 'build',
-    description: 'Postgres + auth + storage + edge functions. The free tier is unreal.',
-    url: 'https://supabase.com',
-    host: 'supabase.com',
-    searchKeywords: 'supabase postgres database auth storage serverless backend firebase alternative',
+    description: 'Versatile language used for backend services, automation scripts, and CLI toolchains.',
+    url: 'https://python.org',
+    host: 'python.org',
+    searchKeywords: 'python backend automation scripting CLI fast-api',
     tag: 'Free'
   },
   {
-    id: 'neon',
-    name: 'Neon',
+    id: 'kotlin',
+    name: 'Kotlin & Android SDK',
     category: 'build',
-    description: 'Serverless Postgres. Branch your DB like Git. Great for learning SQL.',
-    url: 'https://neon.tech',
-    host: 'neon.tech',
-    searchKeywords: 'neon serverless postgres sql database cloud branching relational',
+    description: 'Native Android development for utilities like Linacre Uninstaller and DKMA Monster.',
+    url: 'https://developer.android.com',
+    host: 'developer.android.com',
+    searchKeywords: 'kotlin android mobile app development sdk',
     tag: 'Free'
   },
   {
-    id: 'turso',
-    name: 'Turso',
+    id: 'dexie',
+    name: 'Dexie / IndexedDB',
     category: 'build',
-    description: 'SQLite at the edge. Embedded databases, insanely fast, free hobby plan.',
-    url: 'https://turso.tech',
-    host: 'turso.tech',
-    searchKeywords: 'turso sqlite edge database distributed embedded libsql',
-    tag: 'Free'
-  },
-  {
-    id: 'upstash',
-    name: 'Upstash Redis',
-    category: 'build',
-    description: 'Serverless Redis for rate limiting, caching & queues. Pay per request.',
-    url: 'https://upstash.com',
-    host: 'upstash.com',
-    searchKeywords: 'upstash redis serverless cache queue key-value memory data',
-    tag: 'Free'
-  },
-  {
-    id: 'clerk',
-    name: 'Clerk',
-    category: 'build',
-    description: 'Auth in minutes — sign-up, sign-in, user management. 10K free users.',
-    url: 'https://clerk.com',
-    host: 'clerk.com',
-    searchKeywords: 'clerk authentication users signin authorization sessions jwt login identity',
-    tag: 'Free'
-  },
-  {
-    id: 'authjs',
-    name: 'Auth.js',
-    category: 'build',
-    description: 'Open-source auth. OAuth, magic links and more. Free forever.',
-    url: 'https://authjs.dev',
-    host: 'authjs.dev',
-    searchKeywords: 'auth.js oauth open source authentication nextauth magiclinks passwordless',
-    tag: 'Free'
-  },
-  {
-    id: 'stripe',
-    name: 'Stripe',
-    category: 'build',
-    description: 'Accept payments online. Free to set up, pay only per transaction.',
-    url: 'https://stripe.com',
-    host: 'stripe.com',
-    searchKeywords: 'stripe payments checkout credit card billing ecommerce gateway subscriptions',
-    tag: 'Free'
-  },
-  {
-    id: 'resend',
-    name: 'Resend',
-    category: 'build',
-    description: 'Transactional email from code. 3K/month free, React Email built in.',
-    url: 'https://resend.com',
-    host: 'resend.com',
-    searchKeywords: 'resend transactional email react inbox notification mailer smtp api',
-    tag: 'Free'
-  },
-  {
-    id: 'cloudflare',
-    name: 'Cloudflare',
-    category: 'build',
-    description: 'CDN, DNS, Workers & R2 storage. Generous free tier, domains at cost.',
-    url: 'https://cloudflare.com',
-    host: 'cloudflare.com',
-    searchKeywords: 'cloudflare cdn dns workers r2 storage security edge functions ssl',
-    tag: 'Free'
-  },
-  {
-    id: 'vite',
-    name: 'Vite',
-    category: 'build',
-    description: 'Lightning-fast dev server & bundler. Hot module replacement, instant startup.',
-    url: 'https://vitejs.dev',
-    host: 'vitejs.dev',
-    searchKeywords: 'vite build tool dev server bundler hot module replacement HMR esbuild rollup',
-    tag: 'Free'
-  },
-  {
-    id: 'bun',
-    name: 'Bun',
-    category: 'build',
-    description: 'All-in-one JS runtime, bundler & package manager. Drop-in Node replacement, much faster.',
-    url: 'https://bun.sh',
-    host: 'bun.sh',
-    searchKeywords: 'bun javascript runtime bundler package manager node replacement testing transpiler',
-    tag: 'Free'
-  },
-  {
-    id: 'postman',
-    name: 'Postman',
-    category: 'build',
-    description: 'Test & explore APIs visually. Send requests, inspect responses, mock endpoints.',
-    url: 'https://www.postman.com',
-    host: 'postman.com',
-    searchKeywords: 'postman api testing http client rest graphql mock collections headers',
-    tag: 'Free'
-  },
-  {
-    id: 'docker',
-    name: 'Docker',
-    category: 'build',
-    description: 'Containerize apps for consistent dev & deployment. Free for personal use, huge ecosystem.',
-    url: 'https://docker.com',
-    host: 'docker.com',
-    searchKeywords: 'docker containers devops deployment images virtualization engine compose hub',
-    tag: 'Free'
-  },
-  {
-    id: 'svelte',
-    name: 'Svelte',
-    category: 'build',
-    description: 'Compiled UI framework. Less boilerplate, smaller bundles, great DX.',
-    url: 'https://svelte.dev',
-    host: 'svelte.dev',
-    searchKeywords: 'svelte ui compiler javascript layout reactive compiled sveltekit framework',
-    tag: 'Free'
-  },
-  {
-    id: 'sentry',
-    name: 'Sentry',
-    category: 'build',
-    description: 'Real-time error tracking and performance monitoring. Free for small teams.',
-    url: 'https://sentry.io',
-    host: 'sentry.io',
-    searchKeywords: 'sentry error monitoring debugging crash tracing performance analytics logs telemetry',
+    description: 'Local-first browser database wrapper for fast offline storage without backend dependence.',
+    url: 'https://dexie.org',
+    host: 'dexie.org',
+    searchKeywords: 'dexie indexeddb storage local-first database offline',
     tag: 'Free'
   },
 
@@ -291,147 +101,34 @@ export const TOOLS: Tool[] = [
     id: 'vercel',
     name: 'Vercel',
     category: 'deploy',
-    description: 'Deploy React, Next.js, Svelte & more. Instant previews, free hobby tier.',
+    description: 'Global edge hosting platform with automated GitHub deployment previews and SSL.',
     url: 'https://vercel.com',
     host: 'vercel.com',
-    searchKeywords: 'vercel deploy hosting next.js react serverless edge static analytics pre-rendering',
-    tag: 'Free'
-  },
-  {
-    id: 'netlify',
-    name: 'Netlify',
-    category: 'deploy',
-    description: 'Static sites + serverless functions. Git or drag-and-drop. 100GB free.',
-    url: 'https://netlify.com',
-    host: 'netlify.com',
-    searchKeywords: 'netlify static sites serverless functions git deployment jamstack lambda',
-    tag: 'Free'
-  },
-  {
-    id: 'cloudflare_pages',
-    name: 'Cloudflare Pages',
-    category: 'deploy',
-    description: 'Unlimited bandwidth on the fastest edge network. Pairs with Workers.',
-    url: 'https://pages.cloudflare.com',
-    host: 'pages.cloudflare.com',
-    searchKeywords: 'cloudflare pages edge hosting workers serverless site cd deployment unlimited',
+    searchKeywords: 'vercel deploy hosting edge serverless static analytics',
     tag: 'Free'
   },
   {
     id: 'github_pages',
     name: 'GitHub Pages',
     category: 'deploy',
-    description: 'Free static hosting straight from your repo. Perfect for portfolios & docs.',
+    description: 'Free static hosting directly from GitHub repositories for web guides and games.',
     url: 'https://pages.github.com',
     host: 'pages.github.com',
-    searchKeywords: 'github pages static hosting portfolio repositories custom domain build',
+    searchKeywords: 'github pages static hosting deploy web docs',
     tag: 'Free'
   },
   {
-    id: 'render',
-    name: 'Render',
+    id: 'cloudflare',
+    name: 'Cloudflare',
     category: 'deploy',
-    description: 'Web services, static sites & databases. Free static + 750 compute hrs/mo.',
-    url: 'https://render.com',
-    host: 'render.com',
-    searchKeywords: 'render web services databases servers cron cloud redis postgres solid-hosting',
+    description: 'DNS management, edge workers, and CDN caching for domain performance.',
+    url: 'https://cloudflare.com',
+    host: 'cloudflare.com',
+    searchKeywords: 'cloudflare cdn dns workers security edge',
     tag: 'Free'
-  },
-  {
-    id: 'railway',
-    name: 'Railway',
-    category: 'deploy',
-    description: 'Deploy anything — databases, backends, full-stack apps. $5 credit/month.',
-    url: 'https://railway.app',
-    host: 'railway.app',
-    searchKeywords: 'railway deploy backend fullstack containers database cloud variables templates',
-    tag: 'Free'
-  },
-
-  // DESIGN
-  {
-    id: 'figma',
-    name: 'Figma',
-    category: 'design',
-    description: 'Industry-standard design tool. Free for 3 projects, browser-based.',
-    url: 'https://figma.com',
-    host: 'figma.com',
-    searchKeywords: 'figma design tool ui ux layout prototyping wireframe collaborative vector vector graphics',
-    tag: 'Free'
-  },
-  {
-    id: 'lucide',
-    name: 'Lucide Icons',
-    category: 'design',
-    description: 'Beautiful, consistent icons. SVG + framework components. All free.',
-    url: 'https://lucide.dev',
-    host: 'lucide.dev',
-    searchKeywords: 'lucide icons svg react vue svelte clean vector graphic design pack library',
-    tag: 'Free'
-  },
-  {
-    id: 'heroicons',
-    name: 'Heroicons',
-    category: 'design',
-    description: 'Clean SVG icons in 3 styles, by the Tailwind team. Free to use anywhere.',
-    url: 'https://heroicons.com',
-    host: 'heroicons.com',
-    searchKeywords: 'heroicons tailwind svg icons outline solid micro vector designer graphics UI iconset',
-    tag: 'Free'
-  },
-  {
-    id: 'unsplash',
-    name: 'Unsplash',
-    category: 'design',
-    description: 'High-quality stock photos. Free for commercial use, no attribution.',
-    url: 'https://unsplash.com',
-    host: 'unsplash.com',
-    searchKeywords: 'unsplash stock photos free commercial high-resolution photographer imagery background banner graphic',
-    tag: 'Free'
-  },
-  {
-    id: 'coolors',
-    name: 'Coolors',
-    category: 'design',
-    description: 'Palette generator. Hit space to generate, export to CSS or Tailwind.',
-    url: 'https://coolors.co',
-    host: 'coolors.co',
-    searchKeywords: 'coolors color palette generator matching shades tints contrast palette generator exporter hex rgb',
-    tag: 'Free'
-  },
-  {
-    id: 'dribbble',
-    name: 'Dribbble',
-    category: 'design',
-    description: 'Design inspiration. See what top designers are shipping and get ideas.',
-    url: 'https://dribbble.com',
-    host: 'dribbble.com',
-    searchKeywords: 'dribbble design inspiration UI showcase artwork mockups typography layout trends templates',
-    tag: 'Free'
-  },
-
-  // EMAIL
-  {
-    id: 'zoho_mail',
-    name: 'Zoho Mail',
-    category: 'email',
-    description: 'Custom-domain email for 5 users, no ads. david@yourdomain — done.',
-    url: 'https://zoho.com/mail',
-    host: 'zoho.com/mail',
-    searchKeywords: 'zoho mail custom domain free professional mailbox zeroads host business email exchange',
-    tag: 'Free'
-  },
-  {
-    id: 'google_workspace',
-    name: 'Google Workspace',
-    category: 'email',
-    description: 'Gmail on your domain. $7/mo after the trial — the best email experience.',
-    url: 'https://workspace.google.com',
-    host: 'workspace.google.com',
-    searchKeywords: 'google workspace gmail custom domain trial docs slides drive drive business cloud productivity meet calendar',
-    tag: 'Trial'
   }
 ];
+
 
 export const MANUAL_PROJECTS: Project[] = [
   {

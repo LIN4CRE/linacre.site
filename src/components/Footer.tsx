@@ -61,6 +61,16 @@ export default function Footer() {
               <div className="flex items-center gap-3 mt-1.5 text-muted-foreground/50">
                 <button
                   onClick={() => {
+                    window.history.pushState({}, '', '/games');
+                    window.dispatchEvent(new PopStateEvent('popstate'));
+                  }}
+                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
+                >
+                  Games
+                </button>
+                <span>·</span>
+                <button
+                  onClick={() => {
                     window.history.pushState({}, '', '/work');
                     window.dispatchEvent(new PopStateEvent('popstate'));
                   }}
@@ -156,7 +166,7 @@ export default function Footer() {
                 <DollarSign className="w-4 h-4" />
               </a>
               <span className="font-mono text-[9px] text-muted-foreground/40 border border-amber-color/15 px-1.5 py-0.5 rounded-md select-none">
-                v6.1.0
+                v6.2.0
               </span>
             </div>
           </div>

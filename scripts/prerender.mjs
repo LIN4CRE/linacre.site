@@ -112,6 +112,7 @@ const ROUTE_LABEL = {
   '/': 'Home',
   '/work': 'Work',
   '/projects': 'Projects',
+  '/games': 'Games',
   '/toolkit': 'Toolkit',
   '/learn': 'Learn',
   '/blog': 'Blog',
@@ -819,6 +820,7 @@ const indexable = Object.entries(meta.routes).filter(([, m]) => m.index);
 const ROUTE_LASTMOD_SOURCES = {
   '/': ['route-meta.json', 'src/App.tsx', 'src/data/core.ts'],
   '/projects': ['src/components/Projects.tsx', 'src/data/core.ts'],
+  '/games': ['src/components/Games.tsx', 'public/games/index.html'],
   '/about': ['src/components/About.tsx'],
   '/toolkit': ['src/components/Toolkit.tsx', 'src/data.ts'],
   '/learn': ['src/components/Learn.tsx'],

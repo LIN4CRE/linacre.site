@@ -82,13 +82,11 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
   });
 
   const categories: { id: ToolCategory | 'all'; label: string; title: string }[] = [
-    { id: 'all', label: 'all', title: 'Show all developer tools' },
-    { id: 'start', label: 'start', title: 'IDE, Version Control, Project planning' },
-    { id: 'build', label: 'build', title: 'Frameworks, DBs, Auth, Payment' },
-    { id: 'deploy', label: 'deploy', title: 'Hostings, Cloud platforms, CDNs' },
-    { id: 'design', label: 'design', title: 'Icons, Prototyping, Assets' },
-    { id: 'email', label: 'email', title: 'Domain emails, transactional APIs' },
-    { id: 'stack', label: '★ my stack', title: 'Your bookmarked developer tools' },
+    { id: 'all', label: 'all loadout', title: 'Show full developer loadout' },
+    { id: 'start', label: 'start', title: 'IDE, Version Control, Project management' },
+    { id: 'build', label: 'build', title: 'Frameworks, languages, local-first DBs' },
+    { id: 'deploy', label: 'deploy', title: 'Cloud hosting, edge networks, DNS' },
+    { id: 'stack', label: '★ my stack', title: 'Your bookmarked tools' },
   ];
 
   const getLeftBorderColor = (cat: string) => {
