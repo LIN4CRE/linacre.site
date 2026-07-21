@@ -1607,8 +1607,11 @@ You do not need to use all agents if the task is simple, but at least two should
   };
 
   const quickPrompts = [
+    '⚡ Audit this TypeScript code for security vulnerabilities, memory leaks, and speed optimizations',
+    '🗄️ Design a production PostgreSQL schema for a multi-tenant SaaS app with foreign keys and indexes',
+    '🔍 Build a RegEx to validate ISO timestamps, UUID v4, and email domains with explanation',
+    '📜 Generate an OpenAPI 3.0 YAML specification for a REST API authentication server',
     'Explain Docker Compose in simple terms',
-    'Write a SQL query to fetch active users',
     'Explain the benefits of Tailwind CSS v4'
   ];
 

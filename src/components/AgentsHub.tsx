@@ -1097,8 +1097,41 @@ export default function AgentsHub() {
         </div>
       </div>
 
-      {/* Header bar controls: Sound Toggle */}
+      {/* Header bar controls: Sound Toggle & Export */}
       <div className="flex justify-end gap-2 pr-1">
+        <button
+          onClick={() => {
+            const blueprintData = {
+              version: "1.0",
+              exportedAt: new Date().toISOString(),
+              hub: "linacre.site/agents",
+              agents: agents.map(a => ({
+                id: a.id,
+                name: a.name,
+                role: a.role,
+                personality: a.personality,
+                spriteName: a.spriteName,
+                task: a.task,
+                taskQueue: a.taskQueue,
+                roboticTraits: a.roboticTraits
+              }))
+            };
+            const jsonStr = JSON.stringify(blueprintData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `agent_blueprints_${Date.now()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-purple-color/40 bg-purple-color/10 hover:bg-purple-color/20 text-purple-color font-mono text-xs font-bold transition-all cursor-pointer"
+        >
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>Export Agent Blueprints</span>
+        </button>
+
         <button
           onClick={() => {
             playSynthSound('click', isMuted);
