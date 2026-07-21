@@ -17,7 +17,7 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
   const [bookmarkedTools, setBookmarkedTools] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Load bookmarks from localStorage
+  // Load bookmarks and URL query parameters (?q=)
   useEffect(() => {
     try {
       const saved = localStorage.getItem('linacre_stack_v1');
@@ -27,7 +27,34 @@ export default function Toolkit({ onToolSelect, openPalette, searchQuery, setSea
     } catch (e) {
       console.error('Failed to load stack bookmarks', e);
     }
+
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('q');
+      if (q && !searchQuery) {
+        setSearchQuery(q);
+      }
+    } catch (e) {
+      console.error('Failed to parse URL query param', e);
+    }
   }, []);
+
+  // Update URL search params when searchQuery changes
+  useEffect(() => {
+    try {
+      if (window.location.pathname === '/toolkit') {
+        const url = new URL(window.location.href);
+        if (searchQuery.trim()) {
+          url.searchParams.set('q', searchQuery.trim());
+        } else {
+          url.searchParams.delete('q');
+        }
+        window.history.replaceState(null, '', url.toString());
+      }
+    } catch (e) {
+      console.error('Failed to update URL search params', e);
+    }
+  }, [searchQuery]);
 
   // Save bookmarks to localStorage
   const saveBookmarks = (newBookmarks: string[]) => {

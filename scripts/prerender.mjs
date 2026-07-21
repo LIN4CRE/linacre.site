@@ -111,6 +111,7 @@ const WEBSITE = {
 const ROUTE_LABEL = {
   '/': 'Home',
   '/work': 'Work',
+  '/book': 'Book Call',
   '/projects': 'Projects',
   '/games': 'Games',
   '/toolkit': 'Toolkit',
@@ -661,6 +662,18 @@ ${CTA_BLOCK}`;
   <li>GitHub: <a href="https://github.com/LIN4CRE" rel="noopener noreferrer">github.com/LIN4CRE</a></li>
   <li>LinkedIn: <a href="https://linkedin.com/in/david-linacre" rel="noopener noreferrer">david-linacre</a></li>
 </ul>`;
+
+    case route === '/book':
+      return `
+<h1>Book a Discovery Call</h1>
+<p>Schedule a direct 15-minute intro or system architecture review with David Linacre. No automated calendar loops — send two preferred time slots in UK time (GMT/BST) and receive a direct calendar invite within 12 hours.</p>
+<h2>Available Call Formats</h2>
+<ul>
+  <li><strong>15-Min Discovery Call (Free):</strong> High-level scope alignment, stack feasibility feedback, estimated cost range, and written follow-up summary.</li>
+  <li><strong>45-Min Systems Architecture Review:</strong> Technical bottleneck diagnosis, IAM/security review, and recommended architecture roadmap.</li>
+</ul>
+<p><a class="cta" href="mailto:david@linacre.site?subject=Book%20a%2015-min%20discovery%20call">Email david@linacre.site to book →</a> <a class="cta alt" href="/contact">Fill out project form</a></p>
+<p class="meta">🔒 UK GDPR · Reply &lt; 12h · NDA-friendly by default</p>`;
 
     case route === '/contact/thanks':
       return `

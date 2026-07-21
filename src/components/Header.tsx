@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House, Gamepad2 } from 'lucide-react';
 import InteractiveGlobe from './InteractiveGlobe';
@@ -14,6 +14,21 @@ interface HeaderProps {
 
 export default function Header({ activeTab, setActiveTab, theme, setTheme, openPalette, activeColor }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const mobileButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        requestAnimationFrame(() => {
+          mobileButtonRef.current?.focus();
+        });
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mobileMenuOpen]);
 
   const coreItems = [
     { id: 'home', label: 'Home', icon: House },
@@ -211,14 +226,12 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               <Briefcase className="w-3.5 h-3.5" />
               <span>Work with</span>
             </a>
-            {/* Secondary — book a call. Calendly event URLs return 404
-                (verified 12 Jul 2026 — audit Issue 1), so this routes to the
-                working contact form until a scheduler is restored. */}
+            {/* Secondary — book a call. Routes to the /book route with scheduling options & direct email booking. */}
             <a
-              href="/contact"
+              href="/book"
               onClick={(e) => {
                 e.preventDefault();
-                setActiveTab('contact');
+                setActiveTab('book');
                 setMobileMenuOpen(false);
               }}
               className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-color/30 hover:bg-amber-color/10 text-amber-color font-mono text-xs font-bold transition-all shadow-sm focus:outline-none"
@@ -258,9 +271,12 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
 
             {/* Mobile menu button */}
             <button
+              ref={mobileButtonRef}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 md:hidden text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/50"
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav-panel"
               id="btn-mobile-menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -272,13 +288,14 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
       {/* Mobile menu panel */}
       <AnimatePresence>
         {mobileMenuOpen && (
-          <motion.div
+          <motion.nav
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.15 }}
             className="md:hidden border-t border-amber-color/10 bg-background/95 backdrop-blur-xl overflow-hidden"
             id="mobile-nav-panel"
+            aria-label="Mobile primary navigation"
           >
             <div className="px-4 py-3 space-y-1">
               {[...coreItems, ...moreItems].map((item) => {
@@ -332,7 +349,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                 <span>GitHub</span>
               </a>
             </div>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
     </header>

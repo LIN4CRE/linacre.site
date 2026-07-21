@@ -1,7 +1,7 @@
 // linacre.site service worker
 // v11 — Self-hosted local fonts, dedicated Games Hub, curated loadout, and 100% real CV data.
 // Keep API + cross-origin requests untouched (Lab streaming still works).
-var CACHE = "linacre-v12";
+var CACHE = "linacre-v13";
 var OFFLINE_URL = "offline.html";
 var URLS = [
   ".",
@@ -10,7 +10,7 @@ var URLS = [
   "404.html",
   "500.html",
   "offline.html",
-  "about", "contact", "contact/thanks",
+  "about", "contact", "contact/thanks", "book",
   "privacy", "cookie-policy", "terms",
   "accessibility", "blog", "status",
   "agents", "lab", "identity",

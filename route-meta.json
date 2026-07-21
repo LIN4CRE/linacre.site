@@ -147,6 +147,12 @@
       "description": "Terms of service for David Linacre freelance engineering — engagements, deliverables, liability cap, governing law (England & Wales).",
       "canonical": "https://www.linacre.site/terms",
       "index": true
+    },
+    "/book": {
+      "title": "Book a Discovery Call | David Linacre",
+      "description": "Schedule a direct 15-minute intro or system architecture call with David Linacre. Timezones, availability, expectations, and booking options.",
+      "canonical": "https://www.linacre.site/book",
+      "index": true
     }
   }
 }

@@ -248,6 +248,7 @@ export default function Projects() {
                 <div className="flex flex-col gap-2 border-t border-border-color pt-5 sm:flex-row">
                   {selected.liveUrl && <a href={selected.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-amber-color px-4 py-3 font-mono text-xs font-bold text-[#031018]">Open live / download <ExternalLink className="h-4 w-4" /></a>}
                   {selected.repoUrl && <a href={selected.repoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-border-color px-4 py-3 font-mono text-xs font-bold text-foreground hover:border-amber-color/50"><Github className="h-4 w-4" /> View source</a>}
+                  <a href="/book" onClick={() => setSelected(null)} className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-color/30 bg-amber-color/10 px-4 py-3 font-mono text-xs font-bold text-amber-color hover:bg-amber-color/20">Discuss similar build →</a>
                 </div>
               </div>
             </motion.div>

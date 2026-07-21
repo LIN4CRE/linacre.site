@@ -206,6 +206,10 @@
     {
       "source": "/terms",
       "destination": "/terms/index.html"
+    },
+    {
+      "source": "/book",
+      "destination": "/book/index.html"
     }
   ],
   "trailingSlash": false,

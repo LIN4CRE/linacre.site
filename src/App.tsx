@@ -36,6 +36,7 @@ const CookiePolicy = lazy(() => import('./components/CookiePolicy'));
 const Terms = lazy(() => import('./components/Terms'));
 const ConsentBanner = lazy(() => import('./components/ConsentBanner'));
 const Now = lazy(() => import('./components/Now'));
+const BookCall = lazy(() => import('./components/BookCall'));
 
 import { BLOG_POSTS } from './data';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -45,6 +46,7 @@ type BreadcrumbPath = { label: string; onClick?: () => void; active?: boolean };
 const ROUTE_LABEL: Record<string, string> = {
   '/now': 'Now',
   '/work': 'Work',
+  '/book': 'Book Call',
   '/projects': 'Projects',
   '/games': 'Games',
   '/toolkit': 'Toolkit',
@@ -70,7 +72,7 @@ export default function App() {
     const hash = window.location.hash.replace(/^#/, '');
     const validTabs = [
       'toolkit', 'games', 'learn', 'lab', 'dashboard', 'identity', 'playground',
-      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work',
+      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'book',
       'contact/thanks', 'cookie-policy', 'terms', 'now'
     ];
 
@@ -759,6 +761,18 @@ export default function App() {
               transition={{ type: "spring", stiffness: 100, damping: 15 }}
             >
               <WorkWithMe />
+            </motion.div>
+          )}
+
+          {activeTab === 'book' && (
+            <motion.div
+              key="book"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15 }}
+            >
+              <BookCall navigate={setActiveTab} />
             </motion.div>
           )}
 

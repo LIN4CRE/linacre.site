@@ -420,7 +420,7 @@ app.post("/api/contact", (req, res) => {
     }
     messages.push({ role: 'user', content: prompt });
 
-    // 1. Try Gemini
+    // 1. Try Gemini 3.6 Flash
     try {
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey) throw new Error("No Gemini key");
@@ -434,13 +434,24 @@ app.post("/api/contact", (req, res) => {
         }
       });
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents,
-      });
+      let responseText = "";
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents,
+        });
+        responseText = response?.text || "";
+      } catch (err: any) {
+        console.warn("Gemini 3.6 Flash fallback to gemini-2.5-flash:", err.message || err);
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents,
+        });
+        responseText = response?.text || "";
+      }
 
-      if (response && response.text) {
-        return res.json({ reply: response.text });
+      if (responseText) {
+        return res.json({ reply: responseText });
       }
       throw new Error("Empty response from Gemini");
     } catch (geminiError: any) {
@@ -516,6 +527,64 @@ app.post("/api/contact", (req, res) => {
     return res.json({
       reply: "Hello! I am the local system proxy. Currently, the server's Gemini, OpenAI, and Claude API keys are exhausted or depleted. \n\nPlease expand the **Configuration Panel** at the top of the page to input your own API keys to chat with the live models! This sandbox runs entirely in your browser and will connect directly using your keys."
     });
+  });
+
+  // API route for generating AI SVG icons/emblems using Gemini 3.6 Flash
+  app.post("/api/generate-icon", chatInputGuard, aiRateLimiter, async (req, res) => {
+    const { prompt, primaryColor = "#22D3EE", secondaryColor = "#34D399" } = req.body ?? {};
+    if (!prompt || typeof prompt !== "string") {
+      return res.status(400).json({ error: "Prompt is required." });
+    }
+
+    const systemInstruction = `You are a world-class vector graphic designer and SVG artist.
+Generate a valid, raw, clean, self-contained SVG icon/emblem based on the user's prompt.
+Strict rules:
+1. Output ONLY the raw <svg>...</svg> markup inside a \`\`\`xml or \`\`\`svg block, or as plain SVG. Do not include markdown preamble outside the code block.
+2. The SVG MUST have viewBox="0 0 100 100", width="100", height="100".
+3. Use primary color "${primaryColor}" and secondary color "${secondaryColor}" with fill, stroke, gradients, or filters as appropriate for a futuristic, modern tech aesthetic.
+4. Keep the design clean, scalable, crisp, and beautifully styled.
+5. No HTML tags or scripts inside the SVG.`;
+
+    const contents = [
+      { role: 'user', parts: [{ text: `${systemInstruction}\n\nPrompt: ${prompt}` }] }
+    ];
+
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) throw new Error("No Gemini API Key configured");
+
+      const ai = new GoogleGenAI({
+        apiKey,
+        httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
+      });
+
+      let responseText = "";
+      try {
+        const response = await ai.models.generateContent({
+          model: "gemini-3.6-flash",
+          contents,
+        });
+        responseText = response?.text || "";
+      } catch (err: any) {
+        console.warn("Gemini 3.6 Flash fallback to gemini-2.5-flash for icon gen:", err.message || err);
+        const response = await ai.models.generateContent({
+          model: "gemini-2.5-flash",
+          contents,
+        });
+        responseText = response?.text || "";
+      }
+
+      if (responseText) {
+        const svgMatch = responseText.match(/<svg[\s\S]*?<\/svg>/i);
+        if (svgMatch) {
+          return res.json({ svg: svgMatch[0], raw: responseText, model: "gemini-3.6-flash" });
+        }
+      }
+      throw new Error("Could not extract SVG markup from Gemini response.");
+    } catch (err: any) {
+      console.error("AI Icon Generation Error:", err);
+      return res.status(500).json({ error: err.message || "Failed to generate AI icon." });
+    }
   });
 
   // API route for Gemini Streaming Chat securely (SSE)

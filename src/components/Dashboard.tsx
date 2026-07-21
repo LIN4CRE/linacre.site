@@ -51,6 +51,7 @@ export default function Dashboard() {
   // Authentication bypass password
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState<string | null>(null);
+  const [showMeshTable, setShowMeshTable] = useState(false);
 
   const [meshStatus, setMeshStatus] = useState<Record<string, {
     status: 'connected' | 'disconnected' | 'connecting';
@@ -632,50 +633,99 @@ export default function Dashboard() {
 
                 {/* Radar Chart from ChartJS */}
                 <div className="w-full h-[240px] flex items-center justify-center">
-                  <Radar
-                    data={{
-                      labels: ['FastAPI', 'Express', 'Poco F7', 'Agent Daemon', 'Gemini Link'],
-                      datasets: [
-                        {
-                          label: 'Connection Strength (%)',
-                          data: [
-                            meshStatus.fastapi.status === 'connected' ? Math.max(30, 100 - meshStatus.fastapi.latency) : (meshStatus.fastapi.status === 'connecting' ? 50 : 0),
-                            meshStatus.express.status === 'connected' ? 95 : 0,
-                            meshStatus.phone.status === 'connected' ? 90 : (meshStatus.phone.status === 'connecting' ? 50 : 0),
-                            meshStatus.agent.status === 'connected' ? 85 : (meshStatus.agent.status === 'connecting' ? 50 : 0),
-                            meshStatus.gemini.status === 'connected' ? 90 : 0,
-                          ],
-                          backgroundColor: 'rgba(6, 182, 212, 0.15)',
-                          borderColor: '#06b6d4',
-                          borderWidth: 2,
-                          pointBackgroundColor: '#06b6d4',
-                          pointBorderColor: '#fff',
-                        }
-                      ]
-                    }}
-                    options={{
-                      scales: {
-                        r: {
-                          angleLines: { color: 'rgba(255, 255, 255, 0.08)' },
-                          grid: { color: 'rgba(255, 255, 255, 0.08)' },
-                          pointLabels: { color: '#94a3b8', font: { size: 9, family: 'monospace' } },
-                          ticks: { display: false },
-                          suggestedMin: 0,
-                          suggestedMax: 100
-                        }
-                      },
-                      plugins: {
-                        legend: { display: false }
-                      },
-                      responsive: true,
-                      maintainAspectRatio: false
-                    }}
-                  />
+                  {!showMeshTable ? (
+                    <Radar
+                      data={{
+                        labels: ['FastAPI', 'Express', 'Poco F7', 'Agent Daemon', 'Gemini Link'],
+                        datasets: [
+                          {
+                            label: 'Connection Strength (%)',
+                            data: [
+                              meshStatus.fastapi.status === 'connected' ? Math.max(30, 100 - meshStatus.fastapi.latency) : (meshStatus.fastapi.status === 'connecting' ? 50 : 0),
+                              meshStatus.express.status === 'connected' ? 95 : 0,
+                              meshStatus.phone.status === 'connected' ? 90 : (meshStatus.phone.status === 'connecting' ? 50 : 0),
+                              meshStatus.agent.status === 'connected' ? 85 : (meshStatus.agent.status === 'connecting' ? 50 : 0),
+                              meshStatus.gemini.status === 'connected' ? 90 : 0,
+                            ],
+                            backgroundColor: 'rgba(6, 182, 212, 0.15)',
+                            borderColor: '#06b6d4',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#06b6d4',
+                            pointBorderColor: '#fff',
+                          }
+                        ]
+                      }}
+                      options={{
+                        scales: {
+                          r: {
+                            angleLines: { color: 'rgba(255, 255, 255, 0.08)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                            pointLabels: { color: '#94a3b8', font: { size: 9, family: 'monospace' } },
+                            ticks: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                          }
+                        },
+                        plugins: {
+                          legend: { display: false }
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full overflow-x-auto text-[11px] font-mono">
+                      <table className="w-full border-collapse border border-border-color text-left">
+                        <thead>
+                          <tr className="bg-muted/20 text-muted-foreground border-b border-border-color">
+                            <th className="p-2 border-r border-border-color">Component</th>
+                            <th className="p-2 border-r border-border-color">Status</th>
+                            <th className="p-2">Score / Latency</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b border-border-color/60">
+                            <td className="p-2 border-r border-border-color font-bold text-foreground">FastAPI Backend</td>
+                            <td className="p-2 border-r border-border-color text-emerald-color">{meshStatus.fastapi.status}</td>
+                            <td className="p-2 text-muted-foreground">{meshStatus.fastapi.status === 'connected' ? `${meshStatus.fastapi.latency}ms` : 'Offline'}</td>
+                          </tr>
+                          <tr className="border-b border-border-color/60">
+                            <td className="p-2 border-r border-border-color font-bold text-foreground">Express Server</td>
+                            <td className="p-2 border-r border-border-color text-emerald-color">{meshStatus.express.status}</td>
+                            <td className="p-2 text-muted-foreground">{meshStatus.express.latency}ms</td>
+                          </tr>
+                          <tr className="border-b border-border-color/60">
+                            <td className="p-2 border-r border-border-color font-bold text-foreground">Poco F7 Android</td>
+                            <td className="p-2 border-r border-border-color text-amber-color">{meshStatus.phone.status}</td>
+                            <td className="p-2 text-muted-foreground">{meshStatus.phone.status === 'connected' ? `${meshStatus.phone.latency}ms` : 'Waiting'}</td>
+                          </tr>
+                          <tr className="border-b border-border-color/60">
+                            <td className="p-2 border-r border-border-color font-bold text-foreground">Agent Daemon</td>
+                            <td className="p-2 border-r border-border-color text-emerald-color">{meshStatus.agent.status}</td>
+                            <td className="p-2 text-muted-foreground">{meshStatus.agent.status === 'connected' ? `${meshStatus.agent.latency}ms` : 'Inactive'}</td>
+                          </tr>
+                          <tr>
+                            <td className="p-2 border-r border-border-color font-bold text-foreground">Gemini API Link</td>
+                            <td className="p-2 border-r border-border-color text-emerald-color">{meshStatus.gemini.status}</td>
+                            <td className="p-2 text-muted-foreground">{meshStatus.gemini.latency}ms</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
 
-                <div className="flex gap-4 text-[10px] font-mono text-slate-500">
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-cyan" /> Mesh Core Link</span>
-                  <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-color" /> Handshake OK</span>
+                <div className="flex items-center justify-between text-[10px] font-mono text-slate-500">
+                  <div className="flex gap-4">
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-cyan" /> Mesh Core Link</span>
+                    <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-color" /> Handshake OK</span>
+                  </div>
+                  <button
+                    onClick={() => setShowMeshTable(!showMeshTable)}
+                    className="text-cyan hover:underline cursor-pointer font-bold"
+                  >
+                    {showMeshTable ? 'View Radar Chart' : 'Accessible Text Table'}
+                  </button>
                 </div>
               </div>
 

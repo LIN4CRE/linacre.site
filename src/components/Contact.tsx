@@ -25,6 +25,7 @@ export default function Contact() {
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; message?: string; consent?: string }>({});
   const [requestId, setRequestId] = useState('');
   const [company, setCompany] = useState('');
   const [startedAt] = useState(() => Date.now());
@@ -59,7 +60,21 @@ export default function Contact() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !message.trim() || !consent) return;
+    const errors: typeof fieldErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!name.trim()) errors.name = 'Please enter your name.';
+    if (!email.trim() || !emailRegex.test(email.trim())) errors.email = 'Please enter a valid email address.';
+    if (!message.trim() || message.trim().length < 10) errors.message = 'Message must be at least 10 characters long.';
+    if (!consent) errors.consent = 'You must agree to the privacy policy before sending.';
+
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      const firstKey = Object.keys(errors)[0];
+      const el = document.getElementById(firstKey);
+      el?.focus();
+      return;
+    }
 
     setStatus('submitting');
     setErrorMessage('');
@@ -95,6 +110,7 @@ export default function Contact() {
 
       setRequestId(body.requestId);
       setStatus('success');
+      setFieldErrors({});
       setName(''); setEmail(''); setCompanyOrg('');
       setBudget(''); setTimeline(''); setSubject(''); setMessage('');
 
@@ -227,6 +243,26 @@ export default function Contact() {
                     />
                   </div>
 
+                  {Object.keys(fieldErrors).length > 0 && (
+                    <div
+                      id="form-errors"
+                      role="alert"
+                      aria-live="assertive"
+                      tabIndex={-1}
+                      className="p-3 bg-rose-950/30 border border-rose-500/40 text-rose-300 text-xs rounded-lg space-y-1"
+                    >
+                      <h4 className="font-bold flex items-center gap-1.5 text-rose-400">
+                        <ShieldAlert className="w-4 h-4 shrink-0" aria-hidden="true" />
+                        Check highlighted fields
+                      </h4>
+                      <ul className="list-disc pl-5 text-[11px] space-y-0.5 text-rose-200/90">
+                        {Object.values(fieldErrors).map((err, i) => (
+                          <li key={i}>{err}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <div className="space-y-1">
                     <label htmlFor="name" className="block font-mono text-[11px] text-muted-foreground uppercase font-bold">
                       Name <span className="text-amber-color">*</span>
@@ -238,10 +274,16 @@ export default function Contact() {
                       autoComplete="name"
                       placeholder="Jane Doe"
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full bg-background/50 border border-border-color rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus-visible:border-amber-color"
+                      onChange={(e) => { setName(e.target.value); if (fieldErrors.name) setFieldErrors(prev => ({ ...prev, name: undefined })); }}
+                      aria-invalid={Boolean(fieldErrors.name)}
+                      aria-describedby={fieldErrors.name ? 'name-error' : undefined}
+                      className={`w-full bg-background/50 border ${fieldErrors.name ? 'border-rose-500' : 'border-border-color'} rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus-visible:border-amber-color`}
                     />
+                    {fieldErrors.name && (
+                      <p id="name-error" className="text-xs text-rose-400 font-mono" role="alert">{fieldErrors.name}</p>
+                    )}
                   </div>
+
                   <div className="space-y-1">
                     <label htmlFor="email" className="block font-mono text-[11px] text-muted-foreground uppercase font-bold">
                       Work email <span className="text-amber-color">*</span>
@@ -253,9 +295,14 @@ export default function Contact() {
                       autoComplete="email"
                       placeholder="you@company.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-background/50 border border-border-color rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus-visible:border-amber-color"
+                      onChange={(e) => { setEmail(e.target.value); if (fieldErrors.email) setFieldErrors(prev => ({ ...prev, email: undefined })); }}
+                      aria-invalid={Boolean(fieldErrors.email)}
+                      aria-describedby={fieldErrors.email ? 'email-error' : undefined}
+                      className={`w-full bg-background/50 border ${fieldErrors.email ? 'border-rose-500' : 'border-border-color'} rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus-visible:border-amber-color`}
                     />
+                    {fieldErrors.email && (
+                      <p id="email-error" className="text-xs text-rose-400 font-mono" role="alert">{fieldErrors.email}</p>
+                    )}
                   </div>
 
                   <div className="space-y-1">
@@ -316,26 +363,38 @@ export default function Contact() {
                       rows={6}
                       placeholder="What are you building? Goals, current stack, constraints, links..."
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      className="w-full bg-background/50 border border-border-color rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus-visible:border-amber-color"
+                      onChange={(e) => { setMessage(e.target.value); if (fieldErrors.message) setFieldErrors(prev => ({ ...prev, message: undefined })); }}
+                      aria-invalid={Boolean(fieldErrors.message)}
+                      aria-describedby={fieldErrors.message ? 'message-error' : undefined}
+                      className={`w-full bg-background/50 border ${fieldErrors.message ? 'border-rose-500' : 'border-border-color'} rounded-lg px-4 py-2.5 text-sm text-foreground focus:outline-none focus-visible:border-amber-color`}
                     />
+                    {fieldErrors.message && (
+                      <p id="message-error" className="text-xs text-rose-400 font-mono" role="alert">{fieldErrors.message}</p>
+                    )}
                   </div>
-                  <label htmlFor="consent" className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
-                    <input
-                      id="consent"
-                      type="checkbox"
-                      required
-                      checked={consent}
-                      onChange={(e) => setConsent(e.target.checked)}
-                      className="mt-0.5 accent-[color:var(--color-amber-color)]"
-                    />
-                    <span>
-                      I agree to the{' '}
-                      <a href="/privacy" className="text-amber-color hover:underline">Privacy Policy</a>{' '}
-                      and{' '}
-                      <a href="/terms" className="text-amber-color hover:underline">Terms</a>. <span className="text-amber-color">*</span>
-                    </span>
-                  </label>
+                  <div className="space-y-1">
+                    <label htmlFor="consent" className="flex items-start gap-2 text-xs text-muted-foreground cursor-pointer">
+                      <input
+                        id="consent"
+                        type="checkbox"
+                        required
+                        checked={consent}
+                        onChange={(e) => { setConsent(e.target.checked); if (fieldErrors.consent) setFieldErrors(prev => ({ ...prev, consent: undefined })); }}
+                        aria-invalid={Boolean(fieldErrors.consent)}
+                        aria-describedby={fieldErrors.consent ? 'consent-error' : undefined}
+                        className="mt-0.5 accent-[color:var(--color-amber-color)]"
+                      />
+                      <span>
+                        I agree to the{' '}
+                        <a href="/privacy" className="text-amber-color hover:underline">Privacy Policy</a>{' '}
+                        and{' '}
+                        <a href="/terms" className="text-amber-color hover:underline">Terms</a>. <span className="text-amber-color">*</span>
+                      </span>
+                    </label>
+                    {fieldErrors.consent && (
+                      <p id="consent-error" className="text-xs text-rose-400 font-mono pl-6" role="alert">{fieldErrors.consent}</p>
+                    )}
+                  </div>
                   <AnimatePresence>
                     {status === 'error' && (
                       <motion.div

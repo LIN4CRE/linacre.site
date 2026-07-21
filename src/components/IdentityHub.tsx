@@ -52,7 +52,7 @@ import type { HarmonyId } from '../lib/colorTools';
 
 type PreviewMode = 'banner' | 'avatar' | 'social';
 type ColorTarget = 'primary' | 'secondary';
-type MarkTab = 'curated' | 'lab' | 'upload';
+type MarkTab = 'curated' | 'lab' | 'upload' | 'ai';
 
 type PaletteOption = {
   id: string;
@@ -360,11 +360,16 @@ export default function IdentityHub() {
   const [labBatch, setLabBatch] = useState(() => Math.max(0, Number(safeStorage.get('linacre_lab_batch', '0')) || 0));
   const [favMarks, setFavMarks] = useState<string[]>(() => loadJson<string[]>('linacre_brand_fav_marks', []));
 
-  // Custom uploaded emblems
+  // Custom uploaded emblems & AI prompt icon generation
   const [customEmblems, setCustomEmblems] = useState<CustomEmblem[]>(() => loadJson<CustomEmblem[]>('linacre_custom_emblems', []));
   const [uploadError, setUploadError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hasEyeDropper] = useState(() => typeof window !== 'undefined' && 'EyeDropper' in window);
+
+  // AI Icon Generation state (Gemini 3.6 Flash)
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   const palette = useMemo<PaletteOption>(() => {
     if (paletteId === 'custom') {
@@ -602,6 +607,47 @@ export default function IdentityHub() {
     if (frame === id) setFrame('dl-geo');
   };
 
+  const handleGenerateAiIcon = async (promptToUse?: string) => {
+    const query = (promptToUse !== undefined ? promptToUse : aiPrompt).trim();
+    if (!query) return;
+    setAiGenerating(true);
+    setAiError(null);
+
+    try {
+      const response = await fetch('/api/generate-icon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: query,
+          primaryColor: palette.primary,
+          secondaryColor: palette.secondary,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok || !data.svg) {
+        throw new Error(data.error || 'Failed to generate SVG icon from prompt.');
+      }
+
+      const id = `custom-ai-${Date.now().toString(36)}`;
+      const label = (query.slice(0, 24) || 'AI Generated Mark');
+      const emblem: CustomEmblem = {
+        id,
+        name: label,
+        type: 'svg',
+        content: data.svg,
+      };
+
+      setCustomEmblems((previous) => [...previous, emblem]);
+      selectMark(id, 'ai');
+    } catch (err: any) {
+      console.error('AI Icon Error:', err);
+      setAiError(err.message || 'Could not generate icon. Ensure API key is configured or try another prompt.');
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   const cssTokens = `:root {
   --brand-primary: ${palette.primary};
   --brand-secondary: ${palette.secondary};
@@ -644,6 +690,7 @@ export default function IdentityHub() {
   const MARK_TABS: Array<{ id: MarkTab; label: string; icon: typeof Layers }> = [
     { id: 'curated', label: 'Curated', icon: Layers },
     { id: 'lab', label: 'Emblem Lab ∞', icon: FlaskConical },
+    { id: 'ai', label: 'AI Prompt ✨', icon: WandSparkles },
     { id: 'upload', label: 'Upload', icon: Upload },
   ];
 
@@ -988,6 +1035,108 @@ export default function IdentityHub() {
                     <RefreshCw className="h-3.5 w-3.5" /> More marks ∞
                   </button>
                 </div>
+              </div>
+            )}
+
+            {markTab === 'ai' && (
+              <div className="space-y-4">
+                <div className="rounded-xl border border-amber-color/30 bg-background/30 p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-amber-color">
+                      <WandSparkles className="h-3.5 w-3.5 text-amber-color" /> AI Vector Studio · Gemini 3.6 Flash
+                    </span>
+                    <span className="font-mono text-[9px] text-emerald-color font-semibold">Live SVG Generator</span>
+                  </div>
+
+                  <div className="relative">
+                    <input
+                      value={aiPrompt}
+                      onChange={(e) => setAiPrompt(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleGenerateAiIcon(); }}
+                      placeholder="e.g. Cybernetic dragon shield, quantum matrix core, futuristic neon owl..."
+                      className="h-11 w-full rounded-xl border border-border-color bg-background/50 pl-3 pr-28 font-mono text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-amber-color focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleGenerateAiIcon()}
+                      disabled={aiGenerating || !aiPrompt.trim()}
+                      className="absolute right-1 top-1 bottom-1 px-3 rounded-lg bg-amber-color hover:bg-amber-glow font-mono text-[10px] font-bold text-[#031018] flex items-center gap-1.5 disabled:opacity-40 transition-all cursor-pointer"
+                    >
+                      {aiGenerating ? (
+                        <>
+                          <RefreshCw className="h-3 w-3 animate-spin" /> Generating...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-3 w-3" /> Generate
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Preset prompt pills */}
+                  <div className="space-y-1.5">
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground/70">Sample Prompts:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {[
+                        '⚡ Cybernetic Quantum Shield',
+                        '🔮 Holographic Matrix Core',
+                        '🦅 Laser Falcon Crest',
+                        '🐱 Neon Cyber Cat Monogram',
+                        '🧬 Bio-Digital DNA Helix'
+                      ].map((presetPrompt) => (
+                        <button
+                          key={presetPrompt}
+                          type="button"
+                          onClick={() => {
+                            setAiPrompt(presetPrompt);
+                            handleGenerateAiIcon(presetPrompt);
+                          }}
+                          disabled={aiGenerating}
+                          className="rounded-lg border border-border-color bg-background/40 px-2 py-1 font-mono text-[9px] text-muted-foreground hover:border-amber-color/50 hover:text-amber-color transition-colors"
+                        >
+                          {presetPrompt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {aiError && (
+                    <p className="font-mono text-[10px] text-rose-400 bg-rose-950/20 p-2 rounded-lg border border-rose-500/30">
+                      {aiError}
+                    </p>
+                  )}
+                </div>
+
+                {/* Grid of AI generated custom emblems */}
+                {customEmblems.filter(e => e.id.startsWith('custom-ai-')).length > 0 && (
+                  <div>
+                    <span className="mb-1.5 block font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Generated AI Marks</span>
+                    <div className="grid grid-cols-4 gap-2">
+                      {customEmblems.filter(e => e.id.startsWith('custom-ai-')).map((custom) => (
+                        <div key={custom.id} className="relative">
+                          <MarkTile
+                            frameKey={custom.id}
+                            primary={palette.primary}
+                            secondary={palette.secondary}
+                            customEmblems={customEmblems}
+                            active={frame === custom.id}
+                            onSelect={() => selectMark(custom.id, 'ai')}
+                            label={custom.name}
+                          />
+                          <button
+                            onClick={() => removeCustomEmblem(custom.id)}
+                            title={`Delete ${custom.name}`}
+                            aria-label={`Delete ${custom.name}`}
+                            className="absolute left-1 top-1 rounded-md bg-[#030c14]/80 p-1 text-muted-foreground hover:text-rose-400"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
