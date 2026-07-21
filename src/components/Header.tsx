@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House, Gamepad2 } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House, Gamepad2, Volume2, VolumeX } from 'lucide-react';
 import InteractiveGlobe from './InteractiveGlobe';
+import { toggleSoundFx, isSoundFxEnabled, playClick } from '../lib/audioEngine';
 
 interface HeaderProps {
   activeTab: string;
@@ -14,6 +15,7 @@ interface HeaderProps {
 
 export default function Header({ activeTab, setActiveTab, theme, setTheme, openPalette, activeColor }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [soundOn, setSoundOn] = useState(() => isSoundFxEnabled());
   const mobileButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -258,9 +260,26 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
               </kbd>
             </button>
 
+            {/* Sound FX Toggle Button */}
+            <button
+              onClick={() => {
+                const enabled = toggleSoundFx();
+                setSoundOn(enabled);
+              }}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/50"
+              title={soundOn ? 'Sound FX Enabled (Click to Mute)' : 'Sound FX Muted (Click to Enable)'}
+              aria-label="Toggle synthesized sound effects"
+              id="btn-sound-toggle"
+            >
+              {soundOn ? <Volume2 className="w-4 h-4 text-emerald-color" /> : <VolumeX className="w-4 h-4 text-muted-foreground/60" />}
+            </button>
+
             {/* Theme Toggle Button */}
             <button
-              onClick={toggleTheme}
+              onClick={() => {
+                playClick();
+                toggleTheme();
+              }}
               className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-cyan/50"
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               aria-label="Toggle visual theme"

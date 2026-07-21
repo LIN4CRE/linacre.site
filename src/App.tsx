@@ -159,6 +159,8 @@ export default function App() {
     return paths;
   };
 
+  const [konamiUnlocked, setKonamiUnlocked] = useState(false);
+
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
@@ -166,9 +168,32 @@ export default function App() {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
+    // Secret Konami Code Listener: ↑ ↑ ↓ ↓ ← → ← → b a
+    const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let konamiIndex = 0;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      const expected = konamiSequence[konamiIndex].length === 1 ? konamiSequence[konamiIndex].toLowerCase() : konamiSequence[konamiIndex];
+
+      if (key === expected) {
+        konamiIndex++;
+        if (konamiIndex === konamiSequence.length) {
+          setKonamiUnlocked(true);
+          import('./lib/audioEngine').then(m => m.playKonamiSound());
+          konamiIndex = 0;
+        }
+      } else {
+        konamiIndex = 0;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -962,10 +987,37 @@ export default function App() {
         </Suspense>
       )}
 
-      {/* UK GDPR / PECR storage consent (audit #007) */}
-      <Suspense fallback={null}>
-        <ConsentBanner />
-      </Suspense>
+      {/* Konami Code Secret Achievement Unlock Modal */}
+      <AnimatePresence>
+        {konamiUnlocked && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.9 }}
+            className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl border-2 border-amber-color bg-[#030c14]/95 backdrop-blur-xl p-5 shadow-[0_0_30px_rgba(34,211,238,0.4)]"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-color text-[#030c14] font-mono text-xl font-bold">
+                🏆
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-mono text-xs font-bold uppercase tracking-wider text-amber-color">
+                  Secret Overdrive Unlocked!
+                </h3>
+                <p className="text-[11px] text-foreground/90 font-mono leading-relaxed">
+                  You triggered the Konami Code sequence! Cyber Synthesizer &amp; Arcade Overdrive enabled.
+                </p>
+                <button
+                  onClick={() => setKonamiUnlocked(false)}
+                  className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-emerald-color hover:underline cursor-pointer"
+                >
+                  Dismiss &amp; Continue
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Footer />
     </div>
