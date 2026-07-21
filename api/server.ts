@@ -1270,7 +1270,63 @@ Strict rules:
     res.status(200).json({ status: "ok" });
   });
 
+  app.post("/api/generate-icon", async (req, res) => {
+    const { prompt, primaryColor = "#22D3EE", secondaryColor = "#34D399" } = req.body ?? {};
+    if (!prompt || typeof prompt !== "string") {
+      return res.status(400).json({ error: "Prompt is required" });
+    }
 
+    try {
+      const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+      if (apiKey) {
+        const ai = new GoogleGenAI({ apiKey });
+        const systemPrompt = `You are a professional SVG emblem designer. Generate a clean, responsive, dark-mode SVG vector icon for the prompt: "${prompt}".
+Use primary color "${primaryColor}" and secondary color "${secondaryColor}".
+Output ONLY valid SVG markup inside a code block \`\`\`xml ... \`\`\`. Do not include any HTML, explanations, or wrapper markdown outside the code block.
+Make the SVG viewBox="0 0 100 100" with width="100%" and height="100%".`;
+
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.6-flash',
+          contents: systemPrompt,
+        });
+
+        const text = response?.text || '';
+        const match = text.match(/```xml([\s\S]*?)```/) || text.match(/```html([\s\S]*?)```/) || text.match(/```([\s\S]*?)```/);
+        let svg = (match ? match[1] : text).trim();
+        if (svg.includes('<svg') && svg.includes('</svg>')) {
+          const start = svg.indexOf('<svg');
+          const end = svg.lastIndexOf('</svg>') + 6;
+          svg = svg.substring(start, end);
+          return res.json({ svg });
+        }
+      }
+    } catch (e: any) {
+      console.warn("AI Icon Generation via Gemini failed, executing fallback generator:", e.message);
+    }
+
+    const cleanPrompt = String(prompt).replace(/[^a-zA-Z0-9 ]/g, '').trim();
+    const seed = Array.from(cleanPrompt).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const polyPoints = [
+      `${50 + Math.sin(seed) * 35},${50 - Math.cos(seed) * 35}`,
+      `${50 + Math.sin(seed + 2) * 35},${50 - Math.cos(seed + 2) * 35}`,
+      `${50 + Math.sin(seed + 4) * 35},${50 - Math.cos(seed + 4) * 35}`
+    ].join(' ');
+
+    const fallbackSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+      <defs>
+        <linearGradient id="grad-${seed}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${primaryColor}" />
+          <stop offset="100%" stop-color="${secondaryColor}" />
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" rx="20" fill="#030c14" stroke="${primaryColor}" stroke-opacity="0.3" stroke-width="2"/>
+      <polygon points="${polyPoints}" fill="none" stroke="url(#grad-${seed})" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="50" cy="50" r="18" fill="none" stroke="${secondaryColor}" stroke-width="3"/>
+      <circle cx="50" cy="50" r="6" fill="${primaryColor}"/>
+    </svg>`;
+
+    return res.json({ svg: fallbackSvg });
+  });
 
   app.post("/api/auth", (req, res) => {
     const secret = process.env.DASHBOARD_SESSION_SECRET || "default_session_secret_32_bytes_min_12345";

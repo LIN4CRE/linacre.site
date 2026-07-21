@@ -337,6 +337,7 @@ export default function IdentityHub() {
   const [paletteId, setPaletteId] = useState(initialPalette);
   const [customPrimary, setCustomPrimary] = useState(() => normalizeHex(safeStorage.get('linacre_brand_custom_primary', '#22D3EE')) || '#22D3EE');
   const [customSecondary, setCustomSecondary] = useState(() => normalizeHex(safeStorage.get('linacre_brand_custom_secondary', '#34D399')) || '#34D399');
+  const [customBgColor, setCustomBgColor] = useState(() => safeStorage.get('linacre_brand_custom_bg', '#030c14'));
   const [colorTarget, setColorTarget] = useState<ColorTarget>('primary');
   const [recentColors, setRecentColors] = useState<string[]>(() => loadJson<string[]>('linacre_brand_recent_colors', []));
   const [frame, setFrame] = useState(savedFrame);
@@ -409,8 +410,9 @@ export default function IdentityHub() {
     safeStorage.set('linacre_lab_sym', String(labSym));
     safeStorage.set('linacre_lab_cpx', String(labCpx));
     safeStorage.set('linacre_lab_batch', String(labBatch));
+    safeStorage.set('linacre_brand_custom_bg', customBgColor);
     window.dispatchEvent(new Event('linacre-identity-updated'));
-  }, [palette, frame, activeFont, motionMode, glow, name, title, bio, email, website, customPrimary, customSecondary, recentColors, favMarks, customEmblems, markTab, labWord, labFamily, labSym, labCpx, labBatch]);
+  }, [palette, frame, activeFont, motionMode, glow, name, title, bio, email, website, customPrimary, customSecondary, recentColors, favMarks, customEmblems, markTab, labWord, labFamily, labSym, labCpx, labBatch, customBgColor]);
 
   const emblem = useMemo(
     () => getEmblemSVG(frame, palette.primary, palette.secondary, motionMode, 'slow', glow, customEmblems),
@@ -424,7 +426,7 @@ export default function IdentityHub() {
     const brandLine = xmlEscape(`${palette.name.toUpperCase()} / VERIFIED IDENTITY`);
     return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" style="width:100%;height:100%;display:block">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset="0.55" stop-color="#061520"/><stop offset="1" stop-color="#08202a"/></linearGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${customBgColor}"/><stop offset="0.55" stop-color="${customBgColor}"/><stop offset="1" stop-color="${customBgColor}"/></linearGradient>
     <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${palette.primary}"/><stop offset="1" stop-color="${palette.secondary}"/></linearGradient>
     <radialGradient id="aura"><stop stop-color="${palette.primary}" stop-opacity=".18"/><stop offset="1" stop-color="${palette.primary}" stop-opacity="0"/></radialGradient>
     <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="${palette.primary}" stroke-opacity=".08"/></pattern>
@@ -444,18 +446,18 @@ export default function IdentityHub() {
   <circle cx="1090" cy="268" r="5" fill="${palette.secondary}"/>
   <text x="1107" y="273" fill="${palette.secondary}" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">AVAILABLE / ONLINE</text>
 </svg>`;
-  }, [emblem, name, title, website, palette]);
+  }, [emblem, name, title, website, palette, customBgColor]);
 
   const avatarSvg = useMemo(() => `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" style="width:100%;height:100%;display:block">
-  <defs><linearGradient id="avatarBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset="1" stop-color="#0a2632"/></linearGradient><radialGradient id="avatarAura"><stop stop-color="${palette.primary}" stop-opacity=".22"/><stop offset="1" stop-color="${palette.primary}" stop-opacity="0"/></radialGradient></defs>
+  <defs><linearGradient id="avatarBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${customBgColor}"/><stop offset="1" stop-color="${customBgColor}"/></linearGradient><radialGradient id="avatarAura"><stop stop-color="${palette.primary}" stop-opacity=".22"/><stop offset="1" stop-color="${palette.primary}" stop-opacity="0"/></radialGradient></defs>
   <rect width="512" height="512" rx="108" fill="url(#avatarBg)"/>
   <circle cx="256" cy="256" r="245" fill="url(#avatarAura)"/>
   <rect x="44" y="44" width="424" height="424" rx="92" fill="none" stroke="${palette.primary}" stroke-opacity=".38" stroke-width="3"/>
   <svg x="96" y="96" width="320" height="320" viewBox="0 0 100 100">${emblem}</svg>
-</svg>`, [emblem, palette]);
+</svg>`, [emblem, palette, customBgColor]);
 
   const socialSvg = useMemo(() => `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" style="width:100%;height:100%;display:block">
-  <defs><linearGradient id="socialBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset=".6" stop-color="#061520"/><stop offset="1" stop-color="#0a2932"/></linearGradient><pattern id="socialGrid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="${palette.primary}" stroke-opacity=".07"/></pattern></defs>
+  <defs><linearGradient id="socialBg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${customBgColor}"/><stop offset=".6" stop-color="${customBgColor}"/><stop offset="1" stop-color="${customBgColor}"/></linearGradient><pattern id="socialGrid" width="54" height="54" patternUnits="userSpaceOnUse"><path d="M54 0H0V54" fill="none" stroke="${palette.primary}" stroke-opacity=".07"/></pattern></defs>
   <rect width="1200" height="630" fill="url(#socialBg)"/><rect width="1200" height="630" fill="url(#socialGrid)"/>
   <rect x="70" y="135" width="330" height="330" rx="72" fill="#081c28" stroke="${palette.primary}" stroke-opacity=".3"/>
   <svg x="110" y="175" width="250" height="250" viewBox="0 0 100 100">${emblem}</svg>
@@ -465,7 +467,7 @@ export default function IdentityHub() {
   <text x="470" y="377" fill="#9ab7c3" font-family="Inter, sans-serif" font-size="20">${xmlEscape(bio).slice(0, 92)}</text>
   <rect x="470" y="420" width="285" height="46" rx="23" fill="#082330" stroke="${palette.primary}" stroke-opacity=".7"/>
   <text x="494" y="450" fill="${palette.primary}" font-family="JetBrains Mono, monospace" font-size="16" font-weight="700">${xmlEscape(website.replace(/^https?:\/\//, ''))}</text>
-</svg>`, [emblem, name, title, bio, website, palette]);
+</svg>`, [emblem, name, title, bio, website, palette, customBgColor]);
 
   const currentAsset = previewMode === 'banner'
     ? { svg: bannerSvg, width: 1280, height: 320, name: 'linacre-github-banner' }
@@ -851,6 +853,37 @@ export default function IdentityHub() {
                   ))}
                 </div>
               )}
+
+              <div className="mt-4 pt-3 border-t border-border-color/40 space-y-2">
+                <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Asset Background Fill</span>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {[
+                    { name: 'Midnight', hex: '#030c14' },
+                    { name: 'Obsidian', hex: '#0b0f19' },
+                    { name: 'Cyber Navy', hex: '#061520' },
+                    { name: 'Deep Purple', hex: '#120824' },
+                    { name: 'Pure Black', hex: '#000000' }
+                  ].map((bgOption) => (
+                    <button
+                      key={bgOption.name}
+                      onClick={() => setCustomBgColor(bgOption.hex)}
+                      className={`flex items-center gap-1 px-2 py-1 rounded-lg border text-[10px] font-mono cursor-pointer transition-all ${
+                        customBgColor === bgOption.hex ? 'border-amber-color bg-amber-color/10 text-amber-color font-bold' : 'border-border-color bg-background/30 text-muted-foreground'
+                      }`}
+                    >
+                      <span className="w-2.5 h-2.5 rounded-full border border-white/20" style={{ background: bgOption.hex }} />
+                      {bgOption.name}
+                    </button>
+                  ))}
+                  <input
+                    type="color"
+                    value={customBgColor}
+                    onChange={(e) => setCustomBgColor(e.target.value)}
+                    className="w-7 h-6 rounded cursor-pointer border border-border-color bg-transparent"
+                    title="Pick custom background color"
+                  />
+                </div>
+              </div>
 
               <div className="mt-3 flex flex-wrap items-center gap-1.5">
                 <span className="mr-1 font-mono text-[9px] uppercase tracking-wider text-muted-foreground/80">Harmony</span>
