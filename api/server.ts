@@ -515,8 +515,10 @@ app.post("/api/contact", (req, res) => {
       }
       const data = await response.json();
       const reply = data.content?.[0]?.text;
+      const usage = data.usage ?? { input_tokens: 0, output_tokens: 0 };
+      const costUsd = (usage.input_tokens * 0.000003) + (usage.output_tokens * 0.000015);
       if (reply) {
-        return res.json({ reply });
+        return res.json({ reply, usage, costUsd });
       }
       throw new Error("Empty response from Claude");
     } catch (claudeError: any) {
@@ -1017,6 +1019,10 @@ Strict rules:
                 if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
                   const text = parsed.delta.text;
                   res.write(`data: ${JSON.stringify({ choices: [{ delta: { content: text } }] })}\n\n`);
+                } else if (parsed.type === 'message_start' && parsed.message?.usage) {
+                  res.write(`data: ${JSON.stringify({ usage: parsed.message.usage })}\n\n`);
+                } else if (parsed.type === 'message_delta' && parsed.usage) {
+                  res.write(`data: ${JSON.stringify({ usage: parsed.usage })}\n\n`);
                 }
               } catch (e) {
                 // Partial JSON or non-JSON event (e.g. ping)

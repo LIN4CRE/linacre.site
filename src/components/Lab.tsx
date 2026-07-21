@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Cpu, Settings, ChevronDown, ChevronUp, Send, RefreshCw, Key, Sparkles, AlertCircle, CheckCircle, Info, Lock, Download, Trash2, StopCircle, Plus, MessageSquare, Folder, File, FolderPlus, FilePlus, Upload, Paperclip, ChevronRight, Eye, Save, FileText, Terminal, X, Play, Database } from 'lucide-react';
+import { Cpu, Settings, ChevronDown, ChevronUp, Send, RefreshCw, Key, Sparkles, AlertCircle, CheckCircle, Info, Lock, Download, Trash2, StopCircle, Plus, MessageSquare, Folder, File, FolderPlus, FilePlus, Upload, Paperclip, ChevronRight, Eye, Save, FileText, Terminal, X, Play, Database, Coins, DollarSign, CreditCard } from 'lucide-react';
 import { ChatMessage } from '../types';
 
 export type LabProvider = 'gemini' | 'openai' | 'ollama' | 'litellm' | 'claude';
@@ -99,6 +99,42 @@ export default function Lab({ theme = 'dark' }: LabProps) {
 
   // Lab Collaborative Agent Team states
   const [teamMode, setTeamMode] = useState<boolean>(true);
+
+  // Anthropic Budget & Credit States ($100 starting balance)
+  const [anthropicBudget, setAnthropicBudget] = useState(() => {
+    try {
+      const saved = localStorage.getItem('linacre_anthropic_budget_v1');
+      return saved ? parseFloat(saved) : 100.0;
+    } catch {
+      return 100.0;
+    }
+  });
+
+  const [anthropicSpent, setAnthropicSpent] = useState(() => {
+    try {
+      const saved = localStorage.getItem('linacre_anthropic_spent_v1');
+      return saved ? parseFloat(saved) : 0.0;
+    } catch {
+      return 0.0;
+    }
+  });
+
+  const [lastUsage, setLastUsage] = useState<{ input: number; output: number; cost: number } | null>(null);
+
+  const recordAnthropicUsage = (inputTokens: number, outputTokens: number) => {
+    const isHaiku = String(claudeModel).toLowerCase().includes('haiku');
+    const inputRate = isHaiku ? 0.0000008 : 0.000003;
+    const outputRate = isHaiku ? 0.000004 : 0.000015;
+    const cost = (inputTokens * inputRate) + (outputTokens * outputRate);
+
+    setAnthropicSpent(prev => {
+      const next = prev + cost;
+      try { localStorage.setItem('linacre_anthropic_spent_v1', next.toString()); } catch {}
+      return next;
+    });
+
+    setLastUsage({ input: inputTokens, output: outputTokens, cost });
+  };
 
   // prefers-reduced-motion hook (TASK-002)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -1967,11 +2003,55 @@ You do not need to use all agents if the task is simple, but at least two should
                       <Info className="w-3.5 h-3.5 text-cyan" />
                       <span>
                         {serverKeys.claude
-                          ? "A valid Claude secret was detected in your server environment. You can call Claude instantly without entering credentials!"
-                          : "Leave Claude Proxy Endpoint empty to route securely through our server-side API proxy."
-                        }
+                          ? 'Anthropic Fable 5 & Claude 3.5 Sonnet server keys active and ready.'
+                          : 'Enter your custom Anthropic API key to enable live Claude 3.5 Sonnet / Fable 5.'}
                       </span>
                     </span>
+
+                    {/* LIVE ANTHROPIC $100 CREDIT GAUGE */}
+                    <div className="p-3 bg-[#031018] rounded-xl border border-amber-color/30 space-y-2 mt-2">
+                      <div className="flex items-center justify-between font-mono text-xs">
+                        <span className="text-amber-color font-bold flex items-center gap-1.5">
+                          <CreditCard className="w-3.5 h-3.5" />
+                          <span>Anthropic $100 Live Credit Gauge</span>
+                        </span>
+                        <span className="text-[10px] text-muted-foreground">Real-Time USD Precision</span>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 text-center font-mono py-1">
+                        <div className="bg-muted/20 p-2 rounded-lg border border-border-color/40">
+                          <div className="text-[9px] text-muted-foreground uppercase">Starting Budget</div>
+                          <div className="text-xs font-bold text-foreground">${anthropicBudget.toFixed(2)}</div>
+                        </div>
+                        <div className="bg-muted/20 p-2 rounded-lg border border-border-color/40">
+                          <div className="text-[9px] text-muted-foreground uppercase">Total USD Spent</div>
+                          <div className="text-xs font-bold text-rose-400">${anthropicSpent.toFixed(5)}</div>
+                        </div>
+                        <div className="bg-muted/20 p-2 rounded-lg border border-border-color/40">
+                          <div className="text-[9px] text-muted-foreground uppercase">Remaining Credit</div>
+                          <div className="text-xs font-bold text-emerald-color">${Math.max(0, anthropicBudget - anthropicSpent).toFixed(5)}</div>
+                        </div>
+                      </div>
+
+                      {/* Visual Credit Bar */}
+                      <div className="w-full bg-muted/40 h-2 rounded-full overflow-hidden">
+                        <div
+                          className="bg-emerald-color h-full transition-all duration-300"
+                          style={{ width: `${Math.max(0, Math.min(100, ((anthropicBudget - anthropicSpent) / anthropicBudget) * 100))}%` }}
+                        />
+                      </div>
+
+                      {lastUsage ? (
+                        <div className="text-[10px] text-cyan font-mono flex items-center justify-between border-t border-border-color/30 pt-1.5">
+                          <span>Last Query: {lastUsage.input} in / {lastUsage.output} out</span>
+                          <span className="font-bold text-amber-color">+${lastUsage.cost.toFixed(5)}</span>
+                        </div>
+                      ) : (
+                        <div className="text-[9px] text-muted-foreground/60 text-center font-mono pt-1">
+                          No Claude requests sent in current session yet
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
