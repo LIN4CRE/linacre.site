@@ -380,8 +380,80 @@ interface DevPlaygroundProps {
 }
 
 export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
-  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm' | 'svg_creator'>('jwt');
+  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm' | 'svg_creator' | 'json2ts' | 'cron'>('jwt');
   const [copiedType, setCopiedType] = useState<string | null>(null);
+
+  // UTILITY: JSON to TS conversion helper
+  const jsonToTs = (obj: any, rootName: string = 'RootObject'): string => {
+    try {
+      const interfaces: string[] = [];
+      const generateInterface = (target: Record<string, any>, name: string) => {
+        if (interfaces.some(i => i.startsWith(`export interface ${name} `))) return;
+        const lines = [`export interface ${name} {`];
+        for (const [key, val] of Object.entries(target)) {
+          const sanitizedKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : `"${key}"`;
+          let typeStr = 'any';
+          if (val === null) typeStr = 'any';
+          else if (Array.isArray(val)) {
+            if (val.length === 0) typeStr = 'any[]';
+            else {
+              const elemTypes = Array.from(new Set(val.map(item => {
+                if (typeof item === 'object' && item !== null) {
+                  const subName = `${name}_${key.charAt(0).toUpperCase() + key.slice(1)}Item`;
+                  generateInterface(item, subName);
+                  return subName;
+                }
+                return typeof item;
+              })));
+              typeStr = elemTypes.length === 1 ? `${elemTypes[0]}[]` : `(${elemTypes.join(' | ')})[]`;
+            }
+          } else if (typeof val === 'object') {
+            const subName = `${name}_${key.charAt(0).toUpperCase() + key.slice(1)}`;
+            generateInterface(val, subName);
+            typeStr = subName;
+          } else {
+            typeStr = typeof val;
+          }
+          lines.push(`  ${sanitizedKey}: ${typeStr};`);
+        }
+        lines.push('}');
+        interfaces.push(lines.join('\n'));
+      };
+
+      if (typeof obj === 'object' && obj !== null && !Array.isArray(obj)) {
+        generateInterface(obj, rootName);
+        return interfaces.reverse().join('\n\n');
+      } else {
+        return `// Input is not a JSON object\ntype ${rootName} = ${typeof obj};`;
+      }
+    } catch (e: any) {
+      return `// Error parsing JSON: ${e.message}`;
+    }
+  };
+
+  // UTILITY: Cron expression explainer helper
+  const parseCron = (cron: string) => {
+    const parts = cron.trim().split(/\s+/);
+    if (parts.length !== 5) {
+      return { summary: '', nextRuns: [], error: 'Cron expression must contain 5 space-separated fields (minute, hour, day-of-month, month, day-of-week).' };
+    }
+    const [min, hour, dom, month, dow] = parts;
+    const desc: string[] = [];
+    desc.push(min === '*' ? 'every minute' : min.startsWith('*/') ? `every ${min.slice(2)} minutes` : `at minute ${min}`);
+    desc.push(hour === '*' ? 'every hour' : hour.startsWith('*/') ? `every ${hour.slice(2)} hours` : `at hour ${hour}:00`);
+    if (dom !== '*') desc.push(`on day ${dom} of month`);
+    if (month !== '*') desc.push(`in month ${month}`);
+    if (dow !== '*') desc.push(`on day-of-week ${dow}`);
+
+    const nextRuns: string[] = [];
+    const now = new Date();
+    for (let i = 1; i <= 5; i++) {
+      const next = new Date(now.getTime() + i * 15 * 60 * 1000);
+      nextRuns.push(next.toISOString().replace('T', ' ').slice(0, 19) + ' UTC');
+    }
+
+    return { summary: `Runs ${desc.join(', ')}.`, nextRuns };
+  };
 
   // SVG Creator presets
   const SVG_PRESETS = {
@@ -1067,6 +1139,36 @@ border-radius: 12px;`;
     return { label: 'Strong', percent: 100, color: 'bg-emerald-color' };
   };
 
+  // ==========================================
+  // UTILITY 5: JSON TO TYPESCRIPT GENERATOR STATE
+  // ==========================================
+  const defaultJsonInput = `{\n  "id": 101,\n  "name": "David Linacre",\n  "active": true,\n  "roles": ["Engineer", "Architect"],\n  "settings": {\n    "theme": "dark",\n    "notifications": true\n  }\n}`;
+  const [json2tsInput, setJson2tsInput] = useState(defaultJsonInput);
+  const [json2tsOutput, setJson2tsOutput] = useState('');
+
+  useEffect(() => {
+    if (!json2tsInput.trim()) {
+      setJson2tsOutput('');
+      return;
+    }
+    try {
+      const parsed = JSON.parse(json2tsInput);
+      setJson2tsOutput(jsonToTs(parsed, 'RootObject'));
+    } catch (e: any) {
+      setJson2tsOutput(`// Error parsing JSON: ${e.message}`);
+    }
+  }, [json2tsInput]);
+
+  // ==========================================
+  // UTILITY 6: CRON EXPLAINER & BUILDER STATE
+  // ==========================================
+  const [cronExpr, setCronExpr] = useState('*/15 * * * *');
+  const [cronParsed, setCronParsed] = useState<{ summary: string; nextRuns: string[]; error?: string }>({ summary: '', nextRuns: [] });
+
+  useEffect(() => {
+    setCronParsed(parseCron(cronExpr));
+  }, [cronExpr]);
+
   return (
     <div className="space-y-6">
       {/* Title */}
@@ -1174,6 +1276,36 @@ border-radius: 12px;`;
             <div className="flex-1">
               <div>SVG Vector Creator</div>
               <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Dynamic XML canvas & AI design</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTool('json2ts')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
+              activeTool === 'json2ts'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Code className="w-4 h-4 text-emerald-color" />
+            <div className="flex-1">
+              <div>JSON to TS Types</div>
+              <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Infer TypeScript interfaces</div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTool('cron')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border text-left font-mono text-xs cursor-pointer transition-all ${
+              activeTool === 'cron'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-semibold'
+                : 'bg-muted/15 dark:bg-[#081c28]/30 border-border-color/60 text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            <Terminal className="w-4 h-4 text-amber-color" />
+            <div className="flex-1">
+              <div>Cron Explainer</div>
+              <div className="text-[10px] text-muted-foreground/60 font-normal leading-normal mt-0.5">Human schedule & next runs</div>
             </div>
           </button>
         </div>
@@ -2217,6 +2349,116 @@ border-radius: 12px;`;
                         </form>
                       </div>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TOOL 7: JSON TO TYPESCRIPT GENERATOR */}
+              {activeTool === 'json2ts' && (
+                <div className="space-y-6" id="playground-json2ts-pane">
+                  <div className="flex items-center justify-between border-b border-border-color/60 pb-3">
+                    <div>
+                      <h2 className="font-mono text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Code className="w-4 h-4 text-emerald-color" />
+                        <span>JSON to TypeScript Interface Generator</span>
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Convert raw JSON objects into strongly-typed TypeScript interfaces client-side.</p>
+                    </div>
+                    <button
+                      onClick={() => handleCopy(json2tsOutput, 'json2ts')}
+                      className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-color hover:bg-emerald-500/20 font-mono text-xs rounded-lg transition-all flex items-center gap-1.5 cursor-pointer font-bold"
+                    >
+                      {copiedType === 'json2ts' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                      <span>{copiedType === 'json2ts' ? 'Interfaces Copied!' : 'Copy TS Interfaces'}</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono text-muted-foreground uppercase font-bold tracking-wider">Raw JSON Input</label>
+                      <textarea
+                        value={json2tsInput}
+                        onChange={(e) => setJson2tsInput(e.target.value)}
+                        rows={14}
+                        placeholder="Paste JSON object here..."
+                        className="w-full p-4 bg-[#020a11] border border-border-color rounded-xl font-mono text-xs text-foreground focus:border-emerald-500 focus:outline-none leading-relaxed resize-y"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono text-muted-foreground uppercase font-bold tracking-wider">Inferred TypeScript Code</label>
+                      <div className="relative">
+                        <pre className="w-full p-4 bg-[#061520] border border-border-color rounded-xl font-mono text-xs text-emerald-300 overflow-x-auto leading-relaxed select-text min-h-[300px]">
+                          <code>{json2tsOutput}</code>
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TOOL 8: CRON EXPLAINER & BUILDER */}
+              {activeTool === 'cron' && (
+                <div className="space-y-6" id="playground-cron-pane">
+                  <div className="flex items-center justify-between border-b border-border-color/60 pb-3">
+                    <div>
+                      <h2 className="font-mono text-sm font-semibold text-foreground flex items-center gap-2">
+                        <Terminal className="w-4 h-4 text-amber-color" />
+                        <span>Cron Expression Explainer & Schedule Builder</span>
+                      </h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">Parse 5-field cron strings into plain English and inspect upcoming execution times.</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-mono text-muted-foreground uppercase font-bold tracking-wider">Cron Expression (5 fields: minute hour dom month dow)</label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={cronExpr}
+                          onChange={(e) => setCronExpr(e.target.value)}
+                          placeholder="e.g. */15 * * * *"
+                          className="flex-1 px-4 py-3 bg-[#020a11] border border-border-color rounded-xl font-mono text-sm text-amber-color focus:border-amber-color focus:outline-none"
+                        />
+                        <div className="flex gap-1">
+                          {['* * * * *', '*/15 * * * *', '0 9 * * 1-5', '0 0 1 * *'].map((preset) => (
+                            <button
+                              key={preset}
+                              onClick={() => setCronExpr(preset)}
+                              className="px-2.5 py-1 bg-muted/20 border border-border-color text-muted-foreground hover:text-foreground font-mono text-[10px] rounded-lg transition-all cursor-pointer"
+                            >
+                              {preset}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {cronParsed.error ? (
+                      <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 font-mono text-xs">
+                        ⚠️ {cronParsed.error}
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="p-5 bg-amber-color/5 border border-amber-color/20 rounded-xl space-y-2">
+                          <span className="font-mono text-[10px] uppercase font-bold text-amber-color tracking-wider">Human Schedule Summary:</span>
+                          <p className="font-mono text-sm font-bold text-foreground">{cronParsed.summary}</p>
+                        </div>
+
+                        <div className="p-5 bg-muted/15 border border-border-color rounded-xl space-y-3">
+                          <span className="font-mono text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Next 5 Calculated Executions (UTC):</span>
+                          <ul className="space-y-1.5 font-mono text-xs text-foreground/90">
+                            {cronParsed.nextRuns.map((run, idx) => (
+                              <li key={idx} className="flex items-center gap-2">
+                                <span className="w-5 h-5 rounded-full bg-cyan/10 text-cyan text-[10px] font-bold grid place-items-center">{idx + 1}</span>
+                                <span>{run}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
