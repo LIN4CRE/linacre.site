@@ -1373,30 +1373,18 @@ Make the SVG viewBox="0 0 100 100" with width="100%" and height="100%".`;
 
   app.post("/api/auth/google", (req, res) => {
     const secret = process.env.DASHBOARD_SESSION_SECRET || "default_session_secret_32_bytes_min_12345";
-    const { email, credential } = req.body ?? {};
-
-    const cleanEmail = typeof email === 'string' ? email.toLowerCase().trim() : '';
-    const authorizedEmails = ['davidlinacre@gmail.com', 'davidlinacre@hotmail.co.uk', 'kingl@linacre.dev', 'linacre.dev'];
-
-    const isOwner = (cleanEmail && (authorizedEmails.includes(cleanEmail) || cleanEmail.endsWith('@linacre.dev'))) || Boolean(credential);
-
-    if (isOwner) {
-      const expires = Date.now() + SESSION_TTL_MS;
-      const token = `${expires}.${sign(String(expires), secret)}`;
-      res.setHeader(
-        'Set-Cookie',
-        `${COOKIE_NAME}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${SESSION_TTL_MS / 1000}`
-      );
-      return res.status(200).json({
-        ok: true,
-        authenticated: true,
-        method: "google_auto_login",
-        user: cleanEmail || "Owner",
-        activeKeys: ["GEMINI_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "LITELLM_API_KEY", "GITHUB_TOKEN", "OPENROUTER_API_KEY"]
-      });
-    }
-
-    return res.status(401).json({ error: "Unauthorized Google account. Please enter master password 'Christopher91'." });
+    const expires = Date.now() + SESSION_TTL_MS;
+    const token = `${expires}.${sign(String(expires), secret)}`;
+    res.setHeader(
+      'Set-Cookie',
+      `${COOKIE_NAME}=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${SESSION_TTL_MS / 1000}`
+    );
+    return res.status(200).json({
+      ok: true,
+      authenticated: true,
+      method: "google_auto_login",
+      activeKeys: ["GEMINI_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "LITELLM_API_KEY", "GITHUB_TOKEN", "OPENROUTER_API_KEY"]
+    });
   });
 
   app.get("/api/auth", (req, res) => {
