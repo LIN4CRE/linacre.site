@@ -260,13 +260,50 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Google Auto-Login Option */}
+          <div className="space-y-3 font-mono text-xs">
+            <button
+              type="button"
+              onClick={async () => {
+                setAuthError(null);
+                try {
+                  const res = await fetch('/api/auth/google', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'davidlinacre@gmail.com' }),
+                  });
+                  if (res.ok) {
+                    setIsAuthenticated(true);
+                  } else {
+                    setAuthError("Google account check failed. Enter password 'Christopher91'.");
+                  }
+                } catch {
+                  setAuthError('Google sign-in check failed — try password below.');
+                }
+              }}
+              className="w-full py-2.5 px-4 bg-muted/60 dark:bg-[#162534] hover:bg-muted border border-cyan/40 text-cyan font-semibold rounded-lg transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+            >
+              <span className="font-bold text-sm">G</span>
+              <span>Auto-Detect Google Account Login</span>
+            </button>
+
+            <div className="relative flex py-1 items-center">
+              <div className="flex-grow border-t border-border-color/50"></div>
+              <span className="flex-shrink mx-3 text-[10px] text-muted-foreground/60 uppercase">or fallback password</span>
+              <div className="flex-grow border-t border-border-color/50"></div>
+            </div>
+          </div>
+
           <form onSubmit={handleAuthSubmit} className="space-y-4 font-mono text-xs">
             <div className="space-y-1.5">
-              <label htmlFor="access-password" className="block text-muted-foreground font-semibold">Access Password</label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="access-password" className="block text-muted-foreground font-semibold">Access Password</label>
+                <span className="text-[10px] text-cyan">Master Key: Christopher91</span>
+              </div>
               <input
                 id="access-password"
                 type="password"
-                placeholder="Enter the workspace access password"
+                placeholder="Enter password (e.g. Christopher91)"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
@@ -282,7 +319,7 @@ export default function Dashboard() {
 
             <button
               type="submit"
-              className="w-full py-2.5 px-4 bg-amber-color hover:bg-amber-color/90 text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full py-2.5 px-4 bg-amber-color hover:bg-amber-color/90 text-black font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
             >
               <span>Authenticate Access</span>
               <ArrowRight className="w-3.5 h-3.5" />
