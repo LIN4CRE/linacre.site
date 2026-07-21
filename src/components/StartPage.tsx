@@ -45,10 +45,28 @@ const utilities: Array<{
 
 const products = [
   {
+    name: 'Personal OP Agent',
+    eyebrow: 'Zero-setup AI workspace',
+    description: 'Single-file HTML AI workspace and prompt controller running 100% in your browser.',
+    url: '/tools/opagent.html',
+    action: 'Launch OP Agent',
+    icon: Sparkles,
+    accent: 'cyan',
+  },
+  {
+    name: 'Arena Audit',
+    eyebrow: 'Universal audit prompt builder',
+    description: 'Modular browser audit prompt builder for codebases, UX, security, and performance.',
+    url: 'https://dlinacre.github.io/a-audit/',
+    action: 'Build audit prompt',
+    icon: ShieldCheck,
+    accent: 'purple',
+  },
+  {
     name: 'Mob Deals',
     eyebrow: 'Make a better choice',
     description: 'Compare UK SIM-only deals and keep your number with a plain-English switching guide.',
-    url: 'https://lin4cre.github.io/mob-deals/',
+    url: 'https://dlinacre.github.io/mob-deals/',
     action: 'Compare mobile deals',
     icon: Smartphone,
     accent: 'cyan',
@@ -65,7 +83,7 @@ const products = [
   {
     name: 'DKMA Monster',
     eyebrow: 'Keep Android apps alive',
-    description: 'Find the exact battery and autostart settings for 15 Android phone families, with optional ADB automation.',
+    description: 'Find exact battery and autostart settings for 15 Android phone families, plus GUI tool.',
     url: 'https://lin4cre.github.io/dkma-monster/',
     action: 'Fix background apps',
     icon: ShieldCheck,

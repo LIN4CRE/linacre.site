@@ -2,7 +2,39 @@ export { CHANGELOG, TERMINAL_LINES } from './data/core';
 import { Tool, Project, MCPServer, SkillTemplate, BlogPost } from './types';
 
 export const TOOLS: Tool[] = [
-  // START
+  // SINGLE-FILE APPS & TOOLS
+  {
+    id: 'opagent',
+    name: 'Personal OP Agent',
+    category: 'start',
+    description: 'Zero-setup client-side AI workspace & prompt controller. Runs 100% in your browser.',
+    url: '/tools/opagent.html',
+    host: 'linacre.site/tools/opagent.html',
+    searchKeywords: 'opagent personal ai agent prompt workspace single file html',
+    tag: 'App · Live'
+  },
+  {
+    id: 'arena_audit',
+    name: 'Arena Audit Prompt Builder',
+    category: 'start',
+    description: 'Universal browser audit prompt generator for engineering, UX, security, and performance reviews.',
+    url: 'https://dlinacre.github.io/a-audit/',
+    host: 'dlinacre.github.io/a-audit',
+    searchKeywords: 'arena audit prompt builder security performance code quality',
+    tag: 'App · Live'
+  },
+  {
+    id: 'apk_hub',
+    name: 'Android APK Launch Hub',
+    category: 'start',
+    description: 'Quick launcher and download index for David\'s Android utilities and debloat tools.',
+    url: '/tools/apk-hub.html',
+    host: 'linacre.site/tools/apk-hub.html',
+    searchKeywords: 'apk hub launcher android utilities uninstaller',
+    tag: 'App · Live'
+  },
+
+  // START & IDE
   {
     id: 'vscode',
     name: 'VS Code',
@@ -15,12 +47,12 @@ export const TOOLS: Tool[] = [
   },
   {
     id: 'github',
-    name: 'GitHub',
+    name: 'GitHub (LIN4CRE & DLinacre)',
     category: 'start',
-    description: 'Version control, open-source portfolio hosting, Actions CI/CD, and issue tracking.',
-    url: 'https://github.com/LIN4CRE',
-    host: 'github.com/LIN4CRE',
-    searchKeywords: 'github version control repos repositories git collab',
+    description: 'Version control, open-source portfolio hosting, Actions CI/CD, and release management.',
+    url: 'https://github.com/DLinacre',
+    host: 'github.com/DLinacre',
+    searchKeywords: 'github version control repos repositories git dlinacre lin4cre',
     tag: 'Free'
   },
   {
@@ -129,35 +161,34 @@ export const TOOLS: Tool[] = [
   }
 ];
 
-
 export const MANUAL_PROJECTS: Project[] = [
   {
-    name: 'linacre.site',
+    name: 'Personal OP Agent',
     category: 'build',
-    description: 'A utility-first start page and open developer studio with private browser tools, curated project stories, learning resources, and an optional AI playground.',
-    url: 'https://www.linacre.site/',
-    host: 'linacre.site',
-    tag: 'Featured · Live',
-    role: 'Product engineer and designer',
-    challenges: 'Turn a sprawling portfolio into a fast, useful product without losing the deeper tools and case studies already available on the site.',
-    solution: 'Created a focused start page, client-side utility suite, cleaner route system, accessible CyberBlue design language, static prerendering, and installable PWA shell.',
-    tech: ['React', 'TypeScript', 'Vite', 'Express', 'PWA', 'Vercel'],
-    liveUrl: 'https://www.linacre.site/',
-    repoUrl: 'https://github.com/LIN4CRE/linacre.site'
+    description: 'A zero-setup, single-file HTML AI workspace and prompt controller running 100% locally in your browser with context history and model routing.',
+    url: '/tools/opagent.html',
+    host: 'linacre.site/tools/opagent.html',
+    tag: 'Single-File App · Live',
+    role: 'Creator and frontend architect',
+    challenges: 'Developers need an immediate, zero-build AI playground that runs offline and connects to models without multi-step server setup.',
+    solution: 'Engineered a standalone 170KB single-file HTML workspace with inline CSS, key storage, dynamic system prompts, and responsive streaming layout.',
+    tech: ['HTML5', 'Vanilla JS', 'Tailwind CSS', 'Web Storage', 'AI Prompts'],
+    liveUrl: '/tools/opagent.html',
+    repoUrl: 'https://github.com/LIN4CRE/ev-backend'
   },
   {
-    name: 'Mob Deals',
+    name: 'Arena Audit Prompt Builder',
     category: 'build',
-    description: 'A transparent UK SIM-only comparison and switching guide with 64 provider records, public source checks, and plain-English PAC/STAC help.',
-    url: 'https://lin4cre.github.io/mob-deals/',
-    host: 'lin4cre.github.io/mob-deals',
-    tag: 'Featured · Live',
-    role: 'Product designer and developer',
-    challenges: 'Mobile comparison sites often blur live prices, affiliate claims, and editorial data, making it hard for non-technical users to judge what is current.',
-    solution: 'Separated manually reviewed deal entries from automated reachability checks, linked every source, added clear disclaimers, and built an accessible number-switching flow.',
-    tech: ['HTML', 'CSS', 'JavaScript', 'GitHub Actions', 'Accessibility', 'SEO'],
-    liveUrl: 'https://lin4cre.github.io/mob-deals/',
-    repoUrl: 'https://github.com/LIN4CRE/mob-deals'
+    description: 'A specialized browser audit tool for building systematic prompt checklists across UX, UI, SEO, Accessibility, and Security.',
+    url: 'https://dlinacre.github.io/a-audit/',
+    host: 'dlinacre.github.io/a-audit',
+    tag: 'Single-File App · Live',
+    role: 'Developer and prompt strategist',
+    challenges: 'Structured technical audits require exhaustive checklists that are easily customizable per product domain.',
+    solution: 'Built a modular single-page audit generator with instant search, category filtering, export formats, and zero third-party dependencies.',
+    tech: ['HTML5', 'JavaScript', 'Tailwind CSS', 'GitHub Pages'],
+    liveUrl: 'https://dlinacre.github.io/a-audit/',
+    repoUrl: 'https://github.com/DLinacre/a-audit'
   },
   {
     name: 'PokeGuru',
@@ -168,10 +199,38 @@ export const MANUAL_PROJECTS: Project[] = [
     tag: 'Featured · Live',
     role: 'Frontend and product engineer',
     challenges: 'Large card catalogues need responsive search and useful market context without overwhelming collectors on mobile devices.',
-    solution: 'Built a typed React interface with route-based search, set browsing, GBP-first presentation, local collection tracking, and a static GitHub Pages deployment.',
+    solution: 'Built a typed React interface with route-based search, set browsing, GBP-first presentation, local collection tracking, and static GitHub Pages deployment.',
     tech: ['React', 'TypeScript', 'Vite', 'PWA', 'GitHub Pages'],
     liveUrl: 'https://lin4cre.github.io/PokeGuru/',
     repoUrl: 'https://github.com/LIN4CRE/PokeGuru'
+  },
+  {
+    name: 'Apex POS',
+    category: 'build',
+    description: 'An offline-first point-of-sale system for the browser with register, stock, customers, expenses, receipts, and business reporting.',
+    url: 'https://dlinacre.github.io/Apex-POS/',
+    host: 'dlinacre.github.io/Apex-POS',
+    tag: 'Offline App · Live',
+    role: 'Product developer and maintainer',
+    challenges: 'Small operators need a usable register and stock system even when connectivity is poor and without sending business data to a third-party backend.',
+    solution: 'Kept the product client-side with IndexedDB offline storage, responsive register flows, inventory warnings, expense tracking, and receipt output.',
+    tech: ['Vue 3', 'Dexie', 'IndexedDB', 'PWA', 'Offline-first'],
+    liveUrl: 'https://dlinacre.github.io/Apex-POS/',
+    repoUrl: 'https://github.com/DLinacre/Apex-POS'
+  },
+  {
+    name: 'Mob Deals',
+    category: 'build',
+    description: 'A transparent UK SIM-only comparison and switching guide with 64 provider records, public source checks, and plain-English PAC/STAC help.',
+    url: 'https://dlinacre.github.io/mob-deals/',
+    host: 'dlinacre.github.io/mob-deals',
+    tag: 'Featured · Live',
+    role: 'Product designer and developer',
+    challenges: 'Mobile comparison sites often blur live prices, affiliate claims, and editorial data, making it hard for non-technical users to judge what is current.',
+    solution: 'Separated manually reviewed deal entries from automated reachability checks, linked every source, added clear disclaimers, and built an accessible number-switching flow.',
+    tech: ['HTML', 'CSS', 'JavaScript', 'GitHub Actions', 'Accessibility'],
+    liveUrl: 'https://dlinacre.github.io/mob-deals/',
+    repoUrl: 'https://github.com/DLinacre/mob-deals'
   },
   {
     name: 'DKMA Monster',
@@ -179,10 +238,10 @@ export const MANUAL_PROJECTS: Project[] = [
     description: 'A practical Android background-app survival toolkit: searchable guidance for 15 OEM families plus CLI, desktop GUI, ADB, root, and Magisk options.',
     url: 'https://lin4cre.github.io/dkma-monster/',
     host: 'lin4cre.github.io/dkma-monster',
-    tag: 'Featured · Open source',
+    tag: 'Featured · Open Source',
     role: 'Systems designer and maintainer',
     challenges: 'Android manufacturers hide battery and autostart controls in different places, causing alarms, sync, and background services to stop silently.',
-    solution: 'Centralised OEM-specific guidance in one data model and reused it across a web guide and automation tools, with a no-root path for ordinary users.',
+    solution: 'Centralised OEM-specific guidance in one data model and reused it across a web guide and GUI tool (`/tools/dkma-gui.html`), with a no-root path for ordinary users.',
     tech: ['Android', 'ADB', 'Python', 'Kotlin', 'Magisk', 'HTML'],
     liveUrl: 'https://lin4cre.github.io/dkma-monster/',
     repoUrl: 'https://github.com/LIN4CRE/dkma-monster'
@@ -202,6 +261,34 @@ export const MANUAL_PROJECTS: Project[] = [
     repoUrl: 'https://github.com/LIN4CRE/LinacreUninstaller'
   },
   {
+    name: 'Linacre LLM Hub & Benchmarks',
+    category: 'deploy',
+    description: 'Automated 24-hour LLM benchmark dashboard and model discovery super-app aggregating speed, pricing, and capability metrics.',
+    url: 'https://lin4cre.github.io/Linacre-LLM-Benchmarks/',
+    host: 'lin4cre.github.io/Linacre-LLM-Benchmarks',
+    tag: 'Dashboard · Live',
+    role: 'Platform developer',
+    challenges: 'Model benchmarks move fast and are often spread across separate leaderboards.',
+    solution: 'Automated 24h scraping and aggregation scripts pushing JSON updates to a static GitHub Pages dashboard.',
+    tech: ['JavaScript', 'Python', 'GitHub Actions', 'JSON'],
+    liveUrl: 'https://lin4cre.github.io/Linacre-LLM-Benchmarks/',
+    repoUrl: 'https://github.com/LIN4CRE/Linacre-LLM-Benchmarks'
+  },
+  {
+    name: 'KushCloud',
+    category: 'design',
+    description: 'A polished one-tap browser game with four worlds, combo scoring, power-ups, unlockable cosmetics, synthesised audio, and an optional leaderboard.',
+    url: 'https://lin4cre.github.io/KushCloud/',
+    host: 'lin4cre.github.io/KushCloud',
+    tag: 'Browser Game · Live',
+    role: 'Game designer and frontend engineer',
+    challenges: 'Deliver responsive arcade controls, progression, sound, and visual variety without relying on heavy external game assets.',
+    solution: 'Used Canvas 2D, Web Audio, deterministic game state, adaptive quality, keyboard/touch controls, and a PWA-ready React shell.',
+    tech: ['React', 'TypeScript', 'Canvas 2D', 'Web Audio', 'PWA'],
+    liveUrl: 'https://lin4cre.github.io/KushCloud/',
+    repoUrl: 'https://github.com/LIN4CRE/KushCloud'
+  },
+  {
     name: 'MyHub Dev Pipeline',
     category: 'deploy',
     description: 'A documented Python DevOps reference project covering CI/CD, security checks, DORA-style metrics, anomaly detection, tests, and automated remediation experiments.',
@@ -215,37 +302,34 @@ export const MANUAL_PROJECTS: Project[] = [
     repoUrl: 'https://github.com/LIN4CRE/myhub-pipeline'
   },
   {
-    name: 'KushCloud',
-    category: 'design',
-    description: 'A polished one-tap browser game with four worlds, combo scoring, power-ups, unlockable cosmetics, synthesised audio, and an optional leaderboard.',
-    url: 'https://lin4cre.github.io/KushCloud/',
-    host: 'lin4cre.github.io/KushCloud',
-    tag: 'Browser game · Live',
-    role: 'Game designer and frontend engineer',
-    challenges: 'Deliver responsive arcade controls, progression, sound, and visual variety without relying on heavy external game assets.',
-    solution: 'Used Canvas 2D, Web Audio, deterministic game state, adaptive quality, keyboard/touch controls, and a PWA-ready React shell.',
-    tech: ['React', 'TypeScript', 'Canvas 2D', 'Web Audio', 'PWA'],
-    liveUrl: 'https://lin4cre.github.io/KushCloud/',
-    repoUrl: 'https://github.com/LIN4CRE/KushCloud'
+    name: 'Deasy Continuous Command Suite',
+    category: 'deploy',
+    description: 'Continuous command suite and branch desktop manager for streamlined project deployment and local environment control.',
+    url: 'https://github.com/DLinacre/Deasy',
+    host: 'github.com/DLinacre/Deasy',
+    tag: 'Desktop / CLI · Source',
+    role: 'Creator and core engineer',
+    challenges: 'Managing multiple local development services and deployment branches requires an efficient desktop control interface.',
+    solution: 'Built a lightweight manager connecting CLI script orchestration, status monitoring, and electron deployment wrappers.',
+    tech: ['TypeScript', 'Node.js', 'Electron', 'Vite'],
+    repoUrl: 'https://github.com/DLinacre/Deasy'
   },
   {
-    name: 'Apex POS',
-    category: 'build',
-    description: 'An offline-first point-of-sale system for the browser with register, stock, customers, expenses, receipts, and business reporting.',
-    url: 'https://dlinacre.github.io/Apex-POS/',
-    host: 'dlinacre.github.io/Apex-POS',
-    tag: 'Offline app · Live',
-    role: 'Product developer and LIN4CRE mirror maintainer',
-    challenges: 'Small operators need a usable register and stock system even when connectivity is poor and without sending business data to a third-party backend.',
-    solution: 'Kept the product client-side with offline storage, responsive register flows, inventory warnings, expense tracking, receipt output, and analytics views.',
-    tech: ['Vue 3', 'Dexie', 'IndexedDB', 'PWA', 'Offline-first'],
-    liveUrl: 'https://dlinacre.github.io/Apex-POS/',
-    repoUrl: 'https://github.com/LIN4CRE/Apex-POS'
+    name: 'EV Bot & Voice Architecture',
+    category: 'deploy',
+    description: 'Voice assistant integration linking Alexa commands to desktop PC macro controls and Gemini-powered conversational responses.',
+    url: 'https://github.com/LIN4CRE/ev-backend',
+    host: 'github.com/LIN4CRE/ev-backend',
+    tag: 'Voice AI · Backend Source',
+    role: 'Systems engineer',
+    challenges: 'Low-latency Alexa skill handling and macro dispatch require strict signature validation and request rate limiting.',
+    solution: 'Engineered a FastAPI Python backend service with SQLite memory persistence, SSE event channels, and Alexa interaction models.',
+    tech: ['FastAPI', 'Python', 'Alexa Skill Kit', 'Gemini AI', 'SQLite'],
+    repoUrl: 'https://github.com/LIN4CRE/ev-backend'
   }
 ];
 
 export const PROJECTS: Project[] = MANUAL_PROJECTS;
-
 
 export const ROADMAP_STEPS = [
   { n: 1, title: 'Set up your dev environment', text: 'Install VS Code + Git, make a dev folder, and run `git init` for the first time.' },
@@ -347,82 +431,10 @@ export const MCP_SERVERS: MCPServer[] = [
     isReady: true
   },
   {
-    id: 'mcp-gh',
-    category: 'GitHub',
-    title: 'GitHub API',
-    description: 'Manage repos, issues, PRs, and code reviews.',
-    package: 'npm i @modelcontextprotocol/server-github',
-    config: `{
-  "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "<your-token>"
-      }
-    }
-  }
-}`,
-    isReady: true
-  },
-  {
-    id: 'mcp-brave',
-    category: 'Brave Search',
-    title: 'Web Search',
-    description: 'Search the web via Brave\'s search API. Requires a free API key.',
-    package: 'npm i @modelcontextprotocol/server-brave-search',
-    config: `{
-  "mcpServers": {
-    "brave-search": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-      "env": {
-        "BRAVE_API_KEY": "<your-key>"
-      }
-    }
-  }
-}`,
-    isReady: true
-  },
-  {
-    id: 'mcp-fetch',
-    category: 'Fetch',
-    title: 'URL Fetcher',
-    description: 'Fetch and extract content from any URL. Great for docs.',
-    package: 'npm i @modelcontextprotocol/server-fetch',
-    config: `{
-  "mcpServers": {
-    "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"]
-    }
-  }
-}`,
-    isReady: true
-  },
-  {
-    id: 'mcp-docker',
-    category: 'Docker',
-    title: 'Docker',
-    description: 'Manage containers, images, and Docker Compose stacks.',
-    package: 'docker pull mcp/docker',
-    config: `{
-  "mcpServers": {
-    "docker": {
-      "command": "docker",
-      "args": ["run", "-i", "--rm", "--init",
-        "-v", "/var/run/docker.sock:/var/run/docker.sock",
-        "mcp/docker"]
-    }
-  }
-}`,
-    isReady: false
-  },
-  {
     id: 'mcp-pg',
-    category: 'Postgres',
+    category: 'PostgreSQL',
     title: 'PostgreSQL',
-    description: 'Query databases, inspect schemas, run migrations.',
+    description: 'Query, inspect, and manage PostgreSQL databases.',
     config: `{
   "mcpServers": {
     "postgres": {
@@ -633,13 +645,6 @@ With these headers configured, static files serve directly from Vercel's edge ca
   }
 ];
 
-// ---------------------------------------------------------------------------
-// /work page: availability + FAQ (audit 12 Jul 2026 — Roadmap #15 + TASK-006).
-// Rendered in WorkWithMe.tsx AND consumed by scripts/prerender.mjs (via
-// prerender-data.entry.ts) for the /work static snapshot and FAQPage JSON-LD,
-// so the visible text and the schema always match exactly.
-
-/** Update when booking status changes — shown on /work and in its schema. */
 export const WORK_NEXT_AVAILABLE = 'August 2026';
 
 export interface WorkFaq {
@@ -650,32 +655,18 @@ export interface WorkFaq {
 export const WORK_FAQS: WorkFaq[] = [
   {
     question: 'How quickly can we start?',
-    answer:
-      'Systems audits can usually start within 1–2 weeks. Custom development projects are booked in order of enquiry against the next available slot shown on this page. Retainer clients receive priority scheduling.',
+    answer: 'Systems audits can usually start within 1–2 weeks. Custom development projects are booked in order of enquiry against the next available slot shown on this page.'
   },
   {
     question: 'What does the Systems & Infrastructure Audit include?',
-    answer:
-      'A deep technical review of your architecture, security, performance, and developer experience: a full architecture review with a written report, security and performance recommendations, a 30/60/90-day implementation roadmap, and two 45-minute follow-up consulting calls. Pricing starts at £1,800.',
+    answer: 'A deep technical review of your architecture, security, performance, and developer experience with a written report and implementation roadmap. Pricing starts at £1,800.'
   },
   {
     question: 'How do custom development projects work?',
-    answer:
-      'We agree scope, milestones and a starting price (from £6,500) before any code is written. You get a production-grade build — typically React and TypeScript with Go or Python services — deployed to Vercel or your cloud, full documentation with a system handoff, and 30 days of direct post-launch support.',
-  },
-  {
-    question: 'What does the monthly retainer cover?',
-    answer:
-      '£2,400 per month reserves 20 hours of priority engineering time: architecture guidance, code reviews, rapid prototyping, API support, and a monthly systems strategy call.',
+    answer: 'We agree scope, milestones and pricing (from £6,500) before writing code. You get a production-grade build deployed to Vercel or your cloud, with documentation and 30 days support.'
   },
   {
     question: 'Do you sign NDAs and comply with UK GDPR?',
-    answer:
-      'Yes. I am NDA-friendly and work under UK GDPR: client repositories are fully isolated, credentials are never hardcoded, and your contact details are used only to reply. Enquiries receive a response within 12 hours.',
-  },
-  {
-    question: 'Where are you based and who do you work with?',
-    answer:
-      'I am based in West Yorkshire, UK, and work remotely with teams across the UK, EU and US. Most engagements run fully remote with async updates and scheduled calls.',
-  },
+    answer: 'Yes. I am NDA-friendly and work under UK GDPR. Enquiries receive a response within 12 hours.'
+  }
 ];

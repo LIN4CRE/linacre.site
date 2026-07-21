@@ -1,7 +1,7 @@
 // linacre.site service worker
 // v11 — Self-hosted local fonts, dedicated Games Hub, curated loadout, and 100% real CV data.
 // Keep API + cross-origin requests untouched (Lab streaming still works).
-var CACHE = "linacre-v11";
+var CACHE = "linacre-v12";
 var OFFLINE_URL = "offline.html";
 var URLS = [
   ".",
@@ -15,7 +15,12 @@ var URLS = [
   "accessibility", "blog", "status",
   "agents", "lab", "identity",
   "projects", "games", "toolkit", "learn",
-  "playground", "work"
+  "playground", "work",
+  "tools/opagent.html",
+  "tools/arena-audit.html",
+  "tools/apk-hub.html",
+  "tools/dkma-gui.html",
+  "tools/ev-bot-advisor.html"
 ];
 
 self.addEventListener("install", function (e) {
