@@ -1,5 +1,9 @@
 {
   "buildCommand": "npm run build",
+  "redirects": [
+    { "source": "/work", "destination": "/toolkit", "permanent": true },
+    { "source": "/book", "destination": "/toolkit", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
@@ -20,7 +24,7 @@
       ]
     },
     {
-      "source": "/(sitemap.xml|robots.txt|llms.txt|llms-full.txt|feed.xml)",
+      "source": "/(sitemap.xml|robots.txt|llms.txt|llms-full.txt|feed.xml|skills.txt)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -132,10 +136,6 @@
       "destination": "/games/index.html"
     },
     {
-      "source": "/work",
-      "destination": "/work/index.html"
-    },
-    {
       "source": "/about",
       "destination": "/about/index.html"
     },
@@ -206,10 +206,6 @@
     {
       "source": "/terms",
       "destination": "/terms/index.html"
-    },
-    {
-      "source": "/book",
-      "destination": "/book/index.html"
     }
   ],
   "trailingSlash": false,

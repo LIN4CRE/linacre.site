@@ -118,12 +118,6 @@
       "canonical": "https://www.linacre.site/status",
       "index": false
     },
-    "/work": {
-      "title": "Work with David Linacre | Services & Availability",
-      "description": "Systems engineering audits, custom full-stack development, and ongoing fractional engineering retainers with David Linacre.",
-      "canonical": "https://www.linacre.site/work",
-      "index": true
-    },
     "/now": {
       "title": "What David Linacre is doing now",
       "description": "Derek Sivers style /now page outlining David Linacre's current projects, learning goals, and recent reading list.",
@@ -146,12 +140,6 @@
       "title": "Terms of service | linacre.site",
       "description": "Terms of service for David Linacre freelance engineering — engagements, deliverables, liability cap, governing law (England & Wales).",
       "canonical": "https://www.linacre.site/terms",
-      "index": true
-    },
-    "/book": {
-      "title": "Book a Discovery Call | David Linacre",
-      "description": "Schedule a direct 15-minute intro or system architecture call with David Linacre. Timezones, availability, expectations, and booking options.",
-      "canonical": "https://www.linacre.site/book",
       "index": true
     }
   }

@@ -437,7 +437,7 @@ function headFor(route, m) {
 
 // ------------------------------------------------- static content snapshots
 const NAV = [
-  ['/', 'Home'], ['/toolkit', 'Toolkit'], ['/projects', 'Projects'], ['/work', 'Work'], ['/learn', 'Learn'],
+  ['/', 'Home'], ['/toolkit', 'Toolkit'], ['/projects', 'Projects'], ['/learn', 'Learn'],
   ['/blog', 'Blog'], ['/playground', 'Playground'], ['/about', 'About'], ['/contact', 'Contact'],
 ];
 
@@ -791,7 +791,7 @@ function snapshot(route, m) {
   <main id="main-content">${pageBody(route, m)}</main>
   <footer>
     <p>© ${new Date().getFullYear()} David Linacre · <a href="https://github.com/LIN4CRE" rel="noopener">GitHub</a> ·
-    <a href="/work">Work</a> · <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/accessibility">Accessibility</a> ·
+    <a href="/contact">Contact</a> · <a href="/privacy">Privacy</a> · <a href="/accessibility">Accessibility</a> ·
     <a href="/status">Status</a></p>
     <p class="meta">Full interactive experience (toolkit search, AI lab, playground) requires JavaScript.</p>
   </footer>

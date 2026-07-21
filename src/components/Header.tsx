@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Briefcase, Bot, User, Mail, Activity, FileText, FolderCode, Calendar, House, Gamepad2, Volume2, VolumeX } from 'lucide-react';
+import { Menu, X, Github, Terminal, BookOpen, Cpu, Layers, Sun, Moon, Command, Sparkles, Sliders, Bot, User, Mail, Activity, FileText, FolderCode, House, Gamepad2, Volume2, VolumeX } from 'lucide-react';
 import InteractiveGlobe from './InteractiveGlobe';
 import { toggleSoundFx, isSoundFxEnabled, playClick } from '../lib/audioEngine';
 
@@ -37,7 +37,7 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
     { id: 'projects', label: 'Projects', icon: FolderCode },
     { id: 'games', label: 'Games', icon: Gamepad2 },
     { id: 'toolkit', label: 'Toolkit', icon: Layers },
-    { id: 'work', label: 'Work', icon: Briefcase },
+    { id: 'playground', label: 'Playground', icon: Sliders },
   ];
 
   const moreItems = [
@@ -47,7 +47,6 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
     { id: 'blog', label: 'Blog', icon: FileText },
     { id: 'agents', label: 'Agents', icon: Bot },
     { id: 'lab', label: 'AI Lab', icon: Cpu },
-    { id: 'playground', label: 'Playground', icon: Sliders },
     { id: 'identity', label: 'Identity', icon: Sparkles },
     { id: 'status', label: 'Status', icon: Activity },
     { id: 'dashboard', label: 'Dashboard', icon: Terminal },
@@ -213,34 +212,20 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
 
           {/* Action Tools */}
           <div className="flex items-center gap-2">
-            {/* Primary "Work with me" CTA (audit CRO-01 / #009) */}
+            {/* Primary CTA — the tool box */}
             <a
-              href="/work"
+              href="/toolkit"
               onClick={(e) => {
                 e.preventDefault();
-                setActiveTab('work');
+                setActiveTab('toolkit');
                 setMobileMenuOpen(false);
               }}
-              data-analytics="nav_hire_cta"
+              data-analytics="nav_toolkit_cta"
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-color hover:bg-amber-glow text-[#030c14] font-mono text-xs font-bold transition-all shadow-[0_0_16px_rgba(34,211,238,0.35)] hover:shadow-[0_0_24px_rgba(34,211,238,0.55)] focus:outline-none"
-              id="btn-header-work"
+              id="btn-header-toolkit"
             >
-              <Briefcase className="w-3.5 h-3.5" />
-              <span>Work with</span>
-            </a>
-            {/* Secondary — book a call. Routes to the /book route with scheduling options & direct email booking. */}
-            <a
-              href="/book"
-              onClick={(e) => {
-                e.preventDefault();
-                setActiveTab('book');
-                setMobileMenuOpen(false);
-              }}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-color/30 hover:bg-amber-color/10 text-amber-color font-mono text-xs font-bold transition-all shadow-sm focus:outline-none"
-              id="btn-header-book-call"
-            >
-              <Calendar className="w-3.5 h-3.5" />
-              <span>Book Call</span>
+              <Layers className="w-3.5 h-3.5" />
+              <span>Toolkit</span>
             </a>
 
             {/* Interactive Globe Widget */}
@@ -342,20 +327,20 @@ export default function Header({ activeTab, setActiveTab, theme, setTheme, openP
                 );
               })}
 
-              {/* Mobile primary CTA — top of menu */}
+              {/* Mobile primary CTA — the tool box */}
               <a
-                href="/work"
+                href="/toolkit"
                 onClick={(e) => {
                   e.preventDefault();
-                  setActiveTab('work');
+                  setActiveTab('toolkit');
                   setMobileMenuOpen(false);
                 }}
-                data-analytics="nav_hire_cta_mobile"
+                data-analytics="nav_toolkit_cta_mobile"
                 className="w-full px-3 py-2.5 flex items-center justify-center gap-2 rounded-md bg-amber-color text-[#030c14] font-mono text-sm font-bold shadow-[0_0_16px_rgba(34,211,238,0.35)]"
-                id="mobile-nav-work-cta"
+                id="mobile-nav-toolkit-cta"
               >
-                <Briefcase className="w-4 h-4" />
-                <span>Work with</span>
+                <Layers className="w-4 h-4" />
+                <span>Toolkit</span>
               </a>
               <a
                 href="https://github.com/LIN4CRE/linacre.site"

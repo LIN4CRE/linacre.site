@@ -71,12 +71,12 @@ export default function Footer() {
                 <span>·</span>
                 <button
                   onClick={() => {
-                    window.history.pushState({}, '', '/work');
+                    window.history.pushState({}, '', '/toolkit');
                     window.dispatchEvent(new PopStateEvent('popstate'));
                   }}
                   className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
                 >
-                  Work with David
+                  Toolkit
                 </button>
                 <span>·</span>
                 <button
@@ -117,18 +117,6 @@ export default function Footer() {
                   className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
                 >
                   Accessibility
-                </button>
-                <span>·</span>
-                <button
-                  onClick={() => {
-                    // Calendly events 404'd (audit Issue 1, 12 Jul 2026) —
-                    // route to the contact form until a scheduler is restored.
-                    window.history.pushState({}, '', '/contact');
-                    window.dispatchEvent(new PopStateEvent('popstate'));
-                  }}
-                  className="hover:text-amber-color transition-colors cursor-pointer focus:outline-none"
-                >
-                  Book a Call
                 </button>
               </div>
             </div>
