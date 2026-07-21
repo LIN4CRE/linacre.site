@@ -49,7 +49,6 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
   // Command lists
   const navCommands: CommandItem[] = [
     { id: 'nav-home', label: 'Go to Useful Start Page', icon: House, action: () => { setActiveTab('home'); onClose(); }, meta: 'Quick browser tools and free products' },
-    { id: 'nav-work', label: 'Go to Work with David (Services)', icon: Briefcase, action: () => { setActiveTab('work'); onClose(); }, meta: 'Consulting packages, custom project development, and retainers' },
     { id: 'nav-projects', label: 'Go to Projects Portfolio', icon: FolderCode, action: () => { setActiveTab('projects'); onClose(); }, meta: 'Manage, build, and showcase workspace applications' },
     { id: 'nav-games', label: 'Go to Playable Browser Games', icon: Gamepad2, action: () => { setActiveTab('games'); onClose(); }, meta: 'Play KushCloud flyer and built-in interactive Snake' },
     { id: 'nav-toolkit', label: 'Go to Toolkit Directory', icon: Compass, action: () => { setActiveTab('toolkit'); onClose(); }, meta: 'View David\'s curated developer loadout' },

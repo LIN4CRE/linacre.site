@@ -652,16 +652,16 @@ export default function StartPage({ navigate }: StartPageProps) {
         })}
       </section>
 
-      <section className="relative overflow-hidden rounded-2xl border border-amber-color/20 bg-amber-color/[0.06] p-6 sm:p-8" aria-labelledby="work-cta-heading">
+      <section className="relative overflow-hidden rounded-2xl border border-amber-color/20 bg-amber-color/[0.06] p-6 sm:p-8" aria-labelledby="toolbox-cta-heading">
         <div className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-amber-color/10 blur-3xl" />
         <div className="relative flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div className="max-w-2xl">
-            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-color">Need something that does not exist yet?</span>
-            <h2 id="work-cta-heading" className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">I build useful software, not shelfware.</h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">From focused web tools to full product systems — clear scope, production-ready delivery, and straightforward handover.</p>
+            <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-color">Bring the tools to your workflow</span>
+            <h2 id="toolbox-cta-heading" className="mt-2 font-display text-2xl font-bold tracking-tight text-foreground">A tool box for you — and your AI.</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Private, offline browser utilities that also run as an MCP server — so Claude, Cursor or any agent can call them directly. No sign-up, no tracking.</p>
           </div>
-          <button onClick={() => navigate('work')} className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-color px-5 py-3 font-mono text-sm font-bold text-[#030c14] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-amber-glow">
-            Work with David <ArrowUpRight className="h-4 w-4" />
+          <button onClick={() => navigate('toolkit')} className="flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-color px-5 py-3 font-mono text-sm font-bold text-[#030c14] shadow-[0_0_24px_rgba(34,211,238,0.25)] hover:bg-amber-glow">
+            Open the toolkit <ArrowUpRight className="h-4 w-4" />
           </button>
         </div>
       </section>

@@ -30,13 +30,11 @@ const Privacy = lazy(() => import('./components/Privacy'));
 const AccessibilityStatement = lazy(() => import('./components/AccessibilityStatement'));
 const Blog = lazy(() => import('./components/Blog'));
 const StatusPage = lazy(() => import('./components/StatusPage'));
-const WorkWithMe = lazy(() => import('./components/WorkWithMe'));
 const ContactThanks = lazy(() => import('./components/ContactThanks'));
 const CookiePolicy = lazy(() => import('./components/CookiePolicy'));
 const Terms = lazy(() => import('./components/Terms'));
 const ConsentBanner = lazy(() => import('./components/ConsentBanner'));
 const Now = lazy(() => import('./components/Now'));
-const BookCall = lazy(() => import('./components/BookCall'));
 
 import { BLOG_POSTS } from './data';
 import Breadcrumbs from './components/Breadcrumbs';
@@ -45,8 +43,6 @@ type BreadcrumbPath = { label: string; onClick?: () => void; active?: boolean };
 
 const ROUTE_LABEL: Record<string, string> = {
   '/now': 'Now',
-  '/work': 'Work',
-  '/book': 'Book Call',
   '/projects': 'Projects',
   '/games': 'Games',
   '/toolkit': 'Toolkit',
@@ -72,7 +68,7 @@ export default function App() {
     const hash = window.location.hash.replace(/^#/, '');
     const validTabs = [
       'toolkit', 'games', 'learn', 'lab', 'dashboard', 'identity', 'playground',
-      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'book',
+      'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status',
       'contact/thanks', 'cookie-policy', 'terms', 'now'
     ];
 
@@ -777,30 +773,6 @@ export default function App() {
             </motion.div>
           )}
 
-          {activeTab === 'work' && (
-            <motion.div
-              key="work"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ type: "spring", stiffness: 100, damping: 15 }}
-            >
-              <WorkWithMe />
-            </motion.div>
-          )}
-
-          {activeTab === 'book' && (
-            <motion.div
-              key="book"
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ type: "spring", stiffness: 100, damping: 15 }}
-            >
-              <BookCall navigate={setActiveTab} />
-            </motion.div>
-          )}
-
           {activeTab === 'agents' && (
             <motion.div
               key="agents"
@@ -933,7 +905,7 @@ export default function App() {
             </motion.div>
           )}
 
-          {!['home', 'toolkit', 'games', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'work', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
+          {!['home', 'toolkit', 'games', 'learn', 'lab', 'dashboard', 'identity', 'playground', 'projects', 'agents', 'about', 'contact', 'privacy', 'accessibility', 'blog', 'status', 'contact-thanks', 'cookie-policy', 'terms', 'now'].includes(activeTab) && (
             <motion.div
               key="404"
               initial={{ opacity: 0, scale: 0.95 }}

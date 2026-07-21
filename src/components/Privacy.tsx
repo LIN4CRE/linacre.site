@@ -32,7 +32,7 @@ export default function Privacy() {
           Privacy <span className="text-cyan">Policy</span>
         </h1>
         <p className="text-sm">
-          // System transmission date: July 10, 2026. Zero tracking cookies active.
+          // Last updated: 10 July 2026. Zero tracking cookies active.
         </p>
       </motion.section>
 
