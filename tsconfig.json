@@ -23,6 +23,7 @@
   },
   "exclude": [
     "pixel-agents",
+    "mcp",
     "node_modules",
     "dist"
   ]

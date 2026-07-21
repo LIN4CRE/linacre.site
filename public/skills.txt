@@ -1,0 +1,38 @@
+# skills.txt — machine-readable capability manifest for linacre.site
+# Companion to /llms.txt and /llms-full.txt. Tells AI agents what tools this
+# site offers and how to call them locally over MCP.
+# Spec-inspired by llms.txt (https://llmstxt.org). Last updated: 2026-07-21.
+
+> Linacre Tool Box — a suite of privacy-first developer utilities, usable in the
+> browser at linacre.site OR as an MCP server your AI client runs locally.
+> Every tool is pure and offline: nothing you pass in leaves your machine.
+
+## MCP server
+- Name: linacre-toolbox
+- Transport: stdio
+- Source: https://github.com/LIN4CRE/linacre.site (mcp/)
+- Run: `npx -y @linacre/toolbox-mcp`  (or `node mcp/dist/server.js`)
+- Manifest: https://www.linacre.site/.well-known/mcp.json
+
+## Tools
+- json_format: Validate, pretty-print, or minify JSON.
+- base64: Encode/decode Base64 (URL-safe optional).
+- jwt_decode: Decode a JWT header + payload (no signature verification).
+- regex_test: Test a JS regex against text; returns matches, indices, named groups.
+- hash: sha256 / sha1 / sha512 / md5 of input text.
+- uuid_generate: Generate 1–100 random UUID v4 values.
+- password_generate: CSPRNG password with configurable character classes.
+- uk_vat: Add or remove UK VAT (default 20%).
+- url_clean: Remove utm_*, fbclid, gclid and 25+ tracking parameters from a URL.
+- timestamp_convert: Convert Unix timestamps to ISO/UTC and back.
+- text_tools: stats, case changes, trim, dedupe/sort/reverse lines, slugify.
+
+## Web tool surfaces (no sign-up, no tracking)
+- Playground: https://www.linacre.site/playground
+- Toolkit directory: https://www.linacre.site/toolkit
+- AI Lab: https://www.linacre.site/lab
+- Agents Hub: https://www.linacre.site/agents
+
+## Contact
+- Author: David Christopher Linacre
+- Email: david@linacre.site

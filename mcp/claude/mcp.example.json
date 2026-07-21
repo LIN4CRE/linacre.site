@@ -1,0 +1,9 @@
+{
+  "//": "Rename this file to .mcp.json in a project root to give Claude Code / Cowork the Linacre Tool Box. Build first: cd mcp && npm install && npm run build. Adjust the path if needed.",
+  "mcpServers": {
+    "linacre-toolbox": {
+      "command": "node",
+      "args": ["./mcp/dist/server.js"]
+    }
+  }
+}

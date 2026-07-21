@@ -1,0 +1,38 @@
+{
+  "name": "@linacre/toolbox-mcp",
+  "version": "1.0.0",
+  "description": "Linacre Tool Box — an MCP server exposing linacre.site's privacy-first developer utilities (JSON, Base64, JWT, RegEx, hashing, UUID, password, UK VAT, URL cleaner, timestamp, text tools) to any AI client. Pure, offline, deterministic.",
+  "type": "module",
+  "bin": {
+    "linacre-toolbox-mcp": "dist/server.js"
+  },
+  "main": "dist/server.js",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai-tools",
+    "developer-tools",
+    "linacre"
+  ],
+  "author": "David Christopher Linacre <david@linacre.site> (https://www.linacre.site)",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "typescript": "~5.8.2"
+  }
+}
