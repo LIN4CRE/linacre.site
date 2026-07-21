@@ -244,7 +244,9 @@ export default function App() {
     name: 'DAVID LINACRE',
     title: 'Software engineer · useful tools · AI systems',
     bio: 'Building practical software, open-source tools, and reliable automation systems.',
-    glow: 2
+    glow: 2,
+    customPrimary: '#22D3EE',
+    customSecondary: '#34D399'
   });
 
   const syncIdentity = () => {
@@ -257,6 +259,8 @@ export default function App() {
       const pPulseSpeed = params.get('brand_pulse_speed');
       const pGlow = params.get('brand_glow');
       const pName = params.get('brand_name');
+      const pPrimary = params.get('brand_primary');
+      const pSecondary = params.get('brand_secondary');
 
       if (pColor) localStorage.setItem('linacre_brand_color', pColor);
       if (pFont) localStorage.setItem('linacre_brand_font', pFont);
@@ -265,6 +269,8 @@ export default function App() {
       if (pPulseSpeed) localStorage.setItem('linacre_brand_pulse_speed', pPulseSpeed);
       if (pGlow) localStorage.setItem('linacre_brand_glow', pGlow);
       if (pName) localStorage.setItem('linacre_brand_name', pName);
+      if (pPrimary) localStorage.setItem('linacre_brand_custom_primary', pPrimary);
+      if (pSecondary) localStorage.setItem('linacre_brand_custom_secondary', pSecondary);
     } catch (e) {
       console.error('Failed to parse search params', e);
     }
@@ -280,6 +286,8 @@ export default function App() {
     const title = localStorage.getItem('linacre_brand_title') || 'Software engineer · useful tools · AI systems';
     const bio = localStorage.getItem('linacre_brand_bio') || 'Building practical software, open-source tools, and reliable automation systems.';
     const glow = Number(localStorage.getItem('linacre_brand_glow') || '2');
+    const customPrimary = localStorage.getItem('linacre_brand_custom_primary') || '#22D3EE';
+    const customSecondary = localStorage.getItem('linacre_brand_custom_secondary') || '#34D399';
 
     try {
       const savedEmblems = localStorage.getItem('linacre_custom_emblems');
@@ -288,7 +296,7 @@ export default function App() {
       console.error('Failed to parse custom emblems in App.tsx', e);
     }
 
-    setIdentity({ colorId, fontId, frameId, motionId, pulseSpeed, name, title, bio, glow });
+    setIdentity({ colorId, fontId, frameId, motionId, pulseSpeed, name, title, bio, glow, customPrimary, customSecondary });
   };
 
   useEffect(() => {
@@ -345,6 +353,8 @@ export default function App() {
     matrix: { primary: '#2DD4BF', secondary: '#A3E635' },
     violet: { primary: '#818CF8', secondary: '#22D3EE' },
     mono: { primary: '#E2F7FA', secondary: '#7DD3FC' },
+    // Fully custom two-colour system tuned in the Identity Studio colour lab.
+    custom: { primary: identity.customPrimary, secondary: identity.customSecondary },
     // Compatibility aliases for previously shared theme links.
     amber: { primary: '#22D3EE', secondary: '#34D399' },
     cyan: { primary: '#38BDF8', secondary: '#2DD4BF' },

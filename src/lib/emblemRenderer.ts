@@ -1,3 +1,5 @@
+import { getGenerativeEmblemContents, isGenFrame } from './emblemLab';
+
 export interface CustomEmblem {
   id: string;
   name: string;
@@ -439,6 +441,8 @@ export function getEmblemSVG(
     <path d="M 35,32 H 48 A 12,12 0 0,1 60,44 V 44 A 12,12 0 0,1 48,56 H 35 Z" fill="none" stroke-width="4.5" stroke-linejoin="round" />
     <path d="M 42,42 V 50 H 52" fill="none" stroke="${s}" stroke-width="3.5" stroke-linecap="round" />
   </g>`;
+  } else if (isGenFrame(frame)) {
+    emblemContents = `\n  <!-- Emblem Lab generated mark (${frame}) -->\n  ${getGenerativeEmblemContents(frame, p, s, activeMotion === 'pulse')}`;
   } else if (frame.startsWith('custom-')) {
     const custom = customEmblems.find(e => e.id === frame);
     if (custom) {

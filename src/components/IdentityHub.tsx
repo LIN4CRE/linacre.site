@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   Check,
@@ -6,23 +6,53 @@ import {
   CircleUserRound,
   Code2,
   Copy,
+  Dices,
   Download,
   FileImage,
+  FlaskConical,
   Github,
   Image as ImageIcon,
   LayoutTemplate,
+  Layers,
   Link2,
   Mail,
   Palette,
+  Pipette,
   RefreshCw,
   ShieldCheck,
+  Shuffle,
   Sparkles,
+  Star,
+  SwatchBook,
+  Trash2,
   Type,
+  Upload,
   WandSparkles,
 } from 'lucide-react';
 import { getEmblemSVG } from '../lib/emblemRenderer';
+import type { CustomEmblem } from '../lib/emblemRenderer';
+import {
+  GEN_FAMILIES,
+  isGenFrame,
+  labelForKey,
+  makeGenKey,
+  parseGenKey,
+  randomSeedWord,
+} from '../lib/emblemLab';
+import type { GenFamilyId } from '../lib/emblemLab';
+import {
+  ANY_COLOR_GRADIENT,
+  SWATCH_ROWS,
+  contrastRatio,
+  fixContrast,
+  harmonySecondary,
+  normalizeHex,
+} from '../lib/colorTools';
+import type { HarmonyId } from '../lib/colorTools';
 
 type PreviewMode = 'banner' | 'avatar' | 'social';
+type ColorTarget = 'primary' | 'secondary';
+type MarkTab = 'curated' | 'lab' | 'upload';
 
 type PaletteOption = {
   id: string;
@@ -85,6 +115,9 @@ const FRAMES = [
   { id: 'brackets', name: 'Code Prompt', description: 'Simple technical icon' },
   { id: 'circle', name: 'Signal Orb', description: 'Soft compact avatar' },
   { id: 'minimal', name: 'Minimal Spark', description: 'Quiet, abstract option' },
+  { id: 'hexagon', name: 'Pipeline Nexus', description: 'Modular grid core' },
+  { id: 'dl-sacred', name: 'Sacred Geometry', description: 'Circular precision monogram' },
+  { id: 'streetwear', name: 'Cyber Streetwear', description: 'Animated morph badge' },
 ];
 
 const FONTS: FontOption[] = [
@@ -111,6 +144,11 @@ const FONTS: FontOption[] = [
   },
 ];
 
+const BRAND_DARK = '#030c14';
+const MAX_CUSTOM_EMBLEMS = 8;
+const MAX_UPLOAD_BYTES = 300 * 1024;
+const LAB_TILES_PER_BATCH = 8;
+
 const safeStorage = {
   get(key: string, fallback: string) {
     try {
@@ -128,6 +166,15 @@ const safeStorage = {
   },
 };
 
+function loadJson<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 function xmlEscape(value: string) {
   return value
     .replaceAll('&', '&amp;')
@@ -135,18 +182,6 @@ function xmlEscape(value: string) {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&apos;');
-}
-
-function contrastRatio(hex1: string, hex2: string) {
-  const luminance = (hex: string) => {
-    const clean = hex.replace('#', '');
-    const values = [0, 2, 4].map((index) => parseInt(clean.slice(index, index + 2), 16) / 255);
-    const [r, g, b] = values.map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-  };
-  const a = luminance(hex1);
-  const b = luminance(hex2);
-  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 }
 
 function downloadText(content: string, filename: string, type = 'image/svg+xml;charset=utf-8') {
@@ -184,12 +219,128 @@ async function svgToPng(svg: string, filename: string, width: number, height: nu
   anchor.click();
 }
 
+/* ── Small building blocks ────────────────────────────────────────────── */
+
+function SwatchBox({ color, active, onPick, title }: { color: string; active: boolean; onPick: (color: string) => void; title?: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onPick(color)}
+      title={title || color}
+      aria-label={`Use colour ${color}`}
+      className={`h-7 w-full rounded-md transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-white ${active ? 'ring-2 ring-white ring-offset-2 ring-offset-[#030c14]' : 'ring-1 ring-white/10'}`}
+      style={{ background: color }}
+    />
+  );
+}
+
+function HexField({ value, onCommit }: { value: string; onCommit: (hex: string) => void }) {
+  const [text, setText] = useState(value);
+  const [invalid, setInvalid] = useState(false);
+  useEffect(() => setText(value), [value]);
+  const commit = () => {
+    const normalized = normalizeHex(text);
+    if (normalized) {
+      setInvalid(false);
+      onCommit(normalized);
+    } else {
+      setInvalid(true);
+      setText(value);
+    }
+  };
+  return (
+    <input
+      value={text}
+      onChange={(event) => { setText(event.target.value); setInvalid(false); }}
+      onBlur={commit}
+      onKeyDown={(event) => { if (event.key === 'Enter') (event.target as HTMLInputElement).blur(); }}
+      spellCheck={false}
+      aria-label="Hex colour value"
+      className={`h-10 w-full rounded-xl border bg-background/40 px-3 font-mono text-[11px] font-bold uppercase tracking-wider text-foreground focus:outline-none ${invalid ? 'border-error' : 'border-border-color focus:border-amber-color'}`}
+    />
+  );
+}
+
+function ContrastChip({ label, color }: { label: string; color: string }) {
+  const ratio = contrastRatio(color, BRAND_DARK);
+  const pass = ratio >= 4.5;
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-lg border border-border-color bg-[#030c14] px-2 py-1 font-mono text-[10px]">
+      <span className="h-3 w-3 rounded-sm ring-1 ring-white/20" style={{ background: color }} />
+      <span className="text-[#9ab7c3]">{label}</span>
+      <span className={pass ? 'font-bold text-emerald-color' : 'font-bold text-error'}>
+        {ratio.toFixed(2)}:1 {pass ? 'AA' : 'low'}
+      </span>
+    </span>
+  );
+}
+
+function MarkTile({
+  frameKey,
+  primary,
+  secondary,
+  customEmblems,
+  active,
+  onSelect,
+  favourite,
+  onToggleFavourite,
+  label,
+}: {
+  frameKey: string;
+  primary: string;
+  secondary: string;
+  customEmblems: CustomEmblem[];
+  active: boolean;
+  onSelect: () => void;
+  favourite?: boolean;
+  onToggleFavourite?: () => void;
+  label?: string;
+}) {
+  const preview = useMemo(
+    () => getEmblemSVG(frameKey, primary, secondary, 'static', 'slow', 1, customEmblems),
+    [frameKey, primary, secondary, customEmblems],
+  );
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onSelect}
+        title={label || frameKey}
+        className={`block w-full rounded-xl border p-2 transition-all hover:bg-muted/30 ${active ? 'bg-muted/40' : 'border-border-color bg-background/20'}`}
+        style={active ? { borderColor: primary, boxShadow: `0 0 0 1px ${primary}44` } : undefined}
+      >
+        <span className="mx-auto block aspect-square w-full max-w-[72px]" dangerouslySetInnerHTML={{ __html: preview }} />
+      </button>
+      {onToggleFavourite && (
+        <button
+          type="button"
+          onClick={onToggleFavourite}
+          aria-label={favourite ? 'Remove from kept marks' : 'Keep this mark'}
+          title={favourite ? 'Remove from kept marks' : 'Keep this mark'}
+          className="absolute right-1 top-1 rounded-md bg-[#030c14]/80 p-1 text-muted-foreground hover:text-amber-color"
+        >
+          <Star className={`h-3 w-3 ${favourite ? 'fill-amber-color text-amber-color' : ''}`} />
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ── Main studio ──────────────────────────────────────────────────────── */
+
 export default function IdentityHub() {
   const savedPalette = safeStorage.get('linacre_brand_color', 'cyber');
   const initialPalette = savedPalette === 'amber' ? 'cyber' : savedPalette;
+  const savedFrame = safeStorage.get('linacre_brand_frame', 'dl-geo');
+  const initialTab: MarkTab = isGenFrame(savedFrame) ? 'lab' : savedFrame.startsWith('custom-') ? 'upload' : 'curated';
 
   const [paletteId, setPaletteId] = useState(initialPalette);
-  const [frame, setFrame] = useState(safeStorage.get('linacre_brand_frame', 'dl-geo'));
+  const [customPrimary, setCustomPrimary] = useState(() => normalizeHex(safeStorage.get('linacre_brand_custom_primary', '#22D3EE')) || '#22D3EE');
+  const [customSecondary, setCustomSecondary] = useState(() => normalizeHex(safeStorage.get('linacre_brand_custom_secondary', '#34D399')) || '#34D399');
+  const [colorTarget, setColorTarget] = useState<ColorTarget>('primary');
+  const [recentColors, setRecentColors] = useState<string[]>(() => loadJson<string[]>('linacre_brand_recent_colors', []));
+  const [frame, setFrame] = useState(savedFrame);
+  const [markTab, setMarkTab] = useState<MarkTab>(safeStorage.get('linacre_brand_mark_tab', initialTab) as MarkTab);
   const [fontId, setFontId] = useState(safeStorage.get('linacre_brand_font', 'cyber'));
   const [motionMode, setMotionMode] = useState(safeStorage.get('linacre_brand_motion', 'pulse'));
   const [glow, setGlow] = useState(Number(safeStorage.get('linacre_brand_glow', '2')));
@@ -201,7 +352,33 @@ export default function IdentityHub() {
   const [previewMode, setPreviewMode] = useState<PreviewMode>('banner');
   const [copied, setCopied] = useState<string | null>(null);
 
-  const palette = PALETTES.find((option) => option.id === paletteId) || PALETTES[0];
+  // Emblem Lab state
+  const [labWord, setLabWord] = useState(safeStorage.get('linacre_lab_word', 'linacre'));
+  const [labFamily, setLabFamily] = useState<GenFamilyId>((safeStorage.get('linacre_lab_family', 'mix') || 'mix') as GenFamilyId);
+  const [labSym, setLabSym] = useState(() => Math.min(8, Math.max(2, Number(safeStorage.get('linacre_lab_sym', '4')) || 4)));
+  const [labCpx, setLabCpx] = useState(() => Math.min(10, Math.max(1, Number(safeStorage.get('linacre_lab_cpx', '5')) || 5)));
+  const [labBatch, setLabBatch] = useState(() => Math.max(0, Number(safeStorage.get('linacre_lab_batch', '0')) || 0));
+  const [favMarks, setFavMarks] = useState<string[]>(() => loadJson<string[]>('linacre_brand_fav_marks', []));
+
+  // Custom uploaded emblems
+  const [customEmblems, setCustomEmblems] = useState<CustomEmblem[]>(() => loadJson<CustomEmblem[]>('linacre_custom_emblems', []));
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [hasEyeDropper] = useState(() => typeof window !== 'undefined' && 'EyeDropper' in window);
+
+  const palette = useMemo<PaletteOption>(() => {
+    if (paletteId === 'custom') {
+      return {
+        id: 'custom',
+        name: 'Custom Blend',
+        primary: customPrimary,
+        secondary: customSecondary,
+        description: 'Your own two-colour system, tuned box by box.',
+      };
+    }
+    return PALETTES.find((option) => option.id === paletteId) || PALETTES[0];
+  }, [paletteId, customPrimary, customSecondary]);
+
   const activeFont = FONTS.find((option) => option.id === fontId) || FONTS[0];
 
   useEffect(() => {
@@ -216,18 +393,30 @@ export default function IdentityHub() {
     safeStorage.set('linacre_brand_bio', bio);
     safeStorage.set('linacre_brand_email', email);
     safeStorage.set('linacre_brand_website', website);
+    safeStorage.set('linacre_brand_custom_primary', customPrimary);
+    safeStorage.set('linacre_brand_custom_secondary', customSecondary);
+    safeStorage.set('linacre_brand_recent_colors', JSON.stringify(recentColors));
+    safeStorage.set('linacre_brand_fav_marks', JSON.stringify(favMarks));
+    safeStorage.set('linacre_custom_emblems', JSON.stringify(customEmblems));
+    safeStorage.set('linacre_brand_mark_tab', markTab);
+    safeStorage.set('linacre_lab_word', labWord);
+    safeStorage.set('linacre_lab_family', labFamily);
+    safeStorage.set('linacre_lab_sym', String(labSym));
+    safeStorage.set('linacre_lab_cpx', String(labCpx));
+    safeStorage.set('linacre_lab_batch', String(labBatch));
     window.dispatchEvent(new Event('linacre-identity-updated'));
-  }, [palette, frame, activeFont, motionMode, glow, name, title, bio, email, website]);
+  }, [palette, frame, activeFont, motionMode, glow, name, title, bio, email, website, customPrimary, customSecondary, recentColors, favMarks, customEmblems, markTab, labWord, labFamily, labSym, labCpx, labBatch]);
 
   const emblem = useMemo(
-    () => getEmblemSVG(frame, palette.primary, palette.secondary, motionMode, 'slow', glow, []),
-    [frame, palette, motionMode, glow],
+    () => getEmblemSVG(frame, palette.primary, palette.secondary, motionMode, 'slow', glow, customEmblems),
+    [frame, palette, motionMode, glow, customEmblems],
   );
 
   const bannerSvg = useMemo(() => {
     const safeName = xmlEscape(name || 'DAVID LINACRE');
     const safeTitle = xmlEscape(title || 'Software engineer · useful tools · AI systems');
     const safeWebsite = xmlEscape(website.replace(/^https?:\/\//, '') || 'linacre.site');
+    const brandLine = xmlEscape(`${palette.name.toUpperCase()} / VERIFIED IDENTITY`);
     return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" style="width:100%;height:100%;display:block">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#030c14"/><stop offset="0.55" stop-color="#061520"/><stop offset="1" stop-color="#08202a"/></linearGradient>
@@ -242,7 +431,7 @@ export default function IdentityHub() {
   <circle cx="914" cy="244" r="4" fill="${palette.primary}"/><circle cx="1084" cy="244" r="4" fill="${palette.secondary}"/>
   <rect x="58" y="46" width="228" height="228" rx="38" fill="#081c28" fill-opacity=".9" stroke="${palette.primary}" stroke-opacity=".22"/>
   <svg x="82" y="70" width="180" height="180" viewBox="0 0 100 100">${emblem}</svg>
-  <text x="342" y="78" fill="${palette.secondary}" font-family="JetBrains Mono, monospace" font-size="15" font-weight="700" letter-spacing="1.5">CYBERBLUE / VERIFIED IDENTITY</text>
+  <text x="342" y="78" fill="${palette.secondary}" font-family="JetBrains Mono, monospace" font-size="15" font-weight="700" letter-spacing="1.5">${brandLine}</text>
   <text x="338" y="145" fill="#ecfeff" font-family="Space Grotesk, Inter, sans-serif" font-size="52" font-weight="700" letter-spacing="-1.5">${safeName}</text>
   <text x="342" y="187" fill="#9ab7c3" font-family="Inter, sans-serif" font-size="22">${safeTitle}</text>
   <rect x="342" y="218" width="238" height="38" rx="19" fill="#082330" stroke="${palette.primary}" stroke-opacity=".65"/>
@@ -296,6 +485,123 @@ export default function IdentityHub() {
     window.setTimeout(() => setCopied(null), 1_600);
   };
 
+  const pushRecentColor = (hex: string) => {
+    setRecentColors((previous) => [hex, ...previous.filter((entry) => entry !== hex)].slice(0, 10));
+  };
+
+  /** Pick any colour for the active target token — always switches into Custom mode. */
+  const pickColour = (hex: string, target: ColorTarget = colorTarget) => {
+    const normalized = normalizeHex(hex);
+    if (!normalized) return;
+    if (target === 'primary') setCustomPrimary(normalized);
+    else setCustomSecondary(normalized);
+    setPaletteId('custom');
+    pushRecentColor(normalized);
+  };
+
+  const applyHarmony = (harmony: HarmonyId) => {
+    pickColour(palette.primary, 'primary');
+    pickColour(harmonySecondary(palette.primary, harmony), 'secondary');
+  };
+
+  const autoFixContrast = () => {
+    setCustomPrimary(fixContrast(palette.primary, BRAND_DARK));
+    setCustomSecondary(fixContrast(palette.secondary, BRAND_DARK));
+    setPaletteId('custom');
+  };
+
+  const openEyeDropper = async () => {
+    try {
+      const Dropper = (window as unknown as { EyeDropper?: new () => { open(): Promise<{ sRGBHex: string }> } }).EyeDropper;
+      if (!Dropper) return;
+      const result = await new Dropper().open();
+      if (result?.sRGBHex) pickColour(result.sRGBHex);
+    } catch {
+      // User cancelled the eyedropper — nothing to change.
+    }
+  };
+
+  /* Emblem Lab helpers */
+  const labKeys = useMemo(() => {
+    const keys: string[] = [];
+    for (let i = 0; i < LAB_TILES_PER_BATCH; i++) {
+      keys.push(makeGenKey({ family: labFamily, symmetry: labSym, complexity: labCpx, word: `${labWord}·b${labBatch}·${i}` }));
+    }
+    return keys;
+  }, [labFamily, labSym, labCpx, labWord, labBatch]);
+
+  const selectMark = (key: string, tab: MarkTab) => {
+    setFrame(key);
+    setMarkTab(tab);
+    if (isGenFrame(key)) {
+      const cfg = parseGenKey(key);
+      setLabFamily(cfg.family);
+      setLabSym(cfg.symmetry);
+      setLabCpx(cfg.complexity);
+    }
+  };
+
+  const toggleFavourite = (key: string) => {
+    setFavMarks((previous) => (previous.includes(key) ? previous.filter((entry) => entry !== key) : [key, ...previous].slice(0, 24)));
+  };
+
+  const surpriseMe = () => {
+    setLabWord(randomSeedWord());
+    setLabFamily('mix');
+    setLabSym(2 + Math.floor(Math.random() * 7));
+    setLabCpx(1 + Math.floor(Math.random() * 10));
+    setLabBatch(0);
+  };
+
+  /* Custom emblem uploads */
+  const readUploads = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploadError(null);
+    const file = files[0];
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUploadError(`“${file.name}” is ${(file.size / 1024).toFixed(0)} KB — keep uploads under 300 KB so they stay fast and storable.`);
+      return;
+    }
+    if (customEmblems.length >= MAX_CUSTOM_EMBLEMS) {
+      setUploadError(`Up to ${MAX_CUSTOM_EMBLEMS} uploaded marks — delete one before adding another.`);
+      return;
+    }
+    const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
+    const isImage = isSvg || ['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(file.type);
+    if (!isImage) {
+      setUploadError('SVG, PNG, JPG, WebP or GIF only — everything stays on this device.');
+      return;
+    }
+    const id = `custom-${Date.now().toString(36)}`;
+    const label = (file.name.replace(/\.[^.]+$/, '') || 'Uploaded mark').slice(0, 28);
+    if (isSvg) {
+      const text = await file.text();
+      if (!text.includes('<svg')) {
+        setUploadError('That SVG file has no <svg> markup inside.');
+        return;
+      }
+      const sanitized = text.replace(/<script[\s\S]*?<\/script>/gi, '').slice(0, 200_000);
+      const emblem: CustomEmblem = { id, name: label, type: 'svg', content: sanitized };
+      setCustomEmblems((previous) => [...previous, emblem]);
+      selectMark(id, 'upload');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') return;
+      const emblem: CustomEmblem = { id, name: label, type: 'image', content: reader.result };
+      setCustomEmblems((previous) => [...previous, emblem]);
+      selectMark(id, 'upload');
+    };
+    reader.onerror = () => setUploadError('Could not read that file — try another image.');
+    reader.readAsDataURL(file);
+  };
+
+  const removeCustomEmblem = (id: string) => {
+    setCustomEmblems((previous) => previous.filter((entry) => entry.id !== id));
+    if (frame === id) setFrame('dl-geo');
+  };
+
   const cssTokens = `:root {
   --brand-primary: ${palette.primary};
   --brand-secondary: ${palette.secondary};
@@ -308,7 +614,10 @@ export default function IdentityHub() {
 
   const applyCyberPreset = () => {
     setPaletteId('cyber');
+    setCustomPrimary('#22D3EE');
+    setCustomSecondary('#34D399');
     setFrame('dl-geo');
+    setMarkTab('curated');
     setFontId('cyber');
     setMotionMode('pulse');
     setGlow(2);
@@ -322,10 +631,21 @@ export default function IdentityHub() {
     url.searchParams.set('brand_motion', motionMode);
     url.searchParams.set('brand_glow', String(glow));
     url.searchParams.set('brand_name', name);
+    if (palette.id === 'custom') {
+      url.searchParams.set('brand_primary', palette.primary);
+      url.searchParams.set('brand_secondary', palette.secondary);
+    }
     copy(url.toString(), 'link');
   };
 
-  const darkContrast = contrastRatio(palette.primary, '#030c14');
+  const darkContrast = contrastRatio(palette.primary, BRAND_DARK);
+  const activeTargetColor = colorTarget === 'primary' ? customPrimary : customSecondary;
+
+  const MARK_TABS: Array<{ id: MarkTab; label: string; icon: typeof Layers }> = [
+    { id: 'curated', label: 'Curated', icon: Layers },
+    { id: 'lab', label: 'Emblem Lab ∞', icon: FlaskConical },
+    { id: 'upload', label: 'Upload', icon: Upload },
+  ];
 
   return (
     <div className="space-y-10 pb-12" id="identity-brand-studio">
@@ -334,13 +654,13 @@ export default function IdentityHub() {
         <div className="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-color">
-              <ShieldCheck className="h-4 w-4" /> Identity Studio v6
+              <ShieldCheck className="h-4 w-4" /> Identity Studio v7
             </span>
             <h1 className="mt-3 font-display text-3xl font-bold tracking-[-0.04em] text-foreground sm:text-4xl">
-              One identity. Every useful asset.
+              One identity. Endless marks. Every colour.
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-              Choose a palette and mark once, preview the result in real formats, then export production-ready SVG or PNG assets. No sprawling controls and no guesswork.
+              Pick any two colours in the spectrum, generate infinite unique emblems in the Emblem Lab — free, on-device and deterministic — then preview and export production-ready SVG or PNG assets. No accounts, no uploads, no guesswork.
             </p>
           </div>
           <button
@@ -359,60 +679,367 @@ export default function IdentityHub() {
               <Palette className="h-4 w-4 text-amber-color" />
               <h2 className="font-display text-base font-bold text-foreground">1. Colour system</h2>
             </div>
-            <div className="space-y-2">
+
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {PALETTES.map((option) => {
                 const active = option.id === palette.id;
                 return (
                   <button
                     key={option.id}
                     onClick={() => setPaletteId(option.id)}
-                    className={`flex w-full items-center gap-3 rounded-xl border p-3 text-left transition-all ${active ? 'bg-muted/40 text-foreground' : 'border-border-color bg-background/20 text-muted-foreground hover:bg-muted/20'}`}
+                    title={option.description}
+                    className={`rounded-xl border p-2.5 text-left transition-all ${active ? 'bg-muted/40' : 'border-border-color bg-background/20 hover:bg-muted/20'}`}
                     style={active ? { borderColor: option.primary, boxShadow: `0 0 0 1px ${option.primary}22` } : undefined}
                   >
-                    <span className="flex shrink-0 -space-x-1">
-                      <span className="h-8 w-8 rounded-full border-2 border-[var(--linacre-panel)]" style={{ background: option.primary }} />
-                      <span className="h-8 w-8 rounded-full border-2 border-[var(--linacre-panel)]" style={{ background: option.secondary }} />
+                    <span className="flex gap-1">
+                      <span className="h-6 w-1/2 rounded-md ring-1 ring-white/10" style={{ background: option.primary }} />
+                      <span className="h-6 w-1/2 rounded-md ring-1 ring-white/10" style={{ background: option.secondary }} />
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block font-mono text-xs font-bold">{option.name}</span>
-                      <span className="mt-0.5 block text-[11px] leading-4 text-muted-foreground">{option.description}</span>
+                    <span className="mt-2 flex items-center justify-between gap-1 font-mono text-[10px] font-bold text-foreground">
+                      {option.name}
+                      {active && <Check className="h-3 w-3 shrink-0" style={{ color: option.secondary }} />}
                     </span>
-                    {active && <Check className="h-4 w-4 shrink-0" style={{ color: option.secondary }} />}
                   </button>
                 );
               })}
+              <button
+                onClick={() => setPaletteId('custom')}
+                title="Your own two-colour system, tuned box by box."
+                className={`rounded-xl border p-2.5 text-left transition-all ${palette.id === 'custom' ? 'bg-muted/40' : 'border-dashed border-border-color bg-background/20 hover:bg-muted/20'}`}
+                style={palette.id === 'custom' ? { borderColor: customPrimary, borderStyle: 'solid', boxShadow: `0 0 0 1px ${customPrimary}22` } : undefined}
+              >
+                <span className="flex gap-1">
+                  <span className="h-6 w-1/2 rounded-md ring-1 ring-white/10" style={{ background: customPrimary }} />
+                  <span className="h-6 w-1/2 rounded-md ring-1 ring-white/10" style={{ background: customSecondary }} />
+                </span>
+                <span className="mt-2 flex items-center justify-between gap-1 font-mono text-[10px] font-bold text-foreground">
+                  Custom
+                  {palette.id === 'custom' && <Check className="h-3 w-3 shrink-0" style={{ color: customSecondary }} />}
+                </span>
+              </button>
             </div>
-            <div className="mt-4 flex items-center justify-between rounded-xl border border-border-color bg-[#030c14] p-3 font-mono text-[10px]">
-              <span className="text-[#9ab7c3]">Contrast on dark</span>
-              <span className={darkContrast >= 4.5 ? 'text-emerald-color' : 'text-error'}>
-                {darkContrast.toFixed(2)}:1 · {darkContrast >= 4.5 ? 'AA pass' : 'Large text only'}
-              </span>
+
+            {/* Custom colour lab — boxes for everything, the whole spectrum behind one box */}
+            <div className="mt-4 rounded-xl border border-border-color bg-background/25 p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <SwatchBook className="h-3.5 w-3.5 text-amber-color" /> Custom colour lab
+                </span>
+                <div className="flex rounded-lg border border-border-color bg-background/40 p-0.5" role="tablist" aria-label="Colour target">
+                  {(['primary', 'secondary'] as ColorTarget[]).map((target) => {
+                    const active = colorTarget === target;
+                    const chip = target === 'primary' ? customPrimary : customSecondary;
+                    return (
+                      <button
+                        key={target}
+                        onClick={() => setColorTarget(target)}
+                        className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 font-mono text-[10px] font-bold capitalize ${active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                        style={active ? { background: `${chip}26`, boxShadow: `inset 0 0 0 1px ${chip}66` } : undefined}
+                      >
+                        <span className="h-3 w-3 rounded-sm ring-1 ring-white/25" style={{ background: chip }} />
+                        {target}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {SWATCH_ROWS.map((row) => (
+                  <div key={row.name} className="grid grid-cols-[3.4rem_1fr] items-center gap-2">
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground/80">{row.name}</span>
+                    <div className="grid grid-cols-5 gap-1.5">
+                      {row.colors.map((color) => (
+                        <SwatchBox key={color} color={color} active={activeTargetColor === color} onPick={pickColour} />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto]">
+                <label
+                  className="relative block h-11 cursor-pointer overflow-hidden rounded-xl ring-1 ring-white/15 transition-transform hover:scale-[1.01]"
+                  style={{ background: ANY_COLOR_GRADIENT }}
+                  title="Open the full-spectrum colour picker"
+                >
+                  <input
+                    type="color"
+                    value={activeTargetColor}
+                    onChange={(event) => pickColour(event.target.value)}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                    aria-label="Pick any colour from the full spectrum"
+                  />
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center gap-2 bg-black/35 font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+                    <Pipette className="h-3.5 w-3.5" /> Any colour · full spectrum
+                  </span>
+                </label>
+                <div className="flex gap-2">
+                  {hasEyeDropper && (
+                    <button
+                      onClick={openEyeDropper}
+                      title="Sample a colour from anywhere on screen"
+                      className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-border-color bg-muted/20 px-3 font-mono text-[10px] font-bold text-foreground hover:border-amber-color/50"
+                    >
+                      <Pipette className="h-4 w-4" /> Sample
+                    </button>
+                  )}
+                  <div className="w-28">
+                    <HexField value={activeTargetColor} onCommit={pickColour} />
+                  </div>
+                </div>
+              </div>
+
+              {recentColors.length > 0 && (
+                <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                  <span className="mr-1 font-mono text-[9px] uppercase tracking-wider text-muted-foreground/80">Recent</span>
+                  {recentColors.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => pickColour(color)}
+                      title={color}
+                      className={`h-6 w-6 rounded-md transition-transform hover:scale-110 ${activeTargetColor === color ? 'ring-2 ring-white' : 'ring-1 ring-white/15'}`}
+                      style={{ background: color }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 font-mono text-[9px] uppercase tracking-wider text-muted-foreground/80">Harmony</span>
+                {([
+                  ['complement', 'Complement'],
+                  ['analogous', 'Analogous'],
+                  ['triadic', 'Triadic'],
+                  ['mono', 'Soft mono'],
+                ] as Array<[HarmonyId, string]>).map(([id, label]) => (
+                  <button
+                    key={id}
+                    onClick={() => applyHarmony(id)}
+                    title={`Set secondary from primary · ${label}`}
+                    className="rounded-lg border border-border-color bg-background/40 px-2 py-1.5 font-mono text-[9px] font-bold text-muted-foreground hover:border-amber-color/50 hover:text-foreground"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                <ContrastChip label="Primary" color={palette.primary} />
+                <ContrastChip label="Secondary" color={palette.secondary} />
+                {(darkContrast < 4.5 || contrastRatio(palette.secondary, BRAND_DARK) < 4.5) && (
+                  <button
+                    onClick={autoFixContrast}
+                    className="rounded-lg border border-error/40 bg-error/10 px-2 py-1 font-mono text-[9px] font-bold text-error hover:border-error"
+                  >
+                    Auto-fix to AA
+                  </button>
+                )}
+              </div>
             </div>
           </section>
 
           <section className="rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-color" />
-              <h2 className="font-display text-base font-bold text-foreground">2. Mark and motion</h2>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-amber-color" />
+                <h2 className="font-display text-base font-bold text-foreground">2. Mark and motion</h2>
+              </div>
+              {isGenFrame(frame) && (
+                <span className="inline-flex max-w-full items-center gap-1.5 truncate rounded-lg border border-border-color bg-background/40 px-2 py-1 font-mono text-[9px] font-bold text-muted-foreground" title={frame}>
+                  <FlaskConical className="h-3 w-3 shrink-0 text-amber-color" /> {labelForKey(frame)}
+                </span>
+              )}
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {FRAMES.map((option) => {
-                const active = option.id === frame;
-                const preview = getEmblemSVG(option.id, palette.primary, palette.secondary, 'static', 'slow', 1, []);
-                return (
+
+            <div className="mb-4 flex rounded-xl border border-border-color bg-background/30 p-1" role="tablist" aria-label="Mark source">
+              {MARK_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setMarkTab(tab.id)}
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2 font-mono text-[10px] font-bold ${markTab === tab.id ? 'text-[#031018]' : 'text-muted-foreground hover:text-foreground'}`}
+                  style={markTab === tab.id ? { background: palette.primary } : undefined}
+                >
+                  <tab.icon className="h-3.5 w-3.5" /> {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {markTab === 'curated' && (
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {FRAMES.map((option) => {
+                  const active = option.id === frame;
+                  return (
+                    <button
+                      key={option.id}
+                      onClick={() => selectMark(option.id, 'curated')}
+                      className={`rounded-xl border p-3 text-left transition-all ${active ? 'bg-muted/40' : 'border-border-color bg-background/20 hover:bg-muted/20'}`}
+                      style={active ? { borderColor: palette.primary } : undefined}
+                    >
+                      <span className="mx-auto block h-12 w-12" dangerouslySetInnerHTML={{ __html: getEmblemSVG(option.id, palette.primary, palette.secondary, 'static', 'slow', 1, customEmblems) }} />
+                      <span className="mt-2 block font-mono text-[10px] font-bold text-foreground">{option.name}</span>
+                      <span className="mt-0.5 block text-[9px] text-muted-foreground">{option.description}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {markTab === 'lab' && (
+              <div>
+                <div className="mb-3 grid gap-2 sm:grid-cols-[1fr_auto]">
+                  <label className="relative block">
+                    <span className="mb-1.5 block font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Seed word — same word, same marks</span>
+                    <input
+                      value={labWord}
+                      onChange={(event) => { setLabWord(event.target.value.slice(0, 32)); setLabBatch(0); }}
+                      placeholder="type anything — your name, a vibe…"
+                      className="h-11 w-full rounded-xl border border-border-color bg-background/40 px-3 pr-10 font-mono text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-amber-color focus:outline-none"
+                    />
+                    <button
+                      onClick={() => { setLabWord(randomSeedWord()); setLabBatch(0); }}
+                      title="Dice a new seed word"
+                      aria-label="Dice a new seed word"
+                      className="absolute bottom-2 right-2 rounded-md p-1.5 text-muted-foreground hover:text-amber-color"
+                    >
+                      <Dices className="h-4 w-4" />
+                    </button>
+                  </label>
                   <button
-                    key={option.id}
-                    onClick={() => setFrame(option.id)}
-                    className={`rounded-xl border p-3 text-left transition-all ${active ? 'bg-muted/40' : 'border-border-color bg-background/20 hover:bg-muted/20'}`}
-                    style={active ? { borderColor: palette.primary } : undefined}
+                    onClick={surpriseMe}
+                    className="inline-flex items-center justify-center gap-2 self-end rounded-xl bg-amber-color px-3 py-2.5 font-mono text-[10px] font-bold text-[#031018] hover:bg-amber-glow"
                   >
-                    <span className="mx-auto block h-12 w-12" dangerouslySetInnerHTML={{ __html: preview }} />
-                    <span className="mt-2 block font-mono text-[10px] font-bold text-foreground">{option.name}</span>
-                    <span className="mt-0.5 block text-[9px] text-muted-foreground">{option.description}</span>
+                    <Shuffle className="h-4 w-4" /> Surprise me
                   </button>
-                );
-              })}
-            </div>
+                </div>
+
+                <div className="mb-3 grid gap-2 sm:grid-cols-3">
+                  <label className="block">
+                    <span className="mb-1.5 block font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Family</span>
+                    <select
+                      value={labFamily}
+                      onChange={(event) => { setLabFamily(event.target.value as GenFamilyId); setLabBatch(0); }}
+                      className="h-10 w-full rounded-xl border border-border-color bg-background/40 px-2 font-mono text-[10px] font-bold text-foreground focus:border-amber-color focus:outline-none"
+                    >
+                      <option value="mix">Surprise mix</option>
+                      {GEN_FAMILIES.map((family) => (
+                        <option key={family.id} value={family.id}>{family.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="block">
+                    <span className="mb-1.5 block font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Symmetry · {labSym}-fold</span>
+                    <input type="range" min="2" max="8" value={labSym} onChange={(event) => { setLabSym(Number(event.target.value)); setLabBatch(0); }} className="mt-2.5 w-full" aria-label="Symmetry folds" />
+                  </label>
+                  <label className="block">
+                    <span className="mb-1.5 block font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Complexity · L{labCpx}</span>
+                    <input type="range" min="1" max="10" value={labCpx} onChange={(event) => { setLabCpx(Number(event.target.value)); setLabBatch(0); }} className="mt-2.5 w-full" aria-label="Complexity level" />
+                  </label>
+                </div>
+
+                {favMarks.length > 0 && (
+                  <div className="mb-3">
+                    <div className="mb-1.5 flex items-center justify-between">
+                      <span className="font-mono text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Kept marks · {favMarks.length}</span>
+                      <button onClick={() => setFavMarks([])} className="font-mono text-[9px] font-bold text-muted-foreground hover:text-error">Clear all</button>
+                    </div>
+                    <div className="flex gap-1.5 overflow-x-auto pb-1">
+                      {favMarks.map((key) => (
+                        <div key={key} className="w-14 shrink-0">
+                          <MarkTile
+                            frameKey={key}
+                            primary={palette.primary}
+                            secondary={palette.secondary}
+                            customEmblems={customEmblems}
+                            active={frame === key}
+                            onSelect={() => selectMark(key, 'lab')}
+                            favourite
+                            onToggleFavourite={() => toggleFavourite(key)}
+                            label={labelForKey(key)}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-4 gap-2">
+                  {labKeys.map((key) => (
+                    <MarkTile
+                      key={key}
+                      frameKey={key}
+                      primary={palette.primary}
+                      secondary={palette.secondary}
+                      customEmblems={customEmblems}
+                      active={frame === key}
+                      onSelect={() => selectMark(key, 'lab')}
+                      favourite={favMarks.includes(key)}
+                      onToggleFavourite={() => toggleFavourite(key)}
+                      label={labelForKey(key)}
+                    />
+                  ))}
+                </div>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <span className="font-mono text-[9px] text-muted-foreground" title="Deterministic generator — zero cost, zero uploads">Endless by design · batch {labBatch + 1}</span>
+                  <button
+                    onClick={() => setLabBatch((value) => value + 1)}
+                    className="inline-flex items-center gap-2 rounded-xl border border-border-color bg-muted/20 px-3 py-2 font-mono text-[10px] font-bold text-foreground hover:border-amber-color/50"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" /> More marks ∞
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {markTab === 'upload' && (
+              <div>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={(event) => event.preventDefault()}
+                  onDrop={(event) => { event.preventDefault(); readUploads(event.dataTransfer.files); }}
+                  className="flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border-color bg-background/20 px-4 py-6 text-center hover:border-amber-color/50 hover:bg-muted/10"
+                >
+                  <Upload className="h-5 w-5 text-amber-color" />
+                  <span className="font-mono text-[10px] font-bold text-foreground">Drop or browse — SVG, PNG, JPG, WebP</span>
+                  <span className="text-[9px] text-muted-foreground">Under 300 KB · stays on this device · exports with your palette behind it</span>
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".svg,.png,.jpg,.jpeg,.webp,.gif,image/svg+xml,image/png,image/jpeg,image/webp,image/gif"
+                  className="hidden"
+                  onChange={(event) => { readUploads(event.target.files); event.target.value = ''; }}
+                />
+                {uploadError && <p className="mt-2 font-mono text-[10px] text-error">{uploadError}</p>}
+
+                {customEmblems.length > 0 && (
+                  <div className="mt-3 grid grid-cols-4 gap-2">
+                    {customEmblems.map((custom) => (
+                      <div key={custom.id} className="relative">
+                        <MarkTile
+                          frameKey={custom.id}
+                          primary={palette.primary}
+                          secondary={palette.secondary}
+                          customEmblems={customEmblems}
+                          active={frame === custom.id}
+                          onSelect={() => selectMark(custom.id, 'upload')}
+                          label={custom.name}
+                        />
+                        <button
+                          onClick={() => removeCustomEmblem(custom.id)}
+                          title={`Delete ${custom.name}`}
+                          aria-label={`Delete ${custom.name}`}
+                          className="absolute left-1 top-1 rounded-md bg-[#030c14]/80 p-1 text-muted-foreground hover:text-error"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <div>
                 <label className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Motion</label>
@@ -513,7 +1140,7 @@ export default function IdentityHub() {
 
             <div className="bg-[#020a11] p-4 sm:p-6">
               <motion.div
-                key={`${previewMode}-${palette.id}-${frame}-${fontId}`}
+                key={`${previewMode}-${palette.id}-${palette.primary}-${palette.secondary}-${frame}-${fontId}`}
                 initial={{ opacity: 0, scale: 0.985 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className={`mx-auto overflow-hidden rounded-xl border border-white/10 shadow-2xl ${previewMode === 'avatar' ? 'max-w-sm' : 'w-full'}`}
