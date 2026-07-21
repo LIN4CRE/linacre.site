@@ -1,7 +1,7 @@
 // linacre.site service worker
-// v10 — CyberBlue-Green identity, curated portfolio, and regenerated app assets.
+// v11 — Self-hosted local fonts, dedicated Games Hub, curated loadout, and 100% real CV data.
 // Keep API + cross-origin requests untouched (Lab streaming still works).
-var CACHE = "linacre-v10";
+var CACHE = "linacre-v11";
 var OFFLINE_URL = "offline.html";
 var URLS = [
   ".",

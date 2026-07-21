@@ -2,44 +2,67 @@
 <!--
 ══════════════════════════════════════════════════════════════════════════════
   GAMES — DAVID LINACRE · linacre.site/games
-  Single-file game hub. No build step required.
+  Single-file game hub. Self-contained, zero build step, zero trackers.
 ══════════════════════════════════════════════════════════════════════════════
   HOW TO ADD A GAME (when on your Windows PC):
    1. Open this file in Notepad or VS Code.
    2. Search for "const GAMES = [" below.
-   3. Copy a block and edit the fields:
+   3. Duplicate a game block and change the fields:
         title:   Name of the game
         tagline: One-line hook
-        desc:    Short description
-        tags:    ['Arcade', 'Canvas', etc.]
+        desc:    Honest summary
+        tags:    ['Arcade', 'Canvas 2D', etc.]
         tech:    'React · Canvas 2D'
-        icon:    Lucide icon name (e.g. 'gamepad-2', 'zap')
         badge:   'Live' | 'Built-in' | 'In development'
-        play:    URL or '#snake' for built-in game
+        play:    Playable URL or '#snake' for built-in canvas game
         source:  GitHub repository URL
-   4. Save and push to GitHub!
+   4. Save and commit to GitHub. Cards, filters & counters update automatically!
 ══════════════════════════════════════════════════════════════════════════════
 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Playable browser games by David Linacre — self-taught developer from Barnsley, UK. Free, open source, zero trackers.">
+<meta name="description" content="Playable browser games by David Linacre — self-taught developer from Barnsley, UK. KushCloud flyer and built-in interactive Snake. Free and open source.">
 <meta name="theme-color" content="#04060c">
 <link rel="canonical" href="https://www.linacre.site/games">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.linacre.site/games">
-<meta property="og:title" content="Games — David Linacre">
-<meta property="og:description" content="Real browser games built by David Linacre. KushCloud arcade flyer and built-in interactive Snake. Free and MIT-licensed.">
+<meta property="og:title" content="Games — David Linacre · linacre.site">
+<meta property="og:description" content="Real, playable browser games built by David Linacre. KushCloud flyer and built-in interactive Snake with high score persistence.">
+<meta property="og:site_name" content="linacre.site">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Games — David Linacre · linacre.site">
+<meta name="twitter:description" content="Real, playable browser games built by David Linacre. KushCloud flyer and built-in interactive Snake.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0f1c'/%3E%3Ctext x='32' y='41' font-family='monospace' font-size='24' font-weight='bold' fill='%2322d3ee' text-anchor='middle'%3EDL%3C/text%3E%3C/svg%3E">
 <title>Games — David Linacre · linacre.site</title>
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<!-- Self-Hosted Variable Fonts (Zero external blocking CSS calls) -->
+<style>
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/inter-var-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-var-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-var-latin.woff2') format('woff2');
+}
+</style>
 
-<!-- Tailwind CSS (CDN) -->
+<!-- Tailwind CSS CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -64,15 +87,15 @@ tailwind.config = {
 :root {
   --accent-rgb: 34 211 238; /* Cyan default */
   --accent: rgb(var(--accent-rgb));
-  --accent-glow: rgba(var(--accent-rgb), 0.25);
+  --accent-glow: rgba(var(--accent-rgb), 0.28);
   --bg: #04060c;
   --panel: #0a0f1c;
   --ink: #e9eefb;
   --ink-2: #9aa6bf;
   --ink-3: #5f6b85;
-  --glass-bg: rgba(10, 15, 28, 0.75);
-  --glass-brd: rgba(34, 211, 238, 0.15);
-  --glass-hover: rgba(34, 211, 238, 0.25);
+  --glass-bg: rgba(10, 15, 28, 0.82);
+  --glass-brd: rgba(34, 211, 238, 0.18);
+  --glass-hover: rgba(34, 211, 238, 0.35);
 }
 
 body {
@@ -83,41 +106,40 @@ body {
   min-height: 100vh;
 }
 
-/* Glass panel */
+/* Glassmorphism containers */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-brd);
 }
 
 .glass-card {
-  background: rgba(10, 15, 28, 0.6);
-  backdrop-filter: blur(10px);
+  background: rgba(10, 15, 28, 0.65);
+  backdrop-filter: blur(12px);
   border: 1px solid var(--glass-brd);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-card:hover {
   border-color: var(--glass-hover);
-  transform: translateY(-3px);
-  box-shadow: 0 10px 30px -10px var(--accent-glow);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 35px -10px var(--accent-glow);
 }
 
-/* Accent themes */
+/* Color Themes */
 [data-theme="cyan"]    { --accent-rgb: 34 211 238; }
 [data-theme="amber"]   { --accent-rgb: 251 191 36; }
 [data-theme="emerald"] { --accent-rgb: 52 211 153; }
-[data-theme="rose"]    { --accent-rgb: 251 113 133; }
 [data-theme="violet"]  { --accent-rgb: 167 139 250; }
 
-/* Buttons & Chips */
+/* Buttons & Controls */
 .btn {
   display: inline-flex;
-  items-center: center;
+  align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
+  padding: 0.55rem 1.15rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -129,12 +151,12 @@ body {
 .btn-primary {
   background: var(--accent);
   color: #030c14;
-  box-shadow: 0 0 16px var(--accent-glow);
+  box-shadow: 0 0 18px var(--accent-glow);
 }
 
 .btn-primary:hover {
   filter: brightness(1.15);
-  box-shadow: 0 0 24px var(--accent-glow);
+  box-shadow: 0 0 28px var(--accent-glow);
 }
 
 .btn-ghost {
@@ -146,17 +168,17 @@ body {
 .btn-ghost:hover {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(var(--accent-rgb), 0.08);
+  background: rgba(var(--accent-rgb), 0.1);
 }
 
 .chip {
   padding: 0.4rem 0.85rem;
-  border-radius: 0.5rem;
+  border-radius: 0.6rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   border: 1px solid var(--glass-brd);
   color: var(--ink-2);
-  background: rgba(10, 15, 28, 0.4);
+  background: rgba(10, 15, 28, 0.45);
   transition: all 0.2s ease;
   cursor: pointer;
   display: inline-flex;
@@ -167,10 +189,11 @@ body {
 .chip:hover, .chip.active {
   border-color: var(--accent);
   color: var(--accent);
-  background: rgba(var(--accent-rgb), 0.12);
+  background: rgba(var(--accent-rgb), 0.14);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
-/* Snake Game Modal Overlay */
+/* Modal Snake Game Overlay */
 #gameRoot {
   position: fixed;
   inset: 0;
@@ -190,8 +213,8 @@ body {
 #gameBack {
   position: absolute;
   inset: 0;
-  background: rgba(4, 6, 12, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(4, 6, 12, 0.88);
+  backdrop-filter: blur(10px);
 }
 
 #gameCard {
@@ -203,14 +226,14 @@ body {
   border-radius: 1.25rem;
   background: #0a0f1c;
   border: 1px solid var(--glass-brd);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--accent-glow);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.85), 0 0 35px var(--accent-glow);
 }
 
 .game-hud {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   color: var(--ink-2);
@@ -218,20 +241,20 @@ body {
 
 .game-hud b {
   color: var(--accent);
-  font-size: 1rem;
-  margin-left: 0.3rem;
+  font-size: 1.05rem;
+  margin-left: 0.35rem;
 }
 
 #gameCanvas {
   width: 100%;
   aspect-ratio: 1;
   background: #04060c;
-  border-radius: 0.75rem;
+  border-radius: 0.85rem;
   border: 1px solid rgba(255,255,255,0.08);
   touch-action: none;
 }
 
-/* Custom Swatches */
+/* Swatches */
 .swatch {
   width: 1rem;
   height: 1rem;
@@ -241,7 +264,7 @@ body {
   border: 2px solid transparent;
 }
 .swatch:hover, .swatch.active {
-  transform: scale(1.25);
+  transform: scale(1.3);
   border-color: #fff;
 }
 </style>
@@ -249,45 +272,53 @@ body {
 
 <body>
 
+<!-- Accessible Skip to Content -->
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 bg-accent text-black px-4 py-2 rounded-lg font-mono text-xs font-bold">
+  Skip to content
+</a>
+
 <!-- Header Navigation -->
 <header class="sticky top-0 z-50 w-full border-b border-cyan/15 glass" id="siteHeader">
   <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
     <!-- Logo -->
-    <a href="https://www.linacre.site/" class="flex items-center gap-2.5 font-mono font-bold text-lg text-white group">
+    <a href="https://www.linacre.site/" class="flex items-center gap-2.5 font-mono font-bold text-lg text-white group" aria-label="Linacre Start Home">
       <div class="w-8 h-8 rounded-lg bg-cyan/10 border border-cyan/30 flex items-center justify-center text-accent group-hover:border-accent group-hover:scale-105 transition-all">
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <rect x="2" y="6" width="20" height="12" rx="2"/>
-          <path d="M6 12h4m-2-2v4m10-2h.01m-3-1h.01"/>
-        </svg>
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4m-2-2v4m10-2h.01m-3-1h.01"/></svg>
       </div>
       <span>linacre<span class="text-accent">.</span>site<span class="text-xs text-ink-3 font-normal ml-1">/games</span></span>
     </a>
 
     <!-- Nav Links (Direct routes to real pages) -->
-    <nav class="hidden md:flex items-center gap-1 font-mono text-xs">
+    <nav class="hidden md:flex items-center gap-1 font-mono text-xs" aria-label="Primary">
       <a href="https://www.linacre.site/" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg">Home</a>
       <a href="https://www.linacre.site/projects" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg">Projects</a>
       <a href="https://www.linacre.site/toolkit" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg">Toolkit</a>
-      <a href="https://www.linacre.site/games" class="px-3 py-2 text-accent font-bold bg-cyan/10 border border-cyan/20 rounded-lg">Games</a>
+      <a href="https://www.linacre.site/games" aria-current="page" class="px-3 py-2 text-accent font-bold bg-cyan/10 border border-cyan/20 rounded-lg">Games</a>
       <a href="https://www.linacre.site/about" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg">About</a>
       <a href="https://www.linacre.site/contact" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg">Contact</a>
-      <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg flex items-center gap-1">
+      <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener noreferrer" class="px-3 py-2 text-ink-2 hover:text-white transition-colors rounded-lg flex items-center gap-1">
         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
         <span>GitHub</span>
       </a>
     </nav>
 
-    <!-- Swatches / Theme Controls -->
+    <!-- Theme Swatches & Audio Toggle -->
     <div class="flex items-center gap-3">
-      <div class="hidden sm:flex items-center gap-1.5 bg-panel p-1.5 rounded-full border border-cyan/20" id="swatchRow">
+      <button id="soundToggleBtn" class="p-2 rounded-lg bg-panel border border-cyan/20 text-ink-2 hover:text-accent font-mono text-xs flex items-center gap-1.5" title="Toggle Synthesized Audio">
+        <svg id="soundOnIcon" class="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M11 5L6 9H2v6h4l5 4V5z"/></svg>
+        <svg id="soundOffIcon" class="w-4 h-4 text-ink-3 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/><path d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/></svg>
+        <span class="hidden sm:inline text-[10px]">Audio</span>
+      </button>
+
+      <div class="hidden sm:flex items-center gap-1.5 bg-panel p-1.5 rounded-full border border-cyan/20" id="swatchRow" role="group" aria-label="Theme Accent Color">
         <button class="swatch bg-cyan-400 active" data-color="cyan" title="Cyber Cyan"></button>
         <button class="swatch bg-amber-400" data-color="amber" title="Amber Core"></button>
         <button class="swatch bg-emerald-400" data-color="emerald" title="Signal Green"></button>
         <button class="swatch bg-violet-400" data-color="violet" title="Neon Violet"></button>
       </div>
 
-      <!-- Mobile Menu Toggle Button -->
-      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg bg-panel border border-cyan/20 text-ink-2 hover:text-white">
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" class="md:hidden p-2 rounded-lg bg-panel border border-cyan/20 text-ink-2 hover:text-white" aria-label="Toggle Navigation Menu">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
     </div>
@@ -301,12 +332,12 @@ body {
     <a href="https://www.linacre.site/games" class="block py-2 text-accent font-bold">Games</a>
     <a href="https://www.linacre.site/about" class="block py-2 text-ink-2 hover:text-white">About</a>
     <a href="https://www.linacre.site/contact" class="block py-2 text-ink-2 hover:text-white">Contact</a>
-    <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener" class="block py-2 text-ink-2 hover:text-white">GitHub</a>
+    <a href="https://github.com/LIN4CRE" target="_blank" rel="noopener noreferrer" class="block py-2 text-ink-2 hover:text-white">GitHub</a>
   </div>
 </header>
 
 <!-- Main Games Section -->
-<main class="max-w-6xl mx-auto px-4 py-12 space-y-10">
+<main class="max-w-6xl mx-auto px-4 py-12 space-y-10" id="main-content">
 
   <!-- Hero Header -->
   <div class="space-y-4 max-w-2xl">
@@ -324,7 +355,7 @@ body {
 
   <!-- Filter Bar & Counter -->
   <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
-    <div class="flex flex-wrap gap-2" id="filterBar">
+    <div class="flex flex-wrap gap-2" id="filterBar" role="group" aria-label="Filter games">
       <button class="chip active" data-filter="all">All Games</button>
       <button class="chip" data-filter="favs">
         <svg class="w-3.5 h-3.5 text-rose-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -339,7 +370,7 @@ body {
   </div>
 
   <!-- Games Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="gamesGrid">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="gamesGrid" aria-live="polite">
     <!-- Game cards rendered by JS -->
   </div>
 
@@ -350,14 +381,14 @@ body {
       <span>ADDING MORE GAMES ON YOUR WINDOWS PC</span>
     </div>
     <p class="leading-relaxed">
-      To upload new games when back at your PC, open <code class="text-accent bg-panel px-1.5 py-0.5 rounded">public/games/index.html</code> in Notepad or VS Code, find <code class="text-accent bg-panel px-1.5 py-0.5 rounded">const GAMES = [...]</code> in the script, and add a new object block. The grid and filters update automatically!
+      To upload new games when back at your PC, open <code class="text-accent bg-panel px-1.5 py-0.5 rounded">public/games/index.html</code> in Notepad or VS Code, find <code class="text-accent bg-panel px-1.5 py-0.5 rounded">const GAMES = [...]</code> in the script, and add a new object block. The grid, filters, and counters update automatically!
     </p>
   </div>
 
 </main>
 
 <!-- Snake Game Modal -->
-<div id="gameRoot">
+<div id="gameRoot" role="dialog" aria-modal="true" aria-label="Built-in Snake Game">
   <div id="gameBack"></div>
   <div id="gameCard">
     <div class="flex items-center justify-between gap-3 mb-4">
@@ -365,7 +396,7 @@ body {
         <svg class="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4m-2-2v4m10-2h.01m-3-1h.01"/></svg>
         <span>SNAKE <span class="text-accent font-mono text-xs">· BUILT-IN</span></span>
       </div>
-      <button id="gameClose" class="p-1 rounded-lg hover:bg-white/10 text-ink-2 hover:text-white cursor-pointer">
+      <button id="gameClose" class="p-1 rounded-lg hover:bg-white/10 text-ink-2 hover:text-white cursor-pointer" aria-label="Close Snake Game">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
     </div>
@@ -373,7 +404,7 @@ body {
     <div class="game-hud">
       <span>SCORE: <b id="gameScore">0</b></span>
       <span>BEST: <b id="gameHigh">0</b></span>
-      <button id="gameStart" class="btn btn-primary !py-1 !px-3 !text-xs">Start</button>
+      <button id="gameStart" class="btn btn-primary !py-1 !px-3 !text-xs">Start Game</button>
     </div>
 
     <canvas id="gameCanvas" width="420" height="420" aria-label="Snake game canvas"></canvas>
@@ -387,7 +418,7 @@ body {
 <footer class="border-t border-white/10 py-8 text-center font-mono text-xs text-ink-3">
   <div class="max-w-6xl mx-auto px-4 space-y-2">
     <p>© 2026 DAVID LINACRE · <a href="https://www.linacre.site/" class="text-accent hover:underline">LINACRE.SITE</a> · MIT LICENSED</p>
-    <p class="text-[10px]">Barnsley, South Yorkshire, UK · davidlinacre@hotmail.co.uk</p>
+    <p class="text-[10px]">Barnsley, South Yorkshire, UK · davidlinacre@hotmail.co.uk · 07391 428996</p>
   </div>
 </footer>
 
@@ -406,13 +437,13 @@ body {
   };
 
   /* ════════════════════════════════════════════════════════════════════════
-     YOUR GAMES — Add or edit games here when on Windows PC!
+     YOUR GAMES — Edit or add games here when on Windows PC!
      ════════════════════════════════════════════════════════════════════════ */
   const GAMES = [
     {
       title: 'KushCloud',
       tagline: 'Chill one-tap arcade flyer with synthesized audio',
-      desc: 'A vibes-first arcade game: pass obstacles, earn coins, unlock worlds and cosmetics, with synthesised Web Audio and a global leaderboard.',
+      desc: 'A vibes-first arcade game: pass procedural obstacles, earn coins, unlock worlds and cosmetics, with synthesised Web Audio and a global leaderboard.',
       tags: ['Arcade', 'One-tap', 'Web Audio'],
       tech: 'React · TypeScript · Vite · Canvas 2D',
       badge: 'Live',
@@ -422,14 +453,90 @@ body {
     {
       title: 'Snake',
       tagline: 'Classic arcade Snake built directly into this page',
-      desc: 'Written in vanilla JavaScript on Canvas 2D: direction-queue controls, speed ramp, high score tracking, and touch swipe support.',
+      desc: 'Written in vanilla JavaScript on Canvas 2D: direction-queue controls, speed ramp, high score tracking, Web Audio sound blips, and touch swipe support.',
       tags: ['Arcade', 'Built-in', 'Touch-friendly'],
-      tech: 'Vanilla JS · Canvas 2D',
+      tech: 'Vanilla JS · Canvas 2D · Web Audio',
       badge: 'Built-in',
       play: '#snake',
       source: 'https://github.com/LIN4CRE/linacre.site'
     }
   ];
+
+  // Synthesized Web Audio Sound Engine (Zero external audio files needed!)
+  let audioMuted = localStorage.getItem('dlg_muted') === 'true';
+  let audioCtx = null;
+
+  function getAudioCtx() {
+    if (!audioCtx && typeof AudioContext !== 'undefined') {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function playSound(type) {
+    if (audioMuted) return;
+    try {
+      const ctx = getAudioCtx();
+      if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      const now = ctx.currentTime;
+      if (type === 'step') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.04);
+        gain.gain.setValueAtTime(0.08, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } else if (type === 'food') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.setValueAtTime(880, now + 0.06);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'over') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    } catch(e) {}
+  }
+
+  // Update sound UI toggle
+  const soundBtn = document.getElementById('soundToggleBtn');
+  const soundOnIcon = document.getElementById('soundOnIcon');
+  const soundOffIcon = document.getElementById('soundOffIcon');
+
+  function updateSoundUI() {
+    if (audioMuted) {
+      soundOnIcon.classList.add('hidden');
+      soundOffIcon.classList.remove('hidden');
+    } else {
+      soundOnIcon.classList.remove('hidden');
+      soundOffIcon.classList.add('hidden');
+    }
+  }
+  if (soundBtn) {
+    updateSoundUI();
+    soundBtn.addEventListener('click', () => {
+      audioMuted = !audioMuted;
+      localStorage.setItem('dlg_muted', String(audioMuted));
+      updateSoundUI();
+    });
+  }
 
   // Favourites state in localStorage
   let favs = [];
@@ -480,7 +587,7 @@ body {
                 ${g.badge}
               </span>
 
-              <button class="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer fav-btn ${isFav ? 'text-rose-400' : 'text-ink-3'}" data-title="${g.title}" title="Toggle Favourite">
+              <button class="p-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer fav-btn ${isFav ? 'text-rose-400' : 'text-ink-3'}" data-title="${g.title}" title="Toggle Favourite" aria-label="Bookmark ${g.title}">
                 <svg class="w-4 h-4" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
@@ -503,10 +610,10 @@ body {
             <span class="text-[10px] text-ink-3">${g.tech}</span>
 
             <div class="flex items-center gap-2">
-              <a href="${g.source}" target="_blank" rel="noopener" class="btn btn-ghost !py-1 !px-2.5 !text-xs">Code</a>
+              <a href="${g.source}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost !py-1 !px-2.5 !text-xs">Code</a>
               ${isBuiltIn
                 ? `<button class="btn btn-primary !py-1 !px-3 !text-xs play-snake-btn">Play Now</button>`
-                : `<a href="${g.play}" target="_blank" rel="noopener" class="btn btn-primary !py-1 !px-3 !text-xs">Play Game</a>`
+                : `<a href="${g.play}" target="_blank" rel="noopener noreferrer" class="btn btn-primary !py-1 !px-3 !text-xs">Play Game</a>`
               }
             </div>
           </div>
@@ -514,9 +621,9 @@ body {
       `;
     }).join('');
 
-    // Attach event listeners for heart favourites and play snake
+    // Attach event listeners
     document.querySelectorAll('.fav-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', () => {
         const title = btn.getAttribute('data-title');
         if (favs.includes(title)) {
           favs = favs.filter(t => t !== title);
@@ -543,7 +650,7 @@ body {
     });
   });
 
-  // Mobile navigation menu toggle
+  // Mobile menu toggle
   const mobileBtn = document.getElementById('mobileMenuBtn');
   const mobileMenu = document.getElementById('mobileMenu');
   if (mobileBtn && mobileMenu) {
@@ -563,7 +670,7 @@ body {
   });
 
   /* ════════════════════════════════════════════════════════════════════════
-     Built-in Snake Canvas Engine
+     Built-in Snake Canvas Engine with Particle Glow
      ════════════════════════════════════════════════════════════════════════ */
   const root = document.getElementById('gameRoot');
   const cv = document.getElementById('gameCanvas');
@@ -599,6 +706,7 @@ body {
     state = 'run';
     lastStep = performance.now();
     if (startBtn) startBtn.textContent = 'Restart';
+    playSound('step');
   }
 
   function pushDir(m) {
@@ -614,6 +722,7 @@ body {
 
     if (h.x < 0 || h.y < 0 || h.x >= N || h.y >= N || snake.some(s => s.x === h.x && s.y === h.y)) {
       state = 'over';
+      playSound('over');
       if (score > high) {
         high = score;
         try { localStorage.setItem('dlg_snakeHigh', String(high)); } catch(e){}
@@ -625,11 +734,13 @@ body {
     snake.unshift(h);
     if (h.x === food.x && h.y === food.y) {
       score += 10;
-      speed = Math.max(65, speed - 1.5);
+      speed = Math.max(62, speed - 1.5);
       if (scoreEl) scoreEl.textContent = score;
+      playSound('food');
       placeFood();
     } else {
       snake.pop();
+      playSound('step');
     }
   }
 
@@ -639,7 +750,7 @@ body {
     ctx.fillRect(0, 0, cv.width, cv.height);
 
     // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (let i = 1; i < N; i++) {
@@ -648,26 +759,37 @@ body {
     }
     ctx.stroke();
 
-    // Food
+    // Food (Signal Green with Glow)
+    ctx.shadowColor = '#34d399';
+    ctx.shadowBlur = 10;
     ctx.fillStyle = '#34d399';
     ctx.fillRect(food.x * CELL + 2, food.y * CELL + 2, CELL - 4, CELL - 4);
+    ctx.shadowBlur = 0;
 
-    // Snake
+    // Snake Body & Head Glow
     snake.forEach((s, i) => {
-      ctx.fillStyle = i === 0 ? '#22d3ee' : 'rgba(34, 211, 238, 0.7)';
+      if (i === 0) {
+        ctx.shadowColor = '#22d3ee';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = '#22d3ee';
+      } else {
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = 'rgba(34, 211, 238, ' + (0.85 - (i / snake.length) * 0.4) + ')';
+      }
       ctx.fillRect(s.x * CELL + 1, s.y * CELL + 1, CELL - 2, CELL - 2);
     });
+    ctx.shadowBlur = 0;
 
     if (state !== 'run') {
-      ctx.fillStyle = 'rgba(4, 6, 12, 0.75)';
+      ctx.fillStyle = 'rgba(4, 6, 12, 0.82)';
       ctx.fillRect(0, 0, cv.width, cv.height);
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 20px "Space Grotesk", sans-serif';
+      ctx.font = 'bold 22px "Space Grotesk", sans-serif';
       ctx.fillText(state === 'over' ? 'GAME OVER' : 'READY TO PLAY?', cv.width / 2, cv.height / 2 - 10);
       ctx.font = '12px "JetBrains Mono", monospace';
       ctx.fillStyle = '#9aa6bf';
-      ctx.fillText(state === 'over' ? `FINAL SCORE: ${score} · PRESS ENTER TO RETRY` : 'PRESS START OR HIT ENTER', cv.width / 2, cv.height / 2 + 15);
+      ctx.fillText(state === 'over' ? `SCORE: ${score} · PRESS ENTER TO RETRY` : 'PRESS START OR HIT ENTER', cv.width / 2, cv.height / 2 + 16);
     }
   }
 
@@ -717,6 +839,28 @@ body {
     }[k];
     if (m) { e.preventDefault(); pushDir(m); }
   });
+
+  // Touch Swipe Controls for Mobile Devices
+  let touchStartX = 0, touchStartY = 0;
+  if (cv) {
+    cv.addEventListener('touchstart', e => {
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+
+    cv.addEventListener('touchend', e => {
+      if (state !== 'run') { startSnake(); return; }
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - touchStartX;
+      const dy = touch.clientY - touchStartY;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 20) {
+        pushDir([dx > 0 ? 1 : -1, 0]);
+      } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 20) {
+        pushDir([0, dy > 0 ? 1 : -1]);
+      }
+    }, { passive: true });
+  }
 
   // Initial render
   renderGames();

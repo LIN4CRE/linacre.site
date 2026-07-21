@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Gamepad2, Play, Heart, ExternalLink, Code2, Sparkles, Trophy, RotateCcw } from 'lucide-react';
+import { Gamepad2, Play, Heart, ExternalLink, Code2, Sparkles, Trophy, RotateCcw, Volume2, VolumeX } from 'lucide-react';
 
 interface GameItem {
   title: string;
@@ -27,9 +27,9 @@ const GAMES_DATA: GameItem[] = [
   {
     title: 'Snake',
     tagline: 'Classic arcade Snake built into the page',
-    desc: 'Built in vanilla JavaScript on Canvas 2D: smooth direction queueing, progressive speed scaling, high score tracking, and swipe controls.',
-    tags: ['Arcade', 'Built-in', 'Touch-friendly'],
-    tech: 'Vanilla JS · Canvas 2D',
+    desc: 'Built in vanilla JavaScript on Canvas 2D: direction queueing, speed scaling, local high score persistence, touch swipe gestures, and Web Audio synthesised sound blips.',
+    tags: ['Arcade', 'Built-in', 'Touch-friendly', 'Web Audio'],
+    tech: 'Vanilla JS · Canvas 2D · Web Audio',
     badge: 'Built-in',
     play: '#snake',
     source: 'https://github.com/LIN4CRE/linacre.site'
@@ -46,6 +46,7 @@ export default function Games() {
     }
   });
 
+  const [muted, setMuted] = useState<boolean>(() => localStorage.getItem('dlg_muted') === 'true');
   const [snakeOpen, setSnakeOpen] = useState(false);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(() => {
@@ -65,6 +66,53 @@ export default function Games() {
   const speedRef = useRef(120);
   const lastStepRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+
+  const playSynthSound = (type: 'step' | 'food' | 'over') => {
+    if (muted) return;
+    try {
+      if (!audioCtxRef.current && typeof AudioContext !== 'undefined') {
+        audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (!ctx) return;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const now = ctx.currentTime;
+
+      if (type === 'step') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.04);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      } else if (type === 'food') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.setValueAtTime(880, now + 0.06);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      } else if (type === 'over') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.exponentialRampToValueAtTime(80, now + 0.3);
+        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -76,6 +124,14 @@ export default function Games() {
 
   const toggleFav = (title: string) => {
     setFavs(prev => prev.includes(title) ? prev.filter(t => t !== title) : [...prev, title]);
+  };
+
+  const toggleMute = () => {
+    setMuted(m => {
+      const next = !m;
+      try { localStorage.setItem('dlg_muted', String(next)); } catch {}
+      return next;
+    });
   };
 
   const filteredGames = GAMES_DATA.filter(g => {
@@ -105,6 +161,7 @@ export default function Games() {
     setGameState('run');
     placeFood();
     lastStepRef.current = performance.now();
+    playSynthSound('step');
   };
 
   const pushDir = (m: [number, number]) => {
@@ -122,6 +179,7 @@ export default function Games() {
 
     if (head.x < 0 || head.y < 0 || head.x >= N || head.y >= N || snakeRef.current.some(s => s.x === head.x && s.y === head.y)) {
       setGameState('over');
+      playSynthSound('over');
       setScore(s => {
         if (s > highScore) {
           setHighScore(s);
@@ -135,10 +193,12 @@ export default function Games() {
     snakeRef.current.unshift(head);
     if (head.x === foodRef.current.x && head.y === foodRef.current.y) {
       setScore(s => s + 10);
-      speedRef.current = Math.max(65, speedRef.current - 1.5);
+      speedRef.current = Math.max(62, speedRef.current - 1.5);
+      playSynthSound('food');
       placeFood();
     } else {
       snakeRef.current.pop();
+      playSynthSound('step');
     }
   };
 
@@ -153,7 +213,7 @@ export default function Games() {
     ctx.fillRect(0, 0, cv.width, cv.height);
 
     // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
     ctx.lineWidth = 1;
     ctx.beginPath();
     for (let i = 1; i < N; i++) {
@@ -162,15 +222,26 @@ export default function Games() {
     }
     ctx.stroke();
 
-    // Food
+    // Food (Signal Green)
+    ctx.shadowColor = '#34d399';
+    ctx.shadowBlur = 10;
     ctx.fillStyle = '#34d399';
     ctx.fillRect(foodRef.current.x * cell + 2, foodRef.current.y * cell + 2, cell - 4, cell - 4);
+    ctx.shadowBlur = 0;
 
-    // Snake
+    // Snake Body
     snakeRef.current.forEach((s, i) => {
-      ctx.fillStyle = i === 0 ? '#22d3ee' : 'rgba(34, 211, 238, 0.7)';
+      if (i === 0) {
+        ctx.shadowColor = '#22d3ee';
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = '#22d3ee';
+      } else {
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = `rgba(34, 211, 238, ${0.85 - (i / snakeRef.current.length) * 0.4})`;
+      }
       ctx.fillRect(s.x * cell + 1, s.y * cell + 1, cell - 2, cell - 2);
     });
+    ctx.shadowBlur = 0;
   };
 
   useEffect(() => {
@@ -227,14 +298,14 @@ export default function Games() {
         </p>
       </section>
 
-      {/* Filter Bar & Stats */}
+      {/* Filter Bar & Audio Control */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-color pb-6">
         <div className="flex items-center gap-2">
           <button
             onClick={() => setFilter('all')}
             className={`px-3 py-1.5 font-mono text-xs rounded-lg border transition-all cursor-pointer ${
               filter === 'all'
-                ? 'bg-amber-color/10 border-amber-color text-amber-color font-bold'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-bold shadow-[0_0_12px_rgba(251,191,36,0.15)]'
                 : 'bg-muted/30 border-border-color text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -245,7 +316,7 @@ export default function Games() {
             onClick={() => setFilter('favs')}
             className={`px-3 py-1.5 font-mono text-xs rounded-lg border transition-all cursor-pointer flex items-center gap-1.5 ${
               filter === 'favs'
-                ? 'bg-amber-color/10 border-amber-color text-amber-color font-bold'
+                ? 'bg-amber-color/10 border-amber-color text-amber-color font-bold shadow-[0_0_12px_rgba(251,191,36,0.15)]'
                 : 'bg-muted/30 border-border-color text-muted-foreground hover:text-foreground'
             }`}
           >
@@ -257,9 +328,20 @@ export default function Games() {
           </button>
         </div>
 
-        <div className="font-mono text-xs text-muted-foreground flex items-center gap-2">
-          <Gamepad2 className="w-4 h-4 text-amber-color" />
-          <span>Showing {filteredGames.length} of {GAMES_DATA.length} games</span>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleMute}
+            className="px-3 py-1.5 rounded-lg border border-border-color bg-muted/20 font-mono text-xs text-muted-foreground hover:text-foreground hover:border-amber-color/40 flex items-center gap-1.5 cursor-pointer"
+            title="Toggle Web Audio"
+          >
+            {muted ? <VolumeX className="w-3.5 h-3.5 text-muted-foreground" /> : <Volume2 className="w-3.5 h-3.5 text-amber-color" />}
+            <span>{muted ? 'Muted' : 'Audio On'}</span>
+          </button>
+
+          <div className="font-mono text-xs text-muted-foreground flex items-center gap-2">
+            <Gamepad2 className="w-4 h-4 text-amber-color" />
+            <span>Showing {filteredGames.length} of {GAMES_DATA.length} games</span>
+          </div>
         </div>
       </div>
 
@@ -359,7 +441,7 @@ export default function Games() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 font-display font-bold text-lg text-foreground">
                 <Gamepad2 className="w-5 h-5 text-amber-color" />
-                <span>SNAKE <span class="font-mono text-xs text-amber-color">· BUILT-IN</span></span>
+                <span>SNAKE <span className="font-mono text-xs text-amber-color">· BUILT-IN</span></span>
               </div>
               <button
                 onClick={() => setSnakeOpen(false)}
@@ -389,7 +471,7 @@ export default function Games() {
             />
 
             <p className="font-mono text-[10px] text-muted-foreground text-center">
-              USE ARROW KEYS / WASD TO MOVE · ENTER TO RETRY · ESC TO QUIT
+              USE ARROW KEYS / WASD / SWIPE TO MOVE · ENTER TO RETRY · ESC TO QUIT
             </p>
           </div>
         </div>

@@ -7,6 +7,11 @@ import { ChangelogItem } from '../types';
 
 export const CHANGELOG: ChangelogItem[] = [
   {
+    version: 'v6.3',
+    title: 'Self-Hosted Offline Fonts & Web Audio Arcade',
+    description: 'Self-hosted variable fonts locally under /fonts for 100% offline standalone rendering; added synthesized Web Audio blips and touch gesture control to the Games Hub; and expanded David\'s full 16-year career timeline.'
+  },
+  {
     version: 'v6.2',
     title: 'Games Hub & Focused Developer Loadout',
     description: 'Upgraded the dedicated Games page with standalone glass layout, live KushCloud arcade flyer, and built-in interactive Snake; streamlined the Toolkit page into a curated daily loadout; and updated all CV and experience records with verified real data.'
