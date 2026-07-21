@@ -1336,6 +1336,7 @@ Make the SVG viewBox="0 0 100 100" with width="100%" and height="100%".`;
 
   app.post("/api/auth", (req, res) => {
     const secret = process.env.DASHBOARD_SESSION_SECRET || "default_session_secret_32_bytes_min_12345";
+    const passwordHash = process.env.DASHBOARD_PASSWORD_HASH || "e716eb6bf2edcc90a2998bf03f1621e0c1858fa503bc39f492f1da71f38a89d5";
     const { password } = req.body ?? {};
     const rawPassword = typeof password === 'string' ? password : '';
     const cleanPassword = rawPassword.trim();
