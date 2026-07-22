@@ -463,7 +463,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between selection:bg-amber-color/30" style={{ background: 'var(--linacre-gradient-hero)' }}>
+    <div className="min-h-[100dvh] bg-background text-foreground flex flex-col justify-between selection:bg-amber-color/30" style={{ background: 'var(--linacre-gradient-hero)' }}>
       <RouteHead meta={currentMeta} />
       <style dangerouslySetInnerHTML={{ __html: `
         ${activeFont.import}
@@ -966,7 +966,7 @@ export default function App() {
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl border-2 border-amber-color bg-[#030c14]/95 backdrop-blur-xl p-5 shadow-[0_0_30px_rgba(34,211,238,0.4)]"
+            className="fixed bottom-6 inset-x-4 z-50 mx-auto max-w-sm rounded-2xl border-2 border-amber-color bg-[#030c14]/95 backdrop-blur-xl p-5 shadow-[0_0_30px_rgba(34,211,238,0.4)]"
           >
             <div className="flex items-start gap-3">
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-color text-[#030c14] font-mono text-xl font-bold">

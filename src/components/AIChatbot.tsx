@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Bot, X, Send, Terminal, Loader2, RotateCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -176,7 +176,7 @@ export default function AIChatbot() {
             initial={{ opacity: 0, scale: 0.95, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
-            className="fixed bottom-22 right-6 z-40 w-[330px] sm:w-[360px] h-[450px] bg-[#030c14] border border-border-color rounded-xl overflow-hidden shadow-2xl flex flex-col font-mono text-xs"
+            className="fixed bottom-22 inset-x-3 z-40 sm:inset-x-auto sm:right-6 sm:w-[360px] h-[65vh] max-h-[85vh] sm:h-[450px] bg-[#030c14] border border-border-color rounded-xl overflow-hidden shadow-2xl flex flex-col font-mono text-xs"
             id="chatbot-window"
           >
             {/* Terminal Header */}

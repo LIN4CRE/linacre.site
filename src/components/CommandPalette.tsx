@@ -157,7 +157,7 @@ export default function CommandPalette({ isOpen, onClose, setActiveTab, setSearc
           />
 
           {/* Dialog Window */}
-          <div className="flex min-h-screen items-start justify-center p-4 sm:p-6 md:p-20">
+          <div className="flex min-h-[100dvh] items-start justify-center p-4 sm:p-6 md:p-20">
             <motion.div
               initial={{ opacity: 0, scale: 0.96, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
