@@ -382,7 +382,7 @@ interface DevPlaygroundProps {
 import McpToolboxCallout from './McpToolboxCallout';
 
 export default function DevPlayground({ theme = 'dark' }: DevPlaygroundProps) {
-  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm' | 'svg_creator' | 'json2ts' | 'cron'>('jwt');
+  const [activeTool, setActiveTool] = useState<'jwt' | 'glass' | 'regex' | 'gen' | 'c_to_wasm' | 'svg_creator' | 'json2ts' | 'cron' | 'theme'>('jwt');
   const [copiedType, setCopiedType] = useState<string | null>(null);
 
   // UTILITY: JSON to TS conversion helper
