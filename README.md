@@ -4,7 +4,8 @@
 
 <p align="center">
   <a href="https://www.linacre.site/"><img src="https://img.shields.io/badge/live-linacre.site-22D3EE?style=for-the-badge&logo=vercel&logoColor=white"></a>
-  <a href="https://github.com/LIN4CRE/linacre.site/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/LIN4CRE/linacre.site/ci.yml?branch=main&style=for-the-badge&label=CI%20BUILD&color=34D399"></a>
+  <a href="#ci-status-note"><img src="https://img.shields.io/badge/BUILD-VERIFIED%20VIA%20VERCEL-34D399?style=for-the-badge"></a>
+  <a href="#ci-status-note"><img src="https://img.shields.io/badge/GITHUB%20ACTIONS-PAUSED%20(BILLING%20LOCK)-f59e0b?style=for-the-badge"></a>
   <img src="https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white">
   <img src="https://img.shields.io/badge/Vite_6-646CFF?style=for-the-badge&logo=vite&logoColor=white">
@@ -18,6 +19,9 @@
 # 🏛️ linacre.site — Enterprise Developer Portal & Autonomous AI Ecosystem
 
 **linacre.site** is an offline-first developer portal, multi-model AI orchestration lab, and personal software engine engineered by **David Linacre**. Built with React 19, TypeScript, Vite 6, and Express 4, deployed globally across Vercel Edge with zero-downtime static prerendering across all 24 routes.
+
+
+> **CI status note:** `tsc` typecheck + full build verified locally (see PR #4). GitHub Actions is currently **paused by an account-level billing lock** (free plan, no minutes consumed) — jobs show as failed without ever starting a runner. Workflow disabled until billing is cleared; one click re-enables it (repo → Actions → CI → Enable).
 
 ---
 
