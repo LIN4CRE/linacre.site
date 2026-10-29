@@ -130,6 +130,30 @@
       "destination": "/manifest.json"
     },
     {
+      "source": "/games/vault",
+      "destination": "https://lin4cre.github.io/tabulous-games/"
+    },
+    {
+      "source": "/games/vault/:path*",
+      "destination": "https://lin4cre.github.io/tabulous-games/:path*"
+    },
+    {
+      "source": "/games/tabulous",
+      "destination": "https://lin4cre.github.io/tabulous-games/"
+    },
+    {
+      "source": "/games/tabulous/:path*",
+      "destination": "https://lin4cre.github.io/tabulous-games/:path*"
+    },
+    {
+      "source": "/tabulous-games",
+      "destination": "https://lin4cre.github.io/tabulous-games/"
+    },
+    {
+      "source": "/tabulous-games/:path*",
+      "destination": "https://lin4cre.github.io/tabulous-games/:path*"
+    },
+    {
       "source": "/",
       "destination": "/index.html"
     },
