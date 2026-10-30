@@ -48,13 +48,26 @@ export default function FeaturedSpotlight() {
               >
                 <div className="relative aspect-video w-full overflow-hidden bg-[#05060a]">
                   {p.artwork ? (
-                    <img
-                      src={p.artwork}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+                    <>
+                      <img
+                        src={p.artwork}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        onError={e => {
+                          e.currentTarget.style.display = 'none';
+                          const fallback = e.currentTarget.nextElementSibling;
+                          if (fallback) fallback.classList.remove('hidden');
+                        }}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      <span
+                        className="hidden grid h-full w-full place-items-center text-3xl bg-gradient-to-br from-[#12151e] to-[#07080b]"
+                        aria-hidden="true"
+                      >
+                        {p.emoji ?? '📦'}
+                      </span>
+                    </>
                   ) : (
                     <span
                       className="grid h-full w-full place-items-center text-3xl"

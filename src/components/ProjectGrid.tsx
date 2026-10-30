@@ -116,13 +116,26 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
                     {/* Card Artwork Thumbnail Banner (16:9 Aspect Ratio) */}
                     <div className="relative aspect-video -mx-3 -mt-3 mb-2.5 overflow-hidden rounded-t-xl bg-[#05060a] border-b border-white/[0.06]">
                       {project.artwork ? (
-                        <img
-                          src={project.artwork}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
+                        <>
+                          <img
+                            src={project.artwork}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            onError={e => {
+                              e.currentTarget.style.display = 'none';
+                              const fallback = e.currentTarget.nextElementSibling;
+                              if (fallback) fallback.classList.remove('hidden');
+                            }}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          />
+                          <span
+                            className="hidden grid h-full w-full place-items-center text-3xl bg-gradient-to-br from-[#12151e] to-[#07080b]"
+                            aria-hidden="true"
+                          >
+                            {project.emoji || '📦'}
+                          </span>
+                        </>
                       ) : (
                         <span
                           className="grid h-full w-full place-items-center text-3xl"
