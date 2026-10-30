@@ -9,7 +9,8 @@ import {
   Music,
   Code2,
   Cpu,
-  Radio
+  Radio,
+  Gamepad2
 } from 'lucide-react';
 import { audioFx } from '../lib/audioFx';
 
@@ -191,6 +192,16 @@ export default function CyberHUD({
             <Cpu className="h-3.5 w-3.5" />
             <span>Local Rig</span>
           </button>
+
+          {/* Games Dock Link */}
+          <a
+            href="/games"
+            className="dock-btn flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-mono font-semibold text-purple-200 border border-purple-500/40 bg-purple-500/15 hover:bg-purple-500/25 hover:text-white hover:border-purple-500/70 shadow-[0_0_12px_rgba(168,85,247,0.25)] transition-all"
+            title="Tabulous Games — 300+ Playable Browser Ports"
+          >
+            <Gamepad2 className="h-3.5 w-3.5 text-purple-300" />
+            <span>Games</span>
+          </a>
 
           <div className="hidden sm:block h-4 w-px bg-white/15 mx-1" />
 
