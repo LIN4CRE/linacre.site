@@ -245,11 +245,11 @@
     },
     {
       "source": "/games",
-      "destination": "https://lin4cre.github.io/tabulous-games/"
+      "destination": "/games/index.html"
     },
     {
       "source": "/games/",
-      "destination": "https://lin4cre.github.io/tabulous-games/"
+      "destination": "/games/index.html"
     },
     {
       "source": "/games/:path*",

@@ -465,6 +465,11 @@ const written = [];
 for (const [route, m] of Object.entries(meta.routes)) {
   const out =
     route === '/' ? templatePath : path.join(distDir, route.replace(/^\//, ''), 'index.html');
+  if (route === '/games' && fs.existsSync(path.join(root, 'public', 'games', 'index.html'))) {
+    written.push(route);
+    console.log(`[prerender] ${route} → Tabulous Games standalone hub`);
+    continue;
+  }
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, buildShell(route, m));
   written.push(route);

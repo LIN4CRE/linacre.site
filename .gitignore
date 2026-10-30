@@ -39,3 +39,5 @@ status.txt
 # Scratch
 *.log
 *.tmp
+.vercel
+.env*
