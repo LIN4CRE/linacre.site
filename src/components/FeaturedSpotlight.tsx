@@ -46,7 +46,7 @@ export default function FeaturedSpotlight() {
                 transition={{ duration: 0.25, delay: i * 0.04 }}
                 className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-xl border border-white/[0.08] bg-[#0e1016] transition-all duration-200 hover:border-[#8fd6ff]/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
               >
-                <div className="relative h-24 w-full overflow-hidden bg-black/40">
+                <div className="relative aspect-video w-full overflow-hidden bg-[#05060a]">
                   {p.artwork ? (
                     <img
                       src={p.artwork}
@@ -63,7 +63,7 @@ export default function FeaturedSpotlight() {
                       {p.emoji ?? '📦'}
                     </span>
                   )}
-                  <span className="absolute left-2 top-2 rounded-full border border-amber-400/30 bg-black/70 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-300 backdrop-blur">
+                  <span className="absolute left-2 top-2 rounded-full border border-amber-400/30 bg-black/75 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-amber-300 backdrop-blur">
                     Featured
                   </span>
                 </div>

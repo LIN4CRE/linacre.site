@@ -105,16 +105,16 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
             <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#9aa3b2]">{group.label}</h3>
             <span className="h-px flex-1 bg-white/[0.08]" />
           </div>
-          <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {group.projects.map(project => (
               <Card3DTilt key={project.name} className="flex flex-col h-full">
                 <article
                   aria-label={project.name}
-                  className="tabulous-card group flex flex-1 min-w-0 flex-col justify-between"
+                  className="tabulous-card group flex flex-1 min-w-0 flex-col justify-between p-3"
                 >
                   <div>
-                    {/* Card Artwork Thumbnail Banner */}
-                    <div className="relative h-28 -mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl bg-black/40 border-b border-white/[0.06]">
+                    {/* Card Artwork Thumbnail Banner (16:9 Aspect Ratio) */}
+                    <div className="relative aspect-video -mx-3 -mt-3 mb-2.5 overflow-hidden rounded-t-xl bg-[#05060a] border-b border-white/[0.06]">
                       {project.artwork ? (
                         <img
                           src={project.artwork}
@@ -131,28 +131,35 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
                           {project.emoji || '📦'}
                         </span>
                       )}
+
+                      {/* Kind / Category Badge */}
+                      <span className="absolute left-2 top-2 rounded-full border border-white/10 bg-black/75 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[#8fd6ff] backdrop-blur">
+                        {project.kind}
+                      </span>
+
+                      {/* Pinned or New Badge */}
                       {project.pinned && (
-                        <span className="absolute right-2 top-2 shrink-0 rounded-full border border-amber-400/40 bg-black/75 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                        <span className="absolute right-2 top-2 rounded-full border border-amber-400/40 bg-black/75 px-2 py-0.5 font-mono text-[9px] font-bold text-amber-300 backdrop-blur">
                           Pinned
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span aria-hidden="true" className="text-base shrink-0">{project.emoji || '📦'}</span>
-                        <h4 className="min-w-0 break-words font-display text-base font-bold text-white group-hover:text-[#8fd6ff] transition-colors">
-                          {project.name}
-                        </h4>
-                      </div>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span aria-hidden="true" className="text-sm shrink-0">{project.emoji || '📦'}</span>
+                      <h4 className="min-w-0 truncate font-display text-sm font-bold text-white group-hover:text-[#8fd6ff] transition-colors">
+                        {project.name}
+                      </h4>
                     </div>
-                    <p className="mt-2.5 text-xs text-[#9aa3b2] leading-relaxed line-clamp-2">
+
+                    <p className="mt-1 text-xs text-[#9aa3b2] leading-snug line-clamp-2">
                       {project.blurb}
                     </p>
+
                     {project.tech && project.tech.length > 0 && (
-                      <div className="mt-2.5 flex flex-wrap gap-1">
-                        {project.tech.slice(0, 3).map(t => (
-                          <span key={t} className="rounded bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-[#6b7482] border border-white/[0.05]">
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {project.tech.slice(0, 2).map(t => (
+                          <span key={t} className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-[#6b7482] border border-white/[0.05]">
                             {t}
                           </span>
                         ))}
@@ -160,14 +167,14 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
                     )}
                   </div>
 
-                  <div className="mt-3.5 pt-3 border-t border-white/[0.08] flex items-center justify-between gap-2">
+                  <div className="mt-3 pt-2 border-t border-white/[0.06] flex items-center justify-between gap-1.5">
                     <ProjectActions project={project} />
                     {projectActions(project).length > 0 && (
                       <button
                         type="button"
                         onClick={() => setSelected(project)}
                         aria-label={`View details for ${project.name}`}
-                        className="inline-flex min-h-8 items-center rounded-lg border border-white/10 px-2.5 py-1 text-xs text-[#9aa3b2] hover:text-white hover:border-white/25 transition-all"
+                        className="inline-flex min-h-7 items-center rounded-lg border border-white/10 px-2 py-0.5 text-xs text-[#9aa3b2] hover:text-white hover:border-white/25 transition-all"
                       >
                         Details
                       </button>

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Search, Gamepad2, ExternalLink, Terminal } from 'lucide-react';
+import { Search, Gamepad2 } from 'lucide-react';
 import { getTabFromLocation, tabToPath, type AppTab } from './config/routes';
 import { SITE_PROJECTS } from './data/siteProjects';
 import FeaturedSpotlight from './components/FeaturedSpotlight';
@@ -264,88 +264,39 @@ export default function App() {
         {/* Route 1: Home (Start / Projects) */}
         {activeTab === 'home' && (
           <>
-            <section className="relative overflow-hidden rounded-2xl border border-white/[0.08] bg-[#0c0f16]/90 p-5 sm:p-6 lg:p-7 shadow-[0_16px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl">
-              {/* Dynamic subtle ambient glow */}
-              <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-[#8fd6ff]/10 blur-3xl" />
-              <div className="pointer-events-none absolute -right-16 -bottom-16 h-56 w-56 rounded-full bg-[#38bdf8]/10 blur-3xl" />
-
-              <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-center">
-                {/* Left: Memorable, Sophisticated Brand Core */}
-                <div className="space-y-3.5">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1 font-mono text-[10px] font-semibold text-[#8fd6ff]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#8fd6ff] animate-pulse" />
-                    <span>LIN4CRE // INDEPENDENT SYSTEMS · BARNSLEY, UK</span>
-                  </div>
-
-                  <h1 className="font-display text-2xl sm:text-4xl lg:text-[40px] font-extrabold tracking-tight text-white leading-tight">
-                    Useful software.{' '}
-                    <span className="bg-gradient-to-r from-white via-[#8fd6ff] to-[#38bdf8] bg-clip-text text-transparent">
-                      Zero noise.
-                    </span>{' '}
-                    Built to last.
-                  </h1>
-
-                  <p className="max-w-xl text-xs sm:text-sm leading-relaxed text-[#9aa3b2]">
-                    <strong className="text-white font-medium">{SITE_PROJECTS.length}</strong> public systems,
-                    WASAPI DSP audio synchronizers, Pokémon AI pricing engines, and the Tabulous browser games vault.
-                    No subscriptions, zero trackers, 100% free and inspectable on GitHub.
-                  </p>
-
-                  {/* High-Impact Actions */}
-                  <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                    <a
-                      href="/games"
-                      className="inline-flex items-center gap-2 rounded-xl bg-[#8fd6ff] px-4 py-2 font-mono text-xs font-bold text-[#07080b] shadow-[0_0_16px_rgba(143,214,255,0.3)] transition-all hover:bg-[#c4ebff] hover:scale-105"
-                    >
-                      <Gamepad2 className="h-3.5 w-3.5" />
-                      <span>Play Games (300+)</span>
-                    </a>
-
-                    <a
-                      href="https://github.com/LIN4CRE"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-xl border border-white/12 bg-white/5 px-3.5 py-2 font-mono text-xs font-semibold text-white transition-all hover:border-[#8fd6ff]/50 hover:bg-white/10"
-                    >
-                      <span>GitHub</span>
-                      <ExternalLink className="h-3 w-3 text-[#8fd6ff]" />
-                    </a>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsCommandOpen(true)}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] px-3 py-2 font-mono text-xs text-[#9aa3b2] hover:text-white hover:border-white/20 transition-all cursor-pointer"
-                    >
-                      <Terminal className="h-3 w-3 text-[#8fd6ff]" />
-                      <span>Palette <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 text-[9px]">⌘K</kbd></span>
-                    </button>
-                  </div>
-
-                  {/* Telemetry Micro-Stats */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2.5 border-t border-white/[0.06]">
-                    <div className="rounded-lg border border-white/[0.05] bg-white/[0.02] p-2 text-center">
-                      <div className="font-display text-base font-bold text-[#8fd6ff]">303</div>
-                      <div className="font-mono text-[9px] text-[#9aa3b2] uppercase tracking-wider">Browser Ports</div>
-                    </div>
-                    <div className="rounded-lg border border-white/[0.05] bg-white/[0.02] p-2 text-center">
-                      <div className="font-display text-base font-bold text-white">{SITE_PROJECTS.length}</div>
-                      <div className="font-mono text-[9px] text-[#9aa3b2] uppercase tracking-wider">LIN4CRE Repos</div>
-                    </div>
-                    <div className="rounded-lg border border-white/[0.05] bg-white/[0.02] p-2 text-center">
-                      <div className="font-display text-base font-bold text-white">16 Yrs</div>
-                      <div className="font-mono text-[9px] text-[#9aa3b2] uppercase tracking-wider">Discipline</div>
-                    </div>
-                    <div className="rounded-lg border border-white/[0.05] bg-white/[0.02] p-2 text-center">
-                      <div className="font-display text-base font-bold text-emerald-400">100%</div>
-                      <div className="font-mono text-[9px] text-[#9aa3b2] uppercase tracking-wider">Open Source</div>
-                    </div>
-                  </div>
+            <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-b border-white/[0.08] pb-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#8fd6ff]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#8fd6ff] animate-pulse" />
+                  LIN4CRE // Systems &amp; Software · Barnsley, UK
                 </div>
+                <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                  Useful software. Zero noise. Built to last.
+                </h1>
+                <p className="text-xs sm:text-sm text-[#9aa3b2] max-w-2xl leading-relaxed">
+                  <strong className="text-white font-semibold">{SITE_PROJECTS.length}</strong> verified open-source applications, WASAPI audio DSP synchronizers, collectible AI engines, and 303 browser ports · zero telemetry, 100% free on GitHub.
+                </p>
+              </div>
 
-                {/* Right: The Precision Monolith Centerpiece */}
-                <div className="relative flex items-center justify-center">
-                  <Emblem3D mode="hero" />
-                </div>
+              {/* Compact Quick Actions & Status */}
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href="/games"
+                  className="tabulous-btn-surprise"
+                  title="Launch Tabulous Games (303 Playable Browser Games)"
+                >
+                  <Gamepad2 className="h-3.5 w-3.5 text-[#8fd6ff]" />
+                  <span>Games (303)</span>
+                </a>
+                <a
+                  href="https://github.com/LIN4CRE"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tabulous-btn-support"
+                  title="View LIN4CRE on GitHub"
+                >
+                  <span>GitHub ↗</span>
+                </a>
               </div>
             </section>
 
