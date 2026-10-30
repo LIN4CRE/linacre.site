@@ -16,70 +16,161 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
   const [access, setAccess] = useState<AccessFilter>('all');
   const [selected, setSelected] = useState<SiteProject | null>(null);
   const [sort, setSort] = useState('recommended');
+
   const visible = filterProjects(projects, query, category, access).sort((a, b) =>
     (sort === 'recommended' ? Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) : 0) ||
     a.name.localeCompare(b.name),
   );
+
   const groups = PROJECT_CATEGORIES.map(item => ({
     ...item,
     projects: visible.filter(project => projectCategory(project) === item.id),
   })).filter(group => group.projects.length);
+
   const reset = () => { setQuery(''); setCategory('all'); setAccess('all'); };
   const categories = PROJECT_CATEGORIES.filter(item => projects.some(project => projectCategory(project) === item.id));
 
   return (
     <section aria-label={heading} className="space-y-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+      {/* Header & Controls Bar */}
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/[0.08] pb-4">
         <div>
-          <h2 className="font-display text-2xl font-bold">{heading}</h2>
-          <p role="status" className="mt-2 text-sm text-muted-foreground">{visible.length} of {projects.length} listed projects</p>
+          <h2 className="font-display text-2xl font-bold text-white">{heading}</h2>
+          <p role="status" className="mt-1 text-xs text-[#9aa3b2]">
+            {visible.length} of {projects.length} listed projects
+          </p>
         </div>
-        <label className="text-sm">Sort
-          <select aria-label="Sort projects" value={sort} onChange={event => setSort(event.target.value)} className="ml-2 min-h-11 rounded-lg border border-border-color bg-background px-3">
-            <option value="recommended">Pinned first</option><option value="az">A–Z</option>
-          </select>
-        </label>
+        <div className="flex flex-wrap items-center gap-3">
+          <label className="flex items-center text-xs text-[#9aa3b2] gap-1.5">
+            <span>Sort:</span>
+            <select
+              aria-label="Sort projects"
+              value={sort}
+              onChange={event => setSort(event.target.value)}
+              className="rounded-lg border border-white/[0.1] bg-[#0e1016] px-2.5 py-1 text-xs text-white"
+            >
+              <option value="recommended">Pinned first</option>
+              <option value="az">A–Z</option>
+            </select>
+          </label>
+          <label className="flex items-center text-xs text-[#9aa3b2] gap-1.5">
+            <span>Access:</span>
+            <select
+              aria-label="Filter by access"
+              value={access}
+              onChange={event => setAccess(event.target.value as AccessFilter)}
+              className="rounded-lg border border-white/[0.1] bg-[#0e1016] px-2.5 py-1 text-xs text-white"
+            >
+              <option value="all">All access types</option>
+              <option value="use">Use in browser</option>
+              <option value="download">Downloads</option>
+              <option value="source">Source available</option>
+            </select>
+          </label>
+          {(query || category !== 'all' || access !== 'all') && (
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded-lg border border-white/10 px-2.5 py-1 text-xs text-[#8fd6ff] hover:bg-white/5"
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Tabulous Filter Pills */}
       <div role="group" aria-label="Project categories" className="flex flex-wrap gap-2">
         {[{ id: 'all' as const, label: 'All categories' }, ...categories].map(item => (
-          <button key={item.id} type="button" aria-pressed={category === item.id} onClick={() => setCategory(item.id)}
-            className={`min-h-11 rounded-xl border px-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground ${category === item.id ? 'border-foreground bg-muted font-semibold' : 'border-border-color hover:bg-muted'}`}>
-            {item.label} <span className="text-muted-foreground">({item.id === 'all' ? projects.length : projects.filter(project => projectCategory(project) === item.id).length})</span>
+          <button
+            key={item.id}
+            type="button"
+            aria-pressed={category === item.id}
+            onClick={() => setCategory(item.id)}
+            className={`tabulous-pill ${category === item.id ? 'active' : ''}`}
+          >
+            <span>{item.label}</span>
+            <span className="text-[11px] opacity-60">
+              ({item.id === 'all' ? projects.length : projects.filter(project => projectCategory(project) === item.id).length})
+            </span>
           </button>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="text-sm">Access
-          <select aria-label="Filter by access" value={access} onChange={event => setAccess(event.target.value as AccessFilter)} className="ml-2 min-h-11 rounded-lg border border-border-color bg-background px-3">
-            <option value="all">All access types</option><option value="use">Use in browser</option>
-            <option value="download">Downloads</option><option value="source">Source available</option>
-          </select>
-        </label>
-        {(query || category !== 'all' || access !== 'all') && <button type="button" onClick={reset} className="min-h-11 rounded-lg px-3 text-sm underline underline-offset-4">Clear all filters</button>}
-      </div>
-      <p className="text-sm leading-6 text-muted-foreground">App links are not uptime checks. Downloads appear only where a download or release link is recorded; source-only projects may need building or setup.</p>
+
+      {/* Project Group Sections & Dark Chrome Cards */}
       {groups.map(group => (
-        <section key={group.id} aria-label={group.label} className="space-y-4">
-          <h3 className="font-display text-xl font-semibold">{group.label}</h3>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section key={group.id} aria-label={group.label} className="space-y-3 pt-2">
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#9aa3b2]">{group.label}</h3>
+            <span className="h-px flex-1 bg-white/[0.08]" />
+          </div>
+          <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
             {group.projects.map(project => (
-              <article key={project.name} aria-label={project.name} className="flex min-w-0 flex-col rounded-2xl border border-border-color bg-[var(--linacre-panel)] p-5">
-                <div className="flex items-start gap-3">
-                  <span aria-hidden="true" className="text-2xl">{project.emoji || '📦'}</span>
-                  <h4 className="min-w-0 break-words font-display text-lg font-bold">{project.name}</h4>
+              <article
+                key={project.name}
+                aria-label={project.name}
+                className="tabulous-card group flex min-w-0 flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span aria-hidden="true" className="text-xl shrink-0">{project.emoji || '📦'}</span>
+                      <h4 className="min-w-0 break-words font-display text-base font-bold text-white group-hover:text-[#8fd6ff] transition-colors">
+                        {project.name}
+                      </h4>
+                    </div>
+                    {project.pinned && (
+                      <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                        Pinned
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-2.5 text-xs text-[#9aa3b2] leading-relaxed line-clamp-2">
+                    {project.blurb}
+                  </p>
+                  {project.tech && project.tech.length > 0 && (
+                    <div className="mt-2.5 flex flex-wrap gap-1">
+                      {project.tech.slice(0, 3).map(t => (
+                        <span key={t} className="rounded bg-white/[0.04] px-1.5 py-0.5 text-[10px] text-[#6b7482] border border-white/[0.05]">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {project.pinned && <p className="mt-2 text-xs font-semibold text-muted-foreground">Pinned</p>}
-                <p className="mb-5 mt-3 flex-1 text-sm leading-6 text-muted-foreground">{project.blurb}</p>
-                {projectCategory(project) !== 'Private' && projectActions(project).every(action => action.kind === 'source') && <p className="mb-3 text-xs text-muted-foreground">Source only — no app or download recorded</p>}
-                {project.kind === 'Game' && !project.pinned && <p className="mb-3 text-xs text-muted-foreground">Needs playtesting — not recommended yet</p>}
-                <ProjectActions project={project} />
-                {projectActions(project).length > 0 && <button type="button" onClick={() => setSelected(project)} aria-label={`View details for ${project.name}`} className="mt-3 min-h-11 self-start rounded-lg text-sm underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">Details</button>}
+
+                <div className="mt-3.5 pt-3 border-t border-white/[0.08] flex items-center justify-between gap-2">
+                  <ProjectActions project={project} />
+                  {projectActions(project).length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setSelected(project)}
+                      aria-label={`View details for ${project.name}`}
+                      className="inline-flex min-h-8 items-center rounded-lg border border-white/10 px-2.5 py-1 text-xs text-[#9aa3b2] hover:text-white hover:border-white/25 transition-all"
+                    >
+                      Details
+                    </button>
+                  )}
+                </div>
               </article>
             ))}
           </div>
         </section>
       ))}
-      {!visible.length && <div className="rounded-2xl border border-dashed border-border-color p-8 text-center"><p>No projects match these filters.</p><button type="button" onClick={reset} className="mt-3 min-h-11 rounded-lg px-3 font-semibold underline">Reset filters</button></div>}
+
+      {!visible.length && (
+        <div className="rounded-xl border border-dashed border-white/15 p-8 text-center text-[#9aa3b2]">
+          <p className="text-sm">No projects match these filters.</p>
+          <button
+            type="button"
+            onClick={reset}
+            className="mt-3 rounded-lg border border-white/15 px-3 py-1.5 text-xs font-semibold text-white hover:bg-white/5"
+          >
+            Reset filters
+          </button>
+        </div>
+      )}
+
       <ProjectDetailModal project={selected} onClose={() => setSelected(null)} />
     </section>
   );
