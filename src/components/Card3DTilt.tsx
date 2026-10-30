@@ -3,18 +3,18 @@ import { useState, useRef, MouseEvent, ReactNode } from 'react';
 interface Card3DTiltProps {
   children: ReactNode;
   className?: string;
-  maxTilt?: number; // max tilt angle in degrees (default 10)
+  maxTilt?: number; // max tilt angle in degrees (default 4.5 for sophisticated subtle depth)
   glare?: boolean;
 }
 
 /**
- * Card3DTilt — interactive physics-based 3D card tilt with dynamic holographic sheen.
- * Elevates cards with physical depth, specularity, and smooth cursor tracking.
+ * Card3DTilt — sophisticated, tactile 3D card tilt with precision sapphire specular sheen.
+ * Calibrated for a premium, understated physical feel (Linear / Teenage Engineering standard).
  */
 export default function Card3DTilt({
   children,
   className = '',
-  maxTilt = 8,
+  maxTilt = 4.5,
   glare = true,
 }: Card3DTiltProps) {
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +26,6 @@ export default function Card3DTilt({
   });
 
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    // If reduced motion is requested, skip tilt
     if (
       typeof window !== 'undefined' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -48,18 +47,18 @@ export default function Card3DTilt({
     const rotateY = ((x - centerX) / centerX) * maxTilt;
 
     setTransformStyle(
-      `perspective(800px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.018, 1.018, 1.018)`,
+      `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(4px)`,
     );
 
     if (glare) {
       const glareX = (x / rect.width) * 100;
       const glareY = (y / rect.height) * 100;
-      setGlarePosition({ x: glareX, y: glareY, opacity: 0.18 });
+      setGlarePosition({ x: glareX, y: glareY, opacity: 0.12 });
     }
   };
 
   const handleMouseLeave = () => {
-    setTransformStyle('perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
+    setTransformStyle('perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)');
     setGlarePosition(prev => ({ ...prev, opacity: 0 }));
   };
 
@@ -68,21 +67,21 @@ export default function Card3DTilt({
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className={`relative transition-all duration-200 ease-out will-change-transform ${className}`}
+      className={`relative transition-transform duration-300 ease-out will-change-transform ${className}`}
       style={{
-        transform: transformStyle || 'perspective(800px) rotateX(0deg) rotateY(0deg)',
+        transform: transformStyle || 'perspective(1000px) rotateX(0deg) rotateY(0deg)',
         transformStyle: 'preserve-3d',
       }}
     >
       {children}
 
-      {/* Dynamic Specular Holographic Glare */}
+      {/* Sapphire Specular Sheen (Subtle, Sophisticated) */}
       {glare && (
         <div
-          className="pointer-events-none absolute inset-0 z-20 rounded-xl transition-opacity duration-300"
+          className="pointer-events-none absolute inset-0 z-20 rounded-xl transition-opacity duration-500 ease-out"
           style={{
             opacity: glarePosition.opacity,
-            background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(143, 214, 255, 0.35) 0%, rgba(143, 214, 255, 0.08) 35%, transparent 65%)`,
+            background: `radial-gradient(circle at ${glarePosition.x}% ${glarePosition.y}%, rgba(143, 214, 255, 0.22) 0%, rgba(255, 255, 255, 0.05) 30%, transparent 60%)`,
             mixBlendMode: 'screen',
           }}
           aria-hidden="true"
