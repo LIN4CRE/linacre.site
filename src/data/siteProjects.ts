@@ -3,7 +3,7 @@
  *
  * Prioritises verified live apps, active tools, games, and repositories from
  * the LIN4CRE GitHub account and live Vercel deployments (APKHub, PokéFlip AI).
- * Broken placeholders and dead external services have been removed.
+ * Each project includes authentic, relatable artwork banners.
  */
 
 export type ProjectKind =
@@ -106,7 +106,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: true,
     kind: 'Game',
     emoji: '🕹️',
-    artwork: '/banners/tabulous-games.webp',
+    artwork: '/banners/retro-arcade-vault.svg',
     blurb:
       'Sleek retro gaming vault & web player preloaded with 63+ classic PS1, GBA, NDS, SNES, and Sega Genesis titles with box artwork and CRT shaders.',
     url: 'https://lin4cre.github.io/retro-arcade-vault/',
@@ -127,7 +127,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: true,
     kind: 'App',
     emoji: '🚂',
-    artwork: '/banners/deasy.webp',
+    artwork: '/banners/dbsteam.png',
     blurb:
       'Next-Gen Steam & Gaming Account Operations Hub with SteamDB Paid Releases, Cloud Save Vault, Lua Automation Scripting, and Gemini AI Intelligence.',
     url: 'https://lin4cre.github.io/DBSTEAM/',
@@ -148,7 +148,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: true,
     kind: 'Tool',
     emoji: '🔊',
-    artwork: '/projects/whole-home-adblocker.svg',
+    artwork: '/banners/dual-audio-synchronizer.png',
     blurb:
       'Studio-grade WASAPI multi-speaker audio synchronizer for Windows with automatic ±1 ms clock-drift phase lock and 2.8 kHz Hearing Clarity DSP.',
     url: 'https://lin4cre.github.io/dual-audio-synchronizer/',
@@ -167,6 +167,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: true,
     kind: 'App',
     emoji: '🌐',
+    artwork: '/og.png',
     blurb:
       'David Linacre personal portfolio, project library, browser games vault, and tools directory.',
     url: 'https://www.linacre.site',
@@ -187,6 +188,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     badge: 'NEW',
     kind: 'App',
     emoji: '📖',
+    artwork: '/banners/speedread.svg',
     blurb:
       'High-velocity RSVP speed reading app — train comprehension at 300 to 1,000+ words per minute with cadence pacing.',
     url: 'https://lin4cre.github.io/SpeedRead/',
@@ -205,6 +207,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     badge: 'NEW',
     kind: 'Tool',
     emoji: '⚡',
+    artwork: '/banners/skipr.jpg',
     blurb:
       'Auto-skip intros, outros & recaps seamlessly for Stremio on Android TV, Fire TV, and Desktop.',
     url: 'https://lin4cre.github.io/skipr/',
@@ -223,6 +226,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     badge: 'NEW',
     kind: 'App',
     emoji: '🎤',
+    artwork: '/banners/karaoke-pulse.png',
     blurb:
       'Full-stack YouTube Karaoke Studio with synced scrolling lyrics, dual-stem AI vocal removal, live mic reverb & pitch detection.',
     url: 'https://github.com/LIN4CRE/karaoke-pulse',
@@ -240,6 +244,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Beginner 2x4 Workbench Guide',
     kind: 'Tool',
     emoji: '🪵',
+    artwork: '/banners/beginner-bench.svg',
     blurb:
       'Responsive beginner woodworking bench build guide with cut diagrams, hardware list, and an interactive 3D model.',
     url: 'https://lin4cre.github.io/beginner-2x4-bench-plan/',
@@ -257,6 +262,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Barnsley Web Builder',
     kind: 'App',
     emoji: '🏗️',
+    artwork: '/banners/barnsley-web-builder.png',
     blurb:
       'Turnkey website builder for local shops, trades, and independent services in Barnsley and South Yorkshire.',
     url: 'https://lin4cre.github.io/Barnsley-Web-Builder/',
@@ -274,6 +280,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'DigiPoke',
     kind: 'Game',
     emoji: '🐾',
+    artwork: '/banners/pixelpoke-arena.webp',
     blurb:
       'Local-first creature-collecting battler PWA with turn-based strategy and optional end-to-end encrypted sync.',
     url: 'https://lin4cre.github.io/digipoke/',
@@ -304,6 +311,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Lad Jokes',
     kind: 'App',
     emoji: '🍻',
+    artwork: '/banners/lad-jokes.png',
     blurb:
       'Adults-only humour commons prototype: raunchy stories, community outrage ratings, and encrypted chat with zero runtime dependencies.',
     url: 'https://lin4cre.github.io/lad-jokes/',
@@ -316,6 +324,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Linacre Lyric Cinema',
     kind: 'App',
     emoji: '🎬',
+    artwork: '/banners/linacre-cinema.jpg',
     blurb:
       'Official high-definition master lyric videos and cinema player for David Linacre original music releases.',
     url: 'https://lin4cre.github.io/linacre-music-videos/',
@@ -328,6 +337,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Frostpine',
     kind: 'Game',
     emoji: '❄️',
+    artwork: '/banners/frostpine.png',
     blurb:
       'Snow plough arcade game — clear treacherous alpine roads, avoid obstacles, and beat the storm timer.',
     url: 'https://github.com/LIN4CRE/Frostpine',
@@ -340,6 +350,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Gyroll',
     kind: 'Game',
     emoji: '⚪',
+    artwork: '/banners/gyroll.svg',
     blurb:
       '3D precision ball-rolling physics puzzle game with accelerometer tilt and keyboard controls.',
     url: 'https://github.com/LIN4CRE/Gyroll',
@@ -352,6 +363,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'LineRider',
     kind: 'Game',
     emoji: '🎿',
+    artwork: '/banners/pulse.webp',
     blurb:
       'Interactive line-drawing track creator and physics sledder simulation running directly in the browser.',
     url: 'https://github.com/LIN4CRE/LineRider',
@@ -377,6 +389,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'PulseRider',
     kind: 'Game',
     emoji: '⚡',
+    artwork: '/banners/pulse.webp',
     blurb:
       'High-speed neon rhythm runner with procedural soundtrack pacing and reactive obstacle dodging.',
     url: 'https://github.com/LIN4CRE/PulseRider',
@@ -389,6 +402,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'NXAndroid',
     kind: 'Tool',
     emoji: '🎮',
+    artwork: '/banners/nxandroid.png',
     blurb:
       'Android companion utilities, configuration patches, and launcher integrations for mobile console emulation.',
     url: 'https://github.com/LIN4CRE/NXAndroid',
@@ -401,6 +415,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'BuildingBux',
     kind: 'Tool',
     emoji: '🧱',
+    artwork: '/banners/buildingbux.svg',
     blurb:
       'Roblox developer monetization toolset and Luau balance simulator for game designers.',
     url: 'https://github.com/LIN4CRE/BuildingBux',
@@ -413,6 +428,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'N8Ns',
     kind: 'DevOps',
     emoji: '🔄',
+    artwork: '/banners/n8ns.png',
     blurb:
       'Automated n8n workflow blueprints for TikTok content scheduling, trend analysis, and social webhooks.',
     url: 'https://github.com/LIN4CRE/N8Ns',
@@ -425,6 +441,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Bizintel',
     kind: 'Tool',
     emoji: '📊',
+    artwork: '/banners/arena-audit.webp',
     blurb:
       'Lightweight business intelligence analytics dashboard for tracking sales pipelines and operational metrics.',
     url: 'https://github.com/LIN4CRE/Bizintel',
@@ -437,6 +454,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Gadget Guru',
     kind: 'Tool',
     emoji: '🔧',
+    artwork: '/projects/string-and-band.webp',
     blurb:
       'Interactive electronics assembly and hardware component sizing toolkit for makers and DIYers.',
     url: 'https://github.com/LIN4CRE/Gadget-Guru-',
@@ -449,6 +467,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'ComfyUI Wallpaper Pipeline',
     kind: 'AI',
     emoji: '🎨',
+    artwork: '/banners/glitchart-engine.webp',
     blurb:
       'Automated ComfyUI diffusion workflow for generating ultra-wide desktop and dual-monitor wallpapers.',
     url: 'https://github.com/LIN4CRE/comfyui-wallpaper-pipeline',
@@ -461,6 +480,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'EMULATED',
     kind: 'Game',
     emoji: '💾',
+    artwork: '/banners/retro-arcade-vault.svg',
     blurb:
       'Consolidated retro emulator library and ROM cataloging scripts for multi-system retro setups.',
     url: 'https://github.com/LIN4CRE/EMULATED',
@@ -580,6 +600,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Linacre Global Monitor',
     kind: 'Tool',
     emoji: '📡',
+    artwork: '/banners/linacre-llm-benchmarks.webp',
     blurb:
       'Real-time geopolitical and environmental situational awareness dashboard fed by NASA, USGS, and Open-Meteo.',
     url: 'https://dlinacre.github.io/linacre-global-monitor/',
@@ -605,6 +626,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Linacre Mission Control Wallpaper',
     kind: 'Tool',
     emoji: '🖥️',
+    artwork: '/banners/linacre-llm-benchmarks.webp',
     blurb:
       'Real-time dual-monitor desktop HUD powered by Lively Wallpaper: live CPU/GPU thread telemetry and storage monitors.',
     url: 'https://dlinacre.github.io/linacre-wallpaper/',
@@ -629,6 +651,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'SIM://ROOT',
     kind: 'Tool',
     emoji: '📟',
+    artwork: '/banners/decrypt.webp',
     blurb:
       'Interactive digital lab and reference guide on SIM card anatomy, APDU pinouts, and client-side cellular protocols.',
     url: 'https://dlinacre.github.io/sim-root/',
@@ -667,6 +690,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     name: 'Sporing',
     kind: 'App',
     emoji: '🍄',
+    artwork: '/banners/bonny-bats.webp',
     blurb:
       "Seasonal foraging chance map for England's edible wild fungi, seasonal fruiting calendars and identification keys.",
     url: 'https://dlinacre.github.io/sporing/',

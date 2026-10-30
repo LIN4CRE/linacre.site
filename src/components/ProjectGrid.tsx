@@ -112,18 +112,38 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
                 className="tabulous-card group flex min-w-0 flex-col justify-between"
               >
                 <div>
+                  {/* Card Artwork Thumbnail Banner */}
+                  <div className="relative h-28 -mx-4 -mt-4 mb-3 overflow-hidden rounded-t-xl bg-black/40 border-b border-white/[0.06]">
+                    {project.artwork ? (
+                      <img
+                        src={project.artwork}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    ) : (
+                      <span
+                        className="grid h-full w-full place-items-center text-3xl"
+                        aria-hidden="true"
+                      >
+                        {project.emoji || '📦'}
+                      </span>
+                    )}
+                    {project.pinned && (
+                      <span className="absolute right-2 top-2 shrink-0 rounded-full border border-amber-400/40 bg-black/75 backdrop-blur px-2 py-0.5 text-[10px] font-bold text-amber-300">
+                        Pinned
+                      </span>
+                    )}
+                  </div>
+
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span aria-hidden="true" className="text-xl shrink-0">{project.emoji || '📦'}</span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span aria-hidden="true" className="text-base shrink-0">{project.emoji || '📦'}</span>
                       <h4 className="min-w-0 break-words font-display text-base font-bold text-white group-hover:text-[#8fd6ff] transition-colors">
                         {project.name}
                       </h4>
                     </div>
-                    {project.pinned && (
-                      <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-bold text-amber-300">
-                        Pinned
-                      </span>
-                    )}
                   </div>
                   <p className="mt-2.5 text-xs text-[#9aa3b2] leading-relaxed line-clamp-2">
                     {project.blurb}
