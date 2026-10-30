@@ -84,73 +84,39 @@
 }
 
 /* ── Light Theme ── */
-:root {
-  color-scheme: dark light;
-  --background: #f5fbfc;
-  --foreground: #0b1f2a;
-  --muted: #e8f4f6;
-  --muted-foreground: #405d68;
-  --border-color: #cfe4e8;
-  --border-hi: #76b9c4;
+/* ─── Unified Tabulous Games Dark Chrome Tokens ─── */
+:root, .dark {
+  color-scheme: dark;
+  --background: #07080b;
+  --foreground: #eef1f6;
+  --muted: #0e1016;
+  --muted-foreground: #9aa3b2;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hi: rgba(143, 214, 255, 0.4);
 
-  /* CyberBlue-Green tokens (light) */
-  --linacre-ink: #f5fbfc;
-  --linacre-deep-slate: #e8f4f6;
-  --linacre-panel: #ffffff;
-  --linacre-panel-soft: #edf8f9;
-  --linacre-border: rgba(8, 145, 178, 0.18);
-  --linacre-border-strong: rgba(8, 145, 178, 0.38);
-  --linacre-glow-soft: 0 12px 36px rgba(8, 145, 178, 0.12);
-  --linacre-glow-strong: 0 18px 48px rgba(16, 185, 129, 0.16);
-  --linacre-card-shadow: 0 12px 40px rgba(4, 47, 58, 0.08);
+  /* Tabulous panel tokens */
+  --linacre-ink: #07080b;
+  --linacre-deep-slate: #0b0d13;
+  --linacre-panel: #0e1016;
+  --linacre-panel-soft: #141720;
+  --linacre-border: rgba(255, 255, 255, 0.08);
+  --linacre-border-strong: rgba(143, 214, 255, 0.4);
+  --linacre-glow-soft: 0 0 24px rgba(143, 214, 255, 0.15);
+  --linacre-glow-strong: 0 0 40px rgba(143, 214, 255, 0.25);
+  --linacre-card-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
 
-  /* Cool, clean gradients (light) */
   --linacre-gradient-hero:
-    radial-gradient(circle at 12% 12%, rgba(34, 211, 238, 0.1), transparent 34%),
-    radial-gradient(circle at 88% 10%, rgba(52, 211, 153, 0.09), transparent 28%),
-    linear-gradient(145deg, #f8fcfd 0%, #eef8fa 55%, #f5fbfc 100%);
-  --linacre-gradient-card: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.98),
-    rgba(244, 251, 252, 0.98)
-  );
+    radial-gradient(circle at 15% -10%, rgba(143, 214, 255, 0.08), transparent 60%),
+    linear-gradient(180deg, #07080b 0%, #0e1016 100%);
+  --linacre-gradient-card: linear-gradient(180deg, #0e1016, #090b10);
 
   /* Motion */
-  --linacre-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --linacre-duration-fast: 160ms;
-  --linacre-duration-base: 260ms;
-  --linacre-duration-slow: 700ms;
+  --linacre-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --linacre-duration-fast: 150ms;
+  --linacre-duration-base: 220ms;
+  --linacre-duration-slow: 400ms;
 }
 
-/* ── Dark Theme (CyberBlue-Green canonical) ── */
-.dark {
-  --background: #030c14;
-  --foreground: #ecfeff;
-  --muted: #081a25;
-  --muted-foreground: #9ab7c3;
-  --border-color: rgba(34, 211, 238, 0.15);
-  --border-hi: rgba(52, 211, 153, 0.4);
-
-  /* Brand tokens */
-  --linacre-ink: #030c14;
-  --linacre-deep-slate: #061520;
-  --linacre-panel: #081c28;
-  --linacre-panel-soft: #0b2633;
-  --linacre-border: rgba(34, 211, 238, 0.19);
-  --linacre-border-strong: rgba(52, 211, 153, 0.46);
-  --linacre-glow-soft: 0 0 28px rgba(34, 211, 238, 0.14);
-  --linacre-glow-strong: 0 0 48px rgba(52, 211, 153, 0.2);
-  --linacre-card-shadow: 0 22px 70px rgba(0, 7, 13, 0.42);
-
-  /* Cool, low-noise gradients (dark) */
-  --linacre-gradient-hero:
-    radial-gradient(circle at 14% 14%, rgba(34, 211, 238, 0.11), transparent 32%),
-    radial-gradient(circle at 86% 10%, rgba(52, 211, 153, 0.08), transparent 28%),
-    linear-gradient(145deg, #030c14 0%, #061520 52%, #030c14 100%);
-  --linacre-gradient-card: linear-gradient(180deg, rgba(8, 28, 40, 0.94), rgba(5, 20, 30, 0.94));
-}
-
-/* ── Cyber Themes ── */
 .theme-purple {
   --neon-accent: #c084fc;
   --neon-glow: rgba(192, 132, 252, 0.35);
