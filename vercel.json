@@ -200,6 +200,18 @@
   ],
   "rewrites": [
     {
+      "source": "/assets/covers/:path*",
+      "destination": "/games/assets/covers/:path*"
+    },
+    {
+      "source": "/assets/brand/:path*",
+      "destination": "/games/assets/brand/:path*"
+    },
+    {
+      "source": "/assets/fonts/:path*",
+      "destination": "/games/assets/fonts/:path*"
+    },
+    {
       "source": "/api/:path*",
       "destination": "/api/server.ts"
     },

@@ -1,7 +1,7 @@
 // linacre.site service worker
-// v16 — refreshed precache list for Tabulous Games native portal.
-// Purges any old v14/v15 cached assets on activation.
-var CACHE = 'linacre-v16';
+// v17 — fixed absolute /games/assets/ paths for Tabulous Games cover art.
+// Purges any old v14/v15/v16 cached assets on activation.
+var CACHE = 'linacre-v17';
 var OFFLINE_URL = 'offline.html';
 var URLS = [
   '.',
