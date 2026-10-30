@@ -19,10 +19,10 @@
       "index": true
     },
     "/games": {
-      "title": "Games library — KushCloud and game projects | Linacre.site",
-      "description": "KushCloud first, with other game projects available for playtesting. Direct game and recorded download links without embedded players or automatic audio.",
+      "title": "Tabulous Games — Browser games that actually run | Linacre.site",
+      "description": "Hand-picked browser game ports, fan remakes, and WebAssembly classics that actually run in a tab. Over 300 verified games with instant play, no installs, and no ads.",
       "canonical": "https://www.linacre.site/games",
-      "image": "https://www.linacre.site/og.png",
+      "image": "https://www.linacre.site/games/assets/brand/og-image.png",
       "index": true
     },
     "/lab": {

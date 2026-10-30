@@ -89,8 +89,11 @@ export default function CommandPalette({
       id: 'nav-games',
       label: 'Go to Games',
       icon: Gamepad2,
-      action: () => go('games'),
-      meta: 'Playable browser games and Roblox projects',
+      action: () => {
+        window.location.href = '/games';
+        onClose();
+      },
+      meta: 'Tabulous Games — 300+ browser games that actually run, zero installs',
     },
     {
       id: 'nav-lab',

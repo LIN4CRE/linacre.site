@@ -1,7 +1,7 @@
 // linacre.site service worker
-// v14 — refreshed precache list for the consolidated route set (v8).
-// Keep API + cross-origin requests untouched (Lab streaming still works).
-var CACHE = 'linacre-v14';
+// v16 — refreshed precache list for Tabulous Games native portal.
+// Purges any old v14/v15 cached assets on activation.
+var CACHE = 'linacre-v16';
 var OFFLINE_URL = 'offline.html';
 var URLS = [
   '.',
@@ -20,20 +20,16 @@ var URLS = [
   'lab',
   'identity',
   'games',
+  'games/',
+  'games/index.html',
+  'games/games.json',
+  'games/manifest.webmanifest',
+  'games/assets/brand/favicon.svg',
+  'games/assets/brand/emblem-256.png',
+  'games/assets/fonts/manrope-800.woff2',
   'tools',
   'mob-deals',
   'pokeguru',
-  'games/circuit',
-  'games/circuit.js',
-  'games/decrypt',
-  'games/decrypt.js',
-  'games/pulse',
-  'games/pulse.js',
-  'games/trigger',
-  'games/trigger.js',
-  'games/gridlock',
-  'games/gridlock.js',
-  'games/slime-factory-tycoon/banner.webp',
   'tools/opagent.html',
   'tools/arena-audit.html',
   'tools/apk-hub.html',

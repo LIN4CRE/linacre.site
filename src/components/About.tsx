@@ -128,7 +128,7 @@ export default function About() {
             inventory management, I bring a practical, disciplined mindset to software engineering.
           </p>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">
-            I build software designed for real users: browser games like KushCloud, Android debloat
+            I build software designed for real users: browser games like Tabulous Games, Android debloat
             tools like Linacre Uninstaller, and local-first web applications like Apex POS.
             Everything I ship is open source and open for inspection on GitHub.
           </p>

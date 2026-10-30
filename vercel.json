@@ -252,10 +252,6 @@
       "destination": "/games/index.html"
     },
     {
-      "source": "/games/:path*",
-      "destination": "https://lin4cre.github.io/tabulous-games/:path*"
-    },
-    {
       "source": "/lab",
       "destination": "/lab/index.html"
     },

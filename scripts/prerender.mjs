@@ -339,28 +339,12 @@ ${CTA_BLOCK}`;
     }
 
     case '/games': {
-      const games = data.projects.filter(p => p.kind === 'Game' && p.url);
-      const rows = games
-        .map(
-          g =>
-            `  <li><a href="${esc(g.url)}" rel="noopener">${esc(g.name)}</a> — ${esc(g.blurb)}</li>`,
-        )
-        .join('\n');
       return `
-<h1>Playable browser games</h1>
-<p>Free, instant-play games built by David — no install, no account, no tracking.</p>
-<ul>
-${rows}
-</ul>
-<h2>Roblox projects</h2>
-<ul>
-  <li><a href="https://dlinacre.github.io/slime-factory-tycoon/" rel="noopener">Slime Factory Tycoon</a> — open-source Roblox idle-tycoon template with an interactive web demo.</li>
-  <li><a href="https://github.com/DLinacre/BloxCapital" rel="noopener">BloxCapital</a> — Roblox monetization &amp; game-performance suite.</li>
-  <li><a href="https://github.com/DLinacre/Blox-Capital" rel="noopener">Blox-Capital</a> — Roblox money-making extension.</li>
-</ul>
-${CTA_BLOCK}`;
+<h1>Tabulous Games — Browser games that actually run</h1>
+<p>A hand-picked library of 300+ browser game ports, fan remakes, and WebAssembly classics that actually run in a tab — racing, shooters, strategy, survivors-likes and retro classics. Every link tested before it is listed. No installs, no ads.</p>
+<p><a href="/games">Launch Tabulous Games Portal</a></p>
+`;
     }
-
     case '/about':
       return `
 <h1>About David Linacre</h1>
@@ -485,7 +469,7 @@ const indexable = Object.entries(meta.routes).filter(([, m]) => m.index);
 const ROUTE_LASTMOD_SOURCES = {
   '/': ['route-meta.json', 'src/App.tsx', 'src/data/siteProjects.ts'],
   '/tools': ['src/components/Tools.tsx', 'src/components/QuickTools.tsx', 'src/data.ts'],
-  '/games': ['src/components/Games.tsx', 'public/games/index.html'],
+  '/games': ['public/games/index.html', 'public/games/games.json'],
   '/about': ['src/components/About.tsx'],
   '/lab': ['src/components/Lab.tsx'],
   '/identity': ['src/components/IdentityHub.tsx'],
