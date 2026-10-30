@@ -162,10 +162,10 @@ export default function CommandPalette({
       label: 'Open GitHub profile',
       icon: Github,
       action: () => {
-        window.open('https://github.com/DLinacre', '_blank', 'noopener');
+        window.open('https://github.com/LIN4CRE', '_blank', 'noopener');
         onClose();
       },
-      meta: 'All source code at github.com/DLinacre',
+      meta: 'All source code at github.com/LIN4CRE',
       keywords: 'github repos repository source code',
     },
     {
@@ -308,14 +308,14 @@ export default function CommandPalette({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.14 }}
-            className="relative mx-auto mt-20 w-full max-w-xl rounded-2xl border border-amber-color/15 bg-[#08121c] shadow-[0_30px_90px_rgba(0,0,0,0.55)] overflow-hidden"
+            className="relative mx-auto mt-20 w-full max-w-xl rounded-2xl border border-white/[0.1] bg-[#0e1016] shadow-[0_30px_90px_rgba(0,0,0,0.7)] overflow-hidden"
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
           >
             {/* Search field */}
-            <div className="flex items-center gap-3 border-b border-amber-color/10 px-4">
-              <Search className="h-4 w-4 shrink-0 text-amber-color" aria-hidden="true" />
+            <div className="flex items-center gap-3 border-b border-white/[0.08] px-4">
+              <Search className="h-4 w-4 shrink-0 text-[#8fd6ff]" aria-hidden="true" />
               <input
                 ref={inputRef}
                 value={query}
@@ -349,14 +349,12 @@ export default function CommandPalette({
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={item.action}
                     className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors ${
-                      active ? 'bg-amber-color/10 text-foreground' : 'text-muted-foreground'
+                      active ? 'bg-white/[0.06] text-white' : 'text-[#9aa3b2] hover:bg-white/[0.03]'
                     }`}
                   >
                     <span
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${
-                        active
-                          ? 'border-amber-color/40 bg-amber-color/10 text-amber-color'
-                          : 'border-border-color bg-muted/20'
+                        active ? 'border-[#8fd6ff]/40 bg-[#8fd6ff]/10 text-[#8fd6ff]' : 'border-white/[0.08] bg-white/[0.03] text-[#9aa3b2]'
                       }`}
                     >
                       {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}
@@ -373,7 +371,7 @@ export default function CommandPalette({
                     </span>
                     {active && (
                       <CornerDownLeft
-                        className="h-3.5 w-3.5 shrink-0 text-amber-color"
+                        className="h-3.5 w-3.5 shrink-0 text-[#8fd6ff]"
                         aria-hidden="true"
                       />
                     )}

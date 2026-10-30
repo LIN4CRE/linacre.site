@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Search, Gamepad2, Sparkles, Wrench, User, Mail, Layers, ExternalLink } from 'lucide-react';
 import { getTabFromLocation, tabToPath, type AppTab } from './config/routes';
 import { SITE_PROJECTS } from './data/siteProjects';
@@ -12,6 +12,7 @@ import Privacy from './components/Privacy';
 import Terms from './components/Terms';
 import AccessibilityStatement from './components/AccessibilityStatement';
 import CookiePolicy from './components/CookiePolicy';
+const CommandPalette = lazy(() => import('./components/CommandPalette'));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<AppTab | string>(() => {
@@ -22,6 +23,7 @@ export default function App() {
   });
   const [query, setQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [isCommandOpen, setIsCommandOpen] = useState(false);
 
   // Synchronize browser history and popstate
   const navigate = (tab: string) => {
@@ -50,6 +52,11 @@ export default function App() {
         if (e.key === 'Escape') {
           (e.target as HTMLElement).blur();
         }
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandOpen(prev => !prev);
         return;
       }
       if (e.key === '/') {
@@ -168,7 +175,7 @@ export default function App() {
               autoComplete="off"
               aria-label="Search all projects"
             />
-            <kbd>/</kbd>
+            <button type="button" onClick={() => setIsCommandOpen(true)} className="flex items-center gap-1 cursor-pointer"><kbd>/</kbd><kbd className="text-[10px]">⌘K</kbd></button>
           </div>
 
           {/* Right Actions */}
@@ -369,6 +376,15 @@ export default function App() {
           </div>
         </div>
       </footer>
+      <Suspense fallback={null}>
+        <CommandPalette
+          isOpen={isCommandOpen}
+          onClose={() => setIsCommandOpen(false)}
+          setActiveTab={navigate}
+          theme="dark"
+          setTheme={() => {}}
+        />
+      </Suspense>
     </div>
   );
 }

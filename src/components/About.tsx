@@ -128,13 +128,13 @@ export default function About() {
             inventory management, I bring a practical, disciplined mindset to software engineering.
           </p>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">
-            I build software designed for real users: browser games like Tabulous Games, Android debloat
-            tools like Linacre Uninstaller, and local-first web applications like Apex POS.
+            I build software designed for real users: the Tabulous Games browser vault, Android tools like APKHub,
+            collectible market intelligence like PokéFlip AI, and studio-grade DSP audio synchronizers.
             Everything I ship is open source and open for inspection on GitHub.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
-              href="https://github.com/DLinacre"
+              href="https://github.com/LIN4CRE"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-xl bg-amber-color px-4 py-3 font-mono text-xs font-bold text-[#031018] hover:bg-amber-glow"
