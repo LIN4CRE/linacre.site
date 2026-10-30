@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Search, Gamepad2, Sparkles } from 'lucide-react';
+import { Search, Gamepad2, ExternalLink, Terminal } from 'lucide-react';
 import { getTabFromLocation, tabToPath, type AppTab } from './config/routes';
 import { SITE_PROJECTS } from './data/siteProjects';
 import FeaturedSpotlight from './components/FeaturedSpotlight';
@@ -12,6 +12,8 @@ import Privacy from './components/Privacy';
 import Terms from './components/Terms';
 import AccessibilityStatement from './components/AccessibilityStatement';
 import CookiePolicy from './components/CookiePolicy';
+import Emblem3D from './components/Emblem3D';
+import AmbientSpaceCanvas from './components/AmbientSpaceCanvas';
 const CommandPalette = lazy(() => import('./components/CommandPalette'));
 
 export default function App() {
@@ -80,34 +82,35 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen text-[#eef1f6] selection:bg-[#8fd6ff]/30 selection:text-white"
+      className="min-h-screen text-[#eef1f6] selection:bg-[#8fd6ff]/30 selection:text-white relative"
       style={{
         background:
           '#07080b radial-gradient(1100px 500px at 15% -10%, rgba(143, 214, 255, 0.07), transparent 60%) no-repeat fixed',
       }}
     >
+      {/* 3D Ambient Cyber Starfield & Constellation */}
+      <AmbientSpaceCanvas />
+
       {/* Tabulous Dark Chrome Sticky Topbar */}
-      <header className="tabulous-topbar">
+      <header className="tabulous-topbar relative z-30">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
-          {/* Brand */}
-          <button
-            type="button"
-            onClick={() => navigate('home')}
-            className="flex items-center gap-2.5 text-white hover:opacity-90 transition-opacity shrink-0 text-left"
-            title="David Linacre Home"
-          >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 font-mono text-sm font-bold text-[#8fd6ff] shadow-sm">
-              DL
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-sm font-bold tracking-tight text-white leading-tight">
+          {/* Brand with 3D Rotating Gyro Emblem */}
+          <div className="flex items-center gap-2.5 shrink-0">
+            <Emblem3D mode="mini" onNavigateHome={() => navigate('home')} />
+            <button
+              type="button"
+              onClick={() => navigate('home')}
+              className="flex flex-col text-left group cursor-pointer"
+              title="David Linacre Home"
+            >
+              <span className="font-display text-sm font-bold tracking-tight text-white group-hover:text-[#8fd6ff] transition-colors leading-tight">
                 David Linacre
               </span>
               <span className="text-[10px] font-mono text-[#6b7482] leading-none">
-                linacre.site
+                linacre.site // 3D Core
               </span>
-            </div>
-          </button>
+            </button>
+          </div>
 
           {/* Primary Navigation Tabs */}
           <nav className="hidden lg:flex items-center gap-1 font-mono text-xs font-semibold">
@@ -261,21 +264,89 @@ export default function App() {
         {/* Route 1: Home (Start / Projects) */}
         {activeTab === 'home' && (
           <>
-            <section className="space-y-2 pt-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-0.5 text-xs font-mono text-[#8fd6ff]">
-                <Sparkles className="h-3 w-3" />
-                <span>DAVID LINACRE // DIGITAL ECOSYSTEM &amp; PROJECTS</span>
+            <section className="relative overflow-hidden rounded-3xl border border-white/[0.08] bg-[#0e1016]/80 p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.6)] backdrop-blur-md">
+              {/* Dynamic ambient cyber backlight */}
+              <div className="pointer-events-none absolute -left-20 -top-20 h-72 w-72 rounded-full bg-[#8fd6ff]/10 blur-3xl" />
+              <div className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-[#38bdf8]/10 blur-3xl" />
+
+              <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
+                {/* Left: Headline, Value Proposition, Action CTAs & Telemetry */}
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[#8fd6ff]/30 bg-[#8fd6ff]/10 px-3 py-1 text-xs font-mono font-bold text-[#8fd6ff] shadow-[0_0_15px_rgba(143,214,255,0.2)]">
+                    <span className="h-2 w-2 rounded-full bg-[#8fd6ff] animate-pulse" />
+                    <span>DAVID LINACRE // VERIFIED SYSTEM &amp; 3D VAULT</span>
+                  </div>
+
+                  <h1 className="font-display text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+                    Software &amp; systems engineered for the{' '}
+                    <span className="bg-gradient-to-r from-white via-[#8fd6ff] to-[#38bdf8] bg-clip-text text-transparent">
+                      open web
+                    </span>
+                    .
+                  </h1>
+
+                  <p className="max-w-xl text-xs sm:text-sm leading-relaxed text-[#9aa3b2]">
+                    <strong className="text-white font-semibold">{SITE_PROJECTS.length}</strong> hand-crafted applications,
+                    low-latency WASAPI DSP audio synchronizers, Pokémon AI intelligence engines, and the curated
+                    Tabulous browser gaming vault. Zero tracking, zero telemetry, 100% free and open-source.
+                  </p>
+
+                  {/* High-Impact Actions */}
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <a
+                      href="/games"
+                      className="inline-flex items-center gap-2 rounded-xl bg-[#8fd6ff] px-4 py-2.5 font-mono text-xs font-bold text-[#07080b] shadow-[0_0_20px_rgba(143,214,255,0.4)] transition-all hover:bg-[#c4ebff] hover:scale-105"
+                    >
+                      <Gamepad2 className="h-4 w-4" />
+                      <span>Play Games (300+)</span>
+                    </a>
+
+                    <a
+                      href="https://github.com/LIN4CRE"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 font-mono text-xs font-bold text-white transition-all hover:border-[#8fd6ff]/50 hover:bg-white/10"
+                    >
+                      <span>Explore GitHub</span>
+                      <ExternalLink className="h-3.5 w-3.5 text-[#8fd6ff]" />
+                    </a>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsCommandOpen(true)}
+                      className="inline-flex items-center gap-1.5 rounded-xl border border-white/[0.08] px-3.5 py-2.5 font-mono text-xs text-[#9aa3b2] hover:text-white hover:border-white/20 transition-all cursor-pointer"
+                    >
+                      <Terminal className="h-3.5 w-3.5 text-[#8fd6ff]" />
+                      <span>Palette <kbd className="rounded border border-white/10 bg-black/40 px-1 py-0.5 text-[10px]">⌘K</kbd></span>
+                    </button>
+                  </div>
+
+                  {/* Telemetry Glass Counter Bar */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-white/[0.08]">
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5 text-center">
+                      <div className="font-display text-lg font-black text-[#8fd6ff]">303</div>
+                      <div className="font-mono text-[10px] text-[#9aa3b2] uppercase tracking-wider">Browser Ports</div>
+                    </div>
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5 text-center">
+                      <div className="font-display text-lg font-black text-white">{SITE_PROJECTS.length}</div>
+                      <div className="font-mono text-[10px] text-[#9aa3b2] uppercase tracking-wider">LIN4CRE Repos</div>
+                    </div>
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5 text-center">
+                      <div className="font-display text-lg font-black text-white">16 Yrs</div>
+                      <div className="font-mono text-[10px] text-[#9aa3b2] uppercase tracking-wider">Discipline</div>
+                    </div>
+                    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-2.5 text-center">
+                      <div className="font-display text-lg font-black text-emerald-400">100%</div>
+                      <div className="font-mono text-[10px] text-[#9aa3b2] uppercase tracking-wider">Open Source</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: The 3D Gyroscopic Core */}
+                <div className="relative flex items-center justify-center">
+                  <Emblem3D mode="hero" />
+                </div>
               </div>
-
-              <h1 className="font-display text-2xl sm:text-4xl font-extrabold tracking-tight text-white">
-                Software &amp; systems that actually ship.
-              </h1>
-
-              <p className="max-w-2xl text-xs sm:text-sm leading-relaxed text-[#9aa3b2]">
-                <strong className="text-white font-semibold">{SITE_PROJECTS.length}</strong> hand-crafted web applications,
-                WASAPI audio synchronizers, developer utilities, and browser ports · zero telemetry, no installs,
-                100% free and open source.
-              </p>
             </section>
 
             {!query && <FeaturedSpotlight />}
