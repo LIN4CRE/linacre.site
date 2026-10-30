@@ -72,11 +72,11 @@
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', ui-monospace, monospace;
   --font-display: 'Space Grotesk', 'Sora', 'Inter Tight', 'Inter', sans-serif;
 
-  /* CyberBlue-Green brand colours. Legacy utility names remain for compatibility. */
-  --color-amber-color: #22d3ee;
-  --color-amber-glow: #34d399;
-  --color-amber-deep: #0891b2;
-  --color-cyan: #67e8f9;
+  /* Tabulous Electric Cyan brand colours. Legacy utility names remain for compatibility. */
+  --color-amber-color: #8fd6ff;
+  --color-amber-glow: #c4ebff;
+  --color-amber-deep: #38bdf8;
+  --color-cyan: #8fd6ff;
   --color-emerald-color: #34d399;
   --color-purple-color: #818cf8;
   --color-cream: #ecfeff;
@@ -207,7 +207,7 @@ html {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(34, 211, 238, 0.78),
+    rgba(143, 214, 255, 0.78),
     rgba(52, 211, 153, 0.78),
     transparent
   );
@@ -216,7 +216,7 @@ html {
 
 .linacre-grid-bg {
   background-image:
-    linear-gradient(rgba(34, 211, 238, 0.055) 1px, transparent 1px),
+    linear-gradient(rgba(143, 214, 255, 0.055) 1px, transparent 1px),
     linear-gradient(90deg, rgba(52, 211, 153, 0.045) 1px, transparent 1px);
   background-size: 48px 48px;
   background-position: center;
@@ -225,7 +225,7 @@ html {
 .linacre-focus-ring:focus-visible {
   outline: 2px solid var(--color-cyan);
   outline-offset: 4px;
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 12px rgba(143, 214, 255, 0.4);
 }
 
 /* ── Micro-Animations ── */
@@ -261,11 +261,11 @@ html {
   0%,
   100% {
     opacity: 0.55;
-    filter: drop-shadow(0 0 4px rgba(34, 211, 238, 0.25));
+    filter: drop-shadow(0 0 4px rgba(143, 214, 255, 0.25));
   }
   50% {
     opacity: 1;
-    filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.48));
+    filter: drop-shadow(0 0 14px rgba(143, 214, 255, 0.48));
   }
 }
 
@@ -291,10 +291,10 @@ html {
 @keyframes amberBreathe {
   0%,
   100% {
-    text-shadow: 0 0 4px rgba(34, 211, 238, 0.3);
+    text-shadow: 0 0 4px rgba(143, 214, 255, 0.3);
   }
   50% {
-    text-shadow: 0 0 16px rgba(34, 211, 238, 0.6);
+    text-shadow: 0 0 16px rgba(143, 214, 255, 0.6);
   }
 }
 
@@ -311,11 +311,11 @@ html {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(34, 211, 238, 0.15);
+  background: rgba(143, 214, 255, 0.15);
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(34, 211, 238, 0.3);
+  background: rgba(143, 214, 255, 0.3);
 }
 
 /* ── Polished Select Dropdown ── */
@@ -347,7 +347,7 @@ input[type='range']::-webkit-slider-thumb {
   transition:
     transform var(--linacre-duration-fast) var(--linacre-ease),
     background-color var(--linacre-duration-fast) var(--linacre-ease);
-  box-shadow: 0 0 4px rgba(34, 211, 238, 0.4);
+  box-shadow: 0 0 4px rgba(143, 214, 255, 0.4);
 }
 input[type='range']::-webkit-slider-thumb:hover {
   transform: scale(1.25);
@@ -363,7 +363,7 @@ input[type='range']::-webkit-slider-thumb:hover {
   outline: 3px solid var(--color-amber-color);
   outline-offset: 2px;
   border-radius: 4px;
-  box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.18);
+  box-shadow: 0 0 0 4px rgba(143, 214, 255, 0.18);
 }
 
 /* High-contrast / forced-colors mode */
@@ -426,7 +426,7 @@ button,
 
 /* ── Selection ── */
 ::selection {
-  background: rgba(34, 211, 238, 0.25);
+  background: rgba(143, 214, 255, 0.25);
   color: inherit;
 }
 
@@ -495,8 +495,8 @@ button,
   font-family: var(--font-mono);
   font-size: 0.9em;
   color: var(--color-amber-glow);
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.15);
+  background: rgba(143, 214, 255, 0.08);
+  border: 1px solid rgba(143, 214, 255, 0.15);
   border-radius: 4px;
   padding: 0.1em 0.35em;
 }
@@ -524,7 +524,7 @@ button,
 /* Branded scrollbar (WebKit) + Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(34, 211, 238, 0.45) transparent;
+  scrollbar-color: rgba(143, 214, 255, 0.45) transparent;
 }
 ::-webkit-scrollbar {
   width: 10px;
@@ -534,20 +534,20 @@ button,
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(34, 211, 238, 0.55), rgba(52, 211, 153, 0.4));
+  background: linear-gradient(180deg, rgba(143, 214, 255, 0.55), rgba(52, 211, 153, 0.4));
   border-radius: 8px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(34, 211, 238, 0.85), rgba(52, 211, 153, 0.6));
+  background: linear-gradient(180deg, rgba(143, 214, 255, 0.85), rgba(52, 211, 153, 0.6));
   background-clip: padding-box;
   border: 2px solid transparent;
 }
 
 /* Brand selection colour */
 ::selection {
-  background: rgba(34, 211, 238, 0.3);
+  background: rgba(143, 214, 255, 0.3);
   color: inherit;
 }
 
@@ -569,10 +569,10 @@ article.group:hover {
 @keyframes linacre-cta-pulse {
   0%,
   100% {
-    box-shadow: 0 0 16px rgba(34, 211, 238, 0.35);
+    box-shadow: 0 0 16px rgba(143, 214, 255, 0.35);
   }
   50% {
-    box-shadow: 0 0 26px rgba(34, 211, 238, 0.65);
+    box-shadow: 0 0 26px rgba(143, 214, 255, 0.65);
   }
 }
 a[class*='bg-amber-color'] {
@@ -586,7 +586,7 @@ a[class*='bg-amber-color'] {
 
 /* Logo shimmer on hover */
 #nav-logo:hover .text-foreground {
-  text-shadow: 0 0 14px rgba(34, 211, 238, 0.35);
+  text-shadow: 0 0 14px rgba(143, 214, 255, 0.35);
 }
 
 /* Footer + header link underlines */
@@ -662,7 +662,7 @@ header a:hover {
 }
 
 .logo3d-emblem {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(34, 211, 238, 0.22));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4)) drop-shadow(0 0 10px rgba(143, 214, 255, 0.22));
 }
 
 /* ── Redesign v8 polish ───────────────────────────────────────────────────

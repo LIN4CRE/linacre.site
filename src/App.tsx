@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Search, Gamepad2, Sparkles, Wrench, User, Mail, Layers, ExternalLink } from 'lucide-react';
+import { Search, Gamepad2, Sparkles } from 'lucide-react';
 import { getTabFromLocation, tabToPath, type AppTab } from './config/routes';
 import { SITE_PROJECTS } from './data/siteProjects';
 import FeaturedSpotlight from './components/FeaturedSpotlight';

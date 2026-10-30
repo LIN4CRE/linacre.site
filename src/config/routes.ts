@@ -1,4 +1,5 @@
 import type { AppTab } from '../app/types';
+export type { AppTab };
 
 export const ROUTE_LABEL: Record<string, string> = {
   '/': 'Home',
