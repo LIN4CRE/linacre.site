@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, Gamepad2, Sparkles, Wrench, User, Mail, Layers, ExternalLink } from 'lucide-react';
 import { getTabFromLocation, tabToPath, type AppTab } from './config/routes';
+import { SITE_PROJECTS } from './data/siteProjects';
 import FeaturedSpotlight from './components/FeaturedSpotlight';
 import ProjectGrid from './components/ProjectGrid';
 import Tools from './components/Tools';
@@ -163,7 +164,7 @@ export default function App() {
               type="search"
               value={query}
               onChange={e => handleSearchChange(e.target.value)}
-              placeholder="Search 79 projects..."
+              placeholder={`Search ${SITE_PROJECTS.length} verified projects...`}
               autoComplete="off"
               aria-label="Search all projects"
             />
@@ -185,7 +186,7 @@ export default function App() {
 
             {/* GitHub */}
             <a
-              href="https://github.com/DLinacre"
+              href="https://github.com/LIN4CRE"
               target="_blank"
               rel="noopener noreferrer"
               className="tabulous-btn-support"
@@ -240,7 +241,7 @@ export default function App() {
               type="search"
               value={query}
               onChange={e => handleSearchChange(e.target.value)}
-              placeholder="Search 79 projects..."
+              placeholder={`Search ${SITE_PROJECTS.length} verified projects...`}
               autoComplete="off"
               aria-label="Search all projects"
             />
@@ -264,7 +265,7 @@ export default function App() {
               </h1>
 
               <p className="max-w-2xl text-xs sm:text-sm leading-relaxed text-[#9aa3b2]">
-                <strong className="text-white font-semibold">79</strong> hand-crafted web applications,
+                <strong className="text-white font-semibold">{SITE_PROJECTS.length}</strong> hand-crafted web applications,
                 WASAPI audio synchronizers, developer utilities, and browser ports · zero telemetry, no installs,
                 100% free and open source.
               </p>
@@ -344,7 +345,7 @@ export default function App() {
               Contact
             </button>
             <a
-              href="https://github.com/DLinacre"
+              href="https://github.com/LIN4CRE"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors"
