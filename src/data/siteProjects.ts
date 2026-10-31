@@ -89,7 +89,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/apkhub.webp',
     blurb:
       'Curated Android APK intelligence portal, build artifact manager, and automated inspection toolkit for TV and mobile packages.',
-    url: 'https://github.com/DLinacre/APKHub',
+    url: 'https://apkhub-alpha.vercel.app/',
     repo: 'https://github.com/DLinacre/APKHub',
     tags: ['android', 'apk', 'firetv', 'artifacts', 'inspector', 'tooling'],
     highlights: [
@@ -110,7 +110,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/pokeflip-ai.webp',
     blurb:
       'Intelligent collectible card pricing index, condition grading analyzer, and predictive market intelligence engine powered by Google Gemini.',
-    url: 'https://github.com/DLinacre/Pok-Flip-AI',
+    url: 'https://pok-flip-ai.vercel.app/',
     repo: 'https://github.com/DLinacre/Pok-Flip-AI',
     tags: ['ai', 'gemini', 'pokemon', 'pricing', 'analytics', 'vision'],
     highlights: [
@@ -130,7 +130,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/retro-arcade-vault.jpg',
     blurb:
       'Zero-install browser retro arcade preloaded with 63+ legendary PS1, GBA, NDS, SNES, and Genesis titles, responsive gamepad mapping, and authentic CRT shaders.',
-    url: 'https://github.com/LIN4CRE/retro-arcade-vault',
+    url: 'https://lin4cre.github.io/retro-arcade-vault/',
     repo: 'https://github.com/LIN4CRE/retro-arcade-vault',
     tags: ['retro', 'emulator', 'ps1', 'gba', 'arcade', 'webassembly'],
     highlights: [
@@ -150,7 +150,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/dual-audio-synchronizer.png',
     blurb:
       'Studio-grade WASAPI multi-speaker synchronizer for Windows with automatic ±1 ms clock-drift phase lock and 2.8 kHz Hearing Clarity DSP.',
-    url: 'https://github.com/LIN4CRE/dual-audio-synchronizer',
+    url: 'https://lin4cre.github.io/dual-audio-synchronizer/',
     repo: 'https://github.com/LIN4CRE/dual-audio-synchronizer',
     tags: ['audio', 'wasapi', 'synchronizer', 'dsp', 'windows', 'csharp', 'clarity'],
     highlights: [
@@ -170,7 +170,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/karaoke-pulse.png',
     blurb:
       'Full-stack YouTube Karaoke Studio featuring synced synchronized lyrics, AI dual-stem vocal removal, live microphone reverb, and pitch detection.',
-    url: 'https://github.com/LIN4CRE/karaoke-pulse',
+    url: 'https://lin4cre.github.io/karaoke-pulse/',
     repo: 'https://github.com/LIN4CRE/karaoke-pulse',
     tags: ['karaoke', 'music', 'vocal-remover', 'youtube', 'dsp', 'audio'],
     highlights: [
@@ -190,7 +190,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/kushcloud.webp',
     blurb:
       'A chill one-tap arcade flyer with responsive physics calibration, procedural synthesized chillwave audio, and unlockable cosmetics.',
-    url: 'https://github.com/DLinacre/KushCloud',
+    url: 'https://dlinacre.github.io/KushCloud/',
     repo: 'https://github.com/DLinacre/KushCloud',
     tags: ['game', 'arcade', 'chill', 'procedural', 'canvas', 'react'],
     highlights: [
@@ -210,7 +210,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/afterglow.webp',
     blurb:
       'Paint with long-exposure light — a novel, endless HTML5 light-painting game. Steer glowing lights to burn shimmering trails onto a night sky.',
-    url: 'https://github.com/DLinacre/afterglow',
+    url: 'https://dlinacre.github.io/afterglow/',
     repo: 'https://github.com/DLinacre/afterglow',
     tags: ['game', 'light-painting', 'canvas', 'art', 'ambient', 'creative'],
     highlights: [
@@ -230,7 +230,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/easy-audiobook-player.svg',
     blurb:
       'A zero-dependency standalone HTML5 audiobook player for local files and legal web audio with chapter bookmarks, playback speed memory, and sleep timers.',
-    url: 'https://github.com/DLinacre/easy-audiobook-player',
+    url: 'https://dlinacre.github.io/easy-audiobook-player/',
     repo: 'https://github.com/DLinacre/easy-audiobook-player',
     tags: ['audiobook', 'player', 'offline', 'single-file', 'html5'],
     highlights: [
@@ -250,7 +250,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/linacre-uninstaller.webp',
     blurb:
       'Android uninstaller and debloat review tool with a clean Material dark UI, safety tiers, and guided removal for OEM background services.',
-    url: 'https://github.com/DLinacre/LinacreUninstaller',
+    url: 'https://dlinacre.github.io/LinacreUninstaller/',
     repo: 'https://github.com/DLinacre/LinacreUninstaller',
     tags: ['android', 'debloat', 'uninstaller', 'security', 'adb', 'cleaner'],
     highlights: [
@@ -270,7 +270,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/speedread.jpg',
     blurb:
       'Rapid Serial Visual Presentation (RSVP) speed-reading engine that flashes words at optimal optical fixation points up to 1,000 WPM.',
-    url: 'https://github.com/LIN4CRE/SpeedRead',
+    url: 'https://lin4cre.github.io/SpeedRead/',
     repo: 'https://github.com/LIN4CRE/SpeedRead',
     tags: ['speedread', 'rsvp', 'productivity', 'reading', 'tool'],
     highlights: [
@@ -290,7 +290,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/whole-home-adblocker.svg',
     blurb:
       'One-click whole-home network ad blocker for Windows: AdGuard Home in Docker with a friendly setup wizard, live telemetry, and preloaded blocklists.',
-    url: 'https://github.com/DLinacre/whole-home-adblocker',
+    url: 'https://dlinacre.github.io/whole-home-adblocker/',
     repo: 'https://github.com/DLinacre/whole-home-adblocker',
     tags: ['adblock', 'adguard', 'docker', 'dns', 'windows', 'networking'],
     highlights: [
@@ -310,7 +310,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/linacre-wallpaper.svg',
     blurb:
       'Real-time hardware telemetry live wallpaper for Windows (Lively Wallpaper native) displaying CPU, GPU, RAM, network graphs, and an integrated ⌘K command palette.',
-    url: 'https://github.com/DLinacre/linacre-wallpaper',
+    url: 'https://dlinacre.github.io/linacre-wallpaper/',
     repo: 'https://github.com/DLinacre/linacre-wallpaper',
     tags: ['wallpaper', 'hardware', 'telemetry', 'system-monitor', 'lively', 'hud'],
     highlights: [
@@ -330,7 +330,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/cubelab.webp',
     blurb:
       'Free offline-first 3D Rubik\'s Cube solver, trainer, timer, and PWA featuring CFOP algorithms, scramble generation, and real-time step visualization.',
-    url: 'https://github.com/DLinacre/cubelab',
+    url: 'https://dlinacre.github.io/cubelab/',
     repo: 'https://github.com/DLinacre/cubelab',
     tags: ['rubiks-cube', 'solver', 'threejs', '3d', 'pwa', 'algorithms'],
     highlights: [
@@ -350,7 +350,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/1files.svg',
     blurb:
       'Curated collection of complete, useful web apps and utilities, each shipped as a SINGLE self-contained HTML file with zero build steps and zero runtime dependencies.',
-    url: 'https://github.com/DLinacre/1files',
+    url: 'https://dlinacre.github.io/1files/',
     repo: 'https://github.com/DLinacre/1files',
     tags: ['single-file', 'html', 'zero-dependency', 'utilities', 'open-source'],
     highlights: [
@@ -370,7 +370,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/bonny-bats.webp',
     blurb:
       'A friendly client-facing guide to bats in buildings: species identification, UK wildlife laws, roost safety, and humane exclusion methodologies.',
-    url: 'https://github.com/DLinacre/bonny-bats',
+    url: 'https://dlinacre.github.io/bonny-bats/',
     repo: 'https://github.com/DLinacre/bonny-bats',
     tags: ['bats', 'wildlife', 'architecture', 'conservation', 'uk-law'],
     highlights: [
@@ -390,7 +390,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/bonny-bakes.jpg',
     blurb:
       'Warm, friendly home-baking recipe companion with an ingredient quantity scaler, recipe favorites, dynamic shopping lists, and print-friendly cards.',
-    url: 'https://github.com/DLinacre/bonny-bakes',
+    url: 'https://dlinacre.github.io/bonny-bakes/',
     repo: 'https://github.com/DLinacre/bonny-bakes',
     tags: ['baking', 'recipes', 'calculator', 'lifestyle', 'pwa'],
     highlights: [
@@ -410,7 +410,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/linacre-osint-hud.svg',
     blurb:
       'Dark glass OSINT heads-up display — 1,310 curated open-source intelligence tools from the OSINT4ALL collection in one self-contained, lightning-fast HTML console.',
-    url: 'https://github.com/DLinacre/linacre-osint-hud',
+    url: 'https://dlinacre.github.io/linacre-osint-hud/',
     repo: 'https://github.com/DLinacre/linacre-osint-hud',
     tags: ['osint', 'cybersecurity', 'intelligence', 'recon', 'console', 'hud'],
     highlights: [
@@ -430,7 +430,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/linacre-global-monitor.svg',
     blurb:
       'Real-time geopolitical and environmental situational awareness dashboard powered by live telemetry from NASA, USGS, and Open-Meteo.',
-    url: 'https://github.com/DLinacre/linacre-global-monitor',
+    url: 'https://dlinacre.github.io/linacre-global-monitor/',
     repo: 'https://github.com/DLinacre/linacre-global-monitor',
     tags: ['geopolitical', 'nasa', 'usgs', 'earthquake', 'weather', 'dashboard'],
     highlights: [
