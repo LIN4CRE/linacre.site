@@ -341,7 +341,7 @@ ${CTA_BLOCK}`;
     case '/games': {
       return `
 <h1>Tabulous Games — Browser games that actually run</h1>
-<p>A hand-picked library of 300+ browser game ports, fan remakes, and WebAssembly classics that actually run in a tab — racing, shooters, strategy, survivors-likes and retro classics. Every link tested before it is listed. No installs, no ads.</p>
+<p>A hand-picked library of instant-play browser game ports, AAA fan remakes, and WebAssembly classics that actually run in a tab — racing, shooters, strategy, survivors-likes and retro classics. Every link tested before it is listed. No installs, no ads, no files required.</p>
 <p><a href="/games">Launch Tabulous Games Portal</a></p>
 `;
     }
