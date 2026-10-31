@@ -227,11 +227,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'App',
     emoji: '🎧',
-    artwork: '/banners/easy-audiobook-player.svg',
+    artwork: '/banners/easy-audiobook-player.jpg',
     blurb:
-      'A zero-dependency standalone HTML5 audiobook player for local files and legal web audio with chapter bookmarks, playback speed memory, and sleep timers.',
-    url: 'https://dlinacre.github.io/easy-audiobook-player/',
-    repo: 'https://github.com/DLinacre/easy-audiobook-player',
+      'A zero-dependency standalone HTML5 audiobook player for local files and legal web audio with chapter bookmarks, playback speed memory, sleep timer, and hotkeys.',
+    url: 'https://lin4cre.github.io/easy-audiobook-player/',
+    repo: 'https://github.com/LIN4CRE/easy-audiobook-player',
     tags: ['audiobook', 'player', 'offline', 'single-file', 'html5'],
     highlights: [
       'Single self-contained HTML file running 100% client-side with zero external requests.',
