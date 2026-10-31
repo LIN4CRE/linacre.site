@@ -247,11 +247,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'Tool',
     emoji: '🧹',
-    artwork: '/banners/linacre-uninstaller.webp',
+    artwork: '/banners/linacre-uninstaller.jpg',
     blurb:
-      'Android uninstaller and debloat review tool with a clean Material dark UI, safety tiers, and guided removal for OEM background services.',
-    url: 'https://dlinacre.github.io/LinacreUninstaller/',
-    repo: 'https://github.com/DLinacre/LinacreUninstaller',
+      'Android debloating suite & interactive web console: native Kotlin mobile app and ADB studio for Fire OS, Samsung One UI, Xiaomi HyperOS, and AOSP.',
+    url: 'https://lin4cre.github.io/LinacreUninstaller/',
+    repo: 'https://github.com/LIN4CRE/LinacreUninstaller',
     tags: ['android', 'debloat', 'uninstaller', 'security', 'adb', 'cleaner'],
     highlights: [
       'Automated safety tier classification (Safe to remove, Warning, Critical system).',
@@ -287,11 +287,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'DevOps',
     emoji: '🛡️',
-    artwork: '/banners/whole-home-adblocker.svg',
+    artwork: '/banners/whole-home-adblocker.jpg',
     blurb:
-      'One-click whole-home network ad blocker for Windows: AdGuard Home in Docker with a friendly setup wizard, live telemetry, and preloaded blocklists.',
-    url: 'https://dlinacre.github.io/whole-home-adblocker/',
-    repo: 'https://github.com/DLinacre/whole-home-adblocker',
+      'One-click whole-home network ad blocker for Windows: AdGuard Home in Docker with a friendly setup wizard, interactive live DNS telemetry HUD, and router guides.',
+    url: 'https://lin4cre.github.io/whole-home-adblocker/',
+    repo: 'https://github.com/LIN4CRE/whole-home-adblocker',
     tags: ['adblock', 'adguard', 'docker', 'dns', 'windows', 'networking'],
     highlights: [
       'Single-click setup orchestrates Docker Desktop, container provisioning, and DNS bindings.',
@@ -307,11 +307,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'Tool',
     emoji: '🖥️',
-    artwork: '/banners/linacre-wallpaper.svg',
+    artwork: '/banners/linacre-wallpaper.jpg',
     blurb:
-      'Real-time hardware telemetry live wallpaper for Windows (Lively Wallpaper native) displaying CPU, GPU, RAM, network graphs, and an integrated ⌘K command palette.',
-    url: 'https://dlinacre.github.io/linacre-wallpaper/',
-    repo: 'https://github.com/DLinacre/linacre-wallpaper',
+      'Cyberpunk desktop HUD & real-time system monitoring wallpaper with Matrix digital rain, CPU/GPU vitals, audio visualizer, and command palette.',
+    url: 'https://lin4cre.github.io/linacre-wallpaper/',
+    repo: 'https://github.com/LIN4CRE/linacre-wallpaper',
     tags: ['wallpaper', 'hardware', 'telemetry', 'system-monitor', 'lively', 'hud'],
     highlights: [
       'Hardware-accelerated Canvas graphs render at 60 FPS with sub-1% CPU consumption.',
@@ -327,11 +327,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'App',
     emoji: '🎲',
-    artwork: '/banners/cubelab.webp',
+    artwork: '/banners/cubelab.jpg',
     blurb:
       'Free offline-first 3D Rubik\'s Cube solver, trainer, timer, and PWA featuring CFOP algorithms, scramble generation, and real-time step visualization.',
-    url: 'https://dlinacre.github.io/cubelab/',
-    repo: 'https://github.com/DLinacre/cubelab',
+    url: 'https://lin4cre.github.io/cubelab/',
+    repo: 'https://github.com/LIN4CRE/cubelab',
     tags: ['rubiks-cube', 'solver', 'threejs', '3d', 'pwa', 'algorithms'],
     highlights: [
       'Interactive 3D WebGL cube with smooth touch gestures and keyboard shortcuts.',
@@ -347,11 +347,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'Source',
     emoji: '📄',
-    artwork: '/banners/1files.svg',
+    artwork: '/banners/1files.jpg',
     blurb:
       'Curated collection of complete, useful web apps and utilities, each shipped as a SINGLE self-contained HTML file with zero build steps and zero runtime dependencies.',
-    url: 'https://dlinacre.github.io/1files/',
-    repo: 'https://github.com/DLinacre/1files',
+    url: 'https://lin4cre.github.io/1files/',
+    repo: 'https://github.com/LIN4CRE/1files',
     tags: ['single-file', 'html', 'zero-dependency', 'utilities', 'open-source'],
     highlights: [
       'Every tool runs completely offline directly by double-clicking the .html file.',
@@ -367,11 +367,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'Tool',
     emoji: '🦇',
-    artwork: '/banners/bonny-bats.webp',
+    artwork: '/banners/bonny-bats.jpg',
     blurb:
       'A friendly client-facing guide to bats in buildings: species identification, UK wildlife laws, roost safety, and humane exclusion methodologies.',
-    url: 'https://dlinacre.github.io/bonny-bats/',
-    repo: 'https://github.com/DLinacre/bonny-bats',
+    url: 'https://lin4cre.github.io/bonny-bats/',
+    repo: 'https://github.com/LIN4CRE/bonny-bats',
     tags: ['bats', 'wildlife', 'architecture', 'conservation', 'uk-law'],
     highlights: [
       'Visual roost identification matrix for UK species (Pipistrelles, Brown Long-eared).',
@@ -390,8 +390,8 @@ export const SITE_PROJECTS: SiteProject[] = [
     artwork: '/banners/bonny-bakes.jpg',
     blurb:
       'Warm, friendly home-baking recipe companion with an ingredient quantity scaler, recipe favorites, dynamic shopping lists, and print-friendly cards.',
-    url: 'https://dlinacre.github.io/bonny-bakes/',
-    repo: 'https://github.com/DLinacre/bonny-bakes',
+    url: 'https://lin4cre.github.io/bonny-bakes/',
+    repo: 'https://github.com/LIN4CRE/bonny-bakes',
     tags: ['baking', 'recipes', 'calculator', 'lifestyle', 'pwa'],
     highlights: [
       'Dynamic serving scaler recalculates flour, sugar, and yeast ratios accurately.',
@@ -407,11 +407,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'Tool',
     emoji: '🛰️',
-    artwork: '/banners/linacre-osint-hud.svg',
+    artwork: '/banners/linacre-osint-hud.jpg',
     blurb:
       'Dark glass OSINT heads-up display — 1,310 curated open-source intelligence tools from the OSINT4ALL collection in one self-contained, lightning-fast HTML console.',
-    url: 'https://dlinacre.github.io/linacre-osint-hud/',
-    repo: 'https://github.com/DLinacre/linacre-osint-hud',
+    url: 'https://lin4cre.github.io/linacre-osint-hud/',
+    repo: 'https://github.com/LIN4CRE/linacre-osint-hud',
     tags: ['osint', 'cybersecurity', 'intelligence', 'recon', 'console', 'hud'],
     highlights: [
       '1,310 verified tools organized across 36 intelligence disciplines (geoint, domain, social).',
@@ -427,11 +427,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: false,
     kind: 'App',
     emoji: '📡',
-    artwork: '/banners/linacre-global-monitor.svg',
+    artwork: '/banners/linacre-global-monitor.jpg',
     blurb:
       'Real-time geopolitical and environmental situational awareness dashboard powered by live telemetry from NASA, USGS, and Open-Meteo.',
-    url: 'https://dlinacre.github.io/linacre-global-monitor/',
-    repo: 'https://github.com/DLinacre/linacre-global-monitor',
+    url: 'https://lin4cre.github.io/linacre-global-monitor/',
+    repo: 'https://github.com/LIN4CRE/linacre-global-monitor',
     tags: ['geopolitical', 'nasa', 'usgs', 'earthquake', 'weather', 'dashboard'],
     highlights: [
       'Live seismic event streaming directly from the USGS earthquake API.',
