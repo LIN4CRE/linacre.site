@@ -86,11 +86,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: true,
     kind: 'App',
     emoji: '📱',
-    artwork: '/banners/apkhub.webp',
+    artwork: '/banners/apkhub.jpg',
     blurb:
       'Curated Android APK intelligence portal, build artifact manager, and automated inspection toolkit for TV and mobile packages.',
-    url: 'https://apkhub-alpha.vercel.app/',
-    repo: 'https://github.com/DLinacre/APKHub',
+    url: 'https://lin4cre.github.io/APKHub/',
+    repo: 'https://github.com/LIN4CRE/APKHub',
     tags: ['android', 'apk', 'firetv', 'artifacts', 'inspector', 'tooling'],
     highlights: [
       'Automated manifest inspection and architecture validation (armeabi-v7a / arm64-v8a).',
