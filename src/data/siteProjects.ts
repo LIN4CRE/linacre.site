@@ -107,11 +107,11 @@ export const SITE_PROJECTS: SiteProject[] = [
     featured: true,
     kind: 'AI',
     emoji: '🃏',
-    artwork: '/banners/pokeflip-ai.webp',
+    artwork: '/banners/pokeflip-ai.jpg',
     blurb:
       'Intelligent collectible card pricing index, condition grading analyzer, and predictive market intelligence engine powered by Google Gemini.',
     url: 'https://pok-flip-ai.vercel.app/',
-    repo: 'https://github.com/DLinacre/Pok-Flip-AI',
+    repo: 'https://github.com/LIN4CRE/Pok-Flip-AI',
     tags: ['ai', 'gemini', 'pokemon', 'pricing', 'analytics', 'vision'],
     highlights: [
       'Computer vision centering, edge-wear, and surface flaw evaluation for grading prediction.',
