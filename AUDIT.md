@@ -10,7 +10,7 @@ Scope: working tree on `arena/94e21f5b-linacre-site`; code, tests, local preview
 
 A substantial responsive refresh is implemented in this branch. It modernizes the site shell and navigation, adds a CSS-built 3D studio object, improves the project catalogue and mobile audio controls, and splits secondary routes and project details into lazy-loaded chunks. Existing navigation/catalogue behavior is covered by component tests.
 
-The release is **not deployed**. This sandbox has no Vercel CLI or Vercel environment credentials. The deployment workflow runs on `main` and requires three Vercel repository secrets; the GitHub connection returned HTTP 403 when asked to list Actions secrets, so their presence could not be verified. Production publication remains blocked on an authorized deploy path.
+The release is **not deployed**. This sandbox has no Vercel CLI or Vercel environment credentials. The deployment workflow runs on `main` and requires three Vercel repository secrets; the GitHub connection returned HTTP 403 when asked to list Actions secrets, so their presence could not be verified. GitHub Actions also returned 403 when asked to dispatch CI, and no PR checks were reported. Production publication remains blocked on an authorized deploy path.
 
 | Area                | Current result                                                                                                                                                                                                                          |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -54,7 +54,7 @@ Commands run successfully on the current changes:
 1. **Browser visual QA:** No browser executable was available in the sandbox. Responsive behavior was checked in CSS and jsdom component tests, but real viewport screenshots, keyboard focus traversal, console checks, and the no-overlap requirement still need browser verification—especially around the `More` panel at 900–1200px and the mobile audio popover.
 2. **Lint backlog:** Lint passes but reports 168 warnings, primarily existing `any` types and React Hooks warnings in older components/utilities. These were not expanded into a repository-wide cleanup in this UX refresh.
 3. **Live-site drift:** Production was not inspected during this pass. The observations from 2026-08-21 below should not be treated as current production facts.
-4. **Production deployment:** `.github/workflows/deploy.yml` deploys on pushes to `main` or manual dispatch, but only when `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are configured. Those secrets were not readable from the current GitHub connection (HTTP 403), and no local Vercel credentials/CLI were present. The current branch has not been deployed.
+4. **Production deployment:** `.github/workflows/deploy.yml` deploys on pushes to `main` or manual dispatch, but only when `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are configured. Those secrets were not readable from the current GitHub connection (HTTP 403); manual Actions dispatch also returned 403. No local Vercel credentials/CLI were present, so the current branch has not been deployed.
 
 ## Historical live-site audit snapshot — 2026-08-21
 
