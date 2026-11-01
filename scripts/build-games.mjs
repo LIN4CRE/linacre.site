@@ -13,7 +13,11 @@ const raw = JSON.parse(fs.readFileSync(gamesJsonPath, 'utf8'));
 const existingInstantGames = raw.games.filter(g => {
   if (g.status === 'files') return false;
   const text = (JSON.stringify(g) || '').toLowerCase();
-  if (text.includes('own the game') || text.includes('bring your own') || text.includes('custom files')) {
+  if (
+    text.includes('own the game') ||
+    text.includes('bring your own') ||
+    text.includes('custom files')
+  ) {
     return false;
   }
   return true;
@@ -48,7 +52,7 @@ const catLabels = {
   'classic-pc': 'Classic PC & Retro Ports',
   openworld: 'Open World & Action',
   strategy: 'Strategy & Sim',
-  sports: 'Sports & Arcade'
+  sports: 'Sports & Arcade',
 };
 
 const catCounts = {};
@@ -60,7 +64,15 @@ finalGames.forEach(g => {
 });
 
 // Category pills
-const catOrder = ['survivors', 'zombies', 'shooters', 'classic-pc', 'openworld', 'strategy', 'sports'];
+const catOrder = [
+  'survivors',
+  'zombies',
+  'shooters',
+  'classic-pc',
+  'openworld',
+  'strategy',
+  'sports',
+];
 let catPillsHtml = `\n          <button class="pill active" data-category="all">All <span>${finalGames.length}</span></button>`;
 for (const cat of catOrder) {
   const count = catCounts[cat] || 0;
@@ -103,7 +115,7 @@ for (const g of finalGames) {
     'new tab games',
     'instant play',
     'browser game',
-    platform
+    platform,
   ].filter(Boolean);
   const tagsStr = tagsArr.join(' ').toLowerCase();
   const isNew = Boolean(g.isNew);
@@ -147,15 +159,36 @@ cardsHtml += '\n';
 let html = fs.readFileSync(indexHtmlPath, 'utf8');
 
 // Replace pills & cards
-html = html.replace(/<!-- CATEGORY-PILLS:START -->[\s\S]*?<!-- CATEGORY-PILLS:END -->/, `<!-- CATEGORY-PILLS:START -->${catPillsHtml}<!-- CATEGORY-PILLS:END -->`);
-html = html.replace(/<!-- STATUS-PILLS:START -->[\s\S]*?<!-- STATUS-PILLS:END -->/, `<!-- STATUS-PILLS:START -->${statusPillsHtml}<!-- STATUS-PILLS:END -->`);
-html = html.replace(/<!-- GAMES:START -->[\s\S]*?<!-- GAMES:END -->/, `<!-- GAMES:START -->${cardsHtml}<!-- GAMES:END -->`);
+html = html.replace(
+  /<!-- CATEGORY-PILLS:START -->[\s\S]*?<!-- CATEGORY-PILLS:END -->/,
+  `<!-- CATEGORY-PILLS:START -->${catPillsHtml}<!-- CATEGORY-PILLS:END -->`,
+);
+html = html.replace(
+  /<!-- STATUS-PILLS:START -->[\s\S]*?<!-- STATUS-PILLS:END -->/,
+  `<!-- STATUS-PILLS:START -->${statusPillsHtml}<!-- STATUS-PILLS:END -->`,
+);
+html = html.replace(
+  /<!-- GAMES:START -->[\s\S]*?<!-- GAMES:END -->/,
+  `<!-- GAMES:START -->${cardsHtml}<!-- GAMES:END -->`,
+);
 
 // Replace count references
-html = html.replace(/<strong data-count-games>\d+<\/strong>/, `<strong data-count-games>${finalGames.length}</strong>`);
-html = html.replace(/Showing <strong>\d+<\/strong> of \d+ games/, `Showing <strong>${finalGames.length}</strong> of ${finalGames.length} games`);
-html = html.replace(/placeholder="Search games, series, studios…"|placeholder="Search games, series, new tab games…" aria-label="Search games"/, 'placeholder="Search games, series, new tab games…" aria-label="Search games"');
-html = html.replace(/<li><b class="k-files">Own files<\/b>[^<]*<\/li>/, '<li><b class="k-instant">100% Playable</b> — all games run immediately in your browser tab with zero purchases or file imports required.</li>');
+html = html.replace(
+  /<strong data-count-games>\d+<\/strong>/,
+  `<strong data-count-games>${finalGames.length}</strong>`,
+);
+html = html.replace(
+  /Showing <strong>\d+<\/strong> of \d+ games/,
+  `Showing <strong>${finalGames.length}</strong> of ${finalGames.length} games`,
+);
+html = html.replace(
+  /placeholder="Search games, series, studios…"|placeholder="Search games, series, new tab games…" aria-label="Search games"/,
+  'placeholder="Search games, series, new tab games…" aria-label="Search games"',
+);
+html = html.replace(
+  /<li><b class="k-files">Own files<\/b>[^<]*<\/li>/,
+  '<li><b class="k-instant">100% Playable</b> — all games run immediately in your browser tab with zero purchases or file imports required.</li>',
+);
 
 // Add styles for hover overlays, sound toggle, and platform badges if not present
 if (!html.includes('.cover-play-badge')) {
@@ -244,7 +277,7 @@ if (!html.includes('.cover-play-badge')) {
 if (!html.includes('id="soundToggle"')) {
   html = html.replace(
     '<button class="btn-surprise" id="surpriseBtn"',
-    '<button class="btn-sound" id="soundToggle" type="button" title="Toggle retro audio FX">🔊 Sound: Off</button>\n        <button class="btn-surprise" id="surpriseBtn"'
+    '<button class="btn-sound" id="soundToggle" type="button" title="Toggle retro audio FX">🔊 Sound: Off</button>\n        <button class="btn-surprise" id="surpriseBtn"',
   );
 }
 
@@ -270,7 +303,10 @@ if (!html.includes('class="featured-ribbon"')) {
           <button class="chip" type="button" data-chip="Wolfenstein">🔫 Wolfenstein 3D</button>
         </div>
       </div>`;
-  html = html.replace('</section>\n\n    <section class="container" id="library"', `${ribbonHtml}\n    </section>\n\n    <section class="container" id="library"`);
+  html = html.replace(
+    '</section>\n\n    <section class="container" id="library"',
+    `${ribbonHtml}\n    </section>\n\n    <section class="container" id="library"`,
+  );
 }
 
 // Add the Web Audio FX script into the bottom script if not present
@@ -359,9 +395,14 @@ if (!html.includes('audioEngine')) {
         });
       });
   `;
-  html = html.replace('$(\'#surpriseBtn\')?.addEventListener(\'click\', surpriseMe);', `$('#surpriseBtn')?.addEventListener('click', () => { audioEngine.coin(); surpriseMe(); });\n${audioScript}`);
+  html = html.replace(
+    "$('#surpriseBtn')?.addEventListener('click', surpriseMe);",
+    `$('#surpriseBtn')?.addEventListener('click', () => { audioEngine.coin(); surpriseMe(); });\n${audioScript}`,
+  );
 }
 
+// Keep generated HTML deterministic and free of whitespace-only lines.
+html = html.replace(/[\t ]+$/gm, '');
 fs.writeFileSync(indexHtmlPath, html, 'utf8');
 
 // Update dist if it exists

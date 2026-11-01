@@ -1,5 +1,4 @@
 import { ArrowUpRight, Code2 } from 'lucide-react';
-import { motion } from 'motion/react';
 import { SITE_PROJECTS } from '../data/siteProjects';
 import Card3DTilt from './Card3DTilt';
 
@@ -17,7 +16,7 @@ export default function FeaturedSpotlight() {
       <div className="mb-3 flex items-center gap-2">
         <h2
           id="featured-heading"
-          className="font-display text-xs font-bold uppercase tracking-wider text-[#9aa3b2]"
+          className="feature-section__title font-display text-xs font-bold uppercase tracking-wider text-[#9aa3b2]"
         >
           Flagship work
         </h2>
@@ -36,15 +35,12 @@ export default function FeaturedSpotlight() {
           })();
           return (
             <Card3DTilt key={p.name} className="flex flex-col h-full">
-              <motion.a
+              <a
                 href={href}
                 target={isExternal ? '_blank' : undefined}
                 rel={isExternal ? 'noopener noreferrer' : undefined}
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.25, delay: i * 0.04 }}
-                className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-xl border border-white/[0.08] bg-[#0e1016] transition-all duration-200 hover:border-[#8fd6ff]/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
+                style={{ animationDelay: `${i * 40}ms` }}
+                className="featured-spotlight__card group relative flex flex-1 flex-col justify-between overflow-hidden rounded-xl border border-white/[0.08] bg-[#0e1016] transition-all duration-200 hover:border-[#8fd6ff]/50 hover:shadow-[0_8px_24px_rgba(0,0,0,0.5)]"
               >
                 <div className="relative aspect-video w-full overflow-hidden bg-[#05060a]">
                   {p.artwork ? (
@@ -118,7 +114,7 @@ export default function FeaturedSpotlight() {
                     Open →
                   </span>
                 </div>
-              </motion.a>
+              </a>
             </Card3DTilt>
           );
         })}

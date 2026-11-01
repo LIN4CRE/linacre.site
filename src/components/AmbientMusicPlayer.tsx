@@ -1,5 +1,14 @@
-import React, { useEffect, useState, useRef, useId, useSyncExternalStore } from 'react';
-import { Play, Pause, Volume2, VolumeX, ExternalLink, Music2 } from 'lucide-react';
+import React, { useEffect, useState, useRef, useId } from 'react';
+import {
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  ExternalLink,
+  Music2,
+  SlidersHorizontal,
+  X,
+} from 'lucide-react';
 import { ambientAudio } from '../lib/ambientAudio';
 
 interface AmbientMusicPlayerProps {
@@ -9,38 +18,58 @@ interface AmbientMusicPlayerProps {
 
 const RESTING_LEVELS = [0.15, 0.15, 0.15, 0.15, 0.15];
 
-export default function AmbientMusicPlayer({ className = '', compact = false }: AmbientMusicPlayerProps) {
+export default function AmbientMusicPlayer({
+  className = '',
+  compact = false,
+}: AmbientMusicPlayerProps) {
   const [audioState, setAudioState] = useState(() => ambientAudio.getState());
   const [visualLevels, setVisualLevels] = useState<number[]>(RESTING_LEVELS);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
+  const volumeToggleRef = useRef<HTMLButtonElement | null>(null);
   const sliderId = useId();
 
+  useEffect(() => ambientAudio.subscribe(setAudioState), []);
+
   useEffect(() => {
-    return ambientAudio.subscribe(setAudioState);
-  }, []);
+    if (!showVolumePopup) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setShowVolumePopup(false);
+        volumeToggleRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [showVolumePopup]);
 
-
-
-  // Real-time soundwave / visualizer animation loop
+  // Keep the equalizer expressive without forcing a React render on every frame.
   useEffect(() => {
-    if (!audioState.isPlaying || audioState.isMuted) {
+    if (
+      !audioState.isPlaying ||
+      audioState.isMuted ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
       return;
     }
 
     let active = true;
+    let lastPaint = 0;
 
-    const updateVisualizer = () => {
+    const updateVisualizer = (now: number) => {
       if (!active) return;
 
-      const freqData = ambientAudio.getVisualizerData();
-      // Sample 5 distinct frequency bands: bass, low-mid, mid, high-mid, highs
-      const b0 = Math.max(0.15, (freqData[1] || 0) / 255);
-      const b1 = Math.max(0.2, (freqData[3] || 0) / 255);
-      const b2 = Math.max(0.25, (freqData[6] || 0) / 255);
-      const b3 = Math.max(0.18, (freqData[10] || 0) / 255);
-      const b4 = Math.max(0.15, (freqData[16] || 0) / 255);
-      setVisualLevels([b0, b1, b2, b3, b4]);
+      if (now - lastPaint >= 80) {
+        const freqData = ambientAudio.getVisualizerData();
+        // Sample bass, low-mid, mid, high-mid and high frequency bands.
+        const b0 = Math.max(0.15, (freqData[1] || 0) / 255);
+        const b1 = Math.max(0.2, (freqData[3] || 0) / 255);
+        const b2 = Math.max(0.25, (freqData[6] || 0) / 255);
+        const b3 = Math.max(0.18, (freqData[10] || 0) / 255);
+        const b4 = Math.max(0.15, (freqData[16] || 0) / 255);
+        setVisualLevels([b0, b1, b2, b3, b4]);
+        lastPaint = now;
+      }
 
       animationFrameRef.current = requestAnimationFrame(updateVisualizer);
     };
@@ -106,12 +135,7 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
       </button>
 
       {/* Subtle Animated Soundwave / Equalizer Bars */}
-      <div
-        className="flex items-end gap-0.5 h-4 w-5 px-0.5 py-0.5 cursor-pointer"
-        onClick={handlePlayToggle}
-        title={audioState.isPlaying ? 'Ambient track actively looping' : 'Soundtrack paused'}
-        aria-hidden="true"
-      >
+      <div className="flex h-4 w-5 items-end gap-0.5 px-0.5 py-0.5" aria-hidden="true">
         {visualLevels.map((lvl, idx) => (
           <span
             key={idx}
@@ -173,12 +197,8 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
         )}
       </button>
 
-      {/* Inline Volume Slider (desktop) or Popover (compact) */}
-      <div
-        className="hidden sm:flex items-center gap-1.5 pl-0.5"
-        onMouseEnter={() => setShowVolumePopup(true)}
-        onMouseLeave={() => setShowVolumePopup(false)}
-      >
+      {/* Inline desktop slider plus an explicitly available touch control. */}
+      <div className="hidden items-center gap-1.5 pl-0.5 sm:flex">
         <label htmlFor={sliderId} className="sr-only">
           Ambient music volume
         </label>
@@ -189,32 +209,59 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
           max="100"
           value={currentVolumePercent}
           onChange={handleVolumeChange}
-          className="h-1.5 w-14 lg:w-16 cursor-pointer appearance-none rounded-lg bg-white/10 accent-[#8fd6ff] focus:outline-none focus:ring-1 focus:ring-[#8fd6ff]/50"
+          className="h-1.5 w-14 cursor-pointer appearance-none rounded-lg bg-white/10 accent-[#8fd6ff] focus:outline-none focus:ring-1 focus:ring-[#8fd6ff]/50"
           aria-label="Ambient music volume slider"
           title={`Volume: ${currentVolumePercent}%`}
         />
-        <span className="text-[10px] text-[#6b7482] w-6 tabular-nums">
-          {currentVolumePercent}%
-        </span>
+        <span className="w-6 text-[10px] tabular-nums text-[#6b7482]">{currentVolumePercent}%</span>
       </div>
 
-      {/* Touch Volume Popup on Mobile when requested */}
-      {showVolumePopup && (
-        <div className="sm:hidden absolute top-full left-0 mt-2 z-50 rounded-xl border border-white/10 bg-[#0d111e]/95 p-3 shadow-xl backdrop-blur-md flex items-center gap-2">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={currentVolumePercent}
-            onChange={handleVolumeChange}
-            className="h-2 w-28 cursor-pointer appearance-none rounded-lg bg-white/10 accent-[#8fd6ff]"
-            aria-label="Ambient volume"
-          />
-          <span className="text-xs text-[#9aa3b2] tabular-nums">
-            {currentVolumePercent}%
-          </span>
-        </div>
-      )}
+      <button
+        ref={volumeToggleRef}
+        type="button"
+        className="ambient-volume-toggle inline-flex items-center justify-center rounded-md text-[#9aa3b2] hover:text-white sm:hidden"
+        aria-label={showVolumePopup ? 'Close music volume controls' : 'Adjust music volume'}
+        aria-expanded={showVolumePopup}
+        aria-controls={`${sliderId}-popover`}
+        onClick={() => setShowVolumePopup(open => !open)}
+      >
+        <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
+      </button>
+
+      <div
+        id={`${sliderId}-popover`}
+        className={`${showVolumePopup ? 'flex' : 'hidden'} absolute left-0 top-full z-50 mt-2 min-w-[220px] items-center gap-2 rounded-xl border border-white/10 bg-[#0d111e]/95 p-3 shadow-xl backdrop-blur-md sm:hidden`}
+        role="group"
+        aria-label="Ambient music volume controls"
+      >
+        <label htmlFor={`${sliderId}-touch`} className="sr-only">
+          Ambient music volume
+        </label>
+        <input
+          id={`${sliderId}-touch`}
+          type="range"
+          min="0"
+          max="100"
+          value={currentVolumePercent}
+          onChange={handleVolumeChange}
+          className="h-2 min-w-0 flex-1 cursor-pointer appearance-none rounded-lg bg-white/10 accent-[#8fd6ff]"
+          aria-valuetext={`${currentVolumePercent}%`}
+        />
+        <span className="w-9 text-right text-xs tabular-nums text-[#9aa3b2]">
+          {currentVolumePercent}%
+        </span>
+        <button
+          type="button"
+          className="ambient-volume-close inline-flex items-center justify-center rounded-md text-[#9aa3b2] hover:text-white"
+          aria-label="Close music volume controls"
+          onClick={() => {
+            setShowVolumePopup(false);
+            volumeToggleRef.current?.focus();
+          }}
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
     </div>
   );
 }

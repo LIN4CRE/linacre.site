@@ -93,7 +93,7 @@ export default function CommandPalette({
         window.location.href = '/games';
         onClose();
       },
-      meta: 'Tabulous Games — 300+ browser games that actually run, zero installs',
+      meta: 'Tabulous Games — 77 verified instant-play games, zero installs',
     },
     {
       id: 'nav-lab',
@@ -175,9 +175,6 @@ export default function CommandPalette({
       action: () => {
         const next = theme === 'dark' ? 'light' : 'dark';
         setTheme(next);
-        document.documentElement.classList.remove('dark', 'light');
-        document.documentElement.classList.add(next);
-        localStorage.setItem('linacre_theme', next);
         onClose();
       },
       meta: 'Toggle the visual theme',
@@ -354,7 +351,9 @@ export default function CommandPalette({
                   >
                     <span
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${
-                        active ? 'border-[#8fd6ff]/40 bg-[#8fd6ff]/10 text-[#8fd6ff]' : 'border-white/[0.08] bg-white/[0.03] text-[#9aa3b2]'
+                        active
+                          ? 'border-[#8fd6ff]/40 bg-[#8fd6ff]/10 text-[#8fd6ff]'
+                          : 'border-white/[0.08] bg-white/[0.03] text-[#9aa3b2]'
                       }`}
                     >
                       {Icon && <Icon className="h-4 w-4" aria-hidden="true" />}

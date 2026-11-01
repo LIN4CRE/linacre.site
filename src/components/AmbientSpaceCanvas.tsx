@@ -94,17 +94,11 @@ export default function AmbientSpaceCanvas() {
     let rotY = 0;
     let rotX = 0;
 
-    let isVisible = true;
-    const handleVisibility = () => {
-      isVisible = !document.hidden;
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
+    let isVisible = !document.hidden;
 
     const render = () => {
-      if (!isVisible) {
-        animId = requestAnimationFrame(render);
-        return;
-      }
+      animId = 0;
+      if (!isVisible) return;
 
       ctx.clearRect(0, 0, width, height);
 
@@ -201,10 +195,21 @@ export default function AmbientSpaceCanvas() {
       animId = requestAnimationFrame(render);
     };
 
+    const handleVisibility = () => {
+      isVisible = !document.hidden;
+      if (!isVisible && animId) {
+        cancelAnimationFrame(animId);
+        animId = 0;
+      } else if (isVisible && !animId) {
+        animId = requestAnimationFrame(render);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
     render();
 
     return () => {
-      cancelAnimationFrame(animId);
+      if (animId) cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
