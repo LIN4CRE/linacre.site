@@ -5,8 +5,10 @@
  */
 import { SITE_PROJECTS } from '../src/data/siteProjects';
 import { TOOLS } from '../src/data';
+import { MUSIC_VIDEO_TRACKS } from '../src/data/musicVideos';
 
 export const data = {
+  musicVideos: MUSIC_VIDEO_TRACKS,
   projects: SITE_PROJECTS.map(p => ({
     name: p.name,
     kind: p.kind,

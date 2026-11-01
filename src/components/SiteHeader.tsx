@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   ArrowUpRight,
   ChevronDown,
+  Clapperboard,
   Gamepad2,
   Github,
   Menu,
@@ -32,6 +33,7 @@ const PRIMARY_LINKS = [
   { tab: 'home', label: 'Projects' },
   { tab: 'tools', label: 'Tools' },
   { tab: 'games', label: 'Games' },
+  { tab: 'music-videos', label: 'Music Videos' },
   { tab: 'about', label: 'About' },
   { tab: 'contact', label: 'Contact' },
 ] as const;
@@ -48,6 +50,7 @@ const MORE_GROUPS = [
   {
     heading: 'Explore',
     links: [
+      { tab: 'osint', label: 'OSINT HUD', description: '1,310 curated tools across 11 sectors' },
       { tab: 'mob-deals', label: 'Mob Deals', description: 'Compare UK SIM-only plans' },
       { tab: 'pokeguru', label: 'PokeGuru', description: 'Browse Pokémon TCG sets' },
     ],
@@ -244,7 +247,24 @@ export default function SiteHeader({
                     className={`site-nav__link${activeTab === tab ? ' is-active' : ''}`}
                   >
                     <Gamepad2 aria-hidden="true" />
-                    {label}
+                    <span>{label}</span>
+                  </a>
+                );
+              }
+              if (tab === 'music-videos') {
+                return (
+                  <a
+                    key={tab}
+                    href={tabToPath(tab)}
+                    aria-current={activeTab === tab ? 'page' : undefined}
+                    className={`site-nav__link${activeTab === tab ? ' is-active' : ''}`}
+                    onClick={event => {
+                      event.preventDefault();
+                      navigate(tab);
+                    }}
+                  >
+                    <Clapperboard aria-hidden="true" />
+                    <span>{label}</span>
                   </a>
                 );
               }

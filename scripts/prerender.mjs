@@ -113,6 +113,18 @@ const ROUTE_LABEL = Object.fromEntries(
 );
 
 const publicProjects = data.projects.filter(p => p.url);
+const osintPayload = JSON.parse(
+  fs.readFileSync(path.join(root, 'public', 'data', 'osint-hud.json'), 'utf8'),
+);
+const osintCounts = osintPayload.groups.reduce(
+  (counts, group) => {
+    counts.sectors += 1;
+    counts.categories += group.cats.length;
+    counts.tools += group.cats.reduce((total, category) => total + category.links.length, 0);
+    return counts;
+  },
+  { tools: 0, categories: 0, sectors: 0 },
+);
 
 function breadcrumbFor(route) {
   if (route === '/') return null;
@@ -234,6 +246,8 @@ const NAV = [
   ['/', 'Home'],
   ['/tools', 'Tools'],
   ['/games', 'Games'],
+  ['/music-videos', 'Music Videos'],
+  ['/osint', 'OSINT HUD'],
   ['/about', 'About'],
   ['/contact', 'Contact'],
 ];
@@ -345,6 +359,45 @@ ${CTA_BLOCK}`;
 <p><a href="/games">Launch Tabulous Games Portal</a></p>
 `;
     }
+
+    case '/music-videos': {
+      const tracks = data.musicVideos
+        .map(
+          (track, index) =>
+            `  <li><a href="https://lin4cre.github.io/linacre-music-videos/#${esc(track.id)}">${esc(track.title)}</a> <span class="meta">${String(index + 1).padStart(2, '0')} · ${esc(track.duration)} · ${esc(track.genre)}</span></li>`,
+        )
+        .join('\n');
+      return `
+<h1>Music Videos — The Proper Mad collection</h1>
+<p>The official cinema player hosts ${data.musicVideos.length} original lyric-video masters, with the original artwork, timed lyrics, playlist, playback controls, theatre mode and audio profiles.</p>
+<p><a href="https://lin4cre.github.io/linacre-music-videos/#the-road-beyond">Open The Road Beyond in the official player</a></p>
+<h2>Track collection</h2>
+<ul>
+${tracks}
+</ul>
+<p>The video masters remain on the official project host rather than being duplicated into this site.</p>
+`;
+    }
+
+    case '/osint': {
+      const sectors = osintPayload.groups
+        .map(
+          group =>
+            `  <li><strong>${esc(group.name)}</strong> — ${group.cats.length} categories and ${group.cats.reduce((total, category) => total + category.links.length, 0)} resources.</li>`,
+        )
+        .join('\n');
+      return `
+<h1>OSINT HUD — ${osintCounts.tools.toLocaleString('en-GB')} curated resources</h1>
+<p>Search and browse ${osintCounts.tools.toLocaleString('en-GB')} public research links across ${osintCounts.sectors} sectors and ${osintCounts.categories} categories. Search, favorites, recents, and world clocks run client-side.</p>
+<h2>Research sectors</h2>
+<ul>
+${sectors}
+</ul>
+<p>Use these third-party resources lawfully, respect privacy and provider terms, and obtain appropriate consent. The curated directory is available from the <a href="https://github.com/LIN4CRE/linacre-osint-hud">original project source</a>.</p>
+<p class="meta">Enable JavaScript to search and interact with the directory. Search filters are stored in the URL fragment, not sent to the site server.</p>
+`;
+    }
+
     case '/about':
       return `
 <h1>About David Linacre</h1>
@@ -470,6 +523,8 @@ const ROUTE_LASTMOD_SOURCES = {
   '/': ['route-meta.json', 'src/App.tsx', 'src/data/siteProjects.ts'],
   '/tools': ['src/components/Tools.tsx', 'src/components/QuickTools.tsx', 'src/data.ts'],
   '/games': ['public/games/index.html', 'public/games/games.json'],
+  '/music-videos': ['src/components/MusicVideos.tsx', 'src/data/musicVideos.ts'],
+  '/osint': ['src/components/OsintHud.tsx', 'public/data/osint-hud.json'],
   '/about': ['src/components/About.tsx'],
   '/lab': ['src/components/Lab.tsx'],
   '/identity': ['src/components/IdentityHub.tsx'],
