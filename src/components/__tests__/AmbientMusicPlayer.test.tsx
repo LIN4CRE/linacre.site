@@ -97,4 +97,39 @@ describe('AmbientMusicPlayer', () => {
     expect(screen.queryByText('Pixel Adventure')).not.toBeInTheDocument();
     expect(screen.getByRole('button', { name: /play background music/i })).toBeInTheDocument();
   });
+
+  it('hooks auto-unlock listener on mount and cleans up on unmount', () => {
+    const unlockSpy = vi.spyOn(ambientAudio, 'registerAutoUnlockListener');
+    const { unmount } = render(<AmbientMusicPlayer />);
+    expect(unlockSpy).toHaveBeenCalled();
+    unmount();
+  });
+
+  it('opens and adjusts mobile volume popup via mobile trigger badge', () => {
+    render(<AmbientMusicPlayer />);
+    const mobileTrigger = screen.getByRole('button', { name: /adjust volume/i });
+    expect(mobileTrigger).toBeInTheDocument();
+
+    // Open popup
+    act(() => {
+      fireEvent.click(mobileTrigger);
+    });
+
+    const mobileSlider = screen.getByLabelText(/mobile ambient volume slider/i) as HTMLInputElement;
+    expect(mobileSlider).toBeInTheDocument();
+    expect(mobileSlider.value).toBe('35');
+
+    // Adjust volume
+    act(() => {
+      fireEvent.change(mobileSlider, { target: { value: '55' } });
+    });
+    expect(ambientAudio.getState().volume).toBe(0.55);
+
+    // Close via Done button
+    const doneBtn = screen.getByRole('button', { name: /done/i });
+    act(() => {
+      fireEvent.click(doneBtn);
+    });
+    expect(screen.queryByLabelText(/mobile ambient volume slider/i)).not.toBeInTheDocument();
+  });
 });

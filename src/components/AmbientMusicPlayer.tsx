@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useId, useSyncExternalStore } from 'react';
+import React, { useEffect, useState, useRef, useId } from 'react';
 import { Play, Pause, Volume2, VolumeX, ExternalLink, Music2 } from 'lucide-react';
 import { ambientAudio } from '../lib/ambientAudio';
 
@@ -11,20 +11,34 @@ const RESTING_LEVELS = [0.15, 0.15, 0.15, 0.15, 0.15];
 
 export default function AmbientMusicPlayer({ className = '', compact = false }: AmbientMusicPlayerProps) {
   const [audioState, setAudioState] = useState(() => ambientAudio.getState());
-  const [visualLevels, setVisualLevels] = useState<number[]>(RESTING_LEVELS);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
+  const barRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const sliderId = useId();
 
+  // Subscribe to engine state updates and hook browser interaction auto-unlock
   useEffect(() => {
-    return ambientAudio.subscribe(setAudioState);
+    const unsubscribe = ambientAudio.subscribe(setAudioState);
+    const cleanupUnlock = ambientAudio.registerAutoUnlockListener();
+    return () => {
+      unsubscribe();
+      cleanupUnlock();
+    };
   }, []);
-
-
 
   // Real-time soundwave / visualizer animation loop
   useEffect(() => {
+    const resetBars = () => {
+      RESTING_LEVELS.forEach((lvl, idx) => {
+        const bar = barRefs.current[idx];
+        if (bar) {
+          bar.style.height = `${Math.round(lvl * 100)}%`;
+        }
+      });
+    };
+
     if (!audioState.isPlaying || audioState.isMuted) {
+      resetBars();
       return;
     }
 
@@ -40,7 +54,14 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
       const b2 = Math.max(0.25, (freqData[6] || 0) / 255);
       const b3 = Math.max(0.18, (freqData[10] || 0) / 255);
       const b4 = Math.max(0.15, (freqData[16] || 0) / 255);
-      setVisualLevels([b0, b1, b2, b3, b4]);
+      const levels = [b0, b1, b2, b3, b4];
+
+      levels.forEach((lvl, idx) => {
+        const bar = barRefs.current[idx];
+        if (bar) {
+          bar.style.height = `${Math.round(lvl * 100)}%`;
+        }
+      });
 
       animationFrameRef.current = requestAnimationFrame(updateVisualizer);
     };
@@ -52,6 +73,7 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      resetBars();
     };
   }, [audioState.isPlaying, audioState.isMuted]);
 
@@ -72,6 +94,7 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
 
   return (
     <div
+      data-ambient-player="true"
       className={`relative inline-flex items-center gap-1.5 sm:gap-2 rounded-xl border border-white/[0.08] bg-[#0d111e]/80 p-1 sm:px-2.5 sm:py-1 text-xs font-mono backdrop-blur-md shadow-[0_2px_12px_rgba(0,0,0,0.4)] transition-all ${
         audioState.isPlaying
           ? 'border-[#8fd6ff]/35 shadow-[0_0_15px_rgba(143,214,255,0.12)]'
@@ -87,6 +110,8 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
         className={`relative inline-flex items-center justify-center h-7 w-7 rounded-lg border transition-all cursor-pointer ${
           audioState.isPlaying
             ? 'border-[#8fd6ff]/60 bg-[#8fd6ff]/15 text-[#8fd6ff] shadow-[0_0_8px_rgba(143,214,255,0.3)]'
+            : !audioState.isUnlocked
+            ? 'border-[#8fd6ff]/40 bg-[#8fd6ff]/10 text-[#8fd6ff] ring-1 ring-[#8fd6ff]/30 shadow-[0_0_8px_rgba(143,214,255,0.2)] animate-pulse'
             : 'border-white/[0.12] bg-white/[0.04] text-[#9aa3b2] hover:text-white hover:border-[#8fd6ff]/40 hover:bg-[#8fd6ff]/10'
         }`}
         title={
@@ -112,9 +137,12 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
         title={audioState.isPlaying ? 'Ambient track actively looping' : 'Soundtrack paused'}
         aria-hidden="true"
       >
-        {visualLevels.map((lvl, idx) => (
+        {RESTING_LEVELS.map((lvl, idx) => (
           <span
             key={idx}
+            ref={el => {
+              barRefs.current[idx] = el;
+            }}
             className={`w-[2.5px] rounded-full transition-all duration-75 ${
               audioState.isPlaying && !audioState.isMuted
                 ? 'bg-gradient-to-t from-[#8fd6ff] to-[#c084fc] shadow-[0_0_6px_rgba(143,214,255,0.5)]'
@@ -173,7 +201,18 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
         )}
       </button>
 
-      {/* Inline Volume Slider (desktop) or Popover (compact) */}
+      {/* Mobile Volume Trigger Badge */}
+      <button
+        type="button"
+        onClick={() => setShowVolumePopup(prev => !prev)}
+        className="sm:hidden text-[10px] text-[#9aa3b2] hover:text-white px-1 py-0.5 rounded border border-white/[0.08] bg-white/[0.04] cursor-pointer tabular-nums"
+        title="Adjust music volume"
+        aria-label={`Adjust volume, currently ${currentVolumePercent}%`}
+      >
+        {currentVolumePercent}%
+      </button>
+
+      {/* Inline Volume Slider (desktop) */}
       <div
         className="hidden sm:flex items-center gap-1.5 pl-0.5"
         onMouseEnter={() => setShowVolumePopup(true)}
@@ -200,7 +239,7 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
 
       {/* Touch Volume Popup on Mobile when requested */}
       {showVolumePopup && (
-        <div className="sm:hidden absolute top-full left-0 mt-2 z-50 rounded-xl border border-white/10 bg-[#0d111e]/95 p-3 shadow-xl backdrop-blur-md flex items-center gap-2">
+        <div className="sm:hidden absolute top-full right-0 mt-2 z-50 rounded-xl border border-white/10 bg-[#0d111e]/95 p-3 shadow-xl backdrop-blur-md flex items-center gap-2">
           <input
             type="range"
             min="0"
@@ -208,11 +247,18 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
             value={currentVolumePercent}
             onChange={handleVolumeChange}
             className="h-2 w-28 cursor-pointer appearance-none rounded-lg bg-white/10 accent-[#8fd6ff]"
-            aria-label="Ambient volume"
+            aria-label="Mobile ambient volume slider"
           />
-          <span className="text-xs text-[#9aa3b2] tabular-nums">
+          <span className="text-xs text-[#9aa3b2] tabular-nums w-8">
             {currentVolumePercent}%
           </span>
+          <button
+            type="button"
+            onClick={() => setShowVolumePopup(false)}
+            className="text-[10px] text-[#8fd6ff] hover:underline ml-1 cursor-pointer"
+          >
+            Done
+          </button>
         </div>
       )}
     </div>

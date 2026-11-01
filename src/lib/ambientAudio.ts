@@ -2,7 +2,7 @@
  * Ambient Continuous Background Audio Engine for linacre.site
  *
  * Implements seamless, perpetual audio looping using Web Audio API with
- * sample-accurate scheduling and equal-power (cos/sin) crossfading.
+ * lookahead scheduling and equal-power (cos/sin) crossfading.
  * Eliminates MP3 encoder padding gaps, silences, and loop seams, creating
  * an endless continuous ambient track.
  */
@@ -41,8 +41,10 @@ function getAudioUrl(): string {
 
 // Audio timing constants
 const START_TRIM = 0.15; // Skip MP3 encoder silence padding
+const LOOP_END = 148.0; // Cut before source audio's natural outro fade
 const CROSSFADE_DURATION = 4.0; // 4-second equal-power crossfade
 const DEFAULT_VOLUME = 0.35; // Ideal low-fatigue ambient volume
+const LOOKAHEAD_SEC = 15.0; // Schedule next loop segment 15s in advance
 
 function createEqualPowerCurves(points = 64) {
   const fadeOut = new Float32Array(points);
@@ -62,6 +64,7 @@ interface PlayingNode {
   gain: GainNode;
   startTime: number;
   stopTime: number;
+  bufferOffset: number;
 }
 
 export class AmbientAudioEngine {
@@ -76,14 +79,16 @@ export class AmbientAudioEngine {
   private isUnlocked = false;
   private isLoading = false;
   private error: string | null = null;
+  private userExplicitlyPaused = false;
 
   private activeNodes: PlayingNode[] = [];
-  private scheduleTimer: ReturnType<typeof setTimeout> | null = null;
+  private schedulerTimer: ReturnType<typeof setInterval> | null = null;
   private nextLoopStartTime = 0;
   private pauseOffset = 0;
+  private loadingPromise: Promise<boolean> | null = null;
 
   private listeners = new Set<AmbientAudioListener>();
-  private frequencyData: Uint8Array<ArrayBuffer> = new Uint8Array(32);
+  private frequencyData: Uint8Array = new Uint8Array(32);
 
   // Fallback HTML audio elements if Web Audio buffer decode is unavailable
   private fallbackAudioA: HTMLAudioElement | null = null;
@@ -95,6 +100,19 @@ export class AmbientAudioEngine {
   constructor() {
     this.restoreStoredPreferences();
     this.cachedState = this.buildSnapshot();
+    this.initVisibilityListener();
+  }
+
+  private initVisibilityListener() {
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.isPlaying) {
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume().catch(() => {});
+        }
+        this.tickScheduler();
+      }
+    });
   }
 
   private buildSnapshot(): AmbientAudioState {
@@ -127,8 +145,13 @@ export class AmbientAudioEngine {
       if (storedMuted !== null) {
         this.isMuted = storedMuted === 'true';
       }
+
+      const storedEnabled = localStorage.getItem(STORAGE_KEY_ENABLED);
+      if (storedEnabled === 'false') {
+        this.userExplicitlyPaused = true;
+      }
     } catch {
-      // Ignore localStorage access failures (e.g. strict security modes)
+      // Ignore localStorage access failures
     }
   }
 
@@ -187,51 +210,69 @@ export class AmbientAudioEngine {
   }
 
   private updateMasterVolume(smooth = true) {
-    if (!this.masterGain || !this.ctx) return;
-    const target = this.isMuted ? 0 : this.volume;
-    try {
-      if (smooth && this.ctx.state === 'running') {
-        this.masterGain.gain.setTargetAtTime(target, this.ctx.currentTime, 0.04);
-      } else {
-        this.masterGain.gain.setValueAtTime(target, this.ctx.currentTime);
+    if (this.masterGain && this.ctx) {
+      const target = this.isMuted ? 0 : this.volume;
+      try {
+        if (smooth && this.ctx.state === 'running') {
+          this.masterGain.gain.setTargetAtTime(target, this.ctx.currentTime, 0.04);
+        } else {
+          this.masterGain.gain.setValueAtTime(target, this.ctx.currentTime);
+        }
+      } catch {
+        this.masterGain.gain.value = target;
       }
-    } catch {
-      this.masterGain.gain.value = target;
+    }
+
+    if (this.isFallbackMode && this.fallbackAudioA) {
+      this.fallbackAudioA.volume = this.isMuted ? 0 : this.volume;
+      this.fallbackAudioA.muted = this.isMuted;
     }
   }
 
   public async loadAudio(): Promise<boolean> {
     if (this.buffer) return true;
-    if (this.isLoading) return false;
+    if (this.loadingPromise) return this.loadingPromise;
 
     this.isLoading = true;
     this.error = null;
     this.notify();
 
-    try {
-      const res = await fetch(getAudioUrl());
-      if (!res.ok) {
-        throw new Error(`Failed to fetch audio: ${res.status}`);
-      }
-      const arrayBuffer = await res.arrayBuffer();
+    this.loadingPromise = (async () => {
+      try {
+        const res = await fetch(getAudioUrl());
+        if (!res.ok) {
+          throw new Error(`Failed to fetch audio: ${res.status}`);
+        }
+        const arrayBuffer = await res.arrayBuffer();
 
-      const ctx = this.ensureAudioContext();
-      if (!ctx) {
-        throw new Error('AudioContext not available');
-      }
+        const ctx = this.ensureAudioContext();
+        if (!ctx) {
+          throw new Error('AudioContext not available');
+        }
 
-      this.buffer = await ctx.decodeAudioData(arrayBuffer);
-      this.isLoading = false;
-      this.notify();
-      return true;
-    } catch (err) {
-      console.warn('Web Audio buffer decode failed, initializing fallback:', err);
-      this.isLoading = false;
-      this.error = err instanceof Error ? err.message : String(err);
-      this.initFallbackMode();
-      this.notify();
-      return false;
-    }
+        this.buffer = await new Promise<AudioBuffer>((resolve, reject) => {
+          const promise = ctx.decodeAudioData(arrayBuffer, resolve, reject);
+          if (promise && typeof promise.then === 'function') {
+            promise.then(resolve, reject);
+          }
+        });
+
+        this.isLoading = false;
+        this.notify();
+        return true;
+      } catch (err) {
+        console.warn('Web Audio buffer decode failed, initializing fallback:', err);
+        this.isLoading = false;
+        this.error = err instanceof Error ? err.message : String(err);
+        this.initFallbackMode();
+        this.notify();
+        return false;
+      } finally {
+        this.loadingPromise = null;
+      }
+    })();
+
+    return this.loadingPromise;
   }
 
   private initFallbackMode() {
@@ -248,32 +289,26 @@ export class AmbientAudioEngine {
   }
 
   /**
-   * Schedule seamless overlapping audio buffers with equal-power crossfade
+   * Schedule the initial playback segment (from offset up to LOOP_END)
    */
-  private scheduleLoop(startTime: number, offset = START_TRIM) {
+  private startPlayback(startTime: number, offset = START_TRIM) {
     if (!this.ctx || !this.buffer || !this.isPlaying) return;
 
-    const effectiveDuration = Math.max(10, (this.buffer.duration - 1.2) - START_TRIM);
-    const loopPlayDuration = effectiveDuration - (offset - START_TRIM);
-    const stopTime = startTime + loopPlayDuration;
+    const remainingDuration = Math.max(0.5, LOOP_END - offset);
+    const stopTime = startTime + remainingDuration;
 
     const source = this.ctx.createBufferSource();
     source.buffer = this.buffer;
     const gain = this.ctx.createGain();
 
-    // Initial gain: if starting mid-way, full volume; if starting at beginning, fade in
-    const isFirstStart = offset === START_TRIM && this.activeNodes.length === 0;
-    if (isFirstStart) {
-      gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(1, startTime + 1.2);
-    } else {
-      gain.gain.setValueAtTime(1, startTime);
-    }
+    // Initial fade in over 0.2s to prevent click/pop
+    const fadeInDuration = Math.min(0.2, remainingDuration * 0.5);
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(1, startTime + fadeInDuration);
 
-    // Schedule equal-power fade-out at the end of this loop segment
+    // Fade out at end of this segment
     const fadeOutStart = Math.max(startTime, stopTime - CROSSFADE_DURATION);
     const fadeOutDuration = stopTime - fadeOutStart;
-
     try {
       gain.gain.setValueCurveAtTime(CURVE_OUT, fadeOutStart, fadeOutDuration);
     } catch {
@@ -288,13 +323,12 @@ export class AmbientAudioEngine {
       source.start(startTime, offset);
       source.stop(stopTime);
     } catch (err) {
-      console.error('Error starting AudioBufferSourceNode:', err);
+      console.error('Error starting initial AudioBufferSourceNode:', err);
     }
 
-    const nodeEntry: PlayingNode = { source, gain, startTime, stopTime };
+    const nodeEntry: PlayingNode = { source, gain, startTime, stopTime, bufferOffset: offset };
     this.activeNodes.push(nodeEntry);
 
-    // Prune expired nodes
     source.onended = () => {
       try {
         source.disconnect();
@@ -303,26 +337,21 @@ export class AmbientAudioEngine {
       this.activeNodes = this.activeNodes.filter(n => n !== nodeEntry);
     };
 
-    // Calculate when the next overlapping track should begin
+    // Next loop starts exactly at fadeOutStart
     this.nextLoopStartTime = fadeOutStart;
 
-    // Schedule the next cycle slightly before fadeOutStart
-    const leadTimeMs = Math.max(50, (fadeOutStart - this.ctx.currentTime - 0.2) * 1000);
-    if (this.scheduleTimer) clearTimeout(this.scheduleTimer);
-
-    this.scheduleTimer = setTimeout(() => {
-      if (this.isPlaying && this.ctx) {
-        // Next loop starts fresh from START_TRIM
-        this.scheduleNextLoopWithCrossfade(this.nextLoopStartTime);
-      }
-    }, leadTimeMs);
+    // Start background lookahead scheduler
+    this.startScheduler();
   }
 
-  private scheduleNextLoopWithCrossfade(startTime: number) {
+  /**
+   * Schedule the next perpetual loop segment with seamless equal-power crossfade
+   */
+  private scheduleLoopSegment(startTime: number) {
     if (!this.ctx || !this.buffer || !this.isPlaying) return;
 
-    const effectiveDuration = Math.max(10, (this.buffer.duration - 1.2) - START_TRIM);
-    const stopTime = startTime + effectiveDuration;
+    const playDuration = Math.max(10, LOOP_END - START_TRIM);
+    const stopTime = startTime + playDuration;
 
     const source = this.ctx.createBufferSource();
     source.buffer = this.buffer;
@@ -352,10 +381,10 @@ export class AmbientAudioEngine {
       source.start(startTime, START_TRIM);
       source.stop(stopTime);
     } catch (err) {
-      console.error('Error starting next AudioBufferSourceNode:', err);
+      console.error('Error starting next loop AudioBufferSourceNode:', err);
     }
 
-    const nodeEntry: PlayingNode = { source, gain, startTime, stopTime };
+    const nodeEntry: PlayingNode = { source, gain, startTime, stopTime, bufferOffset: START_TRIM };
     this.activeNodes.push(nodeEntry);
 
     source.onended = () => {
@@ -367,19 +396,41 @@ export class AmbientAudioEngine {
     };
 
     this.nextLoopStartTime = fadeOutStart;
+  }
 
-    const leadTimeMs = Math.max(50, (fadeOutStart - this.ctx.currentTime - 0.2) * 1000);
-    if (this.scheduleTimer) clearTimeout(this.scheduleTimer);
+  private startScheduler() {
+    this.stopScheduler();
+    this.tickScheduler();
+    this.schedulerTimer = setInterval(() => {
+      this.tickScheduler();
+    }, 1000);
+  }
 
-    this.scheduleTimer = setTimeout(() => {
-      if (this.isPlaying && this.ctx) {
-        this.scheduleNextLoopWithCrossfade(this.nextLoopStartTime);
-      }
-    }, leadTimeMs);
+  private stopScheduler() {
+    if (this.schedulerTimer) {
+      clearInterval(this.schedulerTimer);
+      this.schedulerTimer = null;
+    }
+  }
+
+  private tickScheduler() {
+    if (!this.isPlaying || !this.ctx || !this.buffer) return;
+
+    // Prune expired nodes
+    const now = this.ctx.currentTime;
+    this.activeNodes = this.activeNodes.filter(n => n.stopTime > now);
+
+    // Schedule next segments if within lookahead window
+    while (this.nextLoopStartTime - now < LOOKAHEAD_SEC) {
+      const scheduledTime = Math.max(now + 0.05, this.nextLoopStartTime);
+      this.scheduleLoopSegment(scheduledTime);
+    }
   }
 
   public async play(): Promise<void> {
+    if (this.isPlaying) return; // Prevent duplicate overlapping playback
     this.isUnlocked = true;
+    this.userExplicitlyPaused = false;
     try {
       localStorage.setItem(STORAGE_KEY_ENABLED, 'true');
     } catch {}
@@ -397,6 +448,10 @@ export class AmbientAudioEngine {
         this.playFallback();
         return;
       }
+      // If user paused while loading was awaiting, abort
+      if (this.userExplicitlyPaused) {
+        return;
+      }
     }
 
     if (!this.ctx || !this.buffer) return;
@@ -408,39 +463,42 @@ export class AmbientAudioEngine {
     const offset = this.pauseOffset > 0 ? this.pauseOffset : START_TRIM;
     this.pauseOffset = 0;
 
-    this.scheduleLoop(now + 0.05, offset);
+    this.startPlayback(now + 0.05, offset);
     this.notify();
   }
 
   public pause(): void {
     this.isPlaying = false;
+    this.userExplicitlyPaused = true;
     try {
       localStorage.setItem(STORAGE_KEY_ENABLED, 'false');
     } catch {}
 
-    if (this.scheduleTimer) {
-      clearTimeout(this.scheduleTimer);
-      this.scheduleTimer = null;
-    }
+    this.stopScheduler();
 
     if (this.ctx && this.activeNodes.length > 0) {
-      // Calculate current playback offset for resuming
-      const primary = this.activeNodes[0];
-      const elapsed = Math.max(0, this.ctx.currentTime - primary.startTime);
-      this.pauseOffset = (START_TRIM + elapsed) % ((this.buffer?.duration ?? 150) - START_TRIM);
+      const now = this.ctx.currentTime;
+      const current = this.activeNodes.find(n => n.startTime <= now && now < n.stopTime) || this.activeNodes[0];
+      if (current) {
+        const elapsed = Math.max(0, now - current.startTime);
+        this.pauseOffset = (current.bufferOffset + elapsed) % LOOP_END;
+        if (this.pauseOffset < START_TRIM) {
+          this.pauseOffset = START_TRIM;
+        }
+      }
 
-      // Smooth fade out
       this.activeNodes.forEach(n => {
         try {
-          n.gain.gain.cancelScheduledValues(this.ctx!.currentTime);
-          n.gain.gain.setTargetAtTime(0, this.ctx!.currentTime, 0.05);
+          n.gain.gain.cancelScheduledValues(now);
+          n.gain.gain.setValueAtTime(n.gain.gain.value, now);
+          n.gain.gain.linearRampToValueAtTime(0, now + 0.08);
           setTimeout(() => {
             try {
               n.source.stop();
               n.source.disconnect();
               n.gain.disconnect();
             } catch {}
-          }, 150);
+          }, 100);
         } catch {
           try {
             n.source.stop();
@@ -500,6 +558,7 @@ export class AmbientAudioEngine {
     this.isPlaying = true;
     const vol = this.isMuted ? 0 : this.volume;
     this.fallbackAudioA.volume = vol;
+    this.fallbackAudioA.muted = this.isMuted;
     this.fallbackAudioA.loop = true;
     try {
       const playPromise = this.fallbackAudioA.play();
@@ -516,7 +575,7 @@ export class AmbientAudioEngine {
       return this.frequencyData;
     }
     try {
-      this.analyser.getByteFrequencyData(this.frequencyData as any);
+      this.analyser.getByteFrequencyData(this.frequencyData);
     } catch {
       this.frequencyData.fill(0);
     }
@@ -539,11 +598,17 @@ export class AmbientAudioEngine {
       }
     } catch {}
 
-    if (!enabledPref) return () => {};
+    if (!enabledPref || this.userExplicitlyPaused) return () => {};
 
-    const handleUserGesture = () => {
+    const handleUserGesture = (e: Event) => {
+      // If user interacted directly with the player controls, let the controls handle it
+      const target = e.target as HTMLElement | null;
+      if (target && target.closest('[data-ambient-player="true"]')) {
+        return;
+      }
+
       cleanup();
-      if (!this.isPlaying) {
+      if (!this.isPlaying && !this.userExplicitlyPaused) {
         void this.play();
       }
     };
@@ -554,9 +619,9 @@ export class AmbientAudioEngine {
       window.removeEventListener('touchstart', handleUserGesture);
     };
 
-    window.addEventListener('pointerdown', handleUserGesture, { once: true });
-    window.addEventListener('keydown', handleUserGesture, { once: true });
-    window.addEventListener('touchstart', handleUserGesture, { once: true });
+    window.addEventListener('pointerdown', handleUserGesture);
+    window.addEventListener('keydown', handleUserGesture);
+    window.addEventListener('touchstart', handleUserGesture);
 
     return cleanup;
   }
