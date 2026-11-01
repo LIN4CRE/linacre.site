@@ -1,35 +1,30 @@
-import React, { useEffect, useState, useRef, useId } from 'react';
+import React, { useEffect, useState, useRef, useId, useSyncExternalStore } from 'react';
 import { Play, Pause, Volume2, VolumeX, ExternalLink, Music2 } from 'lucide-react';
-import { ambientAudio, type AmbientAudioState } from '../lib/ambientAudio';
+import { ambientAudio } from '../lib/ambientAudio';
 
 interface AmbientMusicPlayerProps {
   className?: string;
   compact?: boolean;
 }
 
+const RESTING_LEVELS = [0.15, 0.15, 0.15, 0.15, 0.15];
+
 export default function AmbientMusicPlayer({ className = '', compact = false }: AmbientMusicPlayerProps) {
-  const [audioState, setAudioState] = useState<AmbientAudioState>(() => ambientAudio.getState());
-  const [visualLevels, setVisualLevels] = useState<number[]>([0.15, 0.2, 0.15, 0.25, 0.15]);
+  const [audioState, setAudioState] = useState(() => ambientAudio.getState());
+  const [visualLevels, setVisualLevels] = useState<number[]>(RESTING_LEVELS);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
   const animationFrameRef = useRef<number | null>(null);
   const sliderId = useId();
 
-  // Subscribe to audio engine state updates
   useEffect(() => {
-    const unsubscribe = ambientAudio.subscribe(setAudioState);
-    return () => unsubscribe();
+    return ambientAudio.subscribe(setAudioState);
   }, []);
 
-  // Set up interaction listener for autoplay unlock
-  useEffect(() => {
-    const cleanup = ambientAudio.registerAutoUnlockListener();
-    return () => cleanup();
-  }, []);
+
 
   // Real-time soundwave / visualizer animation loop
   useEffect(() => {
     if (!audioState.isPlaying || audioState.isMuted) {
-      setVisualLevels([0.15, 0.15, 0.15, 0.15, 0.15]);
       return;
     }
 

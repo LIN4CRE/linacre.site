@@ -90,8 +90,25 @@ export class AmbientAudioEngine {
   private fallbackAudioB: HTMLAudioElement | null = null;
   private isFallbackMode = false;
 
+  private cachedState: AmbientAudioState;
+
   constructor() {
     this.restoreStoredPreferences();
+    this.cachedState = this.buildSnapshot();
+  }
+
+  private buildSnapshot(): AmbientAudioState {
+    return {
+      isPlaying: this.isPlaying,
+      isMuted: this.isMuted,
+      volume: this.volume,
+      isUnlocked: this.isUnlocked,
+      isLoading: this.isLoading,
+      error: this.error,
+      trackTitle: TRACK_TITLE,
+      artist: TRACK_ARTIST,
+      sunoUrl: SUNO_URL,
+    };
   }
 
   private restoreStoredPreferences() {
@@ -116,27 +133,17 @@ export class AmbientAudioEngine {
   }
 
   public getState(): AmbientAudioState {
-    return {
-      isPlaying: this.isPlaying,
-      isMuted: this.isMuted,
-      volume: this.volume,
-      isUnlocked: this.isUnlocked,
-      isLoading: this.isLoading,
-      error: this.error,
-      trackTitle: TRACK_TITLE,
-      artist: TRACK_ARTIST,
-      sunoUrl: SUNO_URL,
-    };
+    return this.cachedState;
   }
 
   public subscribe(listener: AmbientAudioListener): () => void {
     this.listeners.add(listener);
-    listener(this.getState());
     return () => this.listeners.delete(listener);
   }
 
   private notify() {
-    const state = this.getState();
+    this.cachedState = this.buildSnapshot();
+    const state = this.cachedState;
     this.listeners.forEach(fn => {
       try {
         fn(state);

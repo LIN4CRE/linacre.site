@@ -70,9 +70,6 @@ describe('AmbientAudioEngine', () => {
     const listener = vi.fn();
     const unsubscribe = engine.subscribe(listener);
 
-    expect(listener).toHaveBeenCalledWith(expect.objectContaining({ volume: 0.35 }));
-    listener.mockClear();
-
     engine.setVolume(0.5);
     expect(listener).toHaveBeenCalledWith(expect.objectContaining({ volume: 0.5 }));
 

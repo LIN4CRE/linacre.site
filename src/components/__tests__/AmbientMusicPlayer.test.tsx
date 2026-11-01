@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
 import { describe, expect, it, beforeEach, vi, afterEach } from 'vitest';
 import AmbientMusicPlayer from '../AmbientMusicPlayer';
 import { ambientAudio } from '../../lib/ambientAudio';
@@ -6,22 +6,27 @@ import { ambientAudio } from '../../lib/ambientAudio';
 describe('AmbientMusicPlayer', () => {
   beforeEach(() => {
     localStorage.clear();
-    ambientAudio.pause();
-    ambientAudio.setVolume(0.35);
-    if (ambientAudio.getState().isMuted) {
-      ambientAudio.toggleMute();
-    }
+    act(() => {
+      ambientAudio.pause();
+      ambientAudio.setVolume(0.35);
+      if (ambientAudio.getState().isMuted) {
+        ambientAudio.toggleMute();
+      }
+    });
+    vi.spyOn(ambientAudio, 'play').mockResolvedValue();
+    vi.spyOn(ambientAudio, 'loadAudio').mockResolvedValue(true);
   });
 
   afterEach(() => {
-    ambientAudio.pause();
+    cleanup();
+    act(() => {
+      ambientAudio.pause();
+    });
     vi.restoreAllMocks();
   });
 
   it('renders ambient music player region with controls', () => {
-    act(() => {
-      render(<AmbientMusicPlayer />);
-    });
+    render(<AmbientMusicPlayer />);
     expect(screen.getByRole('region', { name: /ambient background music player/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /play background music/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /mute background music/i })).toBeInTheDocument();
