@@ -31,6 +31,7 @@ Thumbs.db
 
 # Generated assets
 public/wallpapers/
+public/audio/
 public/emblem-animated.svg
 public/emblem-static.svg
 public/agent-report.json

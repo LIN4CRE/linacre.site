@@ -45,7 +45,7 @@ export const SITE_PROJECTS: SiteProject[] = [
     emoji: '🔥',
     artwork: '/banners/firetv-kit.png',
     blurb:
-      'Turnkey Fire TV & Android TV deployment & recovery toolkit: Stremio with ExoPlayer trailer bugfix, SmartTube 4K, TiviMate IPTV, multi-profile Private DNS (AdGuard/Cloudflare/Quad9), tiered telemetry debloat with rollback, and 34-point automated test suite.',
+      'Turnkey Fire TV & Android TV deployment & recovery toolkit: Stremio with ExoPlayer trailer bugfix, SmartTube 4K, TiviMate IPTV, multi-profile Private DNS (AdGuard/Cloudflare/Quad9), tiered telemetry debloat with auto-snapshot rollback, and 46-point AST & live device test suite.',
     url: 'https://lin4cre.github.io/firetv-kit/',
     repo: 'https://github.com/LIN4CRE/firetv-kit',
     tags: ['firetv', 'stremio', 'smarttube', 'tivimate', 'androidtv', 'adguard', 'streaming', 'adb', 'debloat', 'diagnostics'],

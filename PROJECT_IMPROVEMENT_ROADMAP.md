@@ -28,7 +28,7 @@
 
 | # | Project Name | Kind | Workspace / Repository | Status | Key Focus |
 |---|--------------|------|------------------------|--------|-----------|
-| **1** | **Fire TV Setup Kit** | `Tool` | `scratch/firetv-setup-kit` (`LIN4CRE/firetv-kit`) | ✅ **Elevated (10/10 Shipped)** | Multi-subnet scanning, ABI resolution, DNS benchmarks, diagnostics, rollback |
+| **1** | **Fire TV Setup Kit** | `Tool` | `scratch/firetv-setup-kit` (`LIN4CRE/firetv-kit`) | ✅ **Elevated (10/10 Shipped, 46/46 Tests Passing)** | Multi-subnet scanning, ABI resolution, DNS benchmarks, diagnostics, rollback |
 | **2** | **Tabulous Games** | `Game` | `scratch/tabulous-games` (`LIN4CRE/tabulous-games`) | 🎯 **Next in Queue** | WebAssembly memory tuning, offline cache, CRT shaders, gamepad haptics |
 | **3** | **APKHub** | `App` | `scratch/apkhub` (`LIN4CRE/APKHub`) | ⏳ Scheduled | ABI validation, manifest security audit, batch extractor, signature check |
 | **4** | **PokéFlip AI** | `AI` | `scratch/pokeflip-ai` (`LIN4CRE/Pok-Flip-AI`) | ⏳ Scheduled | Gemini 2.0 Flash migration, image centering grading, card price graphing |
@@ -67,7 +67,7 @@
 - [x] **1.7. Deep TV Hardware & Telemetry Diagnostics**: Added `Test-FireTVDiagnostics` measuring display mode, refresh rate, HDR/Dolby Vision support, RAM usage, storage space, and thermal state.
 - [x] **1.8. Cross-Platform Parity in `setup.sh`**: Brought Linux/macOS bash script up to speed with subnet detection, interactive menu, and DNS options.
 - [x] **1.9. Profile Export/Import (`Export-FireTVProfile` / `Import-FireTVProfile`)**: Snapshot device settings to JSON to clone identical configurations across multiple TVs in one household.
-- [x] **1.10. Test Suite Expansion in `Run-Tests.ps1`**: Added unit tests for model mapper, DNS validation, debloat whitelist safety checks, architecture parsing, and profile serialization.
+- [x] **1.10. Test Suite Expansion in `Run-Tests.ps1`**: Expanded to 46 automated tests across 12 groups, including dynamic AST extraction, whitelist safety audits, storage & RAM parser unit tests, snapshot roundtrip, and live device verification.
 
 ---
 
