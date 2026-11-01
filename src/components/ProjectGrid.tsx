@@ -1,4 +1,5 @@
 import { lazy, Suspense, useState } from 'react';
+import { LayoutGrid, List, Shuffle } from 'lucide-react';
 import { SITE_PROJECTS, type ProjectKind, type SiteProject } from '../data/siteProjects';
 import {
   filterProjects,
@@ -29,6 +30,14 @@ export default function ProjectGrid({
   const [access, setAccess] = useState<AccessFilter>('all');
   const [selected, setSelected] = useState<SiteProject | null>(null);
   const [sort, setSort] = useState('recommended');
+  const [viewMode, setViewMode] = useState<'grid' | 'compact'>('grid');
+
+  const openRandomProject = () => {
+    const pool = visible.length > 0 ? visible : projects;
+    if (pool.length === 0) return;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    setSelected(pick);
+  };
 
   const visible = filterProjects(projects, query, category, access).sort(
     (a, b) =>
@@ -94,6 +103,40 @@ export default function ProjectGrid({
               <option value="source">Source available</option>
             </select>
           </label>
+          <button
+            type="button"
+            onClick={openRandomProject}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#0e1016] px-2.5 py-1 text-xs text-[#8fd6ff] hover:border-[#8fd6ff]/40 transition cursor-pointer"
+          >
+            <Shuffle className="h-3.5 w-3.5" aria-hidden="true" />
+            <span>Surprise me</span>
+          </button>
+          <div className="inline-flex rounded-lg border border-white/10 bg-[#0e1016] p-0.5" role="group" aria-label="View layout">
+            <button
+              type="button"
+              aria-pressed={viewMode === 'grid'}
+              onClick={() => setViewMode('grid')}
+              className={`rounded-md px-2 py-0.5 text-xs transition cursor-pointer ${
+                viewMode === 'grid' ? 'bg-white/10 text-white' : 'text-[#9aa3b2] hover:text-white'
+              }`}
+              title="Artwork grid view"
+              aria-label="Artwork grid view"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              aria-pressed={viewMode === 'compact'}
+              onClick={() => setViewMode('compact')}
+              className={`rounded-md px-2 py-0.5 text-xs transition cursor-pointer ${
+                viewMode === 'compact' ? 'bg-white/10 text-white' : 'text-[#9aa3b2] hover:text-white'
+              }`}
+              title="Compact index view"
+              aria-label="Compact index view"
+            >
+              <List className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+          </div>
           {(query || category !== 'all' || access !== 'all') && (
             <button
               type="button"
@@ -137,7 +180,13 @@ export default function ProjectGrid({
             </h3>
             <span className="h-px flex-1 bg-white/[0.08]" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div
+            className={
+              viewMode === 'compact'
+                ? 'grid grid-cols-1 md:grid-cols-2 gap-2.5'
+                : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3'
+            }
+          >
             {group.projects.map(project => (
               <Card3DTilt key={project.name} className="flex flex-col h-full">
                 <article
@@ -146,7 +195,11 @@ export default function ProjectGrid({
                 >
                   <div>
                     {/* Card Artwork Thumbnail Banner (16:9 Aspect Ratio) */}
-                    <div className="relative aspect-video -mx-3 -mt-3 mb-2.5 overflow-hidden rounded-t-xl bg-[#05060a] border-b border-white/[0.06]">
+                    <div
+                      className={`relative aspect-video -mx-3 -mt-3 mb-2.5 overflow-hidden rounded-t-xl bg-[#05060a] border-b border-white/[0.06] ${
+                        viewMode === 'compact' ? 'hidden' : ''
+                      }`}
+                    >
                       {project.artwork ? (
                         <>
                           <img
@@ -205,13 +258,16 @@ export default function ProjectGrid({
 
                     {project.tech && project.tech.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
-                        {project.tech.slice(0, 2).map(t => (
-                          <span
+                        {project.tech.slice(0, 3).map(t => (
+                          <button
                             key={t}
-                            className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-[#6b7482] border border-white/[0.05]"
+                            type="button"
+                            onClick={() => setQuery(t)}
+                            title={`Filter projects by ${t}`}
+                            className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-[#9aa3b2] hover:text-[#8fd6ff] hover:border-[#8fd6ff]/40 border border-white/[0.06] transition cursor-pointer"
                           >
                             {t}
-                          </span>
+                          </button>
                         ))}
                       </div>
                     )}

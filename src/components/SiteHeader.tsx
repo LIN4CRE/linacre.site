@@ -7,6 +7,7 @@ import {
   Github,
   Menu,
   Moon,
+  Orbit,
   Search,
   Sun,
   Volume2,
@@ -34,6 +35,7 @@ const PRIMARY_LINKS = [
   { tab: 'tools', label: 'Tools' },
   { tab: 'games', label: 'Games' },
   { tab: 'music-videos', label: 'Music Videos' },
+  { tab: 'orbit', label: 'Orbit' },
   { tab: 'about', label: 'About' },
   { tab: 'contact', label: 'Contact' },
 ] as const;
@@ -269,6 +271,23 @@ export default function SiteHeader({
                     }}
                   >
                     <Clapperboard aria-hidden="true" />
+                    <span>{label}</span>
+                  </a>
+                );
+              }
+              if (tab === 'orbit') {
+                return (
+                  <a
+                    key={tab}
+                    href={tabToPath(tab)}
+                    aria-current={activeTab === tab ? 'page' : undefined}
+                    className={`site-nav__link${activeTab === tab ? ' is-active' : ''}`}
+                    onClick={event => {
+                      event.preventDefault();
+                      navigate(tab);
+                    }}
+                  >
+                    <Orbit aria-hidden="true" />
                     <span>{label}</span>
                   </a>
                 );
