@@ -35,4 +35,21 @@ describe('project library', () => {
     expect(projectCategory(sourceProject)).toBe('Source');
     expect(SITE_PROJECTS.find(project => project.name === 'Fire TV Setup Kit')?.pinned).toBe(true);
   });
+  it('publishes the Music Videos and OSINT experiences as first-class site routes', () => {
+    const musicVideos = SITE_PROJECTS.find(project => project.name === 'Music Videos')!;
+    const osintHud = SITE_PROJECTS.find(project => project.name === 'Linacre OSINT HUD')!;
+    expect(musicVideos.url).toBe('/music-videos');
+    expect(musicVideos.pinned).toBe(true);
+    expect(projectActions(musicVideos)).toContainEqual({
+      kind: 'use',
+      label: 'Use project',
+      href: '/music-videos',
+    });
+    expect(osintHud.url).toBe('/osint');
+    expect(projectActions(osintHud)).toContainEqual({
+      kind: 'use',
+      label: 'Use project',
+      href: '/osint',
+    });
+  });
 });

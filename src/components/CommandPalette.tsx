@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Search,
+  Clapperboard,
   Compass,
   Cpu,
   CornerDownLeft,
@@ -17,6 +18,7 @@ import {
   Github,
 } from 'lucide-react';
 import { TOOLS } from '../data';
+import { getTabFromLocation } from '../config/routes';
 import { SITE_PROJECTS } from '../data/siteProjects';
 import Fuse from 'fuse.js';
 
@@ -94,6 +96,22 @@ export default function CommandPalette({
         onClose();
       },
       meta: 'Tabulous Games — 77 verified instant-play games, zero installs',
+    },
+    {
+      id: 'nav-music-videos',
+      label: 'Open Music Videos cinema',
+      icon: Clapperboard,
+      action: () => go('music-videos'),
+      meta: 'Ten Proper Mad lyric-video masters, synced lyrics and playback controls',
+      keywords: 'music videos lyrics cinema proper mad player album',
+    },
+    {
+      id: 'nav-osint',
+      label: 'Open OSINT HUD',
+      icon: Globe2,
+      action: () => go('osint'),
+      meta: 'Search 1,310 curated resources across 11 sectors and 77 categories',
+      keywords: 'osint intelligence recon search research hud sectors',
     },
     {
       id: 'nav-lab',
@@ -201,6 +219,18 @@ export default function CommandPalette({
           return;
         }
         const target = p.url || p.repo;
+        if (target?.startsWith('/')) {
+          const destination = getTabFromLocation(target);
+          if (destination === 'games') {
+            window.location.href = target;
+            onClose();
+            return;
+          }
+          if (destination !== 'home' || target === '/') {
+            go(destination);
+            return;
+          }
+        }
         if (target) window.open(target, '_blank', 'noopener');
         onClose();
       },

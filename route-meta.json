@@ -25,6 +25,20 @@
       "image": "https://www.linacre.site/games/assets/brand/og-image.png",
       "index": true
     },
+    "/music-videos": {
+      "title": "Music Videos — The Proper Mad collection | Linacre.site",
+      "description": "Watch Linacre’s ten original Proper Mad lyric-video masters in the official cinema player, with timed lyrics, artwork, playback controls and shareable track links.",
+      "canonical": "https://www.linacre.site/music-videos",
+      "image": "https://www.linacre.site/music-videos/covers/the-road-beyond.jpg",
+      "index": true
+    },
+    "/osint": {
+      "title": "OSINT HUD — 1,310 curated research tools | Linacre.site",
+      "description": "Search and browse 1,310 curated open-source intelligence resources across 11 sectors and 77 categories. Client-side search, bookmarks, recents and world clocks.",
+      "canonical": "https://www.linacre.site/osint",
+      "image": "https://www.linacre.site/banners/linacre-osint-hud.jpg",
+      "index": true
+    },
     "/lab": {
       "title": "AI Lab — model sandbox and experiments | Linacre.site",
       "description": "An interactive AI lab: chat with models, inspect data structures and explore live experiments in the browser.",

@@ -1823,6 +1823,8 @@ if (process.env.NODE_ENV !== 'production') {
     '/accessibility',
     '/mob-deals',
     '/pokeguru',
+    '/music-videos',
+    '/osint',
     '/contact/thanks',
     '/cookie-policy',
     '/terms',

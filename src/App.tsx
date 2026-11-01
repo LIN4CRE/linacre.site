@@ -22,6 +22,8 @@ const IdentityHub = lazy(() => import('./components/IdentityHub'));
 const OpsHUD = lazy(() => import('./components/OpsHUD'));
 const MobDealsSwitcher = lazy(() => import('./components/MobDealsSwitcher'));
 const PokeGuruExplorer = lazy(() => import('./components/PokeGuruExplorer'));
+const MusicVideos = lazy(() => import('./components/MusicVideos'));
+const OsintHud = lazy(() => import('./components/OsintHud'));
 
 function RouteLoading() {
   return (
@@ -95,7 +97,11 @@ export default function App() {
   // Keyboard shortcuts: '/' focuses project search; Escape dismisses an active text field.
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement
+      ) {
         if (e.key === 'Escape') e.target.blur();
         return;
       }
@@ -105,9 +111,8 @@ export default function App() {
         setIsCommandOpen(prev => !prev);
         return;
       }
-      if (e.key === '/') {
+      if (e.key === '/' && activeTab === 'home') {
         e.preventDefault();
-        if (activeTab !== 'home') navigate('home');
         window.requestAnimationFrame(() => searchInputRef.current?.focus());
       }
     };
@@ -179,6 +184,8 @@ export default function App() {
           {activeTab === 'ops' && <OpsHUD />}
           {activeTab === 'mob-deals' && <MobDealsSwitcher />}
           {activeTab === 'pokeguru' && <PokeGuruExplorer />}
+          {activeTab === 'music-videos' && <MusicVideos />}
+          {activeTab === 'osint' && <OsintHud />}
         </Suspense>
       </main>
 
@@ -224,6 +231,20 @@ export default function App() {
             <a href="/games" className="text-[#8fd6ff] hover:text-white transition-colors">
               Games
             </a>
+            <button
+              type="button"
+              onClick={() => navigate('music-videos')}
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
+            >
+              Music Videos
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('osint')}
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
+            >
+              OSINT HUD
+            </button>
             <button
               type="button"
               onClick={() => navigate('lab')}

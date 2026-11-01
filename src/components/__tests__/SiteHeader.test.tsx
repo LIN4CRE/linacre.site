@@ -33,6 +33,9 @@ describe('SiteHeader', () => {
     const gamesLink = within(navigation).getByRole('link', { name: 'Games' });
     expect(gamesLink).toHaveAttribute('href', '/games');
     expect(gamesLink.querySelector('svg')).toBeInTheDocument();
+    const musicLink = within(navigation).getByRole('link', { name: 'Music Videos' });
+    expect(musicLink).toHaveAttribute('href', '/music-videos');
+    expect(musicLink.querySelector('svg')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Search projects and pages' }));
     expect(props.onOpenSearch).toHaveBeenCalledOnce();
@@ -48,6 +51,12 @@ describe('SiteHeader', () => {
 
     await user.click(labLink);
     expect(props.onNavigate).toHaveBeenCalledWith('lab');
+
+    await user.click(screen.getByText('More'));
+    const osintLink = screen.getByRole('link', { name: /OSINT HUD/ });
+    expect(osintLink).toHaveAttribute('href', '/osint');
+    await user.click(osintLink);
+    expect(props.onNavigate).toHaveBeenCalledWith('osint');
   });
 
   it('opens and dismisses the mobile menu with Escape', async () => {
