@@ -41,3 +41,4 @@ status.txt
 *.tmp
 .vercel
 .env*
+.agents/

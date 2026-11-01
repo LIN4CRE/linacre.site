@@ -67,12 +67,12 @@ export const SITE_PROJECTS: SiteProject[] = [
     emoji: '🎮',
     artwork: '/banners/tabulous-games.webp',
     blurb:
-      'The Curated Browser Gaming Vault — 303 games, 23 Classic 3D PC ports, shooters, zombies co-op, and WebAssembly games running natively in your browser.',
+      'The Curated Browser Gaming Vault — 77 verified instant-play browser games with zero file downloads, 23 Classic 3D PC ports, shooters, zombies co-op, and WebAssembly games running natively in your browser.',
     url: '/games',
     repo: 'https://github.com/LIN4CRE/tabulous-games',
     tags: ['games', 'vault', 'retro', 'wasm', 'fps', 'emulator', 'webassembly', 'offline'],
     highlights: [
-      '303 curated titles: Half-Life, Quake III, Doom, Mario 64, Sonic, Zelda, and retro arcade gems.',
+      '77 verified instant-play browser games with zero file downloads: Half-Life, Quake III, Doom, Mario 64, Sonic, Zelda, and retro arcade gems.',
       'Instant-play WebAssembly engine with local game saves and fullscreen HUD.',
       '100% self-hosted on linacre.site with zero external dependencies.',
     ],

@@ -15,7 +15,15 @@ import CookiePolicy from './components/CookiePolicy';
 import Emblem3D from './components/Emblem3D';
 import AmbientSpaceCanvas from './components/AmbientSpaceCanvas';
 import { toggleSound, isSoundEnabled, playBlip } from './lib/audioFeedback';
+import { RouteHead, type RouteMeta } from './components/RouteHead';
+import routeMetaJson from '../route-meta.json';
+
 const CommandPalette = lazy(() => import('./components/CommandPalette'));
+const Lab = lazy(() => import('./components/Lab'));
+const IdentityHub = lazy(() => import('./components/IdentityHub'));
+const OpsHUD = lazy(() => import('./components/OpsHUD'));
+const MobDealsSwitcher = lazy(() => import('./components/MobDealsSwitcher'));
+const PokeGuruExplorer = lazy(() => import('./components/PokeGuruExplorer'));
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<AppTab | string>(() => {
@@ -29,6 +37,11 @@ export default function App() {
   const [isCommandOpen, setIsCommandOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
   const [showBackToTop, setShowBackToTop] = useState(false);
+
+  const currentPath = tabToPath(activeTab);
+  const currentMeta: RouteMeta =
+    (routeMetaJson.routes as Record<string, RouteMeta>)[currentPath] ||
+    routeMetaJson.routes['/'];
 
   // Synchronize browser history and popstate
   const navigate = (tab: string) => {
@@ -105,6 +118,14 @@ export default function App() {
           '#07080b radial-gradient(1100px 500px at 15% -10%, rgba(143, 214, 255, 0.07), transparent 60%) no-repeat fixed',
       }}
     >
+      {/* WCAG 2.2 AA Skip to Content Link */}
+      <a href="#main-content" className="skip-link">
+        Skip to content
+      </a>
+
+      {/* Dynamic Route Title & SEO Sync */}
+      <RouteHead meta={currentMeta} />
+
       {/* 3D Ambient Cyber Starfield & Constellation */}
       <AmbientSpaceCanvas />
 
@@ -292,7 +313,7 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 space-y-8">
+      <main id="main-content" className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8 space-y-8">
         {/* Route 1: Home (Start / Projects) */}
         {activeTab === 'home' && (
           <>
@@ -417,6 +438,41 @@ export default function App() {
 
         {/* Route 9: Cookie Policy */}
         {activeTab === 'cookie-policy' && <CookiePolicy />}
+
+        {/* Route 10: AI Lab */}
+        {activeTab === 'lab' && (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center font-mono text-sm text-[#8fd6ff]">Loading...</div>}>
+            <Lab />
+          </Suspense>
+        )}
+
+        {/* Route 11: Identity Studio */}
+        {activeTab === 'identity' && (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center font-mono text-sm text-[#8fd6ff]">Loading...</div>}>
+            <IdentityHub />
+          </Suspense>
+        )}
+
+        {/* Route 12: Mission Control / Ops HUD */}
+        {activeTab === 'ops' && (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center font-mono text-sm text-[#8fd6ff]">Loading...</div>}>
+            <OpsHUD />
+          </Suspense>
+        )}
+
+        {/* Route 13: Mob Deals */}
+        {activeTab === 'mob-deals' && (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center font-mono text-sm text-[#8fd6ff]">Loading...</div>}>
+            <MobDealsSwitcher />
+          </Suspense>
+        )}
+
+        {/* Route 14: PokeGuru */}
+        {activeTab === 'pokeguru' && (
+          <Suspense fallback={<div className="min-h-[60vh] flex items-center justify-center font-mono text-sm text-[#8fd6ff]">Loading...</div>}>
+            <PokeGuruExplorer />
+          </Suspense>
+        )}
       </main>
 
       {/* Floating Back to Top Button */}
@@ -444,14 +500,14 @@ export default function App() {
             <button
               type="button"
               onClick={() => navigate('home')}
-              className="text-[#9aa3b2] hover:text-white transition-colors"
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
             >
               Projects
             </button>
             <button
               type="button"
               onClick={() => navigate('tools')}
-              className="text-[#9aa3b2] hover:text-white transition-colors"
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
             >
               Tools
             </button>
@@ -463,15 +519,36 @@ export default function App() {
             </a>
             <button
               type="button"
+              onClick={() => navigate('lab')}
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
+            >
+              AI Lab
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('identity')}
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
+            >
+              Identity Studio
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('ops')}
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
+            >
+              Mission Control
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('about')}
-              className="text-[#9aa3b2] hover:text-white transition-colors"
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
             >
               About
             </button>
             <button
               type="button"
               onClick={() => navigate('contact')}
-              className="text-[#9aa3b2] hover:text-white transition-colors"
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
             >
               Contact
             </button>
@@ -486,14 +563,28 @@ export default function App() {
             <button
               type="button"
               onClick={() => navigate('privacy')}
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               Privacy
             </button>
             <button
               type="button"
+              onClick={() => navigate('cookie-policy')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Cookie Policy
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('accessibility')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Accessibility
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('terms')}
-              className="hover:text-white transition-colors"
+              className="hover:text-white transition-colors cursor-pointer"
             >
               Terms
             </button>
