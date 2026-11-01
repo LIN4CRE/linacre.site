@@ -29,7 +29,15 @@ export default function AmbientMusicPlayer({
   const volumeToggleRef = useRef<HTMLButtonElement | null>(null);
   const sliderId = useId();
 
-  useEffect(() => ambientAudio.subscribe(setAudioState), []);
+  // Subscribe to engine state updates and hook browser interaction auto-unlock.
+  useEffect(() => {
+    const unsubscribe = ambientAudio.subscribe(setAudioState);
+    const cleanupUnlock = ambientAudio.registerAutoUnlockListener();
+    return () => {
+      unsubscribe();
+      cleanupUnlock();
+    };
+  }, []);
 
   useEffect(() => {
     if (!showVolumePopup) return;
