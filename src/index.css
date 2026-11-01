@@ -1617,6 +1617,39 @@ body {
   font-size: 0.72rem;
 }
 
+.home-search__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.home-search__chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--site-line);
+  border-radius: 999px;
+  color: var(--site-muted);
+  background: rgba(255, 255, 255, 0.025);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    color 140ms ease,
+    background-color 140ms ease;
+}
+
+.home-search__chip:hover,
+.home-search__chip.is-active {
+  border-color: color-mix(in srgb, var(--site-accent) 60%, var(--site-line));
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--site-accent) 14%, transparent);
+}
+
 .home-hero__stats {
   display: flex;
   flex-wrap: wrap;
@@ -1708,6 +1741,98 @@ body {
     transparent 72%
   );
   filter: blur(15px);
+}
+
+.hero-art__astrolabe {
+  position: absolute;
+  z-index: 0;
+  width: 88%;
+  height: 88%;
+  pointer-events: none;
+  opacity: 0.85;
+  animation: hero-orbit 64s linear infinite;
+}
+
+.hero-art__core {
+  position: absolute;
+  inset: 28%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, #8fd6ff 42%, rgba(56, 189, 248, 0) 75%);
+  box-shadow: 0 0 36px rgba(143, 214, 255, 0.85);
+  transform: translateZ(0);
+  pointer-events: none;
+}
+
+.hero-art__chip {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid rgba(143, 214, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(8, 13, 24, 0.78);
+  backdrop-filter: blur(8px);
+  color: #dbeafe;
+  font-family: var(--font-mono);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.hero-art__chip--nw {
+  top: 3.4rem;
+  left: 1.35rem;
+}
+
+.hero-art__chip--ne {
+  top: 3.4rem;
+  right: 1.35rem;
+}
+
+.hero-art__chip--sw {
+  bottom: 3.35rem;
+  left: 1.35rem;
+}
+
+.hero-art__chip--se {
+  bottom: 3.35rem;
+  right: 1.35rem;
+}
+
+.hero-art__chip-dot {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+}
+
+.hero-art__chip-dot--cyan {
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.hero-art__chip-dot--emerald {
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.hero-art__chip-dot--purple {
+  background: #c084fc;
+  box-shadow: 0 0 8px #c084fc;
+}
+
+.hero-art__chip-dot--amber {
+  background: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+@media (max-width: 520px) {
+  .hero-art__chip {
+    display: none;
+  }
 }
 
 .hero-art__orbit {

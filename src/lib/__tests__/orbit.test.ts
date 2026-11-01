@@ -8,6 +8,7 @@ import {
   nightPath,
   normaliseLon,
   project,
+  projectOrthographic,
   quakeColour,
   splitTrack,
   stargazingScore,
@@ -20,6 +21,12 @@ describe('orbit helpers', () => {
     expect(project(0, 0)).toEqual([180, 90]);
     expect(project(-180, 90)).toEqual([0, 0]);
     expect(normaliseLon(190)).toBeCloseTo(-170, 5);
+    const center = projectOrthographic(HOME.lon, HOME.lat, HOME.lon, HOME.lat);
+    expect(center.visible).toBe(true);
+    expect(center.x).toBeCloseTo(0, 5);
+    expect(center.y).toBeCloseTo(0, 5);
+    const antipode = projectOrthographic(HOME.lon + 180, -HOME.lat, HOME.lon, HOME.lat);
+    expect(antipode.visible).toBe(false);
   });
 
   it('computes great-circle distance accurately', () => {

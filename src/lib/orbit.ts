@@ -14,6 +14,29 @@ export function project(lon: number, lat: number): [number, number] {
   return [normaliseLon(lon) + 180, 90 - lat];
 }
 
+/**
+ * Orthographic 3D globe projection onto a unit sphere centered at (centerLon, centerLat).
+ * Returns x (-1..1), y (-1..1), and visible (true if on the front hemisphere).
+ */
+export function projectOrthographic(
+  lon: number,
+  lat: number,
+  centerLon: number,
+  centerLat: number,
+): { x: number; y: number; visible: boolean } {
+  const phi = lat * DEG;
+  const phi0 = centerLat * DEG;
+  const dLambda = (lon - centerLon) * DEG;
+
+  const cosC =
+    Math.sin(phi0) * Math.sin(phi) + Math.cos(phi0) * Math.cos(phi) * Math.cos(dLambda);
+  const x = Math.cos(phi) * Math.sin(dLambda);
+  const y =
+    Math.cos(phi0) * Math.sin(phi) - Math.sin(phi0) * Math.cos(phi) * Math.cos(dLambda);
+
+  return { x, y: -y, visible: cosC >= 0 };
+}
+
 export function normaliseLon(lon: number): number {
   return ((((lon + 180) % 360) + 360) % 360) - 180;
 }

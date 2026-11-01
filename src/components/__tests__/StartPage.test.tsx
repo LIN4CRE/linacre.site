@@ -27,7 +27,11 @@ describe('StartPage', () => {
       '#project-library',
     );
     expect(document.querySelector('.hero-art__cube')).toBeInTheDocument();
+    expect(document.querySelector('.hero-art__astrolabe')).toBeInTheDocument();
     expect(document.querySelector('.hero-art')).toHaveAttribute('aria-hidden', 'true');
+    expect(
+      screen.getByRole('heading', { name: /Built-in Studios, Hubs & Live Observatories/i }),
+    ).toBeInTheDocument();
   });
 
   it('passes project searches through to the shared catalogue filter', () => {

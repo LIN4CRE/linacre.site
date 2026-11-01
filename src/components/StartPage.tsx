@@ -1,6 +1,7 @@
 import type { RefObject } from 'react';
-import { ArrowDown, ArrowRight, Gamepad2, Search, Wrench } from 'lucide-react';
+import { ArrowDown, ArrowRight, Gamepad2, Orbit, Search, Wrench } from 'lucide-react';
 import { SITE_PROJECTS } from '../data/siteProjects';
+import ExperienceShowcase from './ExperienceShowcase';
 import FeaturedSpotlight from './FeaturedSpotlight';
 import HeroMonolith from './HeroMonolith';
 import ProjectGrid from './ProjectGrid';
@@ -15,6 +16,8 @@ interface StartPageProps {
 const projectCount = SITE_PROJECTS.length;
 const categoryCount = new Set(SITE_PROJECTS.map(project => project.kind)).size;
 const sourceCount = SITE_PROJECTS.filter(project => Boolean(project.repo)).length;
+
+const QUICK_SEARCH_CHIPS = ['Fire TV', 'Android', 'AI', 'Games', 'Audio', 'OSINT'] as const;
 
 export default function StartPage({ navigate, query, setQuery, searchRef }: StartPageProps) {
   return (
@@ -33,8 +36,9 @@ export default function StartPage({ navigate, query, setQuery, searchRef }: Star
           </h1>
 
           <p className="home-hero__intro">
-            Practical apps, thoughtful browser tools and playful experiments. Explore what is live,
-            find a download, or follow the source behind each project.
+            Practical apps, thoughtful browser tools, instant-play WebAssembly games, and live
+            planetary telemetry. Explore what is live, find a download, or follow the open source
+            behind each project.
           </p>
 
           <div className="home-hero__actions">
@@ -54,6 +58,14 @@ export default function StartPage({ navigate, query, setQuery, searchRef }: Star
               <Gamepad2 aria-hidden="true" />
               Play games
             </a>
+            <button
+              type="button"
+              className="home-hero__secondary-action"
+              onClick={() => navigate('orbit')}
+            >
+              <Orbit aria-hidden="true" />
+              Live Orbit
+            </button>
           </div>
 
           <div className="home-search" role="search">
@@ -72,6 +84,21 @@ export default function StartPage({ navigate, query, setQuery, searchRef }: Star
               />
               <kbd aria-hidden="true">/</kbd>
             </div>
+            <div className="home-search__chips" aria-label="Quick search topics">
+              {QUICK_SEARCH_CHIPS.map(chip => {
+                const isSelected = query.toLowerCase() === chip.toLowerCase();
+                return (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => setQuery(isSelected ? '' : chip)}
+                    className={`home-search__chip${isSelected ? ' is-active' : ''}`}
+                  >
+                    {chip}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           <dl className="home-hero__stats" aria-label="Project catalogue at a glance">
@@ -87,6 +114,10 @@ export default function StartPage({ navigate, query, setQuery, searchRef }: Star
               <dt>Source links</dt>
               <dd>{sourceCount.toString().padStart(2, '0')}</dd>
             </div>
+            <div>
+              <dt>Instant games</dt>
+              <dd>77</dd>
+            </div>
           </dl>
         </div>
 
@@ -94,6 +125,8 @@ export default function StartPage({ navigate, query, setQuery, searchRef }: Star
           <HeroMonolith />
         </div>
       </section>
+
+      {!query && <ExperienceShowcase navigate={navigate} />}
 
       {!query && <FeaturedSpotlight />}
 
