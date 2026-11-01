@@ -30,6 +30,15 @@ const TRACK_ARTIST = 'Linacre';
 const SUNO_URL = 'https://suno.com/song/99ac3181-f6f5-491f-8e72-797b7c756cff';
 const AUDIO_SRC = '/audio/99ac3181-f6f5-491f-8e72-797b7c756cff.mp3';
 
+function getAudioUrl(): string {
+  if (typeof window !== 'undefined' && window.location?.origin && !window.location.origin.startsWith('null')) {
+    try {
+      return new URL(AUDIO_SRC, window.location.origin).toString();
+    } catch {}
+  }
+  return AUDIO_SRC;
+}
+
 // Audio timing constants
 const START_TRIM = 0.15; // Skip MP3 encoder silence padding
 const CROSSFADE_DURATION = 4.0; // 4-second equal-power crossfade
@@ -72,7 +81,6 @@ export class AmbientAudioEngine {
   private scheduleTimer: ReturnType<typeof setTimeout> | null = null;
   private nextLoopStartTime = 0;
   private pauseOffset = 0;
-  private pauseTime = 0;
 
   private listeners = new Set<AmbientAudioListener>();
   private frequencyData: Uint8Array<ArrayBuffer> = new Uint8Array(32);
@@ -194,7 +202,7 @@ export class AmbientAudioEngine {
     this.notify();
 
     try {
-      const res = await fetch(AUDIO_SRC);
+      const res = await fetch(getAudioUrl());
       if (!res.ok) {
         throw new Error(`Failed to fetch audio: ${res.status}`);
       }
@@ -224,8 +232,9 @@ export class AmbientAudioEngine {
     this.isFallbackMode = true;
 
     try {
-      this.fallbackAudioA = new Audio(AUDIO_SRC);
-      this.fallbackAudioB = new Audio(AUDIO_SRC);
+      const src = getAudioUrl();
+      this.fallbackAudioA = new Audio(src);
+      this.fallbackAudioB = new Audio(src);
       this.fallbackAudioA.preload = 'auto';
       this.fallbackAudioB.preload = 'auto';
     } catch {}
@@ -485,7 +494,12 @@ export class AmbientAudioEngine {
     const vol = this.isMuted ? 0 : this.volume;
     this.fallbackAudioA.volume = vol;
     this.fallbackAudioA.loop = true;
-    this.fallbackAudioA.play().catch(() => {});
+    try {
+      const playPromise = this.fallbackAudioA.play();
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {});
+      }
+    } catch {}
     this.notify();
   }
 

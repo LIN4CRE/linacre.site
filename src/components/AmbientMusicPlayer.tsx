@@ -28,24 +28,24 @@ export default function AmbientMusicPlayer({ className = '', compact = false }: 
 
   // Real-time soundwave / visualizer animation loop
   useEffect(() => {
+    if (!audioState.isPlaying || audioState.isMuted) {
+      setVisualLevels([0.15, 0.15, 0.15, 0.15, 0.15]);
+      return;
+    }
+
     let active = true;
 
     const updateVisualizer = () => {
       if (!active) return;
 
-      if (audioState.isPlaying && !audioState.isMuted) {
-        const freqData = ambientAudio.getVisualizerData();
-        // Sample 5 distinct frequency bands: bass, low-mid, mid, high-mid, highs
-        const b0 = Math.max(0.15, (freqData[1] || 0) / 255);
-        const b1 = Math.max(0.2, (freqData[3] || 0) / 255);
-        const b2 = Math.max(0.25, (freqData[6] || 0) / 255);
-        const b3 = Math.max(0.18, (freqData[10] || 0) / 255);
-        const b4 = Math.max(0.15, (freqData[16] || 0) / 255);
-        setVisualLevels([b0, b1, b2, b3, b4]);
-      } else {
-        // Flat resting levels when paused or muted
-        setVisualLevels([0.15, 0.15, 0.15, 0.15, 0.15]);
-      }
+      const freqData = ambientAudio.getVisualizerData();
+      // Sample 5 distinct frequency bands: bass, low-mid, mid, high-mid, highs
+      const b0 = Math.max(0.15, (freqData[1] || 0) / 255);
+      const b1 = Math.max(0.2, (freqData[3] || 0) / 255);
+      const b2 = Math.max(0.25, (freqData[6] || 0) / 255);
+      const b3 = Math.max(0.18, (freqData[10] || 0) / 255);
+      const b4 = Math.max(0.15, (freqData[16] || 0) / 255);
+      setVisualLevels([b0, b1, b2, b3, b4]);
 
       animationFrameRef.current = requestAnimationFrame(updateVisualizer);
     };

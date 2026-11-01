@@ -16,6 +16,7 @@ import Emblem3D from './components/Emblem3D';
 import AmbientSpaceCanvas from './components/AmbientSpaceCanvas';
 import { toggleSound, isSoundEnabled, playBlip } from './lib/audioFeedback';
 import { RouteHead, type RouteMeta } from './components/RouteHead';
+import AmbientMusicPlayer from './components/AmbientMusicPlayer';
 import routeMetaJson from '../route-meta.json';
 
 const CommandPalette = lazy(() => import('./components/CommandPalette'));
@@ -221,6 +222,9 @@ export default function App() {
 
           {/* Right Actions */}
           <div className="flex items-center gap-2 shrink-0">
+            {/* Ambient Continuous Background Music Player */}
+            <AmbientMusicPlayer />
+
             {/* Audio Toggle */}
             <button
               type="button"
