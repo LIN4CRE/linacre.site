@@ -2,10 +2,15 @@ import {
   ArrowUpRight,
   AudioLines,
   Captions,
+  Check,
   Clapperboard,
+  Copy,
   ExternalLink,
   Play,
   Radio,
+  Shuffle,
+  SkipBack,
+  SkipForward,
   Video,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -13,7 +18,19 @@ import {
   DEFAULT_MUSIC_VIDEO_TRACK,
   MUSIC_VIDEO_PLAYER_URL,
   MUSIC_VIDEO_TRACKS,
+  type MusicVideoTrack,
 } from '../data/musicVideos';
+
+type GenreFilter = 'all' | 'rap' | 'folk' | 'comedy';
+
+function matchesGenreFilter(track: MusicVideoTrack, filter: GenreFilter): boolean {
+  if (filter === 'all') return true;
+  const g = track.genre.toLowerCase();
+  if (filter === 'rap') return g.includes('rap') || g.includes('grime') || g.includes('boom-bap');
+  if (filter === 'folk') return g.includes('folk') || g.includes('acoustic') || g.includes('indie');
+  if (filter === 'comedy') return g.includes('comedy') || g.includes('pub') || g.includes('garage');
+  return true;
+}
 
 function trackFromHash(): string {
   if (typeof window === 'undefined') return DEFAULT_MUSIC_VIDEO_TRACK;
@@ -33,10 +50,17 @@ function directPlayerUrl(trackId: string): string {
 export default function MusicVideos() {
   const [activeTrackId, setActiveTrackId] = useState(trackFromHash);
   const [frameVersion, setFrameVersion] = useState(0);
+  const [genreFilter, setGenreFilter] = useState<GenreFilter>('all');
+  const [copiedLink, setCopiedLink] = useState(false);
   const currentTrackRef = useRef(activeTrackId);
   const playerRef = useRef<HTMLElement>(null);
-  const activeTrack =
-    MUSIC_VIDEO_TRACKS.find(track => track.id === activeTrackId) ?? MUSIC_VIDEO_TRACKS[0];
+
+  const activeIndex = Math.max(
+    0,
+    MUSIC_VIDEO_TRACKS.findIndex(track => track.id === activeTrackId),
+  );
+  const activeTrack = MUSIC_VIDEO_TRACKS[activeIndex] ?? MUSIC_VIDEO_TRACKS[0];
+  const visibleTracks = MUSIC_VIDEO_TRACKS.filter(t => matchesGenreFilter(t, genreFilter));
 
   useEffect(() => {
     const restoreTrack = () => {
@@ -72,6 +96,31 @@ export default function MusicVideos() {
     else scrollPlayer();
   };
 
+  const stepTrack = (delta: number) => {
+    const nextIndex = (activeIndex + delta + MUSIC_VIDEO_TRACKS.length) % MUSIC_VIDEO_TRACKS.length;
+    selectTrack(MUSIC_VIDEO_TRACKS[nextIndex].id);
+  };
+
+  const shuffleTrack = () => {
+    if (MUSIC_VIDEO_TRACKS.length <= 1) return;
+    let nextIndex = activeIndex;
+    while (nextIndex === activeIndex) {
+      nextIndex = Math.floor(Math.random() * MUSIC_VIDEO_TRACKS.length);
+    }
+    selectTrack(MUSIC_VIDEO_TRACKS[nextIndex].id);
+  };
+
+  const copyShareUrl = async () => {
+    try {
+      const shareUrl = `${window.location.origin}/music-videos#${activeTrack.id}`;
+      await navigator.clipboard?.writeText(shareUrl);
+      setCopiedLink(true);
+      window.setTimeout(() => setCopiedLink(false), 2000);
+    } catch {
+      // Clipboard API unavailable
+    }
+  };
+
   return (
     <section className="music-videos-page" aria-labelledby="music-videos-title">
       <header className="music-videos-hero">
@@ -105,6 +154,13 @@ export default function MusicVideos() {
             >
               <Play aria-hidden="true" /> Open full cinema <ArrowUpRight aria-hidden="true" />
             </a>
+            <button
+              type="button"
+              onClick={shuffleTrack}
+              className="music-videos-source-link cursor-pointer"
+            >
+              <Shuffle aria-hidden="true" /> Surprise track
+            </button>
             <a
               href="https://github.com/LIN4CRE/linacre-music-videos"
               target="_blank"
@@ -124,11 +180,12 @@ export default function MusicVideos() {
           />
           <figcaption>
             <span>
-              <Radio aria-hidden="true" /> NOW SELECTED
+              <Radio aria-hidden="true" /> NOW SELECTED · TRACK{' '}
+              {String(activeIndex + 1).padStart(2, '0')}/10
             </span>
             <strong>{activeTrack.title}</strong>
             <small>
-              {activeTrack.genre.split('/')[0].trim()} · {activeTrack.duration}
+              {activeTrack.genre.split('/')[0].trim()} · {activeTrack.bpm} · {activeTrack.duration}
             </small>
           </figcaption>
         </figure>
@@ -140,45 +197,71 @@ export default function MusicVideos() {
             <p className="music-videos-section-kicker">THE MASTER COLLECTION</p>
             <h2 id="music-track-list-title">Choose a track</h2>
           </div>
-          <span>{MUSIC_VIDEO_TRACKS.length} original videos</span>
+          <div className="flex flex-wrap items-center gap-2">
+            {(
+              [
+                ['all', `All (${MUSIC_VIDEO_TRACKS.length})`],
+                ['rap', 'Rap & Grime'],
+                ['folk', 'Folk & Acoustic'],
+                ['comedy', 'Comedy & Northern'],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                aria-pressed={genreFilter === id}
+                onClick={() => setGenreFilter(id)}
+                className={`rounded-full border px-3 py-1 font-mono text-xs transition cursor-pointer ${
+                  genreFilter === id
+                    ? 'border-[#8fd6ff]/50 bg-[#8fd6ff]/15 text-white'
+                    : 'border-white/10 bg-white/[0.03] text-[#9aa3b2] hover:text-white'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
         <nav className="music-videos-track-rail" aria-label="Choose a music video">
-          {MUSIC_VIDEO_TRACKS.map((track, index) => (
-            <a
-              key={track.id}
-              href={`/music-videos#${track.id}`}
-              className={`music-videos-track${activeTrack.id === track.id ? ' is-active' : ''}`}
-              aria-current={activeTrack.id === track.id ? 'true' : undefined}
-              onClick={event => {
-                if (
-                  event.button !== 0 ||
-                  event.metaKey ||
-                  event.ctrlKey ||
-                  event.shiftKey ||
-                  event.altKey
-                )
-                  return;
-                event.preventDefault();
-                selectTrack(track.id);
-              }}
-            >
-              <span className="music-videos-track__art">
-                <img src={track.cover} alt="" loading="lazy" decoding="async" />
-                <span className="music-videos-track__play" aria-hidden="true">
-                  <Play />
+          {visibleTracks.map(track => {
+            const index = MUSIC_VIDEO_TRACKS.findIndex(item => item.id === track.id);
+            return (
+              <a
+                key={track.id}
+                href={`/music-videos#${track.id}`}
+                className={`music-videos-track${activeTrack.id === track.id ? ' is-active' : ''}`}
+                aria-current={activeTrack.id === track.id ? 'true' : undefined}
+                onClick={event => {
+                  if (
+                    event.button !== 0 ||
+                    event.metaKey ||
+                    event.ctrlKey ||
+                    event.shiftKey ||
+                    event.altKey
+                  )
+                    return;
+                  event.preventDefault();
+                  selectTrack(track.id);
+                }}
+              >
+                <span className="music-videos-track__art">
+                  <img src={track.cover} alt="" loading="lazy" decoding="async" />
+                  <span className="music-videos-track__play" aria-hidden="true">
+                    <Play />
+                  </span>
                 </span>
-              </span>
-              <span className="music-videos-track__meta">
-                <span className="music-videos-track__number">
-                  {String(index + 1).padStart(2, '0')} / {track.duration}
+                <span className="music-videos-track__meta">
+                  <span className="music-videos-track__number">
+                    {String(index + 1).padStart(2, '0')} / {track.duration}
+                  </span>
+                  <strong>{track.title}</strong>
+                  <small>
+                    {track.bpm} · {track.genre.split('/')[0].trim()}
+                  </small>
                 </span>
-                <strong>{track.title}</strong>
-                <small>
-                  {track.bpm} · {track.genre.split('/')[0].trim()}
-                </small>
-              </span>
-            </a>
-          ))}
+              </a>
+            );
+          })}
         </nav>
         <p className="music-videos-track-hint">
           Selecting a track updates this page’s deep link and loads it in the original player below.
@@ -192,17 +275,59 @@ export default function MusicVideos() {
       >
         <div className="music-videos-section-heading music-videos-player-heading">
           <div>
-            <p className="music-videos-section-kicker">OFFICIAL CINEMA PLAYER</p>
+            <p className="music-videos-section-kicker">
+              OFFICIAL CINEMA PLAYER · TRACK {String(activeIndex + 1).padStart(2, '0')} OF{' '}
+              {MUSIC_VIDEO_TRACKS.length}
+            </p>
             <h2 id="music-player-title">{activeTrack.title}</h2>
           </div>
-          <a
-            href={directPlayerUrl(activeTrack.id)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="music-videos-open-link music-videos-open-link--compact"
-          >
-            Open in new tab <ArrowUpRight aria-hidden="true" />
-          </a>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => stepTrack(-1)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-medium text-white hover:border-[#8fd6ff]/40 transition cursor-pointer"
+              aria-label="Previous music video"
+            >
+              <SkipBack className="h-3.5 w-3.5" aria-hidden="true" />
+              <span>Prev</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => stepTrack(1)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-medium text-white hover:border-[#8fd6ff]/40 transition cursor-pointer"
+              aria-label="Next music video"
+            >
+              <span>Next</span>
+              <SkipForward className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={copyShareUrl}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs font-medium text-[#9aa3b2] hover:text-white transition cursor-pointer"
+              aria-label="Copy share link to this track"
+            >
+              {copiedLink ? (
+                <>
+                  <Check className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+                  <span className="text-emerald-300">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Copy link</span>
+                </>
+              )}
+            </button>
+            <a
+              href={directPlayerUrl(activeTrack.id)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="music-videos-open-link music-videos-open-link--compact"
+            >
+              Open in new tab <ArrowUpRight aria-hidden="true" />
+            </a>
+          </div>
         </div>
         <div className="music-videos-frame-shell">
           <iframe

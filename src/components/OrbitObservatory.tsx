@@ -165,7 +165,17 @@ export default function OrbitObservatory() {
   const [showTrack, setShowTrack] = useState(true);
   const [showQuakes, setShowQuakes] = useState(true);
   const [selectedQuakeId, setSelectedQuakeId] = useState<string | null>(null);
-  const [globeTarget, setGlobeTarget] = useState<'iss' | 'home' | 'sun'>('iss');
+  const [globeTarget, setGlobeTarget] = useState<'iss' | 'home' | 'sun' | 'free'>('iss');
+  const [freeCenter, setFreeCenter] = useState<{ lon: number; lat: number }>({
+    lon: -1.48,
+    lat: 53.55,
+  });
+  const [dragOrigin, setDragOrigin] = useState<{
+    x: number;
+    y: number;
+    lon: number;
+    lat: number;
+  } | null>(null);
 
   const fetchTelemetry = useCallback(async () => {
     if (typeof fetch !== 'function') return;
@@ -291,10 +301,13 @@ export default function OrbitObservatory() {
   const [homeX, homeY] = project(HOME.lon, HOME.lat);
 
   const globeCenter = useMemo(() => {
+    if (globeTarget === 'free') {
+      return { lon: freeCenter.lon, lat: freeCenter.lat, label: 'Free Drag Orbit' };
+    }
     if (globeTarget === 'home') return { lon: HOME.lon, lat: HOME.lat, label: 'Barnsley HQ' };
     if (globeTarget === 'sun') return { lon: sun.lon, lat: sun.lat, label: 'Sub-Solar Zenith' };
     return { lon: iss.longitude, lat: iss.latitude, label: 'ISS Orbital Lock' };
-  }, [globeTarget, iss.latitude, iss.longitude, sun.lat, sun.lon]);
+  }, [freeCenter.lat, freeCenter.lon, globeTarget, iss.latitude, iss.longitude, sun.lat, sun.lon]);
 
   const homeDaylight = isDaylight(HOME.lat, HOME.lon, sun);
   const skyVerdict = stargazingScore(weather.cloudCover, homeDaylight, moon.illumination);
@@ -694,7 +707,32 @@ export default function OrbitObservatory() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[260px] aspect-square">
+          <div
+            className="relative mx-auto w-full max-w-[260px] aspect-square cursor-grab active:cursor-grabbing select-none"
+            onPointerDown={e => {
+              e.currentTarget.setPointerCapture?.(e.pointerId);
+              setGlobeTarget('free');
+              setFreeCenter({ lon: globeCenter.lon, lat: globeCenter.lat });
+              setDragOrigin({
+                x: e.clientX,
+                y: e.clientY,
+                lon: globeCenter.lon,
+                lat: globeCenter.lat,
+              });
+            }}
+            onPointerMove={e => {
+              if (!dragOrigin) return;
+              const dx = e.clientX - dragOrigin.x;
+              const dy = e.clientY - dragOrigin.y;
+              setFreeCenter({
+                lon: ((((dragOrigin.lon - dx * 0.65 + 180) % 360) + 360) % 360) - 180,
+                lat: Math.max(-75, Math.min(75, dragOrigin.lat + dy * 0.55)),
+              });
+            }}
+            onPointerUp={() => setDragOrigin(null)}
+            onPointerCancel={() => setDragOrigin(null)}
+            title="Drag to rotate the 3D globe in any direction"
+          >
             <svg
               viewBox="-115 -115 230 230"
               className="h-full w-full block"
