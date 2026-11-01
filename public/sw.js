@@ -74,9 +74,10 @@ self.addEventListener('activate', function (e) {
 self.addEventListener('fetch', function (e) {
   var url = new URL(e.request.url);
 
-  // Never touch API calls, POSTs, or third-party requests (Lab streaming!)
+  // Never touch API calls, POSTs, streaming audio, or third-party requests (Lab streaming!)
   if (e.request.method !== 'GET' || url.origin !== self.location.origin) return;
   if (url.pathname.indexOf('/api/') === 0) return;
+  if (url.pathname.indexOf('/audio/') === 0) return;
 
   // Network-first for page navigations: fresh deploys win, cache is the offline fallback
   if (e.request.mode === 'navigate') {
