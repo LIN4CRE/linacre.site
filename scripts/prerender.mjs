@@ -248,6 +248,7 @@ const NAV = [
   ['/games', 'Games'],
   ['/music-videos', 'Music Videos'],
   ['/osint', 'OSINT HUD'],
+  ['/orbit', 'Orbit'],
   ['/about', 'About'],
   ['/contact', 'Contact'],
 ];
@@ -398,6 +399,18 @@ ${sectors}
 `;
     }
 
+    case '/orbit':
+      return `
+<h1>Orbit &amp; Earth Observatory</h1>
+<p>Real-time planetary desk tracking the International Space Station, the solar day/night terminator, global M4.5+ seismic events, upcoming orbital launches, and live sky conditions over Barnsley (53.55°N, 1.48°W).</p>
+<ul>
+  <li><strong>ISS Live Telemetry</strong> — real-time latitude, longitude, altitude, velocity and 90-minute orbital ground track.</li>
+  <li><strong>Solar Terminator &amp; Lunar Phase</strong> — live sub-solar point, day/night boundary and moon illumination.</li>
+  <li><strong>USGS M4.5+ Seismic Feed</strong> — past 24 hours of global earthquakes plotted on an equirectangular world map.</li>
+  <li><strong>Orbital Launch Schedule</strong> — upcoming rocket launches with live T-minus countdowns.</li>
+</ul>
+`;
+
     case '/about':
       return `
 <h1>About David Linacre</h1>
@@ -525,6 +538,7 @@ const ROUTE_LASTMOD_SOURCES = {
   '/games': ['public/games/index.html', 'public/games/games.json'],
   '/music-videos': ['src/components/MusicVideos.tsx', 'src/data/musicVideos.ts'],
   '/osint': ['src/components/OsintHud.tsx', 'public/data/osint-hud.json'],
+  '/orbit': ['src/components/OrbitObservatory.tsx', 'src/lib/orbit.ts', 'src/data/worldLand.ts'],
   '/about': ['src/components/About.tsx'],
   '/lab': ['src/components/Lab.tsx'],
   '/identity': ['src/components/IdentityHub.tsx'],

@@ -19,6 +19,7 @@ export const ROUTE_LABEL: Record<string, string> = {
   '/ops': 'Ops HUD',
   '/music-videos': 'Music Videos',
   '/osint': 'OSINT HUD',
+  '/orbit': 'Orbit',
 };
 
 export const ROUTE_TAB_IDS = [
@@ -38,6 +39,7 @@ export const ROUTE_TAB_IDS = [
   'ops',
   'music-videos',
   'osint',
+  'orbit',
 ] as const;
 
 export const APP_TABS: readonly AppTab[] = [
@@ -58,6 +60,7 @@ export const APP_TABS: readonly AppTab[] = [
   'ops',
   'music-videos',
   'osint',
+  'orbit',
 ];
 
 const routeTabSet = new Set<string>(ROUTE_TAB_IDS);

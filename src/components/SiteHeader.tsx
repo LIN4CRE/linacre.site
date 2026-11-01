@@ -51,6 +51,11 @@ const MORE_GROUPS = [
     heading: 'Explore',
     links: [
       { tab: 'osint', label: 'OSINT HUD', description: '1,310 curated tools across 11 sectors' },
+      {
+        tab: 'orbit',
+        label: 'Orbit Observatory',
+        description: 'Live ISS track, solar terminator, seismic & launch telemetry',
+      },
       { tab: 'mob-deals', label: 'Mob Deals', description: 'Compare UK SIM-only plans' },
       { tab: 'pokeguru', label: 'PokeGuru', description: 'Browse Pokémon TCG sets' },
     ],

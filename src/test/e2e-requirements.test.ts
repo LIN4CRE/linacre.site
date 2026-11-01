@@ -559,7 +559,7 @@ describe('Tier 1 — Feature Coverage', () => {
       routeMeta = JSON.parse(fs.readFileSync(routeMetaPath, 'utf8'));
     });
 
-    it('1.5.1 verifies route-meta.json contains all 17 expected routes', () => {
+    it('1.5.1 verifies route-meta.json contains all 18 expected routes', () => {
       const expectedRoutes = [
         '/',
         '/tools',
@@ -577,12 +577,13 @@ describe('Tier 1 — Feature Coverage', () => {
         '/pokeguru',
         '/music-videos',
         '/osint',
+        '/orbit',
         '/ops',
       ];
       for (const route of expectedRoutes) {
         expect(routeMeta.routes[route], `Missing route-meta for ${route}`).toBeDefined();
       }
-      expect(Object.keys(routeMeta.routes).length).toBe(17);
+      expect(Object.keys(routeMeta.routes).length).toBe(18);
     });
 
     it('1.5.2 validates that every route contains required SEO and canonical attributes', () => {
@@ -604,6 +605,7 @@ describe('Tier 1 — Feature Coverage', () => {
       expect(routeMeta.routes['/ops'].index).toBe(true);
       expect(routeMeta.routes['/music-videos'].index).toBe(true);
       expect(routeMeta.routes['/osint'].index).toBe(true);
+      expect(routeMeta.routes['/orbit'].index).toBe(true);
     });
 
     it('1.5.4 updates document head tags dynamically via RouteHead component', () => {
@@ -1090,7 +1092,7 @@ describe('Tier 4 — Real-World Application Scenarios', () => {
     const indexableRoutes = Object.entries(routeMeta).filter(
       ([, meta]: [string, any]) => meta.index === true,
     );
-    expect(indexableRoutes.length).toBe(16); // 17 total minus /contact/thanks
+    expect(indexableRoutes.length).toBe(17); // 18 total minus /contact/thanks
 
     // Step 2: Crawler verifies canonical URLs are absolute and use HTTPS
     for (const [, meta] of indexableRoutes as Array<[string, RouteMeta]>) {

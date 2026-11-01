@@ -24,6 +24,7 @@ const MobDealsSwitcher = lazy(() => import('./components/MobDealsSwitcher'));
 const PokeGuruExplorer = lazy(() => import('./components/PokeGuruExplorer'));
 const MusicVideos = lazy(() => import('./components/MusicVideos'));
 const OsintHud = lazy(() => import('./components/OsintHud'));
+const OrbitObservatory = lazy(() => import('./components/OrbitObservatory'));
 
 function RouteLoading() {
   return (
@@ -186,6 +187,7 @@ export default function App() {
           {activeTab === 'pokeguru' && <PokeGuruExplorer />}
           {activeTab === 'music-videos' && <MusicVideos />}
           {activeTab === 'osint' && <OsintHud />}
+          {activeTab === 'orbit' && <OrbitObservatory />}
         </Suspense>
       </main>
 
@@ -244,6 +246,13 @@ export default function App() {
               className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
             >
               OSINT HUD
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('orbit')}
+              className="text-[#9aa3b2] hover:text-white transition-colors cursor-pointer"
+            >
+              Orbit
             </button>
             <button
               type="button"

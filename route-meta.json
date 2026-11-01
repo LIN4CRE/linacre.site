@@ -39,6 +39,12 @@
       "image": "https://www.linacre.site/banners/linacre-osint-hud.jpg",
       "index": true
     },
+    "/orbit": {
+      "title": "Orbit & Earth Observatory — Live ISS, seismic & launch telemetry | Linacre.site",
+      "description": "Real-time planetary observatory tracking the International Space Station, solar day/night terminator, global M4.5+ earthquakes, rocket launches and Barnsley sky conditions.",
+      "canonical": "https://www.linacre.site/orbit",
+      "index": true
+    },
     "/lab": {
       "title": "AI Lab — model sandbox and experiments | Linacre.site",
       "description": "An interactive AI lab: chat with models, inspect data structures and explore live experiments in the browser.",

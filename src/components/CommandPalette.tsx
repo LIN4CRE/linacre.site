@@ -114,6 +114,14 @@ export default function CommandPalette({
       keywords: 'osint intelligence recon search research hud sectors',
     },
     {
+      id: 'nav-orbit',
+      label: 'Open Orbit Observatory',
+      icon: Globe2,
+      action: () => go('orbit'),
+      meta: 'Live ISS orbital telemetry, day/night terminator, seismic events & rocket launches',
+      keywords: 'orbit iss space station satellites earthquakes launches weather astronomy barnsley',
+    },
+    {
       id: 'nav-lab',
       label: 'Go to AI Lab',
       icon: Cpu,

@@ -19,7 +19,8 @@ export type AppTab =
   | 'pokeguru'
   | 'ops'
   | 'music-videos'
-  | 'osint';
+  | 'osint'
+  | 'orbit';
 
 export type SetAppTab = Dispatch<SetStateAction<string>> | ((tab: string) => void);
 

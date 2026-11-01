@@ -193,7 +193,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://play.pokemonshowdown.com https://*.githubusercontent.com https://www.linacre.site; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://generativelanguage.googleapis.com https://*.googleapis.com https://api.openai.com https://api.anthropic.com https://vercel.live wss:; worker-src 'self' blob:; frame-src 'self' https://lin4cre.github.io; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://play.pokemonshowdown.com https://*.githubusercontent.com https://www.linacre.site; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://generativelanguage.googleapis.com https://*.googleapis.com https://api.openai.com https://api.anthropic.com https://api.wheretheiss.at https://earthquake.usgs.gov https://ll.thespacedevs.com https://api.open-meteo.com https://vercel.live wss:; worker-src 'self' blob:; frame-src 'self' https://lin4cre.github.io; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
         }
       ]
     }
@@ -242,6 +242,14 @@
     {
       "source": "/osint/",
       "destination": "/osint/index.html"
+    },
+    {
+      "source": "/orbit",
+      "destination": "/orbit/index.html"
+    },
+    {
+      "source": "/orbit/",
+      "destination": "/orbit/index.html"
     },
     {
       "source": "/games/circuit",
