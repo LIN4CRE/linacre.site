@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { SITE_PROJECTS, type ProjectKind, type SiteProject } from '../data/siteProjects';
-import { filterProjects, PROJECT_CATEGORIES, projectActions, projectCategory, type AccessFilter } from '../lib/projectLibrary';
+import {
+  filterProjects,
+  PROJECT_CATEGORIES,
+  projectActions,
+  projectCategory,
+  type AccessFilter,
+} from '../lib/projectLibrary';
 import ProjectActions from './ProjectActions';
-import ProjectDetailModal from './ProjectDetailModal';
 import Card3DTilt from './Card3DTilt';
+
+const ProjectDetailModal = lazy(() => import('./ProjectDetailModal'));
 
 interface Props {
   query: string;
@@ -12,15 +19,21 @@ interface Props {
   heading?: string;
 }
 
-export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS, heading = 'All projects' }: Props) {
+export default function ProjectGrid({
+  query,
+  setQuery,
+  projects = SITE_PROJECTS,
+  heading = 'All projects',
+}: Props) {
   const [category, setCategory] = useState<ProjectKind | 'all'>('all');
   const [access, setAccess] = useState<AccessFilter>('all');
   const [selected, setSelected] = useState<SiteProject | null>(null);
   const [sort, setSort] = useState('recommended');
 
-  const visible = filterProjects(projects, query, category, access).sort((a, b) =>
-    (sort === 'recommended' ? Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) : 0) ||
-    a.name.localeCompare(b.name),
+  const visible = filterProjects(projects, query, category, access).sort(
+    (a, b) =>
+      (sort === 'recommended' ? Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) : 0) ||
+      a.name.localeCompare(b.name),
   );
 
   const groups = PROJECT_CATEGORIES.map(item => ({
@@ -28,21 +41,34 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
     projects: visible.filter(project => projectCategory(project) === item.id),
   })).filter(group => group.projects.length);
 
-  const reset = () => { setQuery(''); setCategory('all'); setAccess('all'); };
-  const categories = PROJECT_CATEGORIES.filter(item => projects.some(project => projectCategory(project) === item.id));
+  const reset = () => {
+    setQuery('');
+    setCategory('all');
+    setAccess('all');
+  };
+  const categories = PROJECT_CATEGORIES.filter(item =>
+    projects.some(project => projectCategory(project) === item.id),
+  );
 
   return (
-    <section aria-label={heading} className="space-y-6">
+    <section id="project-library" aria-label={heading} className="project-library space-y-6">
       {/* Header & Controls Bar */}
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/[0.08] pb-4">
         <div>
-          <h2 className="font-display text-2xl font-bold text-white">{heading}</h2>
-          <p role="status" className="mt-1 text-xs text-[#9aa3b2]">
+          <h2 className="project-library__title font-display text-2xl font-bold text-white">
+            {heading}
+          </h2>
+          <p
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            className="project-library__count mt-1 text-xs text-[#9aa3b2]"
+          >
             {visible.length} of {projects.length} listed projects
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center text-xs text-[#9aa3b2] gap-1.5">
+          <label className="project-library__controls-label flex items-center text-xs text-[#9aa3b2] gap-1.5">
             <span>Sort:</span>
             <select
               aria-label="Sort projects"
@@ -54,7 +80,7 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
               <option value="az">A–Z</option>
             </select>
           </label>
-          <label className="flex items-center text-xs text-[#9aa3b2] gap-1.5">
+          <label className="project-library__controls-label flex items-center text-xs text-[#9aa3b2] gap-1.5">
             <span>Access:</span>
             <select
               aria-label="Filter by access"
@@ -92,7 +118,11 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
           >
             <span>{item.label}</span>
             <span className="text-[11px] opacity-60">
-              ({item.id === 'all' ? projects.length : projects.filter(project => projectCategory(project) === item.id).length})
+              (
+              {item.id === 'all'
+                ? projects.length
+                : projects.filter(project => projectCategory(project) === item.id).length}
+              )
             </span>
           </button>
         ))}
@@ -102,7 +132,9 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
       {groups.map(group => (
         <section key={group.id} aria-label={group.label} className="space-y-3 pt-2">
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-sm font-bold uppercase tracking-wider text-[#9aa3b2]">{group.label}</h3>
+            <h3 className="project-library__group-title font-display text-sm font-bold uppercase tracking-wider text-[#9aa3b2]">
+              {group.label}
+            </h3>
             <span className="h-px flex-1 bg-white/[0.08]" />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -159,7 +191,9 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
                     </div>
 
                     <div className="flex items-center gap-1.5 min-w-0">
-                      <span aria-hidden="true" className="text-sm shrink-0">{project.emoji || '📦'}</span>
+                      <span aria-hidden="true" className="text-sm shrink-0">
+                        {project.emoji || '📦'}
+                      </span>
                       <h4 className="min-w-0 truncate font-display text-sm font-bold text-white group-hover:text-[#8fd6ff] transition-colors">
                         {project.name}
                       </h4>
@@ -172,7 +206,10 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
                     {project.tech && project.tech.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {project.tech.slice(0, 2).map(t => (
-                          <span key={t} className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-[#6b7482] border border-white/[0.05]">
+                          <span
+                            key={t}
+                            className="rounded bg-white/[0.03] px-1.5 py-0.5 font-mono text-[9px] text-[#6b7482] border border-white/[0.05]"
+                          >
                             {t}
                           </span>
                         ))}
@@ -213,7 +250,11 @@ export default function ProjectGrid({ query, setQuery, projects = SITE_PROJECTS,
         </div>
       )}
 
-      <ProjectDetailModal project={selected} onClose={() => setSelected(null)} />
+      {selected && (
+        <Suspense fallback={null}>
+          <ProjectDetailModal project={selected} onClose={() => setSelected(null)} />
+        </Suspense>
+      )}
     </section>
   );
 }

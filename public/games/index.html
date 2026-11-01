@@ -274,7 +274,7 @@
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; }
     }
-  
+
     /* Linacre.site backlink brand badge */
     .brand-linacre {
       display: inline-flex; align-items: center; gap: 4px;
@@ -360,7 +360,7 @@
     }
     .toast.is-visible { opacity: 1; transform: translateY(0); }
 
-  
+
     /* Enhanced Card Hover & Overlays */
     .game-card {
       position: relative;
@@ -437,7 +437,7 @@
       color: #fff; border-color: var(--accent); background: rgba(143, 214, 255, 0.12);
       transform: translateY(-1px);
     }
-  
+
   </style>
 </head>
 <body>
@@ -470,6 +470,26 @@
     <section class="container intro">
       <h1>Browser games that actually run.</h1>
       <p><strong data-count-games>77</strong> hand-picked ports &amp; remakes · hit <strong>Play</strong> and it opens in a new tab · no installs, no ads.</p>
+
+      <div class="featured-ribbon" aria-label="Featured instant AAA browser hits">
+        <div class="featured-ribbon-header">
+          <span class="ribbon-glow-dot"></span>
+          <span class="ribbon-title">FEATURED AAA INSTANT HITS</span>
+          <span class="ribbon-subtitle">Click to jump or filter</span>
+        </div>
+        <div class="featured-ribbon-chips">
+          <button class="chip" type="button" data-chip="Need for Speed">🏎️ NFS Most Wanted</button>
+          <button class="chip" type="button" data-chip="Super Mario 64">⭐ Super Mario 64</button>
+          <button class="chip" type="button" data-chip="Lethal Company">🧟 Lethal Company</button>
+          <button class="chip" type="button" data-chip="ChronoDivide">⚔️ C&amp;C: Red Alert</button>
+          <button class="chip" type="button" data-chip="Quake">💥 Quake III Arena</button>
+          <button class="chip" type="button" data-chip="Stardew Valley">🌾 Stardew Valley</button>
+          <button class="chip" type="button" data-chip="Cuphead">🥊 Cuphead</button>
+          <button class="chip" type="button" data-chip="Slow Roads">🌄 Slow Roads</button>
+          <button class="chip" type="button" data-chip="Townscaper">🏰 Townscaper</button>
+          <button class="chip" type="button" data-chip="Wolfenstein">🔫 Wolfenstein 3D</button>
+        </div>
+      </div>
     </section>
 
     <section class="container" id="library" aria-label="Game library">
@@ -1400,7 +1420,7 @@
             <img src="/games/assets/covers/cssurf.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1424,7 +1444,7 @@
             <img src="/games/assets/covers/haloce.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1448,7 +1468,7 @@
             <img src="/games/assets/covers/skate3.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1472,7 +1492,7 @@
             <img src="/games/assets/covers/pes6.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--wasm">Wasm</span>
           </a>
           <div class="card-body">
@@ -1496,7 +1516,7 @@
             <img src="/games/assets/covers/gtavc.webp" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1520,7 +1540,7 @@
             <img src="/games/assets/covers/gta3.webp" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1544,7 +1564,7 @@
             <img src="/games/assets/covers/simpsons.webp" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--wasm">Wasm</span>
           </a>
           <div class="card-body">
@@ -1568,7 +1588,7 @@
             <img src="/games/assets/covers/minecraft.webp" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--wasm">Wasm</span>
           </a>
           <div class="card-body">
@@ -1592,7 +1612,7 @@
             <img src="/games/assets/covers/q1.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-multiplayer">Online</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1616,7 +1636,7 @@
             <img src="/games/assets/covers/q2.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-multiplayer">Online</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1640,7 +1660,7 @@
             <img src="/games/assets/covers/q3.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-multiplayer">Online</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1664,7 +1684,7 @@
             <img src="/games/assets/covers/rtcw.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-multiplayer">Online</span>
-            
+
             <span class="badge badge--platform badge--webgl">WebGL</span>
           </a>
           <div class="card-body">
@@ -1688,7 +1708,7 @@
             <img src="/games/assets/covers/urban-terror.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--wasm">Wasm</span>
           </a>
           <div class="card-body">
@@ -1712,7 +1732,7 @@
             <img src="/games/assets/covers/hl1.jpg" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--wasm">Wasm</span>
           </a>
           <div class="card-body">
@@ -1736,7 +1756,7 @@
             <img src="/games/assets/covers/diablo.png" alt="" loading="lazy" decoding="async" width="640" height="360" onerror="this.onerror=null;this.src='/games/assets/brand/banner.svg'">
             <div class="cover-overlay"><span class="cover-play-badge">▶ Play Now</span></div>
             <span class="badge is-instant">Instant</span>
-            
+
             <span class="badge badge--platform badge--wasm">Wasm</span>
           </a>
           <div class="card-body">
@@ -2701,7 +2721,7 @@
           if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
       });
-  
+
       window.addEventListener('hashchange', checkHash);
 
       /* ---- per-card Info and Share actions */
